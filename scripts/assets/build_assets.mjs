@@ -32,8 +32,14 @@ function stripClipName(name) {
   return i >= 0 ? name.slice(i + 1) : name;
 }
 
+// src may be absolute (e.g. pointing at the main checkout's tmp/asset_src from
+// a git worktree) or relative to the repo root.
+function resolveSrc(src) {
+  return path.isAbsolute(src) ? src : path.join(ROOT, src);
+}
+
 async function processModel(io, item) {
-  const srcPath = path.join(ROOT, item.src);
+  const srcPath = resolveSrc(item.src);
   const outPath = path.join(PUBLIC_DIR, item.out);
   const doc = await io.read(srcPath);
   const root = doc.getRoot();
@@ -70,7 +76,7 @@ async function processModel(io, item) {
 }
 
 function processCopy(item) {
-  const srcPath = path.join(ROOT, item.src);
+  const srcPath = resolveSrc(item.src);
   const outPath = path.join(PUBLIC_DIR, item.out);
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.copyFileSync(srcPath, outPath);
