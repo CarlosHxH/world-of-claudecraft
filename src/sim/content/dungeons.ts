@@ -120,9 +120,10 @@ export const DUNGEON_MOBS: Record<string, MobTemplate> = {
     summonAdds: { mobId: 'raised_bonewalker', count: 3, atHpPct: [0.66, 0.33] },
     loot: [
       { copper: 5000, chance: 1 },
-      { itemId: 'boneguard_breastplate', chance: 0.33 },
-      { itemId: 'shadowmeld_tunic', chance: 0.33 },
-      { itemId: 'staff_of_velkhar', chance: 0.34 },
+      // exclusive "one of three" blues per master-spec §4 (weights sum to 1.0)
+      { itemId: 'boneguard_breastplate', chance: 0.33, rollGroup: 'velkhar_blue' },
+      { itemId: 'shadowmeld_tunic', chance: 0.33, rollGroup: 'velkhar_blue' },
+      { itemId: 'staff_of_velkhar', chance: 0.34, rollGroup: 'velkhar_blue' },
     ],
     scale: 1.25, color: 0x512e5f,
   },
@@ -135,9 +136,10 @@ export const DUNGEON_MOBS: Record<string, MobTemplate> = {
     enrage: { belowHpPct: 0.30, dmgMult: 1.5 },
     loot: [
       { copper: 50000, chance: 1 },
-      { itemId: 'wyrmfang_greatblade', chance: 0.34 },
-      { itemId: 'staff_of_the_gravewyrm', chance: 0.33 },
-      { itemId: 'fang_of_korzul', chance: 0.33 },
+      // exclusive "one of three" epics per master-spec §4 (weights sum to 1.0)
+      { itemId: 'wyrmfang_greatblade', chance: 0.34, rollGroup: 'korzul_epic' },
+      { itemId: 'staff_of_the_gravewyrm', chance: 0.33, rollGroup: 'korzul_epic' },
+      { itemId: 'fang_of_korzul', chance: 0.33, rollGroup: 'korzul_epic' },
     ],
     scale: 1.8, color: 0x3d5c45,
   },
@@ -212,7 +214,7 @@ export const DUNGEON_DEFS: Record<string, DungeonDef> = {
     name: 'The Hollow Crypt',
     index: 0,
     doorPos: { x: 80, z: 90 }, // entrance portal at the chapel ruin
-    entry: { x: 0, z: 0 },
+    entry: { x: 0, z: 4 },
     exitOffset: { x: 0, z: -6 },
     spawns: CRYPT_SPAWN_LIST,
     interior: 'crypt',
@@ -225,7 +227,7 @@ export const DUNGEON_DEFS: Record<string, DungeonDef> = {
     name: 'The Sunken Bastion',
     index: 1,
     doorPos: { x: 45, z: 515 }, // drowned keep south of the Gravecaller camp
-    entry: { x: 0, z: 0 },
+    entry: { x: 0, z: 4 },
     exitOffset: { x: 0, z: -6 },
     spawns: BASTION_SPAWN_LIST,
     interior: 'crypt',
@@ -238,7 +240,7 @@ export const DUNGEON_DEFS: Record<string, DungeonDef> = {
     name: 'Gravewyrm Sanctum',
     index: 2,
     doorPos: { x: 0, z: 880 }, // sealed gate at the head of the Sanctum Approach
-    entry: { x: 0, z: 0 },
+    entry: { x: 0, z: 4 },
     exitOffset: { x: 0, z: -6 },
     spawns: SANCTUM_SPAWN_LIST,
     interior: 'sanctum',

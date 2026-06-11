@@ -5,7 +5,7 @@ import puppeteer from 'puppeteer-core';
 import fs from 'node:fs';
 import { BROWSER_PATH } from './browser_path.mjs';
 
-const URL = process.env.GAME_URL ?? 'http://localhost:5173';
+const URL = (process.env.GAME_URL ?? 'http://localhost:5173') + '/?gfx=' + (process.env.GFX_TIER ?? 'high');
 fs.mkdirSync('tmp', { recursive: true });
 
 const browser = await puppeteer.launch({
@@ -126,6 +126,9 @@ await sleep(600);
 await shot('08_bastion_door');
 const inBastion = await page.evaluate(() => {
   const g = window.__game;
+  if (g.sim.player.dead) g.sim.releaseSpirit();
+  const pos = g.sim.groundPos(45, 511);
+  g.sim.player.pos = pos; g.sim.player.prevPos = { ...pos };
   g.sim.enterDungeon('sunken_bastion');
   return g.sim.player.pos.x;
 });
@@ -150,6 +153,10 @@ await tp(0, 862, 0);
 await shot('13_sanctum_approach');
 const inSanctum = await page.evaluate(() => {
   const g = window.__game;
+  // the approach is patrolled by level-19 revenants; revive if they got us
+  if (g.sim.player.dead) g.sim.releaseSpirit();
+  const pos = g.sim.groundPos(0, 876);
+  g.sim.player.pos = pos; g.sim.player.prevPos = { ...pos };
   g.sim.enterDungeon('gravewyrm_sanctum');
   return g.sim.player.pos.x;
 });

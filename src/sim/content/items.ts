@@ -1,4 +1,10 @@
-import type { ItemDef } from '../types';
+import type { ItemDef, PlayerClass } from '../types';
+
+// Archetype groups for class-locked rewards (REWARD_ARCHETYPE hands warrior
+// rewards to paladins/shamans etc., so the lock must admit the whole group).
+const WAR: PlayerClass[] = ['warrior', 'paladin', 'shaman'];
+const MAG: PlayerClass[] = ['mage', 'priest', 'warlock', 'druid'];
+const ROG: PlayerClass[] = ['rogue', 'hunter'];
 
 // ---------------------------------------------------------------------------
 // Items
@@ -41,27 +47,27 @@ export const BASE_ITEMS: Record<string, ItemDef> = {
   // --- quest reward gear ---
   redbrook_blade: {
     id: 'redbrook_blade', name: 'Redbrook Militia Blade', kind: 'weapon', slot: 'mainhand', quality: 'uncommon',
-    weapon: { min: 6, max: 11, speed: 2.2 }, stats: { str: 2 }, sellValue: 120, requiredClass: ['warrior'],
+    weapon: { min: 6, max: 11, speed: 2.2 }, stats: { str: 2 }, sellValue: 120, requiredClass: WAR,
   },
   apprentice_staff: {
     id: 'apprentice_staff', name: 'Vale Apprentice Staff', kind: 'weapon', slot: 'mainhand', quality: 'uncommon',
-    weapon: { min: 7, max: 12, speed: 3.0 }, stats: { int: 3, sta: 1 }, sellValue: 120, requiredClass: ['mage'],
+    weapon: { min: 7, max: 12, speed: 3.0 }, stats: { int: 3, sta: 1 }, sellValue: 120, requiredClass: MAG,
   },
   keen_dirk: {
     id: 'keen_dirk', name: 'Keen Dirk', kind: 'weapon', slot: 'mainhand', quality: 'uncommon',
-    weapon: { min: 4, max: 8, speed: 1.7, dagger: true }, stats: { agi: 2 }, sellValue: 120, requiredClass: ['rogue'],
+    weapon: { min: 4, max: 8, speed: 1.7, dagger: true }, stats: { agi: 2 }, sellValue: 120, requiredClass: ROG,
   },
   militia_vest: {
     id: 'militia_vest', name: 'Militia Chainvest', kind: 'armor', slot: 'chest', quality: 'uncommon',
-    stats: { armor: 90, sta: 2 }, sellValue: 150, requiredClass: ['warrior'],
+    stats: { armor: 90, sta: 2 }, sellValue: 150, requiredClass: WAR,
   },
   woven_robe: {
     id: 'woven_robe', name: 'Valewoven Robe', kind: 'armor', slot: 'chest', quality: 'uncommon',
-    stats: { armor: 30, int: 3, spi: 2 }, sellValue: 150, requiredClass: ['mage'],
+    stats: { armor: 30, int: 3, spi: 2 }, sellValue: 150, requiredClass: MAG,
   },
   shadow_jerkin: {
     id: 'shadow_jerkin', name: 'Shadowstitch Jerkin', kind: 'armor', slot: 'chest', quality: 'uncommon',
-    stats: { armor: 55, agi: 3 }, sellValue: 150, requiredClass: ['rogue'],
+    stats: { armor: 55, agi: 3 }, sellValue: 150, requiredClass: ROG,
   },
   oiled_boots: {
     id: 'oiled_boots', name: 'Oiled Leather Boots', kind: 'armor', slot: 'feet', quality: 'uncommon',
@@ -152,15 +158,15 @@ export const BASE_ITEMS: Record<string, ItemDef> = {
   },
   marrowtread_boots: {
     id: 'marrowtread_boots', name: 'Marrowtread Boots', kind: 'armor', slot: 'feet', quality: 'rare',
-    stats: { armor: 45, sta: 2, str: 1 }, sellValue: 500, requiredClass: ['warrior'],
+    stats: { armor: 45, sta: 2, str: 1 }, sellValue: 500, requiredClass: WAR,
   },
   sextons_slippers: {
     id: 'sextons_slippers', name: "Sexton's Slippers", kind: 'armor', slot: 'feet', quality: 'rare',
-    stats: { armor: 20, int: 2, spi: 2 }, sellValue: 500, requiredClass: ['mage'],
+    stats: { armor: 20, int: 2, spi: 2 }, sellValue: 500, requiredClass: MAG,
   },
   gravewalker_softboots: {
     id: 'gravewalker_softboots', name: 'Gravewalker Softboots', kind: 'armor', slot: 'feet', quality: 'rare',
-    stats: { armor: 32, agi: 3 }, sellValue: 500, requiredClass: ['rogue'],
+    stats: { armor: 32, agi: 3 }, sellValue: 500, requiredClass: ROG,
   },
   // --- quest items ---
   boar_hide: { id: 'boar_hide', name: 'Bristly Boar Hide', kind: 'quest', sellValue: 0, questId: 'q_boars' },

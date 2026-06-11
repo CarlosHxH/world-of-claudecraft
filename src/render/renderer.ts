@@ -12,7 +12,7 @@ import { buildProps } from './props';
 import { radialGlowTexture, sparkleTexture, stoneMaps, SurfaceMaps } from './textures';
 import { Vfx } from './vfx';
 import {
-  GFX, initGfxTier, sharedUniforms, SUN_ANCHOR, SUN_DIR, surfaceMat, urlForcedTier,
+  GFX, initGfxTier, sharedUniforms, SUN_ANCHOR, SUN_DIR, surfaceMat,
 } from './gfx';
 import { buildComposer, PostPipeline } from './post';
 import { buildTerrain, TerrainView } from './terrain';
@@ -26,12 +26,10 @@ const NAMEPLATE_RANGE = 55;
 const ENTITY_DRAW_RANGE = 80;
 // rigs further than this stop casting articulated shadows (~7 draws each) and
 // hand off to a single-draw static-pose shadow proxy (the merged far-LOD mesh
-// on the shadow-only layer) so mid-ground NPCs keep their grounding for ~1/7
-// the cost — the pose freeze is invisible in a shadow blob this far out
+// with a colorWrite-off material) so mid-ground NPCs keep their grounding for
+// ~1/7 the cost — the pose freeze is invisible in a shadow blob this far out
 const ENTITY_SHADOW_RANGE_SQ = 25 * 25;
 const ENTITY_PROXY_SHADOW_RANGE_SQ = 62 * 62;
-// layer rendered by the sun's shadow camera but not the main camera
-const SHADOW_ONLY_LAYER = 1;
 // loot sparkles further than this are hidden (sub-pixel, real draw cost)
 const SPARKLE_DRAW_RANGE_SQ = 40 * 40;
 // beyond this, the articulated rig swaps for its single-draw merged far LOD
@@ -80,8 +78,12 @@ interface EntityView {
   portal?: THREE.Mesh; // dungeon door swirl
   casters: THREE.Object3D[]; // shadow-casting meshes, distance-gated in sync
   shadowOn: boolean;
+  // sheep/bear form casters keep their (1-2 draw) articulated shadows through
+  // the whole proxy band — the frozen humanoid proxy silhouette would be wrong
+  formCasters: THREE.Object3D[];
+  formShadowOn: boolean;
   farMesh: THREE.Mesh | null; // single-draw merged LOD shown beyond 55u
-  shadowProxy: THREE.Mesh | null; // shadow-only static-pose caster, 25-70u
+  shadowProxy: THREE.Mesh | null; // shadow-only static-pose caster, 25-62u
   isFar: boolean;
 }
 
@@ -89,6 +91,19 @@ function collectCasters(root: THREE.Object3D, into: THREE.Object3D[]): void {
   root.traverse((o) => {
     if ((o as THREE.Mesh).isMesh && (o as THREE.Mesh).castShadow) into.push(o);
   });
+}
+
+// Shadow-only material for the static-pose proxy casters: it writes neither
+// color nor depth, so the main pass rasterizes nothing visible, while the
+// shadow pass (which swaps in its own depth material and only checks
+// castShadow + the main camera's layer mask in three r165) still renders the
+// mesh into the shadow map. One shared instance for every proxy.
+let shadowOnlyMatSingleton: THREE.Material | null = null;
+function shadowOnlyMat(): THREE.Material {
+  if (!shadowOnlyMatSingleton) {
+    shadowOnlyMatSingleton = new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false });
+  }
+  return shadowOnlyMatSingleton;
 }
 
 export class Renderer {
@@ -121,7 +136,8 @@ export class Renderer {
   private flames: THREE.Mesh[];
   private fireLights: THREE.PointLight[];
   private propsView!: { update(camX: number, camZ: number, fogFar: number): void };
-  private lightRank: { light: THREE.PointLight; d2: number }[] = [];
+  private lightRank: { light: THREE.PointLight; d2: number; worldPos: THREE.Vector3 }[] = [];
+  private doomedIds: number[] = [];
   private stoneMapsCache: SurfaceMaps | null = null;
   private time = 0;
   vfx: Vfx;
@@ -132,7 +148,11 @@ export class Renderer {
 
   constructor(private sim: IWorld, canvas: HTMLCanvasElement, nameplateLayer: HTMLDivElement) {
     this.nameplateLayer = nameplateLayer;
-    this.webgl = new THREE.WebGLRenderer({ canvas, antialias: urlForcedTier() !== 'low', powerPreference: 'high-performance' });
+    // No default-framebuffer MSAA on any tier: high/ultra get AA from the
+    // composer's MSAA HalfFloat target, low is meant to run without AA — and
+    // requesting it here would hit software GL (the autodetect can only run
+    // after the context exists) with the most expensive setting there is.
+    this.webgl = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
     initGfxTier(this.webgl); // software-GL autodetect needs the live context
     this.lowGfx = GFX.tier === 'low';
     const LOW_GFX = this.lowGfx;
@@ -184,8 +204,6 @@ export class Renderer {
     sun.shadow.bias = -0.0006;
     sun.shadow.normalBias = LOW_GFX ? 0.02 : 0.05;
     sun.shadow.radius = 4;
-    // the shadow camera also sees the shadow-only proxy layer
-    sun.shadow.camera.layers.enable(SHADOW_ONLY_LAYER);
     this.scene.add(sun);
     this.scene.add(sun.target);
     this.sun = sun;
@@ -306,8 +324,15 @@ export class Renderer {
     window.addEventListener('resize', () => {
       this.camera.aspect = window.innerWidth / window.innerHeight;
       this.camera.updateProjectionMatrix();
+      // dragging between monitors changes devicePixelRatio: refresh it before
+      // resizing so the canvas/composer/vfx don't keep the old DPI
+      const ratio = Math.min(window.devicePixelRatio, GFX.pixelRatioCap);
+      this.webgl.setPixelRatio(ratio);
       this.webgl.setSize(window.innerWidth, window.innerHeight);
-      this.post?.setSize(window.innerWidth, window.innerHeight);
+      if (this.post) {
+        this.post.composer.setPixelRatio(ratio);
+        this.post.setSize(window.innerWidth, window.innerHeight);
+      }
       this.vfx.setViewportScale(this.webgl.domElement.clientHeight * this.webgl.getPixelRatio(), 60);
     });
   }
@@ -346,6 +371,13 @@ export class Renderer {
   // Entity views
   // -------------------------------------------------------------------------
 
+  // Shared object-view resources: views must not own materials/textures, or
+  // interest churn leaks them (removeView only disposes per-view geometry).
+  private doorStoneMat: THREE.Material | null = null;
+  private crateMat: THREE.Material | null = null;
+  private crateLidMat: THREE.Material | null = null;
+  private sparkleMat: THREE.SpriteMaterial | null = null;
+
   private createView(e: Entity): void {
     const group = new THREE.Group();
     let rig: Rig;
@@ -358,7 +390,8 @@ export class Renderer {
       const entering = e.templateId === 'dungeon_door';
       const tint = entering ? 0x9a5df0 : 0x6ab8ff;
       rig = { body: new THREE.Group(), parts: {}, kind: 'humanoid', height: 4.6 };
-      const stone = new THREE.MeshLambertMaterial({ color: 0x6a6a72 });
+      this.doorStoneMat ??= new THREE.MeshLambertMaterial({ color: 0x6a6a72 });
+      const stone = this.doorStoneMat;
       for (const sx of [-1.5, 1.5]) {
         const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.7, 4.4, 0.7), stone);
         pillar.position.set(sx, 2.2, 0);
@@ -384,19 +417,20 @@ export class Renderer {
       objectMesh = rig.body;
     } else if (e.kind === 'object') {
       rig = { body: new THREE.Group(), parts: {}, kind: 'humanoid', height: 1.2 };
-      const crate = new THREE.Mesh(
-        new THREE.BoxGeometry(0.9, 0.9, 0.9),
-        new THREE.MeshLambertMaterial({ color: 0x8a6537 }),
-      );
+      this.crateMat ??= new THREE.MeshLambertMaterial({ color: 0x8a6537 });
+      this.crateLidMat ??= new THREE.MeshLambertMaterial({ color: 0x6b4a2b });
+      const crate = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.9, 0.9), this.crateMat);
       crate.position.y = 0.45;
       crate.castShadow = true;
-      const lid = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.12, 0.96), new THREE.MeshLambertMaterial({ color: 0x6b4a2b }));
+      const lid = new THREE.Mesh(new THREE.BoxGeometry(0.96, 0.12, 0.96), this.crateLidMat);
       lid.position.y = 0.92;
       rig.body.add(crate, lid);
       objectMesh = rig.body;
-      const sMat = new THREE.SpriteMaterial({ map: sparkleTexture(), transparent: true, depthWrite: false });
-      if (!this.lowGfx) sMat.color.setScalar(SPARKLE_BOOST); // gold glint via bloom
-      sparkle = new THREE.Sprite(sMat);
+      if (!this.sparkleMat) {
+        this.sparkleMat = new THREE.SpriteMaterial({ map: sparkleTexture(), transparent: true, depthWrite: false });
+        if (!this.lowGfx) this.sparkleMat.color.setScalar(SPARKLE_BOOST); // gold glint via bloom
+      }
+      sparkle = new THREE.Sprite(this.sparkleMat);
       sparkle.scale.set(0.9, 0.9, 1);
       sparkle.position.y = 1.35;
       group.add(sparkle);
@@ -441,12 +475,12 @@ export class Renderer {
         farMesh.userData.entityId = e.id;
         group.add(farMesh);
         if (!this.lowGfx) {
-          // shares the far-LOD geometry; lives on the shadow-only layer so the
-          // main camera never draws it while the sun shadow camera does
-          shadowProxy = new THREE.Mesh(farMesh.geometry, farMesh.material);
+          // shares the far-LOD geometry; the shadow-only material writes no
+          // color/depth so the main camera draws nothing visible while the
+          // shadow pass still renders it into the shadow map
+          shadowProxy = new THREE.Mesh(farMesh.geometry, shadowOnlyMat());
           shadowProxy.scale.copy(rig.body.scale);
           shadowProxy.castShadow = true;
-          shadowProxy.layers.set(SHADOW_ONLY_LAYER);
           shadowProxy.visible = false;
           group.add(shadowProxy);
         }
@@ -455,7 +489,7 @@ export class Renderer {
     this.views.set(e.id, {
       group, rig, sheepRig: null, bearRig: null, walkPhase: 0, attackAnim: 0,
       nameplate: np, nameEl, hpBar, hpFill, markerEl: marker, sparkle, objectMesh, portal,
-      casters, shadowOn: true, farMesh, shadowProxy, isFar: false,
+      casters, shadowOn: true, formCasters: [], formShadowOn: true, farMesh, shadowProxy, isFar: false,
     });
   }
 
@@ -550,21 +584,21 @@ export class Renderer {
     const g = new THREE.Group();
     const { stone, stoneDark, bone } = this.interiorStone(0xc6c6d4, 0x8c8c9c, 0x6a6a72, 0x4a4a52);
 
-    const floor = new THREE.Mesh(scaleUv(new THREE.BoxGeometry(46, 0.5, 122), 10, 26), stoneDark);
-    floor.position.set(0, -0.25, 52);
+    const floor = new THREE.Mesh(scaleUv(new THREE.BoxGeometry(46, 0.5, 132), 10, 28), stoneDark);
+    floor.position.set(0, -0.25, 47);
     floor.receiveShadow = true;
     g.add(floor);
     // walls
     for (const sx of [-23, 23]) {
-      const wall = new THREE.Mesh(scaleUv(new THREE.BoxGeometry(2, 9, 122), 26, 2), stone);
-      wall.position.set(sx, 4.5, 52);
+      const wall = new THREE.Mesh(scaleUv(new THREE.BoxGeometry(2, 9, 132), 28, 2), stone);
+      wall.position.set(sx, 4.5, 47);
       g.add(wall);
     }
     const backWall = new THREE.Mesh(scaleUv(new THREE.BoxGeometry(48, 9, 2), 10, 2), stone);
     backWall.position.set(0, 4.5, 112);
     g.add(backWall);
     const frontWall = new THREE.Mesh(scaleUv(new THREE.BoxGeometry(48, 9, 2), 10, 2), stone);
-    frontWall.position.set(0, 4.5, -9);
+    frontWall.position.set(0, 4.5, -19);
     g.add(frontWall);
     // pillars + torches
     for (let z = 10; z <= 100; z += 15) {
@@ -610,21 +644,21 @@ export class Renderer {
     const g = new THREE.Group();
     const { stone, stoneDark, bone } = this.interiorStone(0xb0a8c0, 0x767088, 0x5e5a66, 0x3f3b48);
 
-    const floor = new THREE.Mesh(scaleUv(new THREE.BoxGeometry(46, 0.5, 168), 10, 36), stoneDark);
-    floor.position.set(0, -0.25, 74.5);
+    const floor = new THREE.Mesh(scaleUv(new THREE.BoxGeometry(46, 0.5, 178), 10, 38), stoneDark);
+    floor.position.set(0, -0.25, 69.5);
     floor.receiveShadow = true;
     g.add(floor);
     // walls
     for (const sx of [-23, 23]) {
-      const wall = new THREE.Mesh(scaleUv(new THREE.BoxGeometry(2, 9, 168), 36, 2), stone);
-      wall.position.set(sx, 4.5, 74.5);
+      const wall = new THREE.Mesh(scaleUv(new THREE.BoxGeometry(2, 9, 178), 38, 2), stone);
+      wall.position.set(sx, 4.5, 69.5);
       g.add(wall);
     }
     const backWall = new THREE.Mesh(scaleUv(new THREE.BoxGeometry(48, 9, 2), 10, 2), stone);
     backWall.position.set(0, 4.5, 158);
     g.add(backWall);
     const frontWall = new THREE.Mesh(scaleUv(new THREE.BoxGeometry(48, 9, 2), 10, 2), stone);
-    frontWall.position.set(0, 4.5, -9);
+    frontWall.position.set(0, 4.5, -19);
     g.add(frontWall);
     // chamber waists: wall stubs leaving a ~10yd centre passage
     for (const sx of [-14, 14]) {
@@ -741,6 +775,18 @@ export class Renderer {
     v.nameplate.remove();
     const idx = this.clickTargets.indexOf(v.rig.body);
     if (idx >= 0) this.clickTargets.splice(idx, 1);
+    // Free this view's GPU resources: geometries are unique per view (merged
+    // rig buckets, far LOD, lazy form rigs, door/crate boxes) and leak GL
+    // buffers + VAOs for the renderer's lifetime if not disposed on interest
+    // churn / instance despawn. Materials and textures are shared caches
+    // (rigMergedMat / surfaceMat / sparkle / door stone) and must survive —
+    // the per-view portal swirl material is the only one owned here. Sprites
+    // share three's global sprite geometry, so only real meshes are disposed.
+    v.group.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (mesh.isMesh) mesh.geometry.dispose();
+    });
+    if (v.portal) (v.portal.material as THREE.Material).dispose();
     this.views.delete(id);
   }
 
@@ -751,16 +797,23 @@ export class Renderer {
     const p = sim.player;
 
     // dynamic worlds: create views for newcomers, drop views for leavers
+    // (doomed ids collected into a reused scratch array — no per-frame alloc)
     for (const e of sim.entities.values()) {
       if (!this.views.has(e.id)) this.createView(e);
     }
-    for (const id of [...this.views.keys()]) {
-      if (!sim.entities.has(id)) this.removeView(id);
+    this.doomedIds.length = 0;
+    for (const id of this.views.keys()) {
+      if (!sim.entities.has(id)) this.doomedIds.push(id);
     }
+    for (const id of this.doomedIds) this.removeView(id);
 
     for (const e of sim.entities.values()) {
       const v = this.views.get(e.id);
       if (!v) continue;
+      // form swaps (polymorph sheep, druid bear) — computed up front because
+      // the shadow gates below must not show the humanoid proxy under a form
+      const polyed = e.auras.some((a) => a.kind === 'polymorph');
+      const bear = !polyed && e.auras.some((a) => a.kind === 'form_bear');
       // distance cull: far rigs are invisible specks but cost real draw calls
       if (e.id !== p.id) {
         const cdx = e.pos.x - p.pos.x, cdz = e.pos.z - p.pos.z;
@@ -777,8 +830,15 @@ export class Renderer {
           for (const caster of v.casters) (caster as THREE.Mesh).castShadow = wantShadow;
         }
         v.isFar = d2 > ENTITY_LOD_RANGE_SQ;
-        // past the articulated gate the static-pose proxy carries the shadow
-        if (v.shadowProxy) v.shadowProxy.visible = !wantShadow && d2 < ENTITY_PROXY_SHADOW_RANGE_SQ;
+        // past the articulated gate the static-pose proxy carries the shadow;
+        // while a form is active its own rig keeps casting instead
+        const inProxyBand = d2 < ENTITY_PROXY_SHADOW_RANGE_SQ;
+        if (v.shadowProxy) v.shadowProxy.visible = !wantShadow && inProxyBand && !polyed && !bear;
+        const wantFormShadow = wantShadow || inProxyBand;
+        if (wantFormShadow !== v.formShadowOn) {
+          v.formShadowOn = wantFormShadow;
+          for (const caster of v.formCasters) (caster as THREE.Mesh).castShadow = wantFormShadow;
+        }
       }
       const x = e.prevPos.x + (e.pos.x - e.prevPos.x) * alpha;
       const y = e.prevPos.y + (e.pos.y - e.prevPos.y) * alpha;
@@ -811,22 +871,20 @@ export class Renderer {
         && groundHeight(e.pos.x, e.pos.z, this.sim.cfg.seed) < WATER_LEVEL - 0.8
         && e.pos.y <= WATER_LEVEL - 0.5;
 
-      // form swaps: polymorph sheep, druid bear
-      const polyed = e.auras.some((a) => a.kind === 'polymorph');
-      const bear = !polyed && e.auras.some((a) => a.kind === 'form_bear');
+      // lazy form rig builds; form casters follow the wider proxy-band gate
       if (polyed && !v.sheepRig) {
         v.sheepRig = buildSheep();
         v.sheepRig.body.scale.multiplyScalar(e.scale);
         v.group.add(v.sheepRig.body);
-        collectCasters(v.sheepRig.body, v.casters);
-        if (!v.shadowOn) v.sheepRig.body.traverse((o) => { (o as THREE.Mesh).castShadow = false; });
+        collectCasters(v.sheepRig.body, v.formCasters);
+        if (!v.formShadowOn) v.sheepRig.body.traverse((o) => { (o as THREE.Mesh).castShadow = false; });
       }
       if (bear && !v.bearRig) {
         v.bearRig = buildBear();
         v.bearRig.body.scale.multiplyScalar(e.scale);
         v.group.add(v.bearRig.body);
-        collectCasters(v.bearRig.body, v.casters);
-        if (!v.shadowOn) v.bearRig.body.traverse((o) => { (o as THREE.Mesh).castShadow = false; });
+        collectCasters(v.bearRig.body, v.formCasters);
+        if (!v.formShadowOn) v.bearRig.body.traverse((o) => { (o as THREE.Mesh).castShadow = false; });
       }
       if (v.sheepRig) v.sheepRig.body.visible = polyed;
       if (v.bearRig) v.bearRig.body.visible = bear;
@@ -854,8 +912,11 @@ export class Renderer {
           const t = 1 - Math.max(0, v.attackAnim) / 0.35;
           if (parts.rightArm) parts.rightArm.rotation.x = -Math.sin(t * Math.PI) * 1.9;
         }
-        // idle breathing
-        if (!moving && parts.head) parts.head.position.y = (activeRig.kind === 'humanoid' ? 2.18 : parts.head.position.y) + Math.sin(this.time * 1.8 + e.id) * 0.012;
+        // idle breathing — absolute around the captured rest height (adding
+        // to the current position accumulated frame-rate-dependent drift)
+        if (!moving && parts.head && activeRig.headRestY !== undefined) {
+          parts.head.position.y = activeRig.headRestY + Math.sin(this.time * 1.8 + e.id) * 0.012;
+        }
       } else if (parts.legs) {
         if (activeRig.kind === 'spider') {
           parts.legs.forEach((leg, i) => {
@@ -1008,15 +1069,20 @@ export class Renderer {
 
   // Forward-renderer point-light budget: every campfire/torch light exists,
   // but only the nearest GFX.maxPointLights within range shine each frame.
+  // Rank entries are pooled (extended only when interiors add lights) and
+  // world positions cached once — the lights never move — so this hot loop
+  // allocates nothing and skips the sort while the budget isn't contended.
   private budgetFireLights(px: number, pz: number): void {
     const ranked = this.lightRank;
-    ranked.length = 0;
-    for (const light of this.fireLights) {
-      light.getWorldPosition(this.tmpV);
-      const dx = this.tmpV.x - px, dz = this.tmpV.z - pz;
-      ranked.push({ light, d2: dx * dx + dz * dz });
+    while (ranked.length < this.fireLights.length) {
+      const light = this.fireLights[ranked.length];
+      ranked.push({ light, d2: 0, worldPos: light.getWorldPosition(new THREE.Vector3()) });
     }
-    ranked.sort((a, b) => a.d2 - b.d2);
+    for (const entry of ranked) {
+      const dx = entry.worldPos.x - px, dz = entry.worldPos.z - pz;
+      entry.d2 = dx * dx + dz * dz;
+    }
+    if (ranked.length > GFX.maxPointLights) ranked.sort((a, b) => a.d2 - b.d2);
     for (let i = 0; i < ranked.length; i++) {
       ranked[i].light.visible = i < GFX.maxPointLights && ranked[i].d2 < LIGHT_BUDGET_RANGE_SQ;
     }

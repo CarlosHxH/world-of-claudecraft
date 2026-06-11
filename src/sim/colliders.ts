@@ -82,10 +82,10 @@ function staticWorldColliders(seed: number): Collider[] {
 // Mirrors Renderer.buildCrypt geometry.
 const CRYPT_COLLIDERS: Collider[] = (() => {
   const out: Collider[] = [];
-  out.push({ type: 'obb', x: -23, z: 52, hw: 1, hd: 61, rot: 0 }); // side walls
-  out.push({ type: 'obb', x: 23, z: 52, hw: 1, hd: 61, rot: 0 });
+  out.push({ type: 'obb', x: -23, z: 47, hw: 1, hd: 66, rot: 0 }); // side walls
+  out.push({ type: 'obb', x: 23, z: 47, hw: 1, hd: 66, rot: 0 });
   out.push({ type: 'obb', x: 0, z: 112, hw: 24, hd: 1, rot: 0 }); // back wall
-  out.push({ type: 'obb', x: 0, z: -9, hw: 24, hd: 1, rot: 0 }); // front wall
+  out.push({ type: 'obb', x: 0, z: -19, hw: 24, hd: 1, rot: 0 }); // front wall (entrance porch: chase cam fits inside)
   for (let z = 10; z <= 100; z += 15) {
     for (const sx of [-14, 14]) out.push({ type: 'circle', x: sx, z, r: 1.0 });
   }
@@ -100,10 +100,10 @@ const CRYPT_COLLIDERS: Collider[] = (() => {
 // geometry; the boss dais is walkable and deliberately has no collider.
 const SANCTUM_COLLIDERS: Collider[] = (() => {
   const out: Collider[] = [];
-  out.push({ type: 'obb', x: -23, z: 74.5, hw: 1, hd: 84, rot: 0 }); // side walls
-  out.push({ type: 'obb', x: 23, z: 74.5, hw: 1, hd: 84, rot: 0 });
+  out.push({ type: 'obb', x: -23, z: 69.5, hw: 1, hd: 89, rot: 0 }); // side walls
+  out.push({ type: 'obb', x: 23, z: 69.5, hw: 1, hd: 89, rot: 0 });
   out.push({ type: 'obb', x: 0, z: 158, hw: 24, hd: 1, rot: 0 }); // back wall
-  out.push({ type: 'obb', x: 0, z: -9, hw: 24, hd: 1, rot: 0 }); // front wall
+  out.push({ type: 'obb', x: 0, z: -19, hw: 24, hd: 1, rot: 0 }); // front wall (entrance porch: chase cam fits inside)
   // chamber waists: wall stubs leaving a ~10yd centre passage at x in [-5,5]
   for (const sx of [-14, 14]) {
     out.push({ type: 'obb', x: sx, z: 67, hw: 9, hd: 5, rot: 0 }); // Boneworks -> Korgath's Hall

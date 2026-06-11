@@ -3,7 +3,7 @@ import type { IWorld } from '../world_api';
 import { Renderer } from '../render/renderer';
 import {
   ABILITIES, CLASSES, DUNGEON_LIST, DUNGEON_X_THRESHOLD, ITEMS, MOBS, NPCS, QUESTS,
-  WORLD_MAX_X, WORLD_MAX_Z, WORLD_MIN_X, WORLD_MIN_Z, ZONES, zoneAt,
+  WORLD_MAX_X, WORLD_MAX_Z, WORLD_MIN_X, WORLD_MIN_Z, ZONES, dungeonAt, zoneAt,
 } from '../sim/data';
 import type { ZoneDef } from '../sim/data';
 import type { InvSlot } from '../sim/types';
@@ -23,6 +23,9 @@ const CLASS_GLYPH: Record<string, string> = {
   warrior: '⚔️', paladin: '🔨', hunter: '🏹', rogue: '🗡️', priest: '✝️',
   shaman: '🌩️', mage: '🔮', warlock: '🕯️', druid: '🐻',
 };
+
+// yards past a zone boundary before the crossing banner/welcome commits
+const ZONE_BANNER_DEADBAND = 5;
 
 export class Hud {
   private abilityButtons: { btn: HTMLButtonElement; label: HTMLSpanElement; cdOverlay: HTMLDivElement; cdText: HTMLDivElement; lastIcon: string }[] = [];
@@ -353,16 +356,24 @@ export class Hud {
 
     $('#death-overlay').style.display = p.dead ? 'flex' : 'none';
 
-    // zone transitions: banner + welcome hint when crossing into a new band
+    // zone transitions: banner + welcome hint when crossing into a new band.
+    // A ~5yd dead-band past the boundary stops a player straddling the border
+    // from re-triggering the banner/log (and the map canvas regen) every step.
     const inDungeon = p.pos.x > DUNGEON_X_THRESHOLD;
     const currentZone = zoneAt(p.pos.z);
     if (!inDungeon && currentZone.id !== this.lastZoneId) {
-      if (this.lastZoneId !== '') {
-        this.showBanner(currentZone.name);
-        this.log(`Entering ${currentZone.name}.`, '#ffd100');
-        this.log(currentZone.welcome, '#ffd100');
+      const lastZone = ZONES.find((z) => z.id === this.lastZoneId);
+      const pastDeadBand = !lastZone
+        || p.pos.z < lastZone.zMin - ZONE_BANNER_DEADBAND
+        || p.pos.z >= lastZone.zMax + ZONE_BANNER_DEADBAND;
+      if (pastDeadBand) {
+        if (this.lastZoneId !== '') {
+          this.showBanner(currentZone.name);
+          this.log(`Entering ${currentZone.name}.`, '#ffd100');
+          this.log(currentZone.welcome, '#ffd100');
+        }
+        this.lastZoneId = currentZone.id;
       }
-      this.lastZoneId = currentZone.id;
     }
 
     // soundtrack: pick the zone theme and layer in combat percussion.
@@ -557,9 +568,13 @@ export class Hud {
     const ctx = canvas.getContext('2d')!;
     const S = canvas.width;
     const p = this.sim.player;
-    const zone: ZoneDef = p.pos.x > DUNGEON_X_THRESHOLD
-      ? zoneAt((DUNGEON_LIST.find((d) => p.pos.x < 900 + d.index * 600 + 300)?.doorPos.z) ?? 0)
-      : zoneAt(p.pos.z);
+    // inside an instance, show the zone the dungeon's door is in (dungeonAt
+    // owns the instance x-band layout); outdoors, follow the committed zone
+    // so border-straddling can't thrash the 280px canvas regen below
+    const dungeon = dungeonAt(p.pos.x);
+    const zone: ZoneDef = dungeon
+      ? zoneAt(dungeon.doorPos.z)
+      : ZONES.find((z) => z.id === this.lastZoneId) ?? zoneAt(p.pos.z);
     const region = { minX: WORLD_MIN_X, maxX: WORLD_MAX_X, minZ: zone.zMin, maxZ: zone.zMax };
     if (!this.mapBg || this.mapZoneId !== zone.id) {
       this.mapBg = this.renderTerrainCanvas(280, region);
@@ -984,6 +999,10 @@ export class Hud {
     const npc = this.sim.entities.get(this.openVendorNpcId);
     if (!npc) return;
     const el = $('#vendor-window');
+    // the rebuild replaces the hovered row (its mouseleave never fires) and
+    // collapses the scrolled list — drop the tooltip and restore the scroll
+    this.hideTooltip();
+    const scrollTop = el.scrollTop;
     let html = `<div class="panel-title"><span>${npc.name} — Goods</span><span class="x-btn" data-close>✕</span></div>`;
     el.innerHTML = html;
     for (const itemId of npc.vendorItems) {
@@ -1004,6 +1023,7 @@ export class Hud {
     el.appendChild(hint);
     el.querySelector('[data-close]')?.addEventListener('click', () => this.closeVendor());
     el.style.display = 'block';
+    el.scrollTop = scrollTop;
   }
 
   closeVendor(): void {

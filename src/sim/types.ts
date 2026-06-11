@@ -94,6 +94,9 @@ export interface LootEntry {
   copper?: number;
   chance: number; // 0..1
   questId?: string; // only drops while this quest is active and not complete
+  // Entries sharing a rollGroup are exclusive: one rng draw is partitioned by
+  // their chances so exactly one drops (group chances should sum to 1.0).
+  rollGroup?: string;
 }
 
 export type MobFamily =
@@ -396,6 +399,7 @@ export interface Entity {
   tappedById: number | null; // first player to damage this mob owns loot/xp/quest credit
   pulseTimer: number; // boss aoe pulse countdown
   firedSummons: number; // summonAdds thresholds already triggered
+  summonedIds: number[]; // live adds this boss summoned; despawned on reset
   enraged: boolean; // enrage mechanic active
   spawnPos: Vec3;
   wanderTarget: Vec3 | null;
@@ -449,7 +453,9 @@ export type SimEvent = { pid?: number } & (
   | { type: 'heal2'; sourceId: number; targetId: number; amount: number; crit: boolean; ability: string }
   // visual-only cue for the renderer: spell projectiles, dot ticks, aoe novas
   | { type: 'spellfx'; sourceId: number; targetId: number; school: string; fx: 'projectile' | 'tick' | 'nova' }
-  | { type: 'log'; text: string; color?: string }
+  // entityId (when set) anchors the log to that entity so the server only
+  // delivers it to nearby players; anchorless logs broadcast server-wide
+  | { type: 'log'; text: string; color?: string; entityId?: number }
 );
 
 export interface MoveInput {

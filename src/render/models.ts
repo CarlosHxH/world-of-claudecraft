@@ -32,6 +32,9 @@ export interface Rig {
   parts: RigParts;
   kind: 'humanoid' | 'wolf' | 'boar' | 'spider' | 'murloc' | 'kobold' | 'skeleton' | 'sheep' | 'elemental' | 'dragonkin';
   height: number;
+  // head pivot rest height, captured by finalizeRig so the idle-breathing
+  // animation can assign an absolute Y instead of accumulating drift
+  headRestY?: number;
 }
 
 interface PlainOpts {
@@ -115,6 +118,7 @@ function bakeColor(geo: THREE.BufferGeometry, color: THREE.Color): void {
 // legs, head, tail) into one merged vertex-colored mesh per material class.
 // Pivot transforms, RigParts and animations are untouched.
 function finalizeRig(rig: Rig): Rig {
+  rig.headRestY = rig.parts.head?.position.y;
   const roots = new Set<THREE.Object3D>([rig.body]);
   const p = rig.parts;
   for (const node of [p.leftArm, p.rightArm, p.leftLeg, p.rightLeg, p.head, p.tail, p.flame]) {

@@ -35,9 +35,13 @@ export const ZONE2_ZONE: ZoneDef = {
 };
 
 // Causeway north from Eastbrook to Fenbridge, then spokes to each hub.
+// The Drowned Chapel spoke rounds the lake at (60,380) along its eastern
+// shore via Widow Thicket — the whole polyline stays clear of the lake carve
+// so the road never dips under the waterline (tests/progression.test.ts
+// samples every road against the heightfield to lock this in).
 export const ZONE2_ROADS: { x: number; z: number }[][] = [
   [{ x: 0, z: 80 }, { x: 0, z: 180 }, { x: -8, z: 240 }, { x: 0, z: 300 }],         // Eastbrook -> Fenbridge
-  [{ x: 4, z: 308 }, { x: 50, z: 380 }, { x: 90, z: 420 }],                         // -> Drowned Chapel
+  [{ x: 4, z: 308 }, { x: 45, z: 336 }, { x: 92, z: 350 }, { x: 102, z: 392 }, { x: 90, z: 420 }], // -> Drowned Chapel
   [{ x: -6, z: 308 }, { x: -40, z: 370 }, { x: -80, z: 420 }],                      // -> Troll Mounds
   [{ x: 2, z: 312 }, { x: 10, z: 400 }, { x: 20, z: 470 }, { x: 45, z: 515 }],      // -> cult camp -> Bastion
 ];

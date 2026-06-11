@@ -5,9 +5,13 @@
 import { describe, expect, it } from 'vitest';
 import {
   CAMPS, CLASSES, ABILITIES, DUNGEON_LIST, GROUND_OBJECTS, ITEMS, MOBS, NPCS,
-  QUESTS, QUEST_ORDER, ZONES, WORLD_MAX_X, WORLD_MAX_Z, WORLD_MIN_X, WORLD_MIN_Z,
+  QUESTS, QUEST_ORDER, REWARD_ARCHETYPE, ROADS, ZONES,
+  WORLD_MAX_X, WORLD_MAX_Z, WORLD_MIN_X, WORLD_MIN_Z,
 } from '../src/sim/data';
-import { XP_TABLE, MAX_LEVEL, ZoneDef } from '../src/sim/types';
+import { ALL_CLASSES, XP_TABLE, MAX_LEVEL, ZoneDef } from '../src/sim/types';
+import { terrainHeight, WATER_LEVEL } from '../src/sim/world';
+
+const WORLD_SEED = 20061; // production seed (main.ts / server/game.ts)
 
 describe('content referential integrity', () => {
   it('every quest reference resolves (NPCs, mobs, items, chains)', () => {
@@ -115,6 +119,44 @@ describe('content referential integrity', () => {
     }
     for (const d of DUNGEON_LIST) {
       if (!inWorld(d.doorPos.x, d.doorPos.z)) problems.push(`${d.id} door outside world`);
+    }
+    expect(problems).toEqual([]);
+  });
+
+  it('every archetype-resolved quest reward is equippable by the receiving class', () => {
+    // turnInQuest resolves itemRewards[cls] ?? itemRewards[REWARD_ARCHETYPE[cls]],
+    // so the resolved item's class lock must admit every class in the group.
+    const problems: string[] = [];
+    for (const q of Object.values(QUESTS)) {
+      for (const cls of ALL_CLASSES) {
+        const itemId = q.itemRewards[cls] ?? q.itemRewards[REWARD_ARCHETYPE[cls]];
+        if (!itemId) continue;
+        const item = ITEMS[itemId];
+        if (!item) continue; // missing items are caught by the integrity test
+        if (item.requiredClass && !item.requiredClass.includes(cls)) {
+          problems.push(`${q.id}: ${cls} receives ${itemId} but cannot equip it`);
+        }
+      }
+    }
+    expect(problems).toEqual([]);
+  });
+
+  it('roads never dip into deep water (sampled every ~4yd)', () => {
+    const problems: string[] = [];
+    for (const road of ROADS) {
+      for (let i = 0; i + 1 < road.length; i++) {
+        const a = road[i], b = road[i + 1];
+        const steps = Math.max(1, Math.ceil(Math.hypot(b.x - a.x, b.z - a.z) / 4));
+        for (let s = 0; s <= steps; s++) {
+          const t = s / steps;
+          const x = a.x + (b.x - a.x) * t;
+          const z = a.z + (b.z - a.z) * t;
+          const h = terrainHeight(x, z, WORLD_SEED);
+          if (h < WATER_LEVEL - 0.5) {
+            problems.push(`road point (${x.toFixed(1)},${z.toFixed(1)}) underwater (h=${h.toFixed(2)})`);
+          }
+        }
+      }
     }
     expect(problems).toEqual([]);
   });

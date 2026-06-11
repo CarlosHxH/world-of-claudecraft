@@ -191,6 +191,14 @@ function startGame(world: IWorld, offlineSim: Sim | null, online: ClientWorld | 
 // Offline flow
 // ---------------------------------------------------------------------------
 
+// Offline names go straight into innerHTML paths (quest $N text, char window
+// title), so enforce the server's character-name rule client-side too:
+// strip anything outside [A-Za-z' -], then require /^[A-Za-z][A-Za-z' -]{1,15}$/.
+function sanitizeOfflineName(raw: string): string {
+  const stripped = raw.replace(/[^A-Za-z' -]/g, '').replace(/^[^A-Za-z]+/, '').slice(0, 16);
+  return /^[A-Za-z][A-Za-z' -]{1,15}$/.test(stripped) ? stripped : 'Adventurer';
+}
+
 function startOffline(playerClass: PlayerClass, name: string): void {
   const sim = new Sim({ seed: WORLD_SEED, playerClass, playerName: name });
   startGame(sim, sim, null);
@@ -281,7 +289,7 @@ function wireStartScreens(): void {
     card.addEventListener('click', () => {
       audio.init();
       music.init();
-      const name = ($('#char-name') as unknown as HTMLInputElement).value.trim().slice(0, 16) || 'Adventurer';
+      const name = sanitizeOfflineName(($('#char-name') as unknown as HTMLInputElement).value.trim());
       startOffline((card as HTMLElement).dataset.class as PlayerClass, name);
     });
   });

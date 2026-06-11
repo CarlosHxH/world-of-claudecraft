@@ -313,7 +313,9 @@ export class MusicDirector {
   private reverbSend: GainNode | null = null;
   private layers: Record<string, Layer> = {};
   private timer: number | undefined;
-  private zone: MusicZone = 'town';
+  // null until the first update() so the initial state always applies — a
+  // 'town' sentinel matched the real starting zone and left spawn silent
+  private zone: MusicZone | null = null;
   private combat = false;
   private _enabled = (typeof localStorage === 'undefined') ? true : localStorage.getItem(STORAGE_KEY) !== '0';
 
@@ -395,12 +397,14 @@ export class MusicDirector {
       }
     }
     const combatLayer = this.layers.combat;
+    // ostinato follows the zone's tonal center (see COMBAT_TRANSPOSE) — kept
+    // current on every zone crossing, not just when combat starts, so being
+    // chased across a border can't leave it in the previous zone's key
+    if (inCombat) combatLayer.transpose = COMBAT_TRANSPOSE[zone];
     const combatTarget = inCombat ? 1 : 0;
     if (combatLayer.target !== combatTarget) {
       combatLayer.target = combatTarget;
       combatLayer.gain.gain.setTargetAtTime(combatTarget, now, inCombat ? 0.35 : FADE_SECONDS / 3);
-      // ostinato follows the zone's tonal center (see COMBAT_TRANSPOSE)
-      combatLayer.transpose = COMBAT_TRANSPOSE[zone];
     }
   }
 

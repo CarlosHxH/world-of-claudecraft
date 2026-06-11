@@ -1644,7 +1644,26 @@ export class Sim {
     if (!template) return;
     let copper = 0;
     const items: InvSlot[] = [];
+    const rolledGroups = new Set<string>();
     for (const entry of template.loot) {
+      // exclusive groups (boss "one of three" tables): a single rng draw is
+      // partitioned by the group entries' chances so exactly one drops.
+      // Exactly one rng.next() per group keeps replays deterministic.
+      if (entry.rollGroup) {
+        if (rolledGroups.has(entry.rollGroup)) continue;
+        rolledGroups.add(entry.rollGroup);
+        const group = template.loot.filter((l) => l.rollGroup === entry.rollGroup);
+        const roll = this.rng.next();
+        let cumulative = 0;
+        for (const g of group) {
+          cumulative += g.chance;
+          if (roll < cumulative) {
+            if (g.itemId) items.push({ itemId: g.itemId, count: 1 });
+            break;
+          }
+        }
+        continue;
+      }
       if (entry.questId) {
         const qp = meta.questLog.get(entry.questId);
         if (!qp || qp.state !== 'active') continue;
@@ -1783,7 +1802,7 @@ export class Sim {
         if (dist2d(mob.pos, mob.spawnPos) > leash) {
           mob.aiState = 'evade';
           mob.aggroTargetId = null;
-          this.emit({ type: 'log', text: mob.name + ' returns home.', color: '#999' });
+          this.emit({ type: 'log', text: mob.name + ' returns home.', color: '#999', entityId: mob.id });
           break;
         }
         const d = dist2d(mob.pos, target.pos);
@@ -1833,6 +1852,7 @@ export class Sim {
           mob.auras = [];
           mob.inCombat = false;
           mob.tappedById = null;
+          this.despawnSummonedAdds(mob);
           mob.firedSummons = 0;
           mob.enraged = false;
           mob.wanderTimer = this.rng.range(2, 8);
@@ -1903,6 +1923,7 @@ export class Sim {
     mob.aiState = 'idle';
     mob.aggroTargetId = null;
     mob.inCombat = false;
+    this.despawnSummonedAdds(mob);
     mob.firedSummons = 0;
     mob.enraged = false;
     mob.wanderTimer = this.rng.range(2, 8);
@@ -1910,6 +1931,23 @@ export class Sim {
       const e = this.entities.get(meta.entityId);
       if (e && e.targetId === mob.id) e.targetId = null;
     }
+  }
+
+  // Encounter reset: remove the adds a boss summoned this pull so retries
+  // start clean (firedSummons re-fires a fresh wave per pull). Player
+  // target/combo refs are cleared first, like freeInstance does.
+  private despawnSummonedAdds(boss: Entity): void {
+    if (boss.summonedIds.length === 0) return;
+    for (const id of boss.summonedIds) {
+      if (!this.entities.has(id)) continue;
+      for (const meta of this.players.values()) {
+        const e = this.entities.get(meta.entityId);
+        if (e?.targetId === id) e.targetId = null;
+        if (e?.comboTargetId === id) { e.comboTargetId = null; e.comboPoints = 0; }
+      }
+      this.entities.delete(id);
+    }
+    boss.summonedIds = [];
   }
 
   // Boss threshold mechanics: add waves (summonAdds) and enrage. Checked
@@ -1929,7 +1967,7 @@ export class Sim {
     if (tmpl.enrage && !mob.enraged && hpFrac <= tmpl.enrage.belowHpPct) {
       mob.enraged = true;
       this.emit({ type: 'aura', targetId: mob.id, name: 'Enrage', gained: true });
-      this.emit({ type: 'log', text: `${mob.name} becomes enraged!`, color: '#ff6666' });
+      this.emit({ type: 'log', text: `${mob.name} becomes enraged!`, color: '#ff6666', entityId: mob.id });
       this.emit({ type: 'spellfx', sourceId: mob.id, targetId: mob.id, school: 'fire', fx: 'nova' });
     }
   }
@@ -1937,7 +1975,7 @@ export class Sim {
   private spawnBossAdds(boss: Entity, mobId: string, count: number): void {
     const template = MOBS[mobId];
     if (!template) return;
-    this.emit({ type: 'log', text: `${boss.name} calls for aid!`, color: '#ff6666' });
+    this.emit({ type: 'log', text: `${boss.name} calls for aid!`, color: '#ff6666', entityId: boss.id });
     this.emit({ type: 'spellfx', sourceId: boss.id, targetId: boss.id, school: 'shadow', fx: 'nova' });
     // adds spawned inside a claimed instance despawn with it
     const inst = this.instances.find((i) => {
@@ -1954,6 +1992,7 @@ export class Sim {
       add.spawnPos = { ...boss.spawnPos }; // leashes with the boss; stays dead in instances
       add.tappedById = boss.tappedById;
       this.entities.set(add.id, add);
+      boss.summonedIds.push(add.id);
       inst?.mobIds.push(add.id);
       if (victim && !victim.dead && victim.kind === 'player') this.aggroMob(add, victim, false);
     }
@@ -2111,9 +2150,13 @@ export class Sim {
   sellItem(itemId: string, pid?: number): void {
     const r = this.resolve(pid);
     if (!r) return;
-    const { meta } = r;
+    const { meta, e: p } = r;
     const def = ITEMS[itemId];
-    if (!def || this.countItem(itemId, meta.entityId) <= 0) return;
+    if (!def || this.countItem(itemId, meta.entityId) <= 0 || p.dead) return;
+    // mirror buyItem's gate: selling requires a vendor in interact range
+    const nearVendor = [...this.entities.values()].some((e) =>
+      e.kind === 'npc' && e.vendorItems.length > 0 && dist2d(p.pos, e.pos) <= INTERACT_RANGE + 2);
+    if (!nearVendor) { this.error(meta.entityId, 'There is no merchant nearby.'); return; }
     if (def.kind === 'quest') { this.error(meta.entityId, 'You cannot sell quest items.'); return; }
     this.removeItem(itemId, 1, meta.entityId);
     meta.copper += def.sellValue;
@@ -2799,7 +2842,7 @@ export class Sim {
   enterDungeon(dungeonId: string, pid?: number): void {
     const r = this.resolve(pid);
     const dungeon = DUNGEONS[dungeonId];
-    if (!r || !dungeon) return;
+    if (!r || !dungeon || r.e.dead) return;
     const key = this.instanceKeyFor(r.meta.entityId);
     let inst = this.instances.find((i) => i.dungeonId === dungeonId && i.partyKey === key);
     if (!inst) {
@@ -2824,9 +2867,12 @@ export class Sim {
 
   leaveDungeon(pid?: number): void {
     const r = this.resolve(pid);
-    if (!r) return;
+    if (!r || r.e.dead) return;
     const p = r.e;
-    const dungeon = dungeonAt(p.pos.x) ?? DUNGEON_LIST[0];
+    // not inside any instance: nothing to leave (no DUNGEON_LIST[0] fallback —
+    // that silently teleported outdoor callers to the Hollow Crypt door)
+    const dungeon = dungeonAt(p.pos.x);
+    if (!dungeon) return;
     p.pos = this.groundPos(dungeon.doorPos.x, dungeon.doorPos.z - 4);
     p.prevPos = { ...p.pos };
     p.targetId = null;
