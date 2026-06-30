@@ -84,13 +84,17 @@ export const API_CONTENT_TYPE: Readonly<Record<string, ContentTypeClass>> = {
   '/api/account/deactivate': PROBLEM_JSON,
   '/api/account/companion-token': PROBLEM_JSON,
   '/api/account/email/change': PROBLEM_JSON,
-  '/api/account/email/verify': HTML,
+  // The two email link-click endpoints (verify, unsubscribe) read like server-rendered
+  // pages but every branch of handleAccountEmailVerify / handleEmailUnsubscribe answers
+  // application/json (the SPA owns the UX), so they are PROBLEM_JSON, NOT HTML. The only
+  // /api route that emits text/html today is /api/auth/discord/callback (the OAuth bounce).
+  '/api/account/email/verify': PROBLEM_JSON,
   '/api/account/export': PROBLEM_JSON,
   '/api/account/marketing': PROBLEM_JSON,
   '/api/account/2fa/setup': PROBLEM_JSON,
   '/api/account/2fa/enable': PROBLEM_JSON,
   '/api/account/2fa/disable': PROBLEM_JSON,
-  '/api/email/unsubscribe': HTML,
+  '/api/email/unsubscribe': PROBLEM_JSON,
   '/api/wallet/link/challenge': PROBLEM_JSON,
   '/api/wallet/link': PROBLEM_JSON,
   '/api/wallet': PROBLEM_JSON,
