@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import { MOBS } from '../src/sim/data';
+import { createMob } from '../src/sim/entity';
 import type { GroundAoE } from '../src/sim/entity_roster';
 import { Sim } from '../src/sim/sim';
+import type { PlayerClass } from '../src/sim/types';
 import { groundHeight } from '../src/sim/world';
 
 // Ground-targeted casting primitive (docs/design/arpg-spell-mechanics.md), exercised
@@ -67,35 +70,70 @@ describe('ground-targeted casting (Flamestrike)', () => {
   });
 });
 
-// The thematic per-class ground-targeted spells share the same primitive: each
-// drops its zone at the aimed point. (Hunter Volley is an instant aoeDamage with
-// no persistent zone, so it is covered by the shared aim-centering code path above
-// rather than a zone-placement assertion here.)
+// The thematic per-class ground-targeted spells. Rain of Fire (warlock), Volley
+// (hunter) and Hurricane (druid) are CHANNELED: casting begins a channel aimed at
+// the (clamped) point, and each tick pulses an AoE there via the channel-tick path.
+// Earthquake (shaman) is an instant lingering ground zone (groundAoE).
 describe('ground-targeted casting (thematic per-class spells)', () => {
-  const cases = [
-    { cls: 'warlock', spell: 'rain_of_fire', label: 'Rain of Fire' },
-    { cls: 'druid', spell: 'hurricane', label: 'Hurricane' },
-    { cls: 'shaman', spell: 'earthquake', label: 'Earthquake' },
+  function castGroundSpell(cls: PlayerClass, spell: string, aim: { x: number; z: number }): Sim {
+    const sim = new Sim({ seed: 7, playerClass: cls, noPlayer: true });
+    const pid = sim.addPlayer(cls, 'Caster');
+    sim.setPlayerLevel(20, pid);
+    const me = sim.entities.get(pid);
+    if (!me) throw new Error('no caster');
+    me.resource = 9999;
+    place(sim, pid, 0, 0);
+    sim.castAbility(spell, pid, aim);
+    return sim;
+  }
+
+  const channeled = [
+    { cls: 'warlock', spell: 'rain_of_fire' },
+    { cls: 'hunter', spell: 'volley' },
+    { cls: 'druid', spell: 'hurricane' },
   ] as const;
 
-  for (const c of cases) {
-    it(`${c.spell} (${c.cls}) drops its zone at the aimed point`, () => {
-      const sim = new Sim({ seed: 7, playerClass: c.cls, noPlayer: true });
-      const pid = sim.addPlayer(c.cls, 'Caster');
-      sim.setPlayerLevel(20, pid);
-      const me = sim.entities.get(pid);
-      if (!me) throw new Error('no caster');
-      me.resource = 9999;
-      place(sim, pid, 0, 0);
-
-      sim.castAbility(c.spell, pid, { x: 16, z: 0 }); // within range
-
-      const zone = (sim as unknown as { groundAoEs: GroundAoE[] }).groundAoEs.find(
-        (z) => z.ability === c.label,
-      );
-      expect(zone, c.spell).toBeDefined();
-      expect(zone?.pos.x).toBeCloseTo(16, 1);
-      expect(zone?.pos.z).toBeCloseTo(0, 1);
+  for (const c of channeled) {
+    it(`${c.spell} (${c.cls}) begins a channel aimed at the (clamped) point`, () => {
+      const sim = castGroundSpell(c.cls, c.spell, { x: 100, z: 0 }); // far beyond range
+      const me = sim.entities.get(sim.playerId);
+      expect(me?.channeling, `${c.spell} channeling`).toBe(true);
+      // aim is clamped to the ability's range from the caster at (0,0)
+      const range = sim.known.find((k) => k.def.id === c.spell)?.def.range ?? 0;
+      expect(me?.castAim?.x).toBeCloseTo(range, 0);
+      expect(me?.castAim?.z).toBeCloseTo(0, 1);
     });
   }
+
+  it('a channeled ground spell damages enemies in the aimed area over its ticks', () => {
+    // Flat dungeon-floor band (x > 600) for deterministic clear line-of-sight.
+    const FLAT_X = 700;
+    const sim = new Sim({ seed: 7, playerClass: 'warlock', noPlayer: true });
+    const pid = sim.addPlayer('warlock', 'Lock');
+    sim.setPlayerLevel(20, pid);
+    const me = sim.entities.get(pid);
+    if (!me) throw new Error('no warlock');
+    me.resource = 9999;
+    place(sim, pid, FLAT_X, 0);
+    const mob = createMob(9100, MOBS.forest_wolf, 20, sim.groundPos(FLAT_X + 6, 0));
+    mob.hostile = true;
+    sim.entities.set(9100, mob);
+    const hp0 = mob.hp;
+
+    sim.castAbility('rain_of_fire', pid, { x: FLAT_X + 6, z: 0 });
+    // advance through enough of the 4 s channel for at least one tick to land
+    for (let i = 0; i < 40; i++) sim.tick();
+
+    expect(mob.hp).toBeLessThan(hp0);
+  });
+
+  it('earthquake (shaman) drops a lingering nature zone at the aimed point', () => {
+    const sim = castGroundSpell('shaman', 'earthquake', { x: 16, z: 0 });
+    const zone = (sim as unknown as { groundAoEs: GroundAoE[] }).groundAoEs.find(
+      (z) => z.ability === 'Earthquake',
+    );
+    expect(zone).toBeDefined();
+    expect(zone?.pos.x).toBeCloseTo(16, 1);
+    expect(zone?.pos.z).toBeCloseTo(0, 1);
+  });
 });

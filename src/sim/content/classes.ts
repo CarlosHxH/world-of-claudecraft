@@ -1020,7 +1020,8 @@ export const ABILITIES: Record<string, AbilityDef> = {
     school: 'fire',
     requiresTarget: false,
     targetMode: 'position',
-    effects: [{ type: 'groundAoE', min: 14, max: 18, radius: 7, duration: 6, interval: 1.5 }],
+    channel: { duration: 4, ticks: 4 },
+    effects: [{ type: 'aoeDamage', min: 14, max: 18, radius: 7 }],
     description: 'Calls a rain of fire onto the target area, burning enemies for $d Fire damage.',
   },
   volley: {
@@ -1036,7 +1037,8 @@ export const ABILITIES: Record<string, AbilityDef> = {
     scalesWith: 'ranged',
     requiresTarget: false,
     targetMode: 'position',
-    effects: [{ type: 'aoeDamage', min: 30, max: 40, radius: 8 }],
+    channel: { duration: 3, ticks: 6 },
+    effects: [{ type: 'aoeDamage', min: 12, max: 16, radius: 8 }],
     description: 'Rains arrows on the target area, dealing $d damage to enemies caught in it.',
   },
   hurricane: {
@@ -1051,7 +1053,8 @@ export const ABILITIES: Record<string, AbilityDef> = {
     school: 'nature',
     requiresTarget: false,
     targetMode: 'position',
-    effects: [{ type: 'groundAoE', min: 12, max: 16, radius: 8, duration: 8, interval: 2 }],
+    channel: { duration: 6, ticks: 6 },
+    effects: [{ type: 'aoeDamage', min: 12, max: 16, radius: 8 }],
     description: 'Calls a hurricane onto the target area, battering enemies for $d Nature damage.',
   },
   earthquake: {

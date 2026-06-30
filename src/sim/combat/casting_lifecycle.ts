@@ -35,6 +35,7 @@ import { abilityScalingPower, channelTickBonus } from '../spell_scaling';
 import type { AbilityDef, Entity, Vec3 } from '../types';
 import {
   angleTo,
+  armorReduction,
   CAST_COMPLETE_EPS,
   CAST_PUSHBACK_SEC,
   CHANNEL_PUSHBACK_FRACTION,
@@ -477,6 +478,28 @@ function armAbilityCooldown(
 }
 
 function applyChannelTick(ctx: SimContext, p: Entity, res: ResolvedAbility): void {
+  // Ground-targeted channels (Rain of Fire / Volley / Hurricane): each tick pulses
+  // the ability's aoeDamage at the aimed point (clamped at cast start, held in
+  // castAim for the channel's life), independent of any entity target.
+  if (res.def.targetMode === 'position') {
+    const center = p.castAim ?? p.pos;
+    const isSpell = res.def.school !== 'physical';
+    ctx.emit({ type: 'spellfxAt', x: center.x, z: center.z, school: res.def.school, fx: 'nova' });
+    const channelSp = channelTickBonus(abilityScalingPower(p, res.def), res.def);
+    for (const eff of res.effects) {
+      if (eff.type !== 'aoeDamage') continue;
+      for (const m of ctx.hostilesInRadius(p, center, eff.radius)) {
+        if (!ctx.hasLineOfSight(p, m)) continue;
+        let dmg = ctx.rng.range(eff.min, eff.max) + channelSp;
+        // physical channels (Volley) are mitigated by armor; spell-school rain is not,
+        // mirroring the instant aoeDamage path in effect_dispatch.
+        if (!isSpell) dmg *= 1 - armorReduction(ctx.effectiveArmor(m), p.level);
+        ctx.dealDamage(p, m, Math.round(dmg), false, res.def.school, res.def.name, 'hit');
+      }
+    }
+    return;
+  }
+
   const target = p.targetId !== null ? ctx.entities.get(p.targetId) : null;
   if (!target || target.dead || !ctx.isHostileTo(p, target)) {
     cancelCast(ctx, p);
