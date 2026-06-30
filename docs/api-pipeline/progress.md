@@ -16,7 +16,7 @@ Mark a row's Status as "In progress" or "Done" and fill Started / Completed
 | Phase 01 QA | Done | 2026-06-30 | 2026-06-30 |
 | Phase 02 | Done | 2026-06-30 | 2026-06-30 |
 | Phase 02 QA | Done | 2026-06-30 | 2026-06-30 |
-| Phase 03 | Not started |  |  |
+| Phase 03 | Done | 2026-06-30 | 2026-06-30 |
 | Phase 03 QA | Not started |  |  |
 | Phase 04 | Not started |  |  |
 | Phase 04 QA | Not started |  |  |
@@ -112,18 +112,22 @@ Notes:
 ## Phase 03: Surface re-inventory, content-type classification + characterization/golden corpus
 
 Deliverables:
-- [ ] Re-derive every endpoint and line anchor against HEAD (main.ts now 1695 lines); add a route-count freshness gate test
-- [ ] Classify the /api surface: JSON (problem+json) vs HTML (email/unsubscribe) vs redirect (discord callback) vs binary (card) vs the {ok:false} 405 (perf_report) so the 415/withBody/mapError design is correct before primitives
-- [ ] Characterization + golden-master fixtures over every inline main.ts route and the createServer prefix dispatch (incl. the new Discord + guild-board + dev-gated /api/perf routes), normalizing dynamic fields
-- [ ] Encode INTENDED (hardened) behavior with a knownDeviation list seeded (perf_report 405, anti-enumeration 404 on register/login, planned 405-before-auth)
+- [x] Re-derive every endpoint against HEAD by SYMBOL anchor (never line numbers); route-count freshness gate test (tests/server/http/surface_inventory.ts + surface_inventory.test.ts). 106 inventory rows across the four dispatchers + the OPTIONS-204 preflight; the gate reads the four dispatcher SOURCE files and asserts set-equality (75 exact `=== '<path>'` arms + 18 `*Match` :param regex sources), with a vacuous-pass guard, so a route added/removed in source without an inventory edit hard-fails.
+- [x] Classify the /api surface into the 5 named content-type classes (content_type_classification.ts): PROBLEM_JSON, HTML (email/unsubscribe, account/email/verify, discord/callback), BINARY (card request body), LEGACY_OKFALSE_405 (perf-report + site-presence), REDIRECT. CORRECTION to the plan: the Discord callback is HTML (a 200 text/html bounce page with client-side location.replace), NOT a 302 REDIRECT; REDIRECT therefore maps to ZERO routes today (defined for taxonomy completeness, asserted unused). Every /api path carries exactly one class; the completeness gate fails on any unclassified /api path.
+- [x] Characterization golden corpus (characterization.test.ts + characterization_admin_oauth_internal.test.ts + 57 fixtures under tests/server/fixtures/{main,admin,oauth,internal}) over the four dispatchers, captured by replaying routeHttpRequest (the Phase 1 spine) through the Phase 2 goldenMaster + normalizer. Byte-stable across runs. Covers the contract/error paths (404 unknown-endpoint, 405 method-ownership, 401 auth-before-method, 413 pre-auth oversize, 503 unconfigured, 204 preflight, the 4 leaderboard query-forks, the 4 Discord /api routes, dev-gated /api/perf, both internal secret gates). DB/network-backed SUCCESS bodies are DEFERRED (documented deferral ledgers) to avoid blessing a pool-less-500 or a dynamic-token golden; later phases mock the db and pick these up.
+- [x] knownDeviation list seeded (known_deviations.ts + known_deviations.test.ts): 12 entries, each tagged introducedInPhase (4 to 25) or null (by-design, preserved). Test cross-checks every deviation route exists in the inventory, every phase is null or in [4,25], ids are unique, and every listed goldenFixtures path exists on disk.
 
 QA:
-- [ ] Fixes applied
-- [ ] Tests added
-- [ ] Dead code removed
-- [ ] Reviews clean
+- [x] Fixes applied (3 em dashes in a test comment removed; the as-const arrays annotated `readonly T[]` so tsc passes; biome golden-dir ignore added for tests/server/fixtures, mirroring tests/parity/golden)
+- [x] Tests added (4 new test files, 73 tests, byte-stable across two runs)
+- [x] Dead code removed (N/A: net-new test-only deliverable)
+- [x] Reviews clean (privacy-security-review CLEAN: secret gates reject, no token/secret/PII in any fixture, no defect blessed as by-design; qa-checklist READY: freshness gate is not a tautology, no runtime/i18n change, 3 by-design NITs)
 
 Notes:
+- ZERO runtime change: the diff is tests/server/http/*.ts + tests/server/fixtures/** + a one-line biome.json golden-dir ignore + these docs. `git diff --name-only` shows no server/ runtime and no src/.
+- Validation: `npx tsc --noEmit` clean; the 4 new test files pass (73/73, twice, byte-stable); biome clean on changed files (only pre-existing ws_auth/main noExplicitAny warnings); `npm run build:server` unaffected.
+- Surfaced (out of Phase 3 scope, do NOT fix here): (1) Discord callback is HTML not a 302 (corrects the error-model + classification plan; affects Phase 7 mapError and Phase 16). (2) A pre-existing em dash in server/oauth.ts renderDevicePage player-facing HTML (a copy-rule violation in server SOURCE; blocks the GET /oauth/device success golden, deferred; fix when oauth migrates in Phase 18 or as a standalone copy fix). (3) The token-bearing discord callback SUCCESS bounce + the OAuth token-mint/device-authorization SUCCESS bodies embed dynamic tokens the key-name normalizer cannot mask (snake_case device_code/user_code, HTML-embedded token); a candidate Phase 2 normalizer enhancement (snake_case + HTML-body token masking), surfaced not applied.
+- By-design NITs (no change warranted, reviewed): the static/SSR createServer prefix routes (/p/*, /avatar/*, /c/*, sitemap) stay on the top-level ladder (Phase 21) outside the 5-class /api scheme, documented in the inventory header; the freshness gate scans the `=== '<path>'` + `*Match` dispatch idioms (every current route uses one), documented; the deferred db/network success-path goldens are by-design (pool-less determinism).
 
 ## Phase 04: Table router (server/http/router.ts)
 
@@ -317,7 +321,7 @@ Notes:
 ## Phase 16: Migrate Discord family (server/discord.ts), net-new since SPEC
 
 Deliverables:
-- [ ] Port /api/auth/discord/start, /api/auth/discord/callback (HTML redirect, classified non-JSON), /api/discord (GET status / DELETE unlink) onto RouteDefs; decide whether to wire the orphaned handleSwagClaim
+- [ ] Port /api/auth/discord/start, /api/auth/discord/callback (HTML bounce, not a 302, classified non-JSON), /api/discord (GET status / DELETE unlink) onto RouteDefs; decide whether to wire the orphaned handleSwagClaim
 - [ ] Add a discord.* ip+account policy to POLICIES and the discord error codes to the catalog + client matcher
 - [ ] Carry forward the isIpBlocked + turnstile parity gap from prior Discord reviews so ported endpoints do not skip those checks
 - [ ] Decide whether wiring the unwired DISCORD_SCHEMA into ensureSchema is in scope here or left to PR #1075

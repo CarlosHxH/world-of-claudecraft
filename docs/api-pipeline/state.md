@@ -11,7 +11,7 @@ workstream), NOT a gameplay change, NOT a WS wire change.
 
 ## Current phase
 
-Phase 02 (test-harness) DONE (2026-06-30: frozen contracts + self-tested harness + behavior-preserving clock seam, ZERO runtime behavior change; in-phase reviewers privacy-security-review + qa-checklist clean with ALL findings applied; full mirror gate green). Phase 02 QA DONE (2026-06-30: all 11 acceptance criteria PASS, 0 BLOCKING / 0 SHOULD-FIX; 3 in-scope NICE-TO-HAVEs fixed: DEFAULT_SITEMAP_LIMIT const, dropped dead branch in FakeRateLimitStore.hit, added a default-clock no-op assertion; security re-confirmed the prod NODE_ENV clock guard + no-secret-leak in loadConfig). Phase 01 + Phase 01 QA DONE. Next: Phase 03 (surface inventory + characterization/golden corpus, which CONSUMES the Phase 2 normalizer placeholder set + golden generator).
+Phase 03 (surface inventory + content-type classification + characterization/golden corpus + knownDeviations) DONE (2026-06-30: tests/docs only, ZERO runtime behavior change; 106-row HEAD-anchored inventory + route-count freshness gate, 5-class /api content-type classification, 57-fixture golden corpus over the four dispatchers replayed through routeHttpRequest + the Phase 2 goldenMaster/normalizer, 12 seeded knownDeviations; tsc clean, 73 tests byte-stable, build:server unaffected; in-phase reviewers privacy-security-review CLEAN + qa-checklist READY). Next: Phase 03 QA (phase-03-qa.md). KEY CORRECTIONS this phase surfaced (see below): the Discord callback is HTML (200 text/html bounce), NOT a 302 redirect; REDIRECT maps to zero routes today. Phase 02 + QA DONE (frozen contracts + self-tested harness + clock seam; all 11 criteria PASS). Phase 01 + QA DONE.
 
 ## Phase 2 frozen contracts (Phases 4 to 9 IMPORT these, never redefine)
 
@@ -85,9 +85,14 @@ The single home is `server/http/types.ts` (TYPE-ONLY, zero runtime emit). Verbat
   - `/oauth` POST JSON: RFC 6749 `{error, error_description}`.
   - `/admin`: `{success, data, error}`.
   - HTML routes (email/unsubscribe, OAuth GET consent/device pages): `htmlError` HTML page.
-  - Discord callback: 302 redirect-to-error (NOT problem+json).
+  - Discord callback: text/html bounce page (200, client-side `location.replace`), NOT a 302
+    redirect and NOT problem+json. Phase 3 characterization CORRECTED the SPEC's "302" assumption
+    (the handler `bouncePage` writes `Content-Type: text/html`); it needs the HTML-error serializer,
+    not a redirect serializer. The REDIRECT envelope/class maps to ZERO routes today.
   - Binary route (card upload): binary/no-JSON-wrap.
-  - The legacy `{ok:false}` 405 (perf_report) is a 4th characterized contract case.
+  - The legacy `{ok:false}` 405 (perf_report + site_presence non-POST) is a 4th characterized
+    contract case (perf_report's own 405 is unreachable via handleApi's POST-gated arm; site_presence
+    is method-agnostic so its non-POST 405 is the live one).
 - Status codes: 422 well-formed-but-invalid (one-pass collected), 400 malformed JSON, 413
   over byte cap (Content Too Large), 409 unique-violation, 401 missing/invalid token (+
   `WWW-Authenticate`), 403 no-entitlement, 429 + `Retry-After`. Unknown -> logged 500 with
@@ -99,7 +104,8 @@ The single home is `server/http/types.ts` (TYPE-ONLY, zero runtime emit). Verbat
 The `/api` surface is NOT uniformly JSON. A global `415 application/json` + JSON-only
 `withBody` + blanket problem+json WOULD break: `POST /api/card` (binary `image/png` via
 `readBinaryBody`), `GET /api/email/unsubscribe` (HTML), `GET /api/auth/discord/callback`
-(302 redirect). Therefore: classify every `/api` route by response content-type; ship a
+(text/html bounce, NOT a 302; Phase 3 corrected this). Therefore: classify every `/api` route by
+response content-type; ship a
 `withRawBody`/binary middleware variant; exempt declared non-JSON routes from 415 + JSON
 withBody; roll out 415 in LOG-ONLY mode first until native (Capacitor) traffic is confirmed.
 Audit each beacon endpoint (`/api/site-presence`, `/api/perf-report`) actual Content-Type.
@@ -120,8 +126,8 @@ character.create/rename/delete/takeover, reports.create; the Discord limiter
 (DISCORD_MAX_PER_MINUTE=15, ip+account) is the genuinely-new 8th surface.
 
 ### Discord family (Phase 16)
-- Migrate `POST /api/auth/discord/start`, `GET /api/auth/discord/callback` (HTML redirect,
-  classified non-JSON), `GET /api/discord` (status), `DELETE /api/discord` (unlink) onto
+- Migrate `POST /api/auth/discord/start`, `GET /api/auth/discord/callback` (text/html bounce,
+  NOT a 302, classified non-JSON), `GET /api/discord` (status), `DELETE /api/discord` (unlink) onto
   RouteDefs.
 - WIRE the unwired `DISCORD_SCHEMA` (5 tables in `discord_db.ts`) into `ensureSchema` here.
 - FIX the orphaned `handleSwagClaim` (implemented + tested in `discord.ts` but never
@@ -271,7 +277,7 @@ the X-ms constant; X is TBD, see open items.)
 |---|---|
 | 01 | DONE. importable `server/ws_auth.ts` (`createWsAuth(deps)` factory -> `{ authenticateWebSocket, onConnection, attachUpgrade(server, wss) }`, wire vocabulary in named constants); in `server/main.ts`: exported `startServer(): Promise<http.Server>` + exported pure `routeHttpRequest(req, res)` dispatcher + `require.main === module` entry guard (NOT import.meta: esbuild empties it under cjs); `tests/server/` dir with `ws_auth.test.ts` + `importable_spine.test.ts` + `route_dispatch.test.ts` (the last added in Phase 01 QA: pins routeHttpRequest's OPTIONS-204 short-circuit + prefix dispatch by mocking the imported sub-dispatchers). NO `server/http/` dir this phase (that is Phase 4+). |
 | 02 | DONE. `server/http/types.ts` (TYPE-ONLY frozen contracts; see "Phase 2 frozen contracts" above) + `server/http/config.ts` (pure `loadConfig`); `now()` clock injected into `ratelimit.ts` ONLY (ratelimit_db.ts does not exist until Phase 19), with `setRateLimitClock`/`resetRateLimitClock`/exported `WINDOW_MS`; `tests/server/{helpers,http}/` dirs + `tests/server/helpers/index.ts` barrel: `fake_http.ts` (FakeRes+makeReq) + `fake_ctx.ts` (fakeCtx+nextGuard) + `fake_db.ts` (CharactersDb/LeaderboardDb/ReportsDb + fakes + tsc drift guard) + `fake_ratelimit_store.ts` (FakeRateLimitStore) + `normalizer.ts` (NORMALIZER_PLACEHOLDERS) + `golden.ts` + `parity.ts` (runParity) + `registry_introspect.ts`; plus `tests/server/ratelimit_clock.test.ts` + `tests/server/http/config.test.ts`. Existing ad-hoc makeRes/makeReq suites NOT converted. |
-| 03 | Characterization/golden-master fixtures over every route + the prefix dispatch; route-count freshness gate test; content-type classification + seeded knownDeviation list. |
+| 03 | DONE. `tests/server/http/surface_inventory.ts` (106-row HEAD-anchored ledger, named DISPATCH/AUTH_SCOPE/REQUIRE_OWNED consts, `:param` rows carry the real RegExp in `match`, orphan flagged `unreachable:true`, leaderboard query-forks as `variant` rows) + `surface_inventory.test.ts` (route-count freshness gate: reads the 4 dispatcher SOURCE files, set-equality of exact `=== '<path>'` arms + `*Match` regex sources vs inventory, vacuous-pass guarded; + classification completeness); `content_type_classification.ts` (5 named classes PROBLEM_JSON/HTML/REDIRECT/BINARY/LEGACY_OKFALSE_405 + per-/api-path map; REDIRECT used by zero routes); `characterization.test.ts` + `characterization_admin_oauth_internal.test.ts` + `tests/server/fixtures/{main,admin,oauth,internal}/*.json` (57 byte-stable goldens via routeHttpRequest + Phase 2 goldenMaster/normalizer); `known_deviations.ts` + `known_deviations.test.ts` (12 seeded deviations). One biome.json line: golden-dir ignore `!tests/server/fixtures` (mirrors `!tests/parity/golden`). ZERO server/ or src/ change. |
 | 04 | `server/http/router.ts` + `tests/server/http/router.test.ts`. |
 | 05 | `server/http/compose.ts` + `server/http/context.ts` + tests. |
 | 06 | `server/http/schema.ts` + test. |
@@ -412,7 +418,7 @@ the X-ms constant; X is TBD, see open items.)
   names and the literal strings.
 - **Non-JSON `/api` classification.** A blanket 415 + JSON-only `withBody` + blanket
   problem+json would break `POST /api/card` (binary), `GET /api/email/unsubscribe` (HTML),
-  `GET /api/auth/discord/callback` (302). Classify by response content-type; ship a
+  `GET /api/auth/discord/callback` (text/html bounce, not a 302). Classify by response content-type; ship a
   `withRawBody` variant; exempt declared non-JSON routes; 415 log-only first until native
   (Capacitor) traffic confirmed. Design task that must PRECEDE the error-model phase.
 - **compose-no-auto-respond rule.** `compose()` returns a promise and does NOT send a
