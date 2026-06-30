@@ -327,18 +327,55 @@ twice, code + masking test), 2 SHOULD-FIX, 2 NIT, all applied (apply-all-finding
 ## Phase 06: Typed schema validator (schema.ts)
 
 Deliverables:
-- [ ] object()/str()/num()/enum() decoders implementing the Standard Schema v1 ~standard type shape (type-only conformance)
-- [ ] All-issues-in-one-pass collection yielding errors[]{pointer,code,params}
-- [ ] Infer<typeof S> so handler input types derive from the schema
-- [ ] Typed params AND query (a :id cannot reach a DB call as NaN; page/pageSize bounded once)
+- [x] object()/str()/num()/bool()/enum_()/optional() decoders conforming type-only to the Standard Schema v1 ~standard shape (imported from the frozen types.ts, NOT a new standard_schema.ts)
+- [x] All-issues-in-one-pass collection yielding issues[]{pointer,code,params} as stable CODES, never English
+- [x] Infer<typeof S> so handler input types derive from the schema (no parallel interface)
+- [x] Typed params AND query (a :id cannot reach a DB call as NaN; page/pageSize bounded once)
 
 QA:
-- [ ] Fixes applied
-- [ ] Tests added
-- [ ] Dead code removed
-- [ ] Reviews clean
+- [x] Fixes applied (3 SHOULD-FIX + the actionable NITs from the correctness/security review, all applied)
+- [x] Tests added (33 in tests/server/http/schema.test.ts: runtime + tsc-checked type-level)
+- [x] Dead code removed (none introduced; module is the minimal combinator set)
+- [x] Reviews clean (privacy-security 0/0, qa-checklist 0/0, adversarial-correctness 0 BLOCKING)
 
 Notes:
+DONE + QA DONE (2026-06-30). New module `server/http/schema.ts` (150 code lines, under the ~150 cap;
+zero new deps) + tests. Surface: `Issue {pointer, code, params?}`, `DecodeResult<T>` (`{ok,value}` |
+`{ok:false,issues}`), `Schema<T> extends StandardSchemaV1<unknown,T>`, `Infer<S>`; combinators
+`object/str/num/bool/enum_/optional(schema, default?)`; stable codes `type|required|min|max|int|
+minLength|maxLength|enum`. decode() collects ALL field issues in one pass; `object()` reads ONLY
+declared keys (via `Object.hasOwn`) into a null-proto object, so an input `__proto__`/`constructor`
+key cannot pollute a prototype. `num()`/`bool()` coerce strings (params/query arrive as strings).
+TWO doc-vs-code reconciliations (the phase doc text was stale; both match state.md's canonical plan):
+(a) NO new `server/http/standard_schema.ts` - Standard Schema v1 is already vendored in the
+Phase-2-frozen `server/http/types.ts` ("the SINGLE home ... Phases 4 to 9 import, never redefine"),
+so schema.ts IMPORTS `StandardSchemaV1`/`StandardSchemaProps`/`StandardSchemaResult`/
+`StandardSchemaIssue` from `./types`. (b) NO `server/http/index.ts` barrel added - none exists; the
+barrel is the Phase 09 deliverable, so schema.ts is consumed by direct extensionless imports.
+The `~standard` conformance is type-only; the runtime `~standard.validate` is a thin sync adapter
+over decode() that still emits CODES (`message = issue.code`, never English).
+
+Review verdict: 3 reviewers (privacy-security-review, qa-checklist, adversarial-correctness), 0
+BLOCKING. The correctness pass found 3 SHOULD-FIX, all applied as a deliberate input-boundary
+HARDENING beyond the minimal contract (decided in QA, documented for Phase 10+ callers):
+- `num()` string coercion is now CANONICAL DECIMAL only (a `DECIMAL` regex, anchored/ReDoS-safe):
+  hex/octal/binary/scientific strings (`'0x10'`->was 16, `'1e3'`->was 1000) are rejected with code
+  `type`, so a string `:id` never decodes to a surprising value. Still contract-compatible ("coerce
+  a string, reject NaN"); body numbers (real `number`) are unaffected.
+- `num({ int })` now requires `Number.isSafeInteger` (was `isInteger`), so two distinct id strings
+  past 2^53 can no longer alias to the same number (rejected with code `int`).
+- `optional(schema, default)` CLONES an object/array default per decode (`structuredClone` for a
+  mutable default), so a mutable default is never shared by reference across requests.
+Plus NITs applied: `object()` output is null-proto (`Object.create(null)`, defense-in-depth matching
+the spine's params/query idiom); `bool()` trims string input for parity with `num()`; and added
+coverage (falsy bounds `min:0`/`max:0`/`maxLength:0`, `-Infinity`, non-decimal rejection, both
+`int`+`min` collected in one pass, present-but-invalid optional inside an object, a nested +
+`optional(object())` Infer assertion, case-sensitive enum, the object-default non-aliasing proof,
+and an explicit-pointer decode). Deferred (correctly OUT of scope): code->HTTP-status + problem+json
+(P7), the `withBody`/validate middleware that calls decode() (P8), RouteDef.schema wiring + registry
+(P9), concrete page/pageSize bounds + the {items,...} envelope (P10), the client i18n matcher (P22).
+Validation: tsc/biome(ci:changed)/build:server all green; `tests/server/http/` 229 pass (schema 33);
+full ASCII-clean. Next: Phase 06 QA (phase-06-qa.md).
 
 ## Phase 07: RFC 9457 error model + per-surface serializers + error_codes catalog
 
