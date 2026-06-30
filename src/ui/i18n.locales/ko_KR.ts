@@ -1655,6 +1655,18 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.taunt.description':
     '대상을 도발합니다. 자신의 위협 수준이 대상이 가장 증오하는 적과 같아지며, 3초 동안 자신을 공격하게 만듭니다.',
   'entities.abilities.fireball.name': '화염구',
+  'entities.abilities.rain_of_fire.name': '불의 비',
+  'entities.abilities.rain_of_fire.description':
+    '지정한 지역에 불의 비를 내려 적을 불태우고 {damage}의 화염 피해를 입힙니다.',
+  'entities.abilities.volley.name': '일제 사격',
+  'entities.abilities.volley.description':
+    '지정한 지역에 화살을 쏟아부어 그 안의 적에게 {damage}의 피해를 입힙니다.',
+  'entities.abilities.hurricane.name': '폭풍우',
+  'entities.abilities.hurricane.description':
+    '지정한 지역에 폭풍우를 일으켜 적을 강타하고 {damage}의 자연 피해를 입힙니다.',
+  'entities.abilities.earthquake.name': '지진',
+  'entities.abilities.earthquake.description':
+    '지정한 지역을 뒤흔들어 적을 강타하고 {damage}의 자연 피해를 입힙니다.',
   'entities.abilities.flamestrike.name': '화염 폭발',
   'entities.abilities.flamestrike.description':
     '지정한 지역에 불길을 일으켜 그 안의 적에게 {damage}의 화염 피해를 입힙니다.',

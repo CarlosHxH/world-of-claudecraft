@@ -561,6 +561,18 @@ export const da_DK: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.fireball.description':
     'Slynger en flammende kugle, der volder {damage} ildskade plus yderligere skade over tid.',
   'entities.abilities.fireball.name': 'Ildkugle',
+  'entities.abilities.rain_of_fire.name': 'Ildregn',
+  'entities.abilities.rain_of_fire.description':
+    'Nedkalder en ildregn over målområdet og brænder fjender for {damage} Ildskade.',
+  'entities.abilities.volley.name': 'Pileregn',
+  'entities.abilities.volley.description':
+    'Nedkalder en regn af pile over målområdet og påfører {damage} skade på fjender i det.',
+  'entities.abilities.hurricane.name': 'Orkan',
+  'entities.abilities.hurricane.description':
+    'Slipper en orkan løs over målområdet og rammer fjender for {damage} Naturskade.',
+  'entities.abilities.earthquake.name': 'Jordskælv',
+  'entities.abilities.earthquake.description':
+    'Ryster målområdet og rammer fjender for {damage} Naturskade.',
   'entities.abilities.flamestrike.name': 'Flammeslag',
   'entities.abilities.flamestrike.description':
     'Nedkalder et flammefelt på målområdet og brænder fjender for {damage} Ildskade.',

@@ -3696,6 +3696,22 @@ export const en: EnTranslations = {
         "name": "Flamestrike",
         "description": "Calls down a patch of flame at the target area, burning enemies for {damage} Fire damage."
       },
+      "rain_of_fire": {
+        "name": "Rain of Fire",
+        "description": "Calls a rain of fire onto the target area, burning enemies for {damage} Fire damage."
+      },
+      "volley": {
+        "name": "Volley",
+        "description": "Rains arrows on the target area, dealing {damage} damage to enemies caught in it."
+      },
+      "hurricane": {
+        "name": "Hurricane",
+        "description": "Calls a hurricane onto the target area, battering enemies for {damage} Nature damage."
+      },
+      "earthquake": {
+        "name": "Earthquake",
+        "description": "Shakes the target area, battering enemies for {damage} Nature damage."
+      },
       "heroic_strike": {
         "name": "Heroic Strike",
         "description": "A strong attack that increases melee damage by {damage}. Activates on your next swing."

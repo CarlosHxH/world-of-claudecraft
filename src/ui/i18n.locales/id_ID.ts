@@ -584,6 +584,18 @@ export const id_ID: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.fireball.description':
     'Melontarkan bola berkobar yang menimbulkan {damage} kerusakan Api ditambah kerusakan tambahan seiring waktu.',
   'entities.abilities.fireball.name': 'Bola Api',
+  'entities.abilities.rain_of_fire.name': 'Hujan Api',
+  'entities.abilities.rain_of_fire.description':
+    'Menurunkan hujan api di area sasaran, membakar musuh sebesar {damage} kerusakan Api.',
+  'entities.abilities.volley.name': 'Hujan Panah',
+  'entities.abilities.volley.description':
+    'Menghujani area sasaran dengan panah, memberi {damage} kerusakan kepada musuh di dalamnya.',
+  'entities.abilities.hurricane.name': 'Badai',
+  'entities.abilities.hurricane.description':
+    'Mendatangkan badai di area sasaran, menghantam musuh sebesar {damage} kerusakan Alam.',
+  'entities.abilities.earthquake.name': 'Gempa Bumi',
+  'entities.abilities.earthquake.description':
+    'Mengguncang area sasaran, menghantam musuh sebesar {damage} kerusakan Alam.',
   'entities.abilities.flamestrike.name': 'Hantaman Api',
   'entities.abilities.flamestrike.description':
     'Memanggil kobaran api di area sasaran, membakar musuh sebesar {damage} kerusakan Api.',

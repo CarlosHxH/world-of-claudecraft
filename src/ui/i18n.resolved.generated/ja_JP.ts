@@ -3696,6 +3696,22 @@ export const ja_JP: EnTranslations = {
         "name": "フレイムストライク",
         "description": "対象地点に炎の地帯を呼び出し、中にいる敵に{damage}の火炎ダメージを与えます。"
       },
+      "rain_of_fire": {
+        "name": "火炎の雨",
+        "description": "対象地点に火の雨を降らせ、敵に{damage}の火炎ダメージを与えます。"
+      },
+      "volley": {
+        "name": "乱射",
+        "description": "対象地点に矢を降らせ、範囲内の敵に{damage}のダメージを与えます。"
+      },
+      "hurricane": {
+        "name": "ハリケーン",
+        "description": "対象地点にハリケーンを呼び起こし、敵に{damage}の自然ダメージを与えます。"
+      },
+      "earthquake": {
+        "name": "地震",
+        "description": "対象地点を揺るがし、敵に{damage}の自然ダメージを与えます。"
+      },
       "heroic_strike": {
         "name": "英雄の一撃",
         "description": "強力な攻撃で近接ダメージが {damage} 増加します。次のスイングで発動します。"

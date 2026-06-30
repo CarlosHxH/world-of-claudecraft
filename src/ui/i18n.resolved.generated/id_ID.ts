@@ -3696,6 +3696,22 @@ export const id_ID: EnTranslations = {
         "name": "Hantaman Api",
         "description": "Memanggil kobaran api di area sasaran, membakar musuh sebesar {damage} kerusakan Api."
       },
+      "rain_of_fire": {
+        "name": "Hujan Api",
+        "description": "Menurunkan hujan api di area sasaran, membakar musuh sebesar {damage} kerusakan Api."
+      },
+      "volley": {
+        "name": "Hujan Panah",
+        "description": "Menghujani area sasaran dengan panah, memberi {damage} kerusakan kepada musuh di dalamnya."
+      },
+      "hurricane": {
+        "name": "Badai",
+        "description": "Mendatangkan badai di area sasaran, menghantam musuh sebesar {damage} kerusakan Alam."
+      },
+      "earthquake": {
+        "name": "Gempa Bumi",
+        "description": "Mengguncang area sasaran, menghantam musuh sebesar {damage} kerusakan Alam."
+      },
       "heroic_strike": {
         "name": "Serangan Heroik",
         "description": "Serangan kuat yang meningkatkan kerusakan jarak dekat sebesar {damage}. Aktif pada ayunan berikutnya."

@@ -1700,6 +1700,18 @@ export const es: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.taunt.description':
     'Provoca al objetivo: tu amenaza sube hasta igualar la de su enemigo más odiado y queda obligado a atacarte durante 3 s.',
   'entities.abilities.fireball.name': 'Bola de Fuego',
+  'entities.abilities.rain_of_fire.name': 'Lluvia de Fuego',
+  'entities.abilities.rain_of_fire.description':
+    'Hace caer una lluvia de fuego sobre el área objetivo, quemando a los enemigos e infligiendo {damage} de daño de Fuego.',
+  'entities.abilities.volley.name': 'Andanada',
+  'entities.abilities.volley.description':
+    'Lanza una lluvia de flechas sobre el área objetivo, infligiendo {damage} de daño a los enemigos atrapados.',
+  'entities.abilities.hurricane.name': 'Huracán',
+  'entities.abilities.hurricane.description':
+    'Desata un huracán sobre el área objetivo, golpeando a los enemigos e infligiendo {damage} de daño de Naturaleza.',
+  'entities.abilities.earthquake.name': 'Terremoto',
+  'entities.abilities.earthquake.description':
+    'Sacude el área objetivo, golpeando a los enemigos e infligiendo {damage} de daño de Naturaleza.',
   'entities.abilities.flamestrike.name': 'Llamarada',
   'entities.abilities.flamestrike.description':
     'Invoca una zona de fuego en el área objetivo, quemando a los enemigos e infligiendo {damage} de daño de Fuego.',

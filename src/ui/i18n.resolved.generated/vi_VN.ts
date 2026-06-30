@@ -3696,6 +3696,22 @@ export const vi_VN: EnTranslations = {
         "name": "Cú Đánh Lửa",
         "description": "Gọi một vùng lửa xuống khu vực mục tiêu, thiêu đốt kẻ địch gây {damage} sát thương Lửa."
       },
+      "rain_of_fire": {
+        "name": "Mưa Lửa",
+        "description": "Trút một cơn mưa lửa xuống khu vực mục tiêu, thiêu đốt kẻ địch gây {damage} sát thương Lửa."
+      },
+      "volley": {
+        "name": "Loạt Tên",
+        "description": "Trút mưa tên xuống khu vực mục tiêu, gây {damage} sát thương cho kẻ địch bên trong."
+      },
+      "hurricane": {
+        "name": "Cuồng Phong",
+        "description": "Triệu hồi cuồng phong xuống khu vực mục tiêu, quật ngã kẻ địch gây {damage} sát thương Thiên Nhiên."
+      },
+      "earthquake": {
+        "name": "Động Đất",
+        "description": "Làm rung chuyển khu vực mục tiêu, quật ngã kẻ địch gây {damage} sát thương Thiên Nhiên."
+      },
       "heroic_strike": {
         "name": "Đòn Anh Hùng",
         "description": "Một đòn đánh mạnh tăng sát thương cận chiến thêm {damage}. Kích hoạt ở đòn đánh tiếp theo của bạn."

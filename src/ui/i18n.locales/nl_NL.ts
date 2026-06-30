@@ -574,6 +574,18 @@ export const nl_NL: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.fireball.description':
     'Werpt een vurige bal die {damage} Vuurschade toebrengt plus extra schade over tijd.',
   'entities.abilities.fireball.name': 'Vuurbal',
+  'entities.abilities.rain_of_fire.name': 'Vuurregen',
+  'entities.abilities.rain_of_fire.description':
+    'Laat een vuurregen neerdalen op het doelgebied en verbrandt vijanden voor {damage} Vuurschade.',
+  'entities.abilities.volley.name': 'Pijlenregen',
+  'entities.abilities.volley.description':
+    'Laat een pijlenregen neerdalen op het doelgebied en richt {damage} schade aan bij vijanden erin.',
+  'entities.abilities.hurricane.name': 'Orkaan',
+  'entities.abilities.hurricane.description':
+    'Ontketent een orkaan boven het doelgebied en treft vijanden voor {damage} Natuurschade.',
+  'entities.abilities.earthquake.name': 'Aardbeving',
+  'entities.abilities.earthquake.description':
+    'Laat het doelgebied beven, treft vijanden voor {damage} Natuurschade.',
   'entities.abilities.flamestrike.name': 'Vlammenslag',
   'entities.abilities.flamestrike.description':
     'Roept een vuurzee op in het doelgebied en verbrandt vijanden voor {damage} Vuurschade.',

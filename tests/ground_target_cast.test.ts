@@ -66,3 +66,36 @@ describe('ground-targeted casting (Flamestrike)', () => {
     expect(zone?.pos.z).toBeCloseTo(5, 1);
   });
 });
+
+// The thematic per-class ground-targeted spells share the same primitive: each
+// drops its zone at the aimed point. (Hunter Volley is an instant aoeDamage with
+// no persistent zone, so it is covered by the shared aim-centering code path above
+// rather than a zone-placement assertion here.)
+describe('ground-targeted casting (thematic per-class spells)', () => {
+  const cases = [
+    { cls: 'warlock', spell: 'rain_of_fire', label: 'Rain of Fire' },
+    { cls: 'druid', spell: 'hurricane', label: 'Hurricane' },
+    { cls: 'shaman', spell: 'earthquake', label: 'Earthquake' },
+  ] as const;
+
+  for (const c of cases) {
+    it(`${c.spell} (${c.cls}) drops its zone at the aimed point`, () => {
+      const sim = new Sim({ seed: 7, playerClass: c.cls, noPlayer: true });
+      const pid = sim.addPlayer(c.cls, 'Caster');
+      sim.setPlayerLevel(20, pid);
+      const me = sim.entities.get(pid);
+      if (!me) throw new Error('no caster');
+      me.resource = 9999;
+      place(sim, pid, 0, 0);
+
+      sim.castAbility(c.spell, pid, { x: 16, z: 0 }); // within range
+
+      const zone = (sim as unknown as { groundAoEs: GroundAoE[] }).groundAoEs.find(
+        (z) => z.ability === c.label,
+      );
+      expect(zone, c.spell).toBeDefined();
+      expect(zone?.pos.x).toBeCloseTo(16, 1);
+      expect(zone?.pos.z).toBeCloseTo(0, 1);
+    });
+  }
+});

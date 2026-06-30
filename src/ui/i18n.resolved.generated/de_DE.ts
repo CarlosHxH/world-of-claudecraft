@@ -3696,6 +3696,22 @@ export const de_DE: EnTranslations = {
         "name": "Flammenschlag",
         "description": "Lässt am Zielort eine Feuerfläche niedergehen, die Gegner verbrennt und {damage} Feuerschaden verursacht."
       },
+      "rain_of_fire": {
+        "name": "Feuerregen",
+        "description": "Lässt einen Feuerregen auf den Zielbereich niedergehen, der Gegner verbrennt und {damage} Feuerschaden verursacht."
+      },
+      "volley": {
+        "name": "Pfeilhagel",
+        "description": "Lässt einen Pfeilhagel auf den Zielbereich niedergehen und verursacht {damage} Schaden an den Gegnern darin."
+      },
+      "hurricane": {
+        "name": "Wirbelsturm",
+        "description": "Entfesselt einen Wirbelsturm über dem Zielbereich, der Gegner trifft und {damage} Naturschaden verursacht."
+      },
+      "earthquake": {
+        "name": "Erdbeben",
+        "description": "Lässt den Zielbereich erbeben, trifft Gegner und verursacht {damage} Naturschaden."
+      },
       "heroic_strike": {
         "name": "Heldenhafter Stoß",
         "description": "Ein mächtiger Angriff, der den Nahkampfschaden um {damage} erhöht. Wird bei eurem nächsten Schwung ausgelöst."

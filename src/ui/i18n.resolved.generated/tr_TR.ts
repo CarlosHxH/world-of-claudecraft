@@ -3696,6 +3696,22 @@ export const tr_TR: EnTranslations = {
         "name": "Alev Vuruşu",
         "description": "Hedef alana alevler yağdırır ve düşmanları yakarak {damage} Ateş hasarı verir."
       },
+      "rain_of_fire": {
+        "name": "Ateş Yağmuru",
+        "description": "Hedef alana ateş yağdırır ve düşmanları yakarak {damage} Ateş hasarı verir."
+      },
+      "volley": {
+        "name": "Ok Yağmuru",
+        "description": "Hedef alana ok yağdırır ve içindeki düşmanlara {damage} hasar verir."
+      },
+      "hurricane": {
+        "name": "Kasırga",
+        "description": "Hedef alana bir kasırga indirir ve düşmanlara {damage} Doğa hasarı verir."
+      },
+      "earthquake": {
+        "name": "Deprem",
+        "description": "Hedef alanı sarsar ve düşmanlara {damage} Doğa hasarı verir."
+      },
       "heroic_strike": {
         "name": "Kahramanca Vuruş",
         "description": "Yakın dövüş hasarını {damage} artıran güçlü bir saldırı. Bir sonraki vuruşunda etkinleşir."

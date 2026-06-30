@@ -3696,6 +3696,22 @@ export const pt_BR: EnTranslations = {
         "name": "Golpe Flamejante",
         "description": "Invoca uma área de chamas no local-alvo, queimando os inimigos e causando {damage} de dano de Fogo."
       },
+      "rain_of_fire": {
+        "name": "Chuva de Fogo",
+        "description": "Faz cair uma chuva de fogo na área-alvo, queimando os inimigos e causando {damage} de dano de Fogo."
+      },
+      "volley": {
+        "name": "Saraivada",
+        "description": "Dispara uma chuva de flechas na área-alvo, causando {damage} de dano aos inimigos atingidos."
+      },
+      "hurricane": {
+        "name": "Furacão",
+        "description": "Desencadeia um furacão na área-alvo, atingindo os inimigos e causando {damage} de dano de Natureza."
+      },
+      "earthquake": {
+        "name": "Terremoto",
+        "description": "Sacode a área-alvo, atingindo os inimigos e causando {damage} de dano de Natureza."
+      },
       "heroic_strike": {
         "name": "Golpe Heroico",
         "description": "Um ataque forte que aumenta o dano corpo a corpo em {damage}. Ativa no seu próximo golpe."

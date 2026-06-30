@@ -3696,6 +3696,22 @@ export const zh_CN: EnTranslations = {
         "name": "烈焰风暴",
         "description": "在目标区域召唤一片烈焰，灼烧其中的敌人，造成 {damage} 点火焰伤害。"
       },
+      "rain_of_fire": {
+        "name": "烈火之雨",
+        "description": "在目标区域降下烈火之雨，灼烧敌人，造成 {damage} 点火焰伤害。"
+      },
+      "volley": {
+        "name": "乱射",
+        "description": "向目标区域射出箭雨，对其中的敌人造成 {damage} 点伤害。"
+      },
+      "hurricane": {
+        "name": "飓风",
+        "description": "在目标区域召唤飓风，重击敌人，造成 {damage} 点自然伤害。"
+      },
+      "earthquake": {
+        "name": "地震",
+        "description": "撼动目标区域，重击敌人，造成 {damage} 点自然伤害。"
+      },
       "heroic_strike": {
         "name": "英勇打击",
         "description": "一次强力攻击，使近战伤害提高 {damage}。在你的下一次挥击时触发。"

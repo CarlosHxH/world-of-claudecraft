@@ -3696,6 +3696,22 @@ export const sv_SE: EnTranslations = {
         "name": "Flamslag",
         "description": "Kallar ner ett eldfält på målområdet och bränner fiender för {damage} Eldskada."
       },
+      "rain_of_fire": {
+        "name": "Eldregn",
+        "description": "Låter ett eldregn falla över målområdet och bränner fiender för {damage} Eldskada."
+      },
+      "volley": {
+        "name": "Pilregn",
+        "description": "Låter pilar regna över målområdet och vållar {damage} skada på fiender i det."
+      },
+      "hurricane": {
+        "name": "Orkan",
+        "description": "Släpper lös en orkan över målområdet och slår fiender för {damage} Naturskada."
+      },
+      "earthquake": {
+        "name": "Jordbävning",
+        "description": "Skakar målområdet och slår fiender för {damage} Naturskada."
+      },
       "heroic_strike": {
         "name": "Hjältehugg",
         "description": "Ett kraftfullt anfall som ökar närstridsskadan med {damage}. Aktiveras vid ditt nästa hugg."

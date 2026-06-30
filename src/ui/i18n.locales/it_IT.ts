@@ -1690,6 +1690,18 @@ export const it_IT: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.taunt.description':
     'Provoca il bersaglio: la tua minaccia sale fino a eguagliare quella del suo nemico più odiato e lo costringe ad attaccarti per 3 s.',
   'entities.abilities.fireball.name': 'Palla di Fuoco',
+  'entities.abilities.rain_of_fire.name': 'Pioggia di Fuoco',
+  'entities.abilities.rain_of_fire.description':
+    'Fa piovere fuoco sulla zona bersaglio, bruciando i nemici per {damage} danni da Fuoco.',
+  'entities.abilities.volley.name': 'Scarica di Frecce',
+  'entities.abilities.volley.description':
+    'Fa piovere frecce sulla zona bersaglio, infliggendo {damage} danni ai nemici colpiti.',
+  'entities.abilities.hurricane.name': 'Uragano',
+  'entities.abilities.hurricane.description':
+    'Scatena un uragano sulla zona bersaglio, colpendo i nemici per {damage} danni della Natura.',
+  'entities.abilities.earthquake.name': 'Terremoto',
+  'entities.abilities.earthquake.description':
+    'Scuote la zona bersaglio, colpendo i nemici per {damage} danni della Natura.',
   'entities.abilities.flamestrike.name': 'Ondata di Fiamme',
   'entities.abilities.flamestrike.description':
     'Evoca fiamme sulla zona bersaglio, bruciando i nemici e infliggendo {damage} danni da Fuoco.',

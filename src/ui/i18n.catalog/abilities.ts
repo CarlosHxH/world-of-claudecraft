@@ -583,6 +583,26 @@ const classAbilityNamesEn = {
         'Calls down a patch of flame at the target area, burning enemies for {damage} Fire damage.',
       ],
       [
+        'rain_of_fire',
+        'Rain of Fire',
+        'Calls a rain of fire onto the target area, burning enemies for {damage} Fire damage.',
+      ],
+      [
+        'volley',
+        'Volley',
+        'Rains arrows on the target area, dealing {damage} damage to enemies caught in it.',
+      ],
+      [
+        'hurricane',
+        'Hurricane',
+        'Calls a hurricane onto the target area, battering enemies for {damage} Nature damage.',
+      ],
+      [
+        'earthquake',
+        'Earthquake',
+        'Shakes the target area, battering enemies for {damage} Nature damage.',
+      ],
+      [
         'heroic_strike',
         'Heroic Strike',
         'A strong attack that increases melee damage by {damage}. Activates on your next swing.',

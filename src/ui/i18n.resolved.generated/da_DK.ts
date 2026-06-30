@@ -3696,6 +3696,22 @@ export const da_DK: EnTranslations = {
         "name": "Flammeslag",
         "description": "Nedkalder et flammefelt på målområdet og brænder fjender for {damage} Ildskade."
       },
+      "rain_of_fire": {
+        "name": "Ildregn",
+        "description": "Nedkalder en ildregn over målområdet og brænder fjender for {damage} Ildskade."
+      },
+      "volley": {
+        "name": "Pileregn",
+        "description": "Nedkalder en regn af pile over målområdet og påfører {damage} skade på fjender i det."
+      },
+      "hurricane": {
+        "name": "Orkan",
+        "description": "Slipper en orkan løs over målområdet og rammer fjender for {damage} Naturskade."
+      },
+      "earthquake": {
+        "name": "Jordskælv",
+        "description": "Ryster målområdet og rammer fjender for {damage} Naturskade."
+      },
       "heroic_strike": {
         "name": "Heroisk Slag",
         "description": "Et stærkt angreb, der øger nærkampsskaden med {damage}. Aktiveres ved dit næste hug."

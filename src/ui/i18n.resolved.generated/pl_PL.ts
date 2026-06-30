@@ -3696,6 +3696,22 @@ export const pl_PL: EnTranslations = {
         "name": "Ognista nawała",
         "description": "Sprowadza płomienie na wybrany obszar, paląc wrogów i zadając {damage} obrażeń od ognia."
       },
+      "rain_of_fire": {
+        "name": "Deszcz ognia",
+        "description": "Sprowadza deszcz ognia na wybrany obszar, paląc wrogów i zadając {damage} obrażeń od ognia."
+      },
+      "volley": {
+        "name": "Salwa",
+        "description": "Zasypuje wybrany obszar strzałami, zadając {damage} obrażeń wrogom w jego obrębie."
+      },
+      "hurricane": {
+        "name": "Huragan",
+        "description": "Sprowadza huragan na wybrany obszar, smagając wrogów i zadając {damage} obrażeń od sił natury."
+      },
+      "earthquake": {
+        "name": "Trzęsienie ziemi",
+        "description": "Wstrząsa wybranym obszarem, smagając wrogów i zadając {damage} obrażeń od sił natury."
+      },
       "heroic_strike": {
         "name": "Heroiczne uderzenie",
         "description": "Potężny atak, który zwiększa obrażenia w zwarciu o {damage}. Aktywuje się przy następnym uderzeniu."

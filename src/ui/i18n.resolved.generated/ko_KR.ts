@@ -3696,6 +3696,22 @@ export const ko_KR: EnTranslations = {
         "name": "화염 폭발",
         "description": "지정한 지역에 불길을 일으켜 그 안의 적에게 {damage}의 화염 피해를 입힙니다."
       },
+      "rain_of_fire": {
+        "name": "불의 비",
+        "description": "지정한 지역에 불의 비를 내려 적을 불태우고 {damage}의 화염 피해를 입힙니다."
+      },
+      "volley": {
+        "name": "일제 사격",
+        "description": "지정한 지역에 화살을 쏟아부어 그 안의 적에게 {damage}의 피해를 입힙니다."
+      },
+      "hurricane": {
+        "name": "폭풍우",
+        "description": "지정한 지역에 폭풍우를 일으켜 적을 강타하고 {damage}의 자연 피해를 입힙니다."
+      },
+      "earthquake": {
+        "name": "지진",
+        "description": "지정한 지역을 뒤흔들어 적을 강타하고 {damage}의 자연 피해를 입힙니다."
+      },
       "heroic_strike": {
         "name": "영웅의 일격",
         "description": "강력한 공격으로 근접 피해가 {damage}만큼 증가합니다. 다음 무기 공격 시 발동됩니다."

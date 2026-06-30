@@ -1688,6 +1688,18 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.taunt.description':
     'Провоцирует цель: ваша угроза повышается до уровня самого ненавистного ей врага, и она вынуждена атаковать вас 3 сек.',
   'entities.abilities.fireball.name': 'Огненный шар',
+  'entities.abilities.rain_of_fire.name': 'Огненный дождь',
+  'entities.abilities.rain_of_fire.description':
+    'Обрушивает огненный дождь на указанную область, сжигая врагов и нанося {damage} ед. урона от огня.',
+  'entities.abilities.volley.name': 'Залп',
+  'entities.abilities.volley.description':
+    'Осыпает указанную область стрелами, нанося {damage} ед. урона врагам в ней.',
+  'entities.abilities.hurricane.name': 'Ураган',
+  'entities.abilities.hurricane.description':
+    'Обрушивает ураган на указанную область, нанося врагам {damage} ед. урона силами природы.',
+  'entities.abilities.earthquake.name': 'Землетрясение',
+  'entities.abilities.earthquake.description':
+    'Сотрясает указанную область, нанося врагам {damage} ед. урона силами природы.',
   'entities.abilities.flamestrike.name': 'Огненный удар',
   'entities.abilities.flamestrike.description':
     'Обрушивает пламя на указанную область, сжигая врагов и нанося {damage} ед. урона от огня.',

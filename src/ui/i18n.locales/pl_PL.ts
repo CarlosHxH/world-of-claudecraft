@@ -565,6 +565,18 @@ export const pl_PL: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.fireball.description':
     'Ciska ognistą kulą, która zadaje {damage} obrażeń od ognia oraz dodatkowe obrażenia w czasie.',
   'entities.abilities.fireball.name': 'Kula ognia',
+  'entities.abilities.rain_of_fire.name': 'Deszcz ognia',
+  'entities.abilities.rain_of_fire.description':
+    'Sprowadza deszcz ognia na wybrany obszar, paląc wrogów i zadając {damage} obrażeń od ognia.',
+  'entities.abilities.volley.name': 'Salwa',
+  'entities.abilities.volley.description':
+    'Zasypuje wybrany obszar strzałami, zadając {damage} obrażeń wrogom w jego obrębie.',
+  'entities.abilities.hurricane.name': 'Huragan',
+  'entities.abilities.hurricane.description':
+    'Sprowadza huragan na wybrany obszar, smagając wrogów i zadając {damage} obrażeń od sił natury.',
+  'entities.abilities.earthquake.name': 'Trzęsienie ziemi',
+  'entities.abilities.earthquake.description':
+    'Wstrząsa wybranym obszarem, smagając wrogów i zadając {damage} obrażeń od sił natury.',
   'entities.abilities.flamestrike.name': 'Ognista nawała',
   'entities.abilities.flamestrike.description':
     'Sprowadza płomienie na wybrany obszar, paląc wrogów i zadając {damage} obrażeń od ognia.',

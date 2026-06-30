@@ -3696,6 +3696,22 @@ export const es: EnTranslations = {
         "name": "Llamarada",
         "description": "Invoca una zona de fuego en el área objetivo, quemando a los enemigos e infligiendo {damage} de daño de Fuego."
       },
+      "rain_of_fire": {
+        "name": "Lluvia de Fuego",
+        "description": "Hace caer una lluvia de fuego sobre el área objetivo, quemando a los enemigos e infligiendo {damage} de daño de Fuego."
+      },
+      "volley": {
+        "name": "Andanada",
+        "description": "Lanza una lluvia de flechas sobre el área objetivo, infligiendo {damage} de daño a los enemigos atrapados."
+      },
+      "hurricane": {
+        "name": "Huracán",
+        "description": "Desata un huracán sobre el área objetivo, golpeando a los enemigos e infligiendo {damage} de daño de Naturaleza."
+      },
+      "earthquake": {
+        "name": "Terremoto",
+        "description": "Sacude el área objetivo, golpeando a los enemigos e infligiendo {damage} de daño de Naturaleza."
+      },
       "heroic_strike": {
         "name": "Golpe heroico",
         "description": "Un ataque poderoso que aumenta el daño cuerpo a cuerpo en {damage}. Se activa en tu siguiente golpe."

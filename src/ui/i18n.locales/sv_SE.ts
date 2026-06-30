@@ -563,6 +563,18 @@ export const sv_SE: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.fireball.description':
     'Slungar ett brinnande klot som vållar {damage} eldskada plus ytterligare skada över tid.',
   'entities.abilities.fireball.name': 'Eldklot',
+  'entities.abilities.rain_of_fire.name': 'Eldregn',
+  'entities.abilities.rain_of_fire.description':
+    'Låter ett eldregn falla över målområdet och bränner fiender för {damage} Eldskada.',
+  'entities.abilities.volley.name': 'Pilregn',
+  'entities.abilities.volley.description':
+    'Låter pilar regna över målområdet och vållar {damage} skada på fiender i det.',
+  'entities.abilities.hurricane.name': 'Orkan',
+  'entities.abilities.hurricane.description':
+    'Släpper lös en orkan över målområdet och slår fiender för {damage} Naturskada.',
+  'entities.abilities.earthquake.name': 'Jordbävning',
+  'entities.abilities.earthquake.description':
+    'Skakar målområdet och slår fiender för {damage} Naturskada.',
   'entities.abilities.flamestrike.name': 'Flamslag',
   'entities.abilities.flamestrike.description':
     'Kallar ner ett eldfält på målområdet och bränner fiender för {damage} Eldskada.',
