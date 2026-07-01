@@ -800,6 +800,29 @@ describe('parties', () => {
       expect(sim.meta(a)?.copper ?? 0).toBeGreaterThan(0);
       expect(openMob.lootable).toBe(false);
     });
+
+    it("does not auto-loot a stranger's corpse after it goes FFA, though a deliberate manual loot still can", () => {
+      const { sim, a } = makeDuo();
+      const stranger = sim.addPlayer('rogue', 'Gimel');
+      teleport(sim, a, 0, 1);
+      // A stranger (not in a's party) tapped this corpse, and its owner-lock has lapsed to FFA.
+      const mob = deadCorpse(sim, stranger, [stranger], {
+        copper: 10,
+        items: [{ itemId: 'worn_sword', count: 1 }],
+      });
+      mob.lootFfaTimer = 0; // FFA unlocked (owner-lock lapsed)
+      // Walk-by refuses even though the corpse is now free-for-all: auto-grabbing
+      // another player's aged-out loot reads as hostile. Silent, corpse untouched.
+      sim.autoLoot(mob.id, a);
+      expect(sim.meta(a)?.copper ?? 0).toBe(0);
+      expect(sim.countItem('worn_sword', a)).toBe(0);
+      expect(mob.lootable).toBe(true);
+      expect(sim.events.some((e) => e.type === 'error')).toBe(false);
+      // A deliberate manual loot on the same FFA corpse still works (manual honors FFA).
+      sim.lootCorpse(mob.id, a);
+      expect(sim.countItem('worn_sword', a)).toBe(1);
+      expect(mob.lootable).toBe(false);
+    });
   });
 });
 
