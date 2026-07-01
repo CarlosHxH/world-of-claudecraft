@@ -732,7 +732,10 @@ export class Hud {
   // The mob whose world-hover tooltip is currently shown (showMobHoverTooltip),
   // so main.ts's per-frame updateHoverCursor can call it every frame while the
   // same mob stays hovered without rebuilding the tooltip HTML each time.
-  private lastMobTooltipId: number | null = null;
+  // A small composite key (id:level:hostile:playerLevel), not just the mob id, so
+  // the hover tooltip repaints when a mid-hover change moves its model. See
+  // showMobHoverTooltip.
+  private lastMobTooltipId: string | null = null;
   private errorTimer: number | undefined;
   private bannerTimer: number | undefined;
   private pfLevelEl = $('#pf-level');
@@ -2031,7 +2034,15 @@ export class Hud {
   }
 
   private applyTargetFramePos(): void {
-    if (!this.targetFramePos || this.isMobileLayout()) return;
+    if (!this.targetFramePos) return;
+    // On the mobile layout the desktop-saved position must not apply. Clear any
+    // inline left/top/right/bottom (e.g. left over after a live desktop-to-mobile
+    // viewport shrink) so the mobile stylesheet owns the frame's position again.
+    if (this.isMobileLayout()) {
+      for (const prop of ['left', 'top', 'right', 'bottom'])
+        this.targetFrameEl.style.removeProperty(prop);
+      return;
+    }
     const rect = this.targetFrameEl.getBoundingClientRect();
     // The frame is display:none with no target (rect is 0x0); fall back to a nominal
     // size so a saved spot still clamps sensibly and re-shows on-screen.
@@ -3194,14 +3205,17 @@ export class Hud {
 
   // Shows the WoW-style mouseover tooltip (name / level / creature type) for a
   // mob hovered in the 3D world. Called every frame main.ts's updateHoverCursor
-  // finds a hovered mob; gated on the id so re-hovering the same mob each frame
-  // does not rebuild the HTML. Mirrors the nameplate's con-color (mobNameColor)
-  // so the tooltip name reads the same color as the mob's overhead label. Shown
-  // at a fixed spot (right of the health bars, see paintTooltipNearPlayerFrame)
-  // rather than following the cursor.
+  // finds a hovered mob; gated on a small key (not just the id) so re-hovering the
+  // same mob each frame does not rebuild the HTML, yet a mid-hover change that
+  // moves the rendered model (the mob aggros so hostile flips, the mob or the
+  // viewer dings a level so the con-color shifts) still repaints. Mirrors the
+  // nameplate's con-color (mobNameColor) so the tooltip name reads the same color
+  // as the mob's overhead label. Shown at a fixed spot (right of the health bars,
+  // see paintTooltipNearPlayerFrame) rather than following the cursor.
   showMobHoverTooltip(entity: Entity, pvpOpponents: ReadonlySet<number>): void {
-    if (entity.id === this.lastMobTooltipId) return;
-    this.lastMobTooltipId = entity.id;
+    const key = `${entity.id}:${entity.level}:${entity.hostile ? 1 : 0}:${this.sim.player.level}`;
+    if (key === this.lastMobTooltipId) return;
+    this.lastMobTooltipId = key;
     const template = MOBS[entity.templateId];
     if (!template) {
       this.hideTooltip();

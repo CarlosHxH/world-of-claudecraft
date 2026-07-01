@@ -63,16 +63,21 @@ describe('mobNameColor', () => {
     expect(mobNameColor(7, false, false)).toBe('#ff4444');
     expect(mobNameColor(4, false, false)).toBe('#ffaa33');
     expect(mobNameColor(2, false, false)).toBe('#ffe97a');
-    expect(mobNameColor(0, false, false)).toBe('#7fdc4f');
+    // A same-level mob cons yellow (the classic even band), not green.
+    expect(mobNameColor(0, false, false)).toBe('#ffe97a');
+    expect(mobNameColor(-4, false, false)).toBe('#7fdc4f');
     expect(mobNameColor(-9, false, false)).toBe('#9d9d9d');
   });
   it('pins the exact con-bucket boundaries', () => {
-    // >=5 red; >=3 orange; >=1 yellow; >=-2 green; below grey.
+    // >=5 red; >=3 orange; -2..+2 yellow; -5..-3 green; below grey.
     expect(mobNameColor(5, false, false)).toBe('#ff4444');
+    expect(mobNameColor(4, false, false)).toBe('#ffaa33');
     expect(mobNameColor(3, false, false)).toBe('#ffaa33');
-    expect(mobNameColor(1, false, false)).toBe('#ffe97a');
-    expect(mobNameColor(-2, false, false)).toBe('#7fdc4f');
-    expect(mobNameColor(-3, false, false)).toBe('#9d9d9d');
+    expect(mobNameColor(2, false, false)).toBe('#ffe97a');
+    expect(mobNameColor(-2, false, false)).toBe('#ffe97a');
+    expect(mobNameColor(-3, false, false)).toBe('#7fdc4f');
+    expect(mobNameColor(-5, false, false)).toBe('#7fdc4f');
+    expect(mobNameColor(-6, false, false)).toBe('#9d9d9d');
   });
   it('a corpse is grey even for a friendly pet', () => {
     expect(mobNameColor(5, true, true)).toBe('#999');

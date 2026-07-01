@@ -39,7 +39,8 @@ export function isFriendlyPet(
 // friendly-pet override so an owned pet reads as friendly green rather than a
 // scary red. Kept here (pure) so the exact color thresholds are unit-tested.
 // Bands (levelDiff = mob level - viewer level): red 5+ above, orange 3-4 above,
-// yellow 1-2 above, green same level down to 2 below, grey 3+ below (trivial).
+// yellow +2 down to -2 (the classic even band: a same-level or slightly-lower mob
+// cons yellow, not green), green 3 to 5 below, grey 6+ below (trivial).
 export const FRIENDLY = '#9fdc7f';
 export function mobNameColor(levelDiff: number, dead: boolean, friendly: boolean): string {
   if (dead) return '#999';
@@ -48,9 +49,9 @@ export function mobNameColor(levelDiff: number, dead: boolean, friendly: boolean
     ? '#ff4444'
     : levelDiff >= 3
       ? '#ffaa33'
-      : levelDiff >= 1
+      : levelDiff >= -2
         ? '#ffe97a'
-        : levelDiff >= -2
+        : levelDiff >= -5
           ? '#7fdc4f'
           : '#9d9d9d';
 }
