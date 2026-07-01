@@ -1,0 +1,164 @@
+// Tests for the bearer-token auth + moderation gate middleware
+// (server/http/middleware/require_account.ts). requireAccount is driven
+// directly (no compose/onion runtime): call it with a fakeCtx/makeReq and a
+// nextGuard, injecting stub lookupToken/moderationStatus so no DB is touched.
+
+import { describe, expect, it } from 'vitest';
+import { mapError } from '../../../server/http/errors';
+import { requireAccount } from '../../../server/http/middleware/require_account';
+import { fakeCtx, nextGuard } from '../helpers/fake_ctx';
+import { makeReq } from '../helpers/fake_http';
+
+const VALID_TOKEN = 'a'.repeat(64);
+
+function authHeader(raw: string): Record<string, string> {
+  return { authorization: `Bearer ${raw}` };
+}
+
+const NOT_LOCKED = {
+  locked: false,
+  banned: false,
+  suspendedUntil: null,
+  reason: '',
+  message: '',
+  chatMutedUntil: null,
+  chatStrikes: 0,
+};
+const BANNED = { ...NOT_LOCKED, locked: true, banned: true, reason: 'banned', message: 'banned' };
+const SUSPENDED_UNTIL = {
+  ...NOT_LOCKED,
+  locked: true,
+  suspendedUntil: '2026-07-01T00:00:00.000Z',
+  reason: 'suspended',
+  message: 'suspended',
+};
+const SUSPENDED_INDEFINITE = {
+  ...NOT_LOCKED,
+  locked: true,
+  reason: 'suspended',
+  message: 'suspended',
+};
+
+describe('requireAccount: missing or invalid token', () => {
+  it('throws auth.token_missing when the Authorization header is absent', async () => {
+    const ctx = fakeCtx({ req: makeReq({}) });
+    const middleware = requireAccount({ scope: 'full' });
+    await expect(middleware(ctx, nextGuard())).rejects.toMatchObject({
+      status: 401,
+      code: 'auth.token_missing',
+    });
+  });
+
+  it('serializes the 401 with a WWW-Authenticate header via mapError', async () => {
+    const ctx = fakeCtx({ req: makeReq({}) });
+    const middleware = requireAccount({ scope: 'full' });
+    try {
+      await middleware(ctx, nextGuard());
+      throw new Error('expected requireAccount to reject');
+    } catch (err) {
+      const serialized = mapError(err, fakeCtx(), { surface: 'problem' });
+      expect(serialized.status).toBe(401);
+      expect(JSON.parse(serialized.body).code).toBe('auth.token_missing');
+      expect(serialized.headers['WWW-Authenticate']).toBe('Bearer');
+    }
+  });
+
+  it('throws auth.token_invalid when the token is well-formed but unknown', async () => {
+    const ctx = fakeCtx({ req: makeReq({ headers: authHeader(VALID_TOKEN) }) });
+    const middleware = requireAccount({ scope: 'full', lookupToken: async () => null });
+    await expect(middleware(ctx, nextGuard())).rejects.toMatchObject({
+      status: 401,
+      code: 'auth.token_invalid',
+    });
+  });
+});
+
+describe('requireAccount: scope gate', () => {
+  it('throws auth.forbidden for a full-scope route hit with a read-scope token', async () => {
+    const ctx = fakeCtx({ req: makeReq({ headers: authHeader(VALID_TOKEN) }) });
+    const middleware = requireAccount({
+      scope: 'full',
+      lookupToken: async () => ({ accountId: 1, scope: 'read' }),
+      moderationStatus: async () => NOT_LOCKED,
+    });
+    await expect(middleware(ctx, nextGuard())).rejects.toMatchObject({
+      status: 403,
+      code: 'auth.forbidden',
+    });
+  });
+});
+
+describe('requireAccount: moderation gate', () => {
+  it('throws moderation.banned for a locked and banned account', async () => {
+    const ctx = fakeCtx({ req: makeReq({ headers: authHeader(VALID_TOKEN) }) });
+    const middleware = requireAccount({
+      scope: 'full',
+      lookupToken: async () => ({ accountId: 1, scope: 'full' }),
+      moderationStatus: async () => BANNED,
+    });
+    await expect(middleware(ctx, nextGuard())).rejects.toMatchObject({
+      status: 403,
+      code: 'moderation.banned',
+    });
+  });
+
+  it('throws moderation.suspended_until with the date param for a timed suspension', async () => {
+    const ctx = fakeCtx({ req: makeReq({ headers: authHeader(VALID_TOKEN) }) });
+    const middleware = requireAccount({
+      scope: 'full',
+      lookupToken: async () => ({ accountId: 1, scope: 'full' }),
+      moderationStatus: async () => SUSPENDED_UNTIL,
+    });
+    await expect(middleware(ctx, nextGuard())).rejects.toMatchObject({
+      status: 403,
+      code: 'moderation.suspended_until',
+      params: { date: SUSPENDED_UNTIL.suspendedUntil },
+    });
+  });
+
+  it('throws moderation.suspended for a locked account with no suspendedUntil date', async () => {
+    const ctx = fakeCtx({ req: makeReq({ headers: authHeader(VALID_TOKEN) }) });
+    const middleware = requireAccount({
+      scope: 'full',
+      lookupToken: async () => ({ accountId: 1, scope: 'full' }),
+      moderationStatus: async () => SUSPENDED_INDEFINITE,
+    });
+    await expect(middleware(ctx, nextGuard())).rejects.toMatchObject({
+      status: 403,
+      code: 'moderation.suspended',
+    });
+  });
+
+  it('applies the moderation gate on a read-scope route too (the bearer-gap coverage)', async () => {
+    const ctx = fakeCtx({ req: makeReq({ headers: authHeader(VALID_TOKEN) }) });
+    const middleware = requireAccount({
+      scope: 'read',
+      lookupToken: async () => ({ accountId: 1, scope: 'read' }),
+      moderationStatus: async () => BANNED,
+    });
+    await expect(middleware(ctx, nextGuard())).rejects.toMatchObject({
+      status: 403,
+      code: 'moderation.banned',
+    });
+  });
+});
+
+describe('requireAccount: success', () => {
+  it('sets ctx.account and calls next() for a valid, unlocked full token', async () => {
+    const ctx = fakeCtx({ req: makeReq({ headers: authHeader(VALID_TOKEN) }) });
+    let nextRan = false;
+    const middleware = requireAccount({
+      scope: 'full',
+      lookupToken: async () => ({ accountId: 1, scope: 'full' }),
+      moderationStatus: async () => NOT_LOCKED,
+    });
+    await middleware(
+      ctx,
+      nextGuard(() => {
+        nextRan = true;
+      }),
+    );
+    expect(ctx.account).toEqual({ accountId: 1, scope: 'full' });
+    expect(nextRan).toBe(true);
+  });
+});
