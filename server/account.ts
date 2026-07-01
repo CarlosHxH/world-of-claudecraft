@@ -89,7 +89,7 @@ export interface AccountGameHooks {
   disconnectAccount(accountId: number, reason: string): void;
 }
 
-// GET /api/account — whoami; re-validates a stored token on reload + feeds the
+// GET /api/account: whoami; re-validates a stored token on reload + feeds the
 // portal header. characterCount is account-wide (every realm), matching the
 // account-wide nature of this self-service portal.
 export async function handleAccountWhoami(
@@ -109,7 +109,7 @@ export async function handleAccountWhoami(
   });
 }
 
-// POST /api/account/password — re-verify current, then revoke every OTHER token
+// POST /api/account/password: re-verify current, then revoke every OTHER token
 // so a password change signs out other devices while keeping this one alive.
 // callerToken is resolved by main.ts; it must never be null here (validated up
 // the stack) so the revoke below can never accidentally nuke this session.
@@ -144,7 +144,7 @@ export async function handleAccountChangePassword(
   return json(res, 200, { ok: true });
 }
 
-// POST /api/account/logout — revoke this device's bearer token. Unlike the
+// POST /api/account/logout: revoke this device's bearer token. Unlike the
 // other account routes this does not need an active account gate; banned,
 // suspended, or deactivated accounts should still be able to sign out locally
 // and invalidate the token held by this browser.
@@ -167,7 +167,7 @@ export async function handleAccountSetEmail(
   return json(res, 410, { error: 'use verified email change' });
 }
 
-// POST /api/account/deactivate — re-confirm password + username, require all
+// POST /api/account/deactivate: re-confirm password + username, require all
 // characters offline, then lock the account and revoke ALL tokens. The lock is
 // reversible by an admin. After locking we deterministically tear down any
 // established socket (revoking tokens alone does not close an open WS).
@@ -292,7 +292,7 @@ export async function handleAccountMarketing(
 // codes. Both setup and disable re-verify the password (mirrors the password and
 // deactivate handlers): a bare session is not enough to change the second factor.
 
-// POST /api/account/2fa/setup — password re-verify, then return a pending secret
+// POST /api/account/2fa/setup: password re-verify, then return a pending secret
 // + otpauth URI for the user to scan. Idempotent: re-running before enabling just
 // supersedes the previous pending secret.
 export async function handleAccount2faSetup(
@@ -316,7 +316,7 @@ export async function handleAccount2faSetup(
   return json(res, 200, { secret, otpauthUri: otpauthUri(secret, acct.username, TOTP_ISSUER) });
 }
 
-// POST /api/account/2fa/enable — confirm a live code against the pending secret,
+// POST /api/account/2fa/enable: confirm a live code against the pending secret,
 // activate 2FA, and return the one-time recovery codes (shown to the user once).
 export async function handleAccount2faEnable(
   req: http.IncomingMessage,
@@ -341,7 +341,7 @@ export async function handleAccount2faEnable(
   return json(res, 200, { ok: true, recoveryCodes });
 }
 
-// POST /api/account/2fa/disable — password re-verify, then clear the secret and
+// POST /api/account/2fa/disable: password re-verify, then clear the secret and
 // all recovery codes. Best-effort security notice email.
 export async function handleAccount2faDisable(
   req: http.IncomingMessage,
