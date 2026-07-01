@@ -490,7 +490,7 @@ tests/server/http 330 pass (was 324); full gate green (npm test 617 files / 6597
 build:env, build:server, build all exit 0; S3 27/3; ci:changed exit 0, changed files clean;
 ASCII-clean). Note (commit hygiene, not a Phase 7 defect): commit 03dc2632 swept a stray root-level
 PROFESSIONS_REVIEW.md in with the schema.ts credential-compare rename; it is unrelated to the API
-pipeline and left untouched here. Next: Phase 08 (Core middleware set + metric/log hook seam + thin
+pipeline and was removed in a follow-up commit at the user's request. Next: Phase 08 (Core middleware set + metric/log hook seam + thin
 rateLimit adapter, phase-08-middleware.md).
 
 ## Phase 08: Core middleware set + metric/log hook seam + thin rateLimit adapter
