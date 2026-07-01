@@ -24,6 +24,10 @@ CREATE TABLE IF NOT EXISTS maps (
 CREATE INDEX IF NOT EXISTS maps_account ON maps(account_id);
 -- Serves the public browse (status filter + newest-first paging).
 CREATE INDEX IF NOT EXISTS maps_status_updated ON maps(status, updated_at DESC);
+-- Postgres does not auto-index the referencing side of an FK: without this,
+-- every parent-map delete (and account CASCADE) sequentially scans maps to
+-- null out children.
+CREATE INDEX IF NOT EXISTS maps_parent ON maps(parent_map_id);
 `;
 
 const MAP_SUMMARY_COLS =
