@@ -19,7 +19,8 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ],
   "es_ES": [
     "desktop.crash.body",
@@ -31,7 +32,8 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ],
   "fr_FR": [
     "desktop.crash.body",
@@ -43,7 +45,8 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ],
   "fr_CA": [
     "desktop.crash.body",
@@ -55,7 +58,8 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ],
   "en_CA": [],
   "it_IT": [
@@ -68,7 +72,8 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ],
   "de_DE": [
     "desktop.crash.body",
@@ -80,7 +85,8 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ],
   "zh_CN": [],
   "zh_TW": [],
@@ -96,7 +102,8 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ],
   "ru_RU": [],
   "nl_NL": [
@@ -109,7 +116,8 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ],
   "pl_PL": [
     "desktop.crash.body",
@@ -121,7 +129,8 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ],
   "id_ID": [
     "desktop.crash.body",
@@ -133,7 +142,8 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ],
   "tr_TR": [
     "desktop.crash.body",
@@ -145,7 +155,8 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ],
   "sv_SE": [
     "desktop.crash.body",
@@ -157,7 +168,8 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ],
   "vi_VN": [
     "desktop.crash.body",
@@ -169,7 +181,8 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ],
   "da_DK": [
     "desktop.crash.body",
@@ -181,6 +194,7 @@ export const pending: Record<string, readonly string[]> = {
     "desktop.update.later",
     "desktop.update.ready",
     "desktop.update.restart",
-    "errors.api.desktopCodeInvalid"
+    "errors.api.desktopCodeInvalid",
+    "hudChrome.options.showOwnNameplate"
   ]
 };
