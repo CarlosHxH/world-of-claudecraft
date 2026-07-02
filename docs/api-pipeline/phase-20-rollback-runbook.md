@@ -85,27 +85,44 @@ need to inspect it, SELECT it; do not remove it.
    database there is nothing to partition and rollback-from-legacy is
    unavailable: the claimed realm row IS the live data. Phase 20's backfill finds
    no legacy row, writes only the marker, and is otherwise a no-op.
-2. Mixed-version fleets LOSE post-backfill market writes on old realms. A realm
-   process still running pre-scoping code keeps writing the bare `'market'` row
-   through its 30 second autosave AFTER the backfill has run. Upgraded code
-   reads the marker and never serves the legacy row again, so every listing,
-   sale, and escrowed copper a player creates on that old realm after the
-   backfill is STRANDED in the bare row and silently disappears the moment that
-   realm upgrades. This is data loss for that realm's players, not cosmetic
-   drift. Mitigation: treat the migration as one maintenance window. Stop EVERY
-   realm process, deploy Phase 20 everywhere, then boot them; do not run a
-   mixed fleet against a live market. After the window, verify no old process
-   wrote after the backfill:
+2. Mixed-version fleets corrupt or lose market data. Which failure you get
+   depends on which OLD code the not-yet-upgraded realm process is running:
+
+   - Pre-scoping code (before the v0.19.0 lazy-migration hotfix) keeps writing
+     the bare `'market'` row through its 30 second autosave AFTER the backfill
+     has run. Upgraded code reads the marker and never serves the legacy row
+     again, so every listing, sale, and escrowed copper a player creates on
+     that old realm after the backfill is STRANDED in the bare row and silently
+     disappears the moment that realm upgrades. This is data loss for that
+     realm's players, not cosmetic drift.
+   - The v0.19.0 hotfix's lazy-migration code is WORSE. It writes realm-scoped
+     keys, but on its first market load with no `market:<realm>` row of its own
+     (a realm the backfill resolved no sellers to, so no partition was written
+     for it) it claims the retained legacy row `FOR UPDATE`, adopts the ENTIRE
+     pre-partition blob into its one realm key (duplicating every listing the
+     backfill already partitioned to other realms), and DELETES the bare row,
+     destroying the rollback artifact this runbook depends on. The row lock
+     serializes it against the backfill transaction, so there is no torn read;
+     the damage is the adoption itself.
+
+   Mitigation for both: treat the migration as one maintenance window. Stop
+   EVERY realm process, deploy Phase 20 everywhere, then boot them; do not run
+   a mixed fleet against a live market. After the window, verify no old
+   process interfered:
 
    ```sql
    SELECT (SELECT updated_at FROM world_state WHERE key = 'market') AS legacy,
           (SELECT updated_at FROM world_state WHERE key = 'market_backfill_done') AS marker;
    ```
 
-   If `legacy` is NEWER than `marker`, an old process wrote after the backfill
-   ran: diff that blob against the per-realm rows and reconcile the stranded
-   listings and copper by hand (the bare row still stays in place as the
-   rollback artifact).
+   If `legacy` is NEWER than `marker`, a pre-scoping process wrote after the
+   backfill ran: diff that blob against the per-realm rows and reconcile the
+   stranded listings and copper by hand (the bare row still stays in place as
+   the rollback artifact). If `legacy` is NULL, a hotfix-era process adopted
+   and deleted the retained row: find the realm row holding the duplicated
+   global blob, remove the listings the backfill already partitioned to other
+   realms from it, and restore the bare `'market'` row from backup if you
+   still need the rollback option.
 3. The backfill runs inside the realm processes' shared `pg_advisory_xact_lock`
    critical section, so concurrent boots serialize: exactly one process runs the
    partition and the rest observe the marker and no-op.
@@ -115,3 +132,11 @@ need to inspect it, SELECT it; do not remove it.
    partial market data. The realm stays down until an operator repairs the
    `'market'` row (or restores it from backup) and boots again; down beats
    silent data loss here.
+5. The marker is one-way. On a database with no legacy row at all (a fresh DB,
+   or caveat 1's already-claimed DB) the backfill still writes the marker
+   (recording `legacyRowFound: false`), and once the marker exists upgraded
+   code never reads the bare `'market'` row again, so a legacy row restored
+   later (for example from backup) is NEVER re-adopted on its own. To make a
+   restored legacy row take effect, run the Data rollback steps above (delete
+   the partitions and the marker) so the next boot re-runs the backfill
+   against it.
