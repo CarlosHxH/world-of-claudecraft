@@ -1,8 +1,16 @@
 # NAME-MAP - the locked rename contract
 
-> STATUS: **PROPOSED / DRAFT.** G1 has generated the full mapping (2026-07-02) and stopped for
-> operator sign-off. No rename track (V/C/W) runs until the operator flips this to **LOCKED**
-> and freezes it. Once LOCKED it is append-only: a slice needing a string not here STOPS and asks.
+> STATUS: **LOCKED** (operator sign-off 2026-07-02). Append-only from here: a slice needing a
+> string not on this map STOPS and appends a request row to 02-WORKING-MEMORY.md - never invents.
+>
+> Operator decisions folded in at lock: every former `generic-keep?` ability/item row was
+> DECIDED (renamed except the five keeps: Sap, Smite, Claw, Dash, Rip - plus Wolf Form and
+> Blessed Tallow which keep their current text); Mogger cluster KEPT as deliberate parody
+> (rows flipped to generic-keep?; 'Mogger' removed from the scanner hardcoded list under the
+> operator-authorized exception); tier sets renamed (7 rows); realm word = "World" (T1 uses it);
+> ~35 names adopted from the SEO name-mining pass (Semrush-checked + adversarially screened,
+> notable: Dirt Nap, Silent Treatment, Grave Mistake, Pound of Flesh, Gravelight, Direhowl,
+> Cinderfall, Winterbite, Gallowglass Maul, Emberkin, Gloomshade, Duskborn, Wraithborn).
 
 This file is the single source of truth for every old -> new string, the analog of the
 world-api `CommandName` table. Every rename slice applies it VERBATIM and never invents a name.
@@ -53,6 +61,8 @@ One table per domain. Columns: `id` (frozen - never changes) | `old` (current di
 scanner key) | `new` (PROPOSED) | `kind` | `flag`. `flag` in {`rename`, `generic-keep?`,
 `coined-id` (C1/C2 also rename the id), `pairing`, `rename?` (operator call pending)}.
 
+**Realm word (T1, operator): "World"** replaces player-visible "realm" copy; `RealmType` id frozen.
+
 **v0.19.0 additions: NONE.** The v0.18.0..v0.19.0 content diff is empty (CI tooling only);
 zero extra rows were needed (verified by G0, recorded in 02-WORKING-MEMORY.md).
 
@@ -66,23 +76,23 @@ zero extra rows were needed (verified by G0, recorded in 02-WORKING-MEMORY.md).
 | `heroic_strike` | Heroic Strike | Reaver Strike | ability | rename |
 | `battle_shout` | Battle Shout | Iron Bellow | ability | rename |
 | `commanding_shout` | Commanding Shout | Bolstering Cry | ability | rename |
-| `demoralizing_shout` | Demoralizing Shout | Withering Howl | ability | rename |
-| `charge` | Charge | Onrush | ability | generic-keep? |
-| `rend` | Rend | Deep Gash | ability | generic-keep? |
+| `demoralizing_shout` | Demoralizing Shout | Direhowl | ability | rename |
+| `charge` | Charge | Onrush | ability | rename |
+| `rend` | Rend | Deep Gash | ability | rename |
 | `thunder_clap` | Thunder Clap | Quaking Roar | ability | rename |
-| `hamstring` | Hamstring | Hobbling Cut | ability | generic-keep? |
+| `hamstring` | Hamstring | Hobbling Cut | ability | rename |
 | `bloodrage` | Bloodrage | Blood Toll | ability | rename |
-| `overpower` | Overpower | Counterstroke | ability | generic-keep? |
-| `execute` | Execute | Mercy Cut | ability | generic-keep? |
-| `slam` | Slam | Brute Swing | ability | generic-keep? |
-| `cleave` | Cleave | Reaping Arc | ability | generic-keep? |
+| `overpower` | Overpower | Redhand | ability | rename |
+| `execute` | Execute | Early Grave | ability | rename |
+| `slam` | Slam | Brute Swing | ability | rename |
+| `cleave` | Cleave | Reaping Arc | ability | rename |
 | `defensive_stance` | Defensive Stance | Guarded Stance | ability | rename |
 | `sunder_armor` | Sunder Armor | Armor Rend | ability | rename |
-| `taunt` | Taunt | Goad | ability | generic-keep? |
+| `taunt` | Taunt | Goad | ability | rename |
 | `mortal_strike` | Mortal Strike | Maiming Strike | ability | rename |
 | `bloodthirst` | Bloodthirst | Bloodletting | ability | rename |
 | `shield_slam` | Shield Slam | Shieldcrack | ability | rename |
-| `whirlwind` | Whirlwind | Bladed Gyre | ability | generic-keep? |
+| `whirlwind` | Whirlwind | Bladed Gyre | ability | rename |
 | `berserker_rage` | Berserker Rage | Seething Wrath | ability | rename |
 
 ### Mage
@@ -94,39 +104,39 @@ zero extra rows were needed (verified by G0, recorded in 02-WORKING-MEMORY.md).
 | `frostbolt` | Frostbolt | Rimelance | ability | rename |
 | `conjure_water` | Conjure Water | Waterbind | ability | rename |
 | `conjure_food` | Conjure Food | Breadbind | ability | rename |
-| `fire_blast` | Fire Blast | Cinder Burst | ability | rename |
+| `fire_blast` | Fire Blast | Cinderfall | ability | rename |
 | `arcane_missiles` | Arcane Missiles | Aether Darts | ability | rename |
 | `polymorph` | Polymorph | Ensorcel | ability | rename |
 | `frost_nova` | Frost Nova | Frozen Fetters | ability | rename |
 | `arcane_explosion` | Arcane Explosion | Aetherburst | ability | rename |
-| `scorch` | Scorch | Scald | ability | generic-keep? |
+| `scorch` | Scorch | Scald | ability | rename |
 | `pyroblast` | Pyroblast | Pyrelance | ability | rename |
-| `ice_barrier` | Ice Barrier | Rime Ward | ability | rename |
+| `ice_barrier` | Ice Barrier | Frostveil | ability | rename |
 
 ### Rogue
 | id (frozen) | old | new (PROPOSED) | kind | flag |
 |---|---|---|---|---|
 | `sinister_strike` | Sinister Strike | Wicked Slash | ability | rename |
-| `eviscerate` | Eviscerate | Grisly Finish | ability | rename |
-| `backstab` | Backstab | Craven Thrust | ability | generic-keep? |
-| `gouge` | Gouge | Eye Jab | ability | generic-keep? |
-| `evasion` | Evasion | Ghostfoot | ability | generic-keep? |
+| `eviscerate` | Eviscerate | Dirt Nap | ability | rename |
+| `backstab` | Backstab | Craven Thrust | ability | rename |
+| `gouge` | Gouge | Eye Jab | ability | rename |
+| `evasion` | Evasion | Ghostfoot | ability | rename |
 | `slice_and_dice` | Slice and Dice | Cutthroat Tempo | ability | rename |
-| `sprint` | Sprint | Swift Heels | ability | generic-keep? |
-| `kidney_shot` | Kidney Shot | Dirty Blow | ability | rename |
-| `ambush` | Ambush | Lurker's Strike | ability | generic-keep? |
-| `stealth` | Stealth | Duskveil | ability | generic-keep? |
+| `sprint` | Sprint | Swift Heels | ability | rename |
+| `kidney_shot` | Kidney Shot | Low Blow | ability | rename |
+| `ambush` | Ambush | Lurker's Strike | ability | rename |
+| `stealth` | Stealth | Duskveil | ability | rename |
 | `adrenaline_rush` | Adrenaline Rush | Quickened Blood | ability | rename |
-| `garrote` | Garrote | Throat Wire | ability | generic-keep? |
-| `cheap_shot` | Cheap Shot | Sucker Punch | ability | rename |
+| `garrote` | Garrote | Throat Wire | ability | rename |
+| `cheap_shot` | Cheap Shot | Gut Punch | ability | rename |
 | `sap` | Sap | Cosh | ability | generic-keep? |
 | `crippling_poison` | Crippling Poison | Leaden Venom | ability | rename |
 | `expose_armor` | Expose Armor | Armor Breach | ability | rename |
-| `rupture` | Rupture | Bleed Out | ability | generic-keep? |
-| `vanish` | Vanish | Smokestep | ability | generic-keep? |
+| `rupture` | Rupture | Bleed Out | ability | rename |
+| `vanish` | Vanish | Smokestep | ability | rename |
 | `instant_poison` | Instant Poison | Adder's Bite | ability | rename |
 | `deadly_poison` | Deadly Poison | Festering Venom | ability | rename |
-| `blind` | Blind | Blinding Ash | ability | generic-keep? |
+| `blind` | Blind | Blinding Ash | ability | rename |
 
 ### Paladin
 | id (frozen) | old | new (PROPOSED) | kind | flag |
@@ -171,9 +181,9 @@ zero extra rows were needed (verified by G0, recorded in 02-WORKING-MEMORY.md).
 | `power_word_fortitude` | Power Word: Fortitude | Litany of Iron | ability | rename |
 | `shadow_word_pain` | Shadow Word: Pain | Dirge of Rot | ability | rename |
 | `power_word_shield` | Power Word: Shield | Psalm of Warding | ability | rename |
-| `renew` | Renew | Lingering Grace | ability | generic-keep? |
+| `renew` | Renew | Lingering Grace | ability | rename |
 | `mind_blast` | Mind Blast | Mindfracture | ability | rename |
-| `heal` | Heal | Solemn Prayer | ability | generic-keep? |
+| `heal` | Heal | Solemn Prayer | ability | rename |
 | `mind_flay` | Mind Flay | Litany of Woe | ability | rename |
 | `flash_heal` | Flash Heal | Urgent Prayer | ability | rename |
 
@@ -186,7 +196,7 @@ zero extra rows were needed (verified by G0, recorded in 02-WORKING-MEMORY.md).
 | `earth_shock` | Earth Shock | Earthen Jolt | ability | rename |
 | `lightning_shield` | Lightning Shield | Static Ward | ability | rename |
 | `flame_shock` | Flame Shock | Cinder Jolt | ability | rename |
-| `flametongue_weapon` | Flametongue Weapon | Emberbound Weapon | ability | rename |
+| `flametongue_weapon` | Flametongue Weapon | Pyrebrand Weapon | ability | rename |
 | `frost_shock` | Frost Shock | Rime Jolt | ability | rename |
 | `frostbrand_weapon` | Frostbrand Weapon | Rimebound Weapon | ability | rename |
 | `ghost_wolf` | Ghost Wolf | Shadewolf | ability | rename |
@@ -199,19 +209,19 @@ zero extra rows were needed (verified by G0, recorded in 02-WORKING-MEMORY.md).
 | `demon_skin` | Demon Skin | Fiendhide | ability | rename |
 | `immolate` | Immolate | Burning Pact | ability | rename |
 | `corruption` | Corruption | Canker | ability | rename |
-| `life_tap` | Life Tap | Blood Barter | ability | rename |
+| `life_tap` | Life Tap | Hard Bargain | ability | rename |
 | `curse_of_agony` | Curse of Agony | Hex of Anguish | ability | rename |
-| `drain_life` | Drain Life | Blood Tithe | ability | rename |
-| `fear` | Fear | Harrow | ability | generic-keep? |
+| `drain_life` | Drain Life | Pound of Flesh | ability | rename |
+| `fear` | Fear | Harrow | ability | rename |
 | `searing_pain` | Searing Pain | Sear | ability | rename |
 | `shadowburn` | Shadowburn | Duskfire | ability | rename |
-| `summon_imp` | Summon Imp | Summon Cinderling | ability | rename |
-| `summon_voidwalker` | Summon Voidwalker | Summon Voidbound | ability | rename |
-| `summon_succubus` | Summon Succubus | Summon Duskmaiden | ability | rename |
+| `summon_imp` | Summon Imp | Summon Emberkin | ability | rename |
+| `summon_voidwalker` | Summon Voidwalker | Summon Gloomshade | ability | rename |
+| `summon_succubus` | Summon Succubus | Summon Duskborn | ability | rename |
 | `summon_felhunter` | Summon Felhunter | Summon Spellhound | ability | rename |
 | `summon_felguard` | Summon Felguard | Summon Warfiend | ability | rename |
 | `summon_infernal` | Summon Infernal | Summon Pyre Colossus | ability | rename |
-| `summon_doomguard` | Summon Doomguard | Summon Ruinlord | ability | rename |
+| `summon_doomguard` | Summon Doomguard | Summon Wraithborn | ability | rename |
 
 - Summon descriptions in `classes.ts` (duplicated byte-identical in the catalog) name each demon
   and two pet-spell words; C2 owns the demon nouns, V1 applies these two tokens with the summons:
@@ -221,34 +231,34 @@ zero extra rows were needed (verified by G0, recorded in 02-WORKING-MEMORY.md).
 ### Druid
 | id (frozen) | old | new (PROPOSED) | kind | flag |
 |---|---|---|---|---|
-| `wrath` | Wrath | Verdant Bolt | ability | generic-keep? |
+| `wrath` | Wrath | Verdant Bolt | ability | rename |
 | `healing_touch` | Healing Touch | Wildmend | ability | rename |
 | `mark_of_the_wild` | Mark of the Wild | Wildward | ability | rename |
 | `moonfire` | Moonfire | Gloamfire | ability | rename |
-| `rejuvenation` | Rejuvenation | Burgeon | ability | rename |
-| `thorns` | Thorns | Briarguard | ability | generic-keep? |
+| `rejuvenation` | Rejuvenation | Wildbloom | ability | rename |
+| `thorns` | Thorns | Briarguard | ability | rename |
 | `entangling_roots` | Entangling Roots | Gripping Roots | ability | rename |
 | `bear_form` | Bear Form | Bruin Form | ability | rename |
 | `bear_charge` | Bear Charge | Bruin Rush | ability | rename |
-| `maul` | Maul | Bonecrush | ability | generic-keep? |
-| `growl` | Growl | Snarl | ability | generic-keep? |
+| `maul` | Maul | Bonecrush | ability | rename |
+| `growl` | Growl | Snarl | ability | rename |
 | `demoralizing_roar` | Demoralizing Roar | Craven Roar | ability | rename |
 | `cat_form` | Wolf Form | Wolf Form | ability | generic-keep? |
-| `prowl` | Prowl | Slink | ability | generic-keep? |
-| `rake` | Rake | Flense | ability | generic-keep? |
+| `prowl` | Prowl | Slink | ability | rename |
+| `rake` | Rake | Flense | ability | rename |
 | `claw` | Claw | Rive | ability | generic-keep? |
 | `ferocious_bite` | Ferocious Bite | Gorebite | ability | rename |
-| `swipe` | Swipe | Sweeping Claws | ability | generic-keep? |
+| `swipe` | Swipe | Sweeping Claws | ability | rename |
 | `regrowth` | Regrowth | Second Bloom | ability | rename |
 | `barkskin` | Barkskin | Oakhide | ability | rename |
 | `starfire` | Starfire | Skyfall | ability | rename |
 | `travel_form` | Travel Form | Fleet Form | ability | rename |
-| `enrage` | Enrage | Stoke | ability | generic-keep? |
-| `bash` | Bash | Concuss | ability | generic-keep? |
+| `enrage` | Enrage | Stoke | ability | rename |
+| `bash` | Bash | Concuss | ability | rename |
 | `faerie_fire` | Faerie Fire | Witchlight | ability | rename |
-| `hibernate` | Hibernate | Slumber | ability | generic-keep? |
+| `hibernate` | Hibernate | Slumber | ability | rename |
 | `dash` | Dash | Lope | ability | generic-keep? |
-| `pounce` | Pounce | Slinkstrike | ability | generic-keep? |
+| `pounce` | Pounce | Slinkstrike | ability | rename |
 | `insect_swarm` | Insect Swarm | Stinging Swarm | ability | rename |
 | `tigers_fury` | Tiger's Fury | Wolfsblood | ability | rename |
 | `rip` | Rip | Unseam | ability | generic-keep? |
@@ -284,11 +294,11 @@ Kept original: mastery `arms` Sharpened Blades.
 | `war_imp_thunder_clap` | Improved Thunder Clap | Improved Quaking Roar | talent | pairing |
 | `war_deflection` | Deflection | Blade Turn | talent | rename |
 | `war_tactical_choice` | Tactical Mastery | Battle Doctrine | choice | rename |
-| `tc_anticipation` | Anticipation | Foresight | choice | rename |
+| `tc_anticipation` | Anticipation | Fair Warning | choice | rename |
 | `tc_bladed_armor` | Bladed Armor | Spiked Harness | choice | rename |
 | `war_berserker_rage` | Berserker Rage | Seething Wrath | talent | pairing |
 | `war_second_wind` | Second Wind | Deep Reserves | talent | rename |
-| `arms_imp_overpower` | Improved Overpower | Improved Counterstroke | talent | pairing |
+| `arms_imp_overpower` | Improved Overpower | Improved Redhand | talent | pairing |
 | `arms_deep_wounds` | Deep Wounds | Lingering Wounds | talent | rename |
 | `arms_imp_slam` | Improved Slam | Improved Brute Swing | talent | pairing |
 | `ac_sweeping` | Sweeping Strikes | Scything Blows | choice | rename |
@@ -297,20 +307,20 @@ Kept original: mastery `arms` Sharpened Blades.
 | `arms_imp_mortal_strike` | Improved Mortal Strike | Improved Maiming Strike | talent | pairing |
 | `fury_cruelty` | Cruelty | Barbarity | talent | rename |
 | `fury_unbridled_wrath` | Unbridled Wrath | Boundless Ire | talent | rename |
-| `fury_whirlwind` | Whirlwind | Bladed Gyre | talent | generic-keep? |
+| `fury_whirlwind` | Whirlwind | Bladed Gyre | talent | pairing |
 | `fury_imp_cleave` | Improved Cleave | Improved Reaping Arc | talent | pairing |
 | `fury_choice` | Berserker | War Madness | choice | rename |
-| `fc_enrage` | Enrage | Red Mist | choice | generic-keep? |
+| `fc_enrage` | Enrage | Red Mist | choice | rename |
 | `fc_flurry` | Flurry | Rapid Blows | choice | rename |
 | `fc_bloodcraze` | Blood Craze | Crimson Hunger | choice | rename |
 | `fury_imp_bloodthirst` | Improved Bloodthirst | Improved Bloodletting | talent | pairing |
 | `prot_toughness` | Shield Mastery | Shieldwright | talent | rename |
-| `prot_anticipation` | Anticipation | Foresight | talent | rename |
+| `prot_anticipation` | Anticipation | Fair Warning | talent | rename |
 | `prot_imp_thunder_clap` | Improved Thunder Clap | Improved Quaking Roar | talent | pairing |
 | `prot_imp_sunder` | Improved Sunder Armor | Improved Armor Rend | talent | pairing |
 | `pc_shield_spec` | Shield Specialization | Shieldbearer | choice | rename |
 | `pc_imp_taunt` | Improved Taunt | Improved Goad | choice | pairing |
-| `pc_last_stand` | Last Stand | Final Bastion | choice | rename |
+| `pc_last_stand` | Last Stand | Eleventh Hour | choice | rename |
 | `prot_imp_shield_slam` | Improved Shield Slam | Improved Shieldcrack | talent | pairing |
 
 Kept original: Savagery (`tc_cruelty`), Weapon Mastery (`arms_tactical_mastery`), Blademaster
@@ -349,8 +359,8 @@ Kept original: Savagery (`tc_cruelty`), Weapon Mastery (`arms_tactical_mastery`)
 | `arc_choice_resilience` | Arcane Resilience | Aetheric Shell | choice | rename |
 | `arc_netherwind` | Netherwind Focus | Sablewind Focus | talent | rename |
 | `fire_imp_fireball` | Improved Fireball | Improved Cinderbolt | talent | pairing |
-| `fire_impact` | Impact | Searing Jolt | talent | rename |
-| `fire_imp_blast` | Improved Fire Blast | Improved Cinder Burst | talent | pairing |
+| `fire_impact` | Impact | Short Fuse | talent | rename |
+| `fire_imp_blast` | Improved Fire Blast | Improved Cinderfall | talent | pairing |
 | `fire_incinerate` | Incinerate | Cremation | talent | rename |
 | `fire_choice` | Combustion | Flashfire | choice | rename |
 | `fire_choice_combustion` | Combustion | Flashfire | choice | rename |
@@ -361,10 +371,10 @@ Kept original: Savagery (`tc_cruelty`), Weapon Mastery (`arms_tactical_mastery`)
 | `frost_permafrost` | Permafrost | Deep Rime | talent | rename |
 | `frost_imp_nova` | Improved Frost Nova | Improved Frozen Fetters | talent | pairing |
 | `frost_shatter` | Shatter | Brittlebreak | talent | rename |
-| `frost_choice_barrier` | Ice Barrier | Rime Ward | choice | pairing |
+| `frost_choice_barrier` | Ice Barrier | Frostveil | choice | pairing |
 | `frost_choice_snap` | Cold Snap | Second Winter | choice | rename |
 | `frost_choice_warding` | Frost Warding | Winterguard | choice | rename |
-| `frost_winter_chill` | Winter Chill | Lasting Chill | talent | rename |
+| `frost_winter_chill` | Winter Chill | Cold Shoulder | talent | rename |
 
 Kept original: School Focus (`mag_school_focus`), Icecraft (`frost_choice`).
 
@@ -389,16 +399,16 @@ Kept original: School Focus (`mag_school_focus`), Icecraft (`frost_choice`).
 | `rog_dirty_tricks` | Dirty Tricks | Foul Play | choice | rename |
 | `rog_trick_poison` | Vile Poisons | Cruel Venoms | choice | rename |
 | `rog_trick_blade` | Blade Flurry | Mirrored Blades | choice | rename |
-| `rog_trick_shadow` | Heightened Senses | Rat's Instinct | choice | rename |
+| `rog_trick_shadow` | Heightened Senses | Hush Money | choice | rename |
 | `rog_preparation` | Preparation | Contingency | talent | rename |
 | `rog_vigor` | Vigor | Stolen Breath | talent | rename |
-| `ass_imp_eviscerate` | Improved Eviscerate | Improved Grisly Finish | talent | pairing |
+| `ass_imp_eviscerate` | Improved Eviscerate | Improved Dirt Nap | talent | pairing |
 | `ass_remorseless` | Remorseless Attacks | Pitiless Blows | talent | rename |
-| `ass_murder` | Murder | Quiet Killing | talent | rename |
+| `ass_murder` | Murder | Dirty Work | talent | rename |
 | `ass_laceration` | Relentless Strikes | Ceaseless Cuts | talent | rename |
 | `ass_choice` | Cold Blood | Killer's Calm | choice | rename |
 | `ass_choice_cold` | Cold Blood | Killer's Calm | choice | rename |
-| `ass_choice_seal` | Seal Fate | Death Writ | choice | rename |
+| `ass_choice_seal` | Seal Fate | Final Notice | choice | rename |
 | `ass_vigor` | Assassin Vigor | Grim Vigor | talent | rename |
 | `combat_imp_gouge` | Improved Gouge | Improved Eye Jab | talent | pairing |
 | `combat_precision` | Precision | Dead Aim | talent | rename |
@@ -409,13 +419,13 @@ Kept original: School Focus (`mag_school_focus`), Icecraft (`frost_choice`).
 | `combat_choice_riposte` | Riposte | Turnabout | choice | rename |
 | `combat_choice_adrenaline` | Adrenaline Rush | Quickened Blood | choice | pairing |
 | `sub_master_deception` | Master of Deception | False Face | talent | rename |
-| `sub_opportunity` | Opportunity | Sly Opening | talent | rename |
+| `sub_opportunity` | Opportunity | Low Cunning | talent | rename |
 | `sub_elusiveness` | Elusiveness | Eel's Grace | talent | rename |
 | `sub_imp_ambush` | Improved Ambush | Improved Lurker's Strike | talent | pairing |
 | `sub_choice` | Shadow Arts | Night Trade | choice | rename |
 | `sub_choice_hemo` | Hemorrhage | Red Ribbon | choice | rename |
 | `sub_choice_prep` | Preparation | Contingency | choice | rename |
-| `sub_choice_senses` | Heightened Senses | Rat's Instinct | choice | rename |
+| `sub_choice_senses` | Heightened Senses | Hush Money | choice | rename |
 | `sub_shadowstep` | Shadowstep | Shadeslip | talent | rename |
 
 Kept original: Vile Precision (`ass_choice_vile`), Weapon Mastery (`combat_weapon_mastery`).
@@ -459,7 +469,7 @@ Kept original: Vile Precision (`ass_choice_vile`), Weapon Mastery (`combat_weapo
 | `prot_guardians_favor` | Guardian Favor | Warder's Vow | talent | rename |
 | `prot_choice` | Sanctuary | Refuge | choice | rename |
 | `prot_choice_sanctuary` | Blessing of Sanctuary | Oath of Refuge | choice | rename |
-| `prot_choice_reckoning` | Reckoning | Countervail | choice | rename |
+| `prot_choice_reckoning` | Reckoning | Grave Mistake | choice | rename |
 | `prot_choice_ardent` | Ardent Defender | Deathless Ardor | choice | rename |
 | `prot_holy_shield` | Holy Shield | Hallowed Wall | talent | rename |
 | `ret_benediction` | Benediction | Fervent Oath | talent | rename |
@@ -557,14 +567,14 @@ Kept original: none.
 | `disc_imp_shield` | Improved Power Word: Shield | Improved Psalm of Warding | talent | pairing |
 | `disc_mental_agility` | Mental Agility | Nimble Mind | talent | rename |
 | `disc_choice` | Discipline Focus | Doctrine Focus | choice | rename |
-| `disc_choice_barrier` | Borrowed Time | Stolen Moments | choice | rename |
+| `disc_choice_barrier` | Borrowed Time | Cold Comfort | choice | rename |
 | `disc_choice_focus` | Inner Focus | Stilled Mind | choice | rename |
 | `disc_choice_power` | Power Infusion | Anointing | choice | rename |
 | `disc_penance` | Penance | Chastisement | talent | rename |
 | `holy_healing_focus` | Healing Focus | Steadied Prayer | talent | rename |
 | `holy_renewal` | Improved Renew | Improved Lingering Grace | talent | pairing |
 | `holy_divine_fury` | Divine Fury | Wrathful Psalm | talent | rename |
-| `holy_inspiration` | Inspiration | Hearten | talent | rename |
+| `holy_inspiration` | Inspiration | Small Mercies | talent | rename |
 | `holy_priest_choice` | Holy Word | Deepword | choice | rename |
 | `holy_priest_choice_spirit` | Spiritual Guidance | Ghostlight | choice | rename |
 | `holy_priest_choice_nova` | Holy Reach | Reaching Word | choice | rename |
@@ -576,7 +586,7 @@ Kept original: none.
 | `shadow_focus` | Shadow Focus | Umbral Intent | talent | rename |
 | `shadow_choice` | Dark Arts | Black Office | choice | rename |
 | `shadow_choice_vampiric` | Vampiric Embrace | Leeching Dirge | choice | rename |
-| `shadow_choice_silence` | Silence | Severed Voice | choice | rename |
+| `shadow_choice_silence` | Silence | Silent Treatment | choice | rename |
 | `shadow_choice_darkness` | Darkness | Creeping Dark | choice | rename |
 | `shadow_shadowform` | Shadowform | Gloamveil | talent | rename |
 
@@ -655,7 +665,7 @@ Kept original: none.
 | `wlk_demonic_skin` | Improved Demon Skin | Improved Fiendhide | talent | pairing |
 | `wlk_cataclysm` | Cataclysm | Calamity | talent | rename |
 | `wlk_dark_pact` | Dark Pact | Grim Bargain | choice | rename |
-| `wlk_pact_affliction` | Nightfall | Eventide | choice | rename |
+| `wlk_pact_affliction` | Nightfall | Grim Tidings | choice | rename |
 | `wlk_pact_demonology` | Fel Stamina | Blackblood Vigor | choice | rename |
 | `wlk_pact_destruction` | Devastation | Wrack | choice | rename |
 | `wlk_shadowburn` | Shadowburn | Duskfire | talent | pairing |
@@ -667,11 +677,11 @@ Kept original: none.
 | `aff_choice` | Soul Harvest | Reaping Path | choice | rename |
 | `aff_choice_siphon` | Siphon Life | Veinleech | choice | rename |
 | `aff_choice_shadow` | Shadow Mastery | Umbral Mastery | choice | rename |
-| `aff_choice_nightfall` | Nightfall | Eventide | choice | rename |
-| `aff_unstable_affliction` | Unstable Affliction | Seething Blight | talent | rename |
+| `aff_choice_nightfall` | Nightfall | Grim Tidings | choice | rename |
+| `aff_unstable_affliction` | Unstable Affliction | Parting Gift | talent | rename |
 | `demo_demonic_embrace` | Demonic Embrace | Fiendish Fortitude | talent | rename |
 | `demo_fel_armor` | Fel Armor | Vile Carapace | talent | rename |
-| `demo_health_funnel` | Improved Life Tap | Improved Blood Barter | talent | pairing |
+| `demo_health_funnel` | Improved Life Tap | Improved Hard Bargain | talent | pairing |
 | `demo_master_summoner` | Master Summoner | Grand Binder | talent | rename |
 | `demo_choice` | Demonic Tactics | Court of Fiends | choice | rename |
 | `demo_choice_link` | Soul Link | Pain Communion | choice | rename |
@@ -732,7 +742,7 @@ Kept original: none.
 | `feral_choice_cat` | Predatory Strikes | Predator's Cunning | choice | rename |
 | `feral_choice_survival` | Survival Instincts | Deathless Will | choice | rename |
 | `feral_heart_wild` | Heart of the Wild | Primal Heart | talent | rename |
-| `rest_imp_rejuv` | Improved Rejuvenation | Improved Burgeon | talent | pairing |
+| `rest_imp_rejuv` | Improved Rejuvenation | Improved Wildbloom | talent | pairing |
 | `rest_druid_naturalist` | Naturalist | Woodwise | talent | rename |
 | `rest_reflection` | Reflection | Quietude | talent | rename |
 | `rest_imp_regrowth` | Improved Regrowth | Improved Second Bloom | talent | pairing |
@@ -779,14 +789,15 @@ Kept original: none.
 | `tallow_candle` | Tallow Candle | Greasy Tallow Lump | item | rename |
 | `blessed_wax` | Blessed Tallow | Blessed Tallow | item | generic-keep? |
 | `q_boars` quest name | Bristleback Hides | Bristly Boar Hides | quest | rename |
-| `bristleback_maul` | Bristleback Maul | Bristlehide Maul | item | rename |
+| `bristleback_maul` | Bristleback Maul | Gallowglass Maul | item | rename |
 | `sanctum_drakonid` | Sanctum Drakonid | Sanctum Scaleguard | mob | rename |
-| `mogger` | Mogger | Rammok | mob | rename? |
-| `mogger_lackey` | Mogger Lackey | Rammok Lackey | mob | rename? |
-| `q_mogger` quest name | Mogger Must Fall | Rammok Must Fall | quest | rename? |
-| `moggers_stomper_boots` | Mogger's Stomper Boots | Rammok's Stomper Boots | item | rename? |
-| `moggers_copper_cudgel` | Mogger's Copper Cudgel | Rammok's Copper Cudgel | item | rename? |
-| `moggers_shiv` | Mogger's Shiv | Rammok's Shiv | item | rename? |
+| `mogger` | Mogger | Mogger | mob | generic-keep? |
+| `tunnel_rat` | Tunnel Rat Digger | Deeprock Digger | mob | rename |
+| `mogger_lackey` | Mogger Lackey | Mogger Lackey | mob | generic-keep? |
+| `q_mogger` quest name | Mogger Must Fall | Mogger Must Fall | quest | generic-keep? |
+| `moggers_stomper_boots` | Mogger's Stomper Boots | Mogger's Stomper Boots | item | generic-keep? |
+| `moggers_copper_cudgel` | Mogger's Copper Cudgel | Mogger's Copper Cudgel | item | generic-keep? |
+| `moggers_shiv` | Mogger's Shiv | Mogger's Shiv | item | generic-keep? |
 
 C1 prose rewords (quest text / greetings; word-boundary scanner entries murloc / bristleback /
 candle-headed / tallow candle clear when these land):
@@ -842,16 +853,16 @@ except the `warlock_imp` petSpell row below).
 
 | current id | old | new (PROPOSED) | kind | flag |
 |---|---|---|---|---|
-| `imp` | Imp | Cinderling | pet | coined-id |
-| `voidwalker` | Voidwalker | Voidbound | pet | coined-id |
-| `succubus` | Succubus | Duskmaiden | pet | coined-id |
+| `imp` | Imp | Emberkin | pet | coined-id |
+| `voidwalker` | Voidwalker | Gloomshade | pet | coined-id |
+| `succubus` | Succubus | Duskborn | pet | coined-id |
 | `felhunter` | Felhunter | Spellhound | pet | coined-id |
 | `felguard` | Felguard | Warfiend | pet | coined-id |
 | `infernal` | Infernal | Pyre Colossus | pet | coined-id |
-| `doomguard` | Doomguard | Ruinlord | pet | coined-id |
+| `doomguard` | Doomguard | Wraithborn | pet | coined-id |
 
-Proposed new code ids (the coined-id sweep): `cinderling`, `voidbound`, `duskmaiden`,
-`spellhound`, `warfiend`, `pyre_colossus`, `ruinlord` (kept out of the table so every map
+Proposed new code ids (the coined-id sweep): `emberkin`, `gloomshade`, `duskborn`,
+`spellhound`, `warfiend`, `pyre_colossus`, `wraithborn` (kept out of the table so every map
 table stays 5-column for the scanner parse).
 
 | id (frozen) | old | new (PROPOSED) | kind | flag |
@@ -903,12 +914,12 @@ table stays 5-column for the scanner parse).
 | `moonshroud_robe` | Moonshroud Robe | Moonwrack Robe | item | rename |
 | `moonshroud_tunic` | Moonshroud Tunic | Moonwrack Tunic | item | rename |
 | `kingsbane_last_oath` | Kingsbane, Last Oath of Thornpeak | Thronebane, Last Oath of Thornpeak | item | rename |
-| `aug_lightwell` | Lightwell | Hallowed Font | augment | rename |
+| `aug_lightwell` | Lightwell | Gravelight | augment | rename |
 | `aug_spellfire` | Spellfire | Grimfire | augment | rename |
-| `gnarled_staff` | Gnarled Staff | Knotted Staff | item | generic-keep? |
-| `recruit_tunic` | Recruit's Tunic | Levyman's Tunic | item | generic-keep? |
-| `apprentice_robe` | Apprentice's Robe | Threadbare Robe | item | generic-keep? |
-| `footpad_jerkin` | Footpad's Jerkin | Cutpurse Jerkin | item | generic-keep? |
+| `gnarled_staff` | Gnarled Staff | Bogoak Staff | item | rename |
+| `recruit_tunic` | Recruit's Tunic | Levyman's Tunic | item | rename |
+| `apprentice_robe` | Apprentice's Robe | Threadbare Robe | item | rename |
+| `footpad_jerkin` | Footpad's Jerkin | Cutpurse Jerkin | item | rename |
 
 - Assembly fix vs the agent draft: shadowmeld_tunic was proposed "Duskveil Tunic" but Duskveil
   is the rogue `stealth` candidate: replaced with "Nightveil Tunic".
@@ -917,11 +928,19 @@ table stays 5-column for the scanner parse).
 - The four starter `generic-keep?` rows are individually dictionary-generic but reproduce the
   WoW level-1 starter kit as an ENSEMBLE with Worn Shortsword; proposals supplied so the
   operator can apply them wholesale or keep.
-- Tier sets (`deathlord`, `wyrmshadow`, `necromancers`, `crownforged`, `nighttalon`, `soulflame`,
-  `stormcallers`): none WoW-verbatim; the naming CONVENTION echoes WoW tier sets structurally.
-  Operator call as one group (risk notes: "Deathlord" is the Legion DK class-hall title;
-  "Stormcaller's Vestments" internally echoes the warrior talent Stormcaller). If any set renames,
-  its member item ids' display names follow.
+- Tier sets: OPERATOR DECIDED (2026-07-02) - all 7 rename (rows below). Member item display
+  names follow their set word; ids frozen; suffixes (Battlegear/Vestments/Raiment/Regalia/Pelt)
+  kept as generic armor words.
+
+| id (frozen) | old | new (LOCKED) | kind | flag |
+|---|---|---|---|---|
+| `deathlord` | Deathlord Battlegear | Barrowlord Battlegear | set | rename |
+| `wyrmshadow` | Wyrmshadow Vestments | Nightfang Vestments | set | rename |
+| `necromancers` | Necromancer's Raiment | Mournweave Raiment | set | rename |
+| `crownforged` | Crownforged Regalia | Bonewrought Regalia | set | rename |
+| `nighttalon` | Nighttalon Pelt | Direfang Pelt | set | rename |
+| `soulflame` | Soulflame Regalia | Wraithfire Regalia | set | rename |
+| `stormcallers` | Stormcaller's Vestments | Galecall Vestments | set | rename |
 - C1 owns: Slimy Murloc Scale, Bristleback Maul, Tallow Candle, Blessed Tallow, the three
   Mogger's items.
 - Coverage: 338 items + 7 sets + 20 augments screened; 308 items + 18 augments passed clean.
@@ -948,10 +967,10 @@ table stays 5-column for the scanner parse).
 | `corrupted_priest_malric` petSpell | Mind Blast | Mindfracture | aura | pairing |
 | `korgath_the_bound` stomp | War Stomp | Shuddering Stomp | aura | rename |
 | `grubjaw` purgeOnHit | Devour Magic | Spellgnaw | aura | rename |
-| `knight_commander_olen` cleave | Cleave | Reaping Arc | aura | generic-keep? |
-| `shardlord_kazzix` frostbite | Frostbite | Deep Chill | aura | generic-keep? |
-| `warlord_drogmar` rampage | Battle Fury | Mounting Rage | aura | generic-keep? |
-| `sister_nhalia` terrify | Banshee's Wail | Keening Wail | aura | generic-keep? |
+| `knight_commander_olen` cleave | Cleave | Reaping Arc | aura | pairing |
+| `shardlord_kazzix` frostbite | Frostbite | Winterbite | aura | rename |
+| `warlord_drogmar` rampage | Battle Fury | Mounting Rage | aura | rename |
+| `sister_nhalia` terrify | Banshee's Wail | Keening Wail | aura | rename |
 
 - The four verbatim rows (Mortal Strike, Mind Blast, War Stomp, Devour Magic) are the audit's
   W2 set; the pairing rows take the SAME new name as their V1 ability row by rule. The draft's
@@ -1028,5 +1047,5 @@ Deep-, Sable-, Hallow-, Cinder-, Dusk-, Gloam- clusters (see decision 5 below).
 - [x] Items/sets/augments: full 365-name screen (21 rename + 4 starter generic-keep? + tier-set
       group + C1-owned rows)
 - [x] The 4 verbatim mob-mechanic names (+ 4 G1-added generic-keep? aura rows)
-- [ ] Operator decisions resolved on every `generic-keep?`, the Mogger parody, Tunnel Rat
-      Digger, and the Brandt greeting (Phase 3 - then flip STATUS to LOCKED)
+- [x] Operator decisions resolved on every `generic-keep?`, the Mogger parody, Tunnel Rat
+      Digger, and the Brandt greeting (locked 2026-07-02)

@@ -28,8 +28,15 @@ Status values: `not-started` -> `in-progress (<who>)` -> `done-on-track (<branch
 `merged (<integration-sha>)`.
 
 ## NAME-MAP lock state (owned by G1) — the #1 cross-slice contract
-- [ ] G1 has filled every Coverage-checklist row in `NAME-MAP.md`.
-- [ ] Operator has reviewed and flipped `NAME-MAP.md` STATUS to **LOCKED**.
+- [x] G1 has filled every Coverage-checklist row in `NAME-MAP.md` (2026-07-02).
+- [x] Operator has reviewed and flipped `NAME-MAP.md` STATUS to **LOCKED** (2026-07-02).
+  Decisions at lock: all former generic-keep? rows decided (5 keeps: Sap, Smite, Claw, Dash,
+  Rip; Wolf Form and Blessed Tallow keep their text); Mogger cluster KEPT as parody with the
+  operator-authorized removal of 'Mogger' from the scanner HARDCODED_VERBATIM (same commit);
+  Tunnel Rat Digger renamed (Deeprock Digger); Brandt greeting reworded; tier sets renamed
+  (Barrowlord/Nightfang/Mournweave/Bonewrought/Direfang/Wraithfire/Galecall); realm word =
+  "World"; ~35 SEO-mined names adopted (Semrush-verified + adversarially screened) incl.
+  pairing cascades - see the map's lock header for the list.
 - Until both are checked, NO V/C/W/T slice may start. Append-only after LOCK; a slice needing a
   missing string STOPS and appends a request row here for the operator, never invents a name.
 
@@ -114,7 +121,7 @@ Overpower, Frost Nova, Arcane Intellect, Holy Light, Arcane Shot, Frost Shock, F
 | bristleback (prose, word-boundary) | C1 | 0 (belt-and-braces) | [ ] |
 | Drakonid | C1 | 2 | [ ] |
 | Sanctum Drakonid | C1 | 2 | [ ] |
-| Mogger | C1 | 13 | [ ] |
+| Mogger | C1 | 13 | n/a - operator KEEP (parody); scanner entry removed at lock |
 | Imp | C2 | 4 | [ ] |
 | Voidwalker | C2 | 4 | [ ] |
 | Succubus | C2 | 4 | [ ] |

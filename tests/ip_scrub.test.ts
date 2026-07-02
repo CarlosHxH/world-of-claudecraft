@@ -61,8 +61,10 @@ const NAME_MAP_PATH = path.join(root, 'ip-refactor', 'NAME-MAP.md');
 
 // The hardcoded verbatim-WoW / Blizzard-coined list from the G0 brief. Kept
 // independent of the NAME-MAP so a missed or mangled map row still fails the
-// gate. Mogger is here per the brief's ownership seed (the Hogger parody is a
-// C1 worklist row; the operator call in the map decides its final fate).
+// gate. 'Mogger' was seeded here by G0 and REMOVED at NAME-MAP lock
+// (2026-07-02): the operator decided to KEEP the Hogger parody, exercising the
+// one operator-authorized scanner edit the briefs allow (the map rows flipped
+// to generic-keep? in the same change, so the map and this list stay aligned).
 const HARDCODED_VERBATIM: string[] = [
   'Heroic Strike',
   'Mortal Strike',
@@ -90,7 +92,6 @@ const HARDCODED_VERBATIM: string[] = [
   'Drakonid',
   'Shadowmeld',
   'Lightwell',
-  'Mogger',
   // "The rest of the warlock demon-pet roster" (the C2 ownership seed): the
   // whole 7-slot lineup re-themes, so the non-coined three are armed here too.
   'Imp',
