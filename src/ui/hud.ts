@@ -64,7 +64,7 @@ import { isItemLevelEligible, itemLevel, itemScore } from '../sim/item_level';
 import { requiredLevelFor } from '../sim/item_level_req';
 import type { Ante, PickAction } from '../sim/lockpick';
 import { PICK_ACTIONS } from '../sim/lockpick';
-import type { QuestObjectiveRef } from '../sim/quest_targets';
+import { type QuestObjectiveRef, questObjectivesForMob } from '../sim/quest_targets';
 import type { ResolvedAbility } from '../sim/sim';
 import type {
   AbilityDef,
@@ -3359,7 +3359,13 @@ export class Hud {
   // of the overhead nameplate bands (mobNameColor). Shown at a fixed spot (right of
   // the health bars, see paintTooltipNearPlayerFrame) rather than following the cursor.
   showMobHoverTooltip(entity: Entity, pvpOpponents: ReadonlySet<number>): void {
-    const key = `${entity.id}:${entity.level}:${entity.hostile ? 1 : 0}:${this.sim.player.level}`;
+    // Questie-style quest lines: the objectives this mob advances, with live
+    // counts. They ride the rebuild key so a kill mid-hover repaints 3/8 -> 4/8.
+    const mobQuests = questObjectivesForMob(this.sim.questLog, entity.templateId);
+    const questKey = mobQuests
+      .map((q) => `${q.questId}#${q.objectiveIndex}:${q.current}/${q.total}`)
+      .join(',');
+    const key = `${entity.id}:${entity.level}:${entity.hostile ? 1 : 0}:${this.sim.player.level}:${questKey}`;
     if (key === this.lastMobTooltipId) return;
     this.lastMobTooltipId = key;
     const template = MOBS[entity.templateId];
@@ -3379,6 +3385,14 @@ export class Hud {
       familyLabel,
       color: mobTooltipConColor(diff, entity.dead, friendlyPet),
       hostile: entity.hostile,
+      quests: mobQuests.map((q) => ({
+        title: questTitle(q.questId),
+        progress: this.questProgressText(
+          questObjectiveLabel(q.questId, q.objectiveIndex),
+          q.current,
+          q.total,
+        ),
+      })),
     };
     this.paintTooltipNearPlayerFrame(mobTooltipHtml(model, MOB_TOOLTIP_VIEW_DEPS));
   }

@@ -1,7 +1,7 @@
 // Pure quest-objective target/location resolution over the static content
 // tables, shared by the presentation layers: the world map draws translucent
-// "your objective lives here" areas from questObjectiveAreas(), and nameplates
-// mark live quest-target mobs from questTargetMobIds(). A host-agnostic leaf
+// "your objective lives here" areas from questObjectiveAreas(), and the mob
+// hover tooltip lists the objectives a mob advances via questObjectivesForMob(). A host-agnostic leaf
 // like threat.ts / format_money.ts: no DOM, no rng, no Sim state. Everything
 // derives from the QUESTS/CAMPS/MOBS/GROUND_OBJECTS/NPCS content plus the
 // player's live quest log, so the offline Sim and the online ClientWorld
@@ -61,19 +61,43 @@ function mobsDroppingQuestItem(itemId: string, questId: string): string[] {
   return out;
 }
 
+/** One quest objective a hovered mob advances, with its live counts: the
+ *  identity + numbers behind the Questie-style mob-tooltip quest lines. */
+export interface MobQuestObjective {
+  questId: string;
+  objectiveIndex: number;
+  current: number;
+  total: number;
+}
+
 /**
- * Template ids of mobs that advance one of the player's active, incomplete
- * objectives: kill targets, plus mobs that drop a needed collect item.
- * Nameplates mark these so the player knows "this one counts".
+ * The player's active, incomplete objectives this mob's template advances:
+ * kill objectives targeting it, plus collect objectives fed by its tagged
+ * loot. The mob tooltip renders one quest-title + progress pair per entry,
+ * so the player knows "this one counts" (and how far along they are).
  */
-export function questTargetMobIds(questLog: ReadonlyMap<string, QuestProgress>): Set<string> {
-  const ids = new Set<string>();
-  for (const { questId, obj } of incompleteObjectives(questLog)) {
-    if (obj.type === 'kill' && obj.targetMobId) ids.add(obj.targetMobId);
-    else if (obj.type === 'collect' && obj.itemId)
-      for (const id of mobsDroppingQuestItem(obj.itemId, questId)) ids.add(id);
+export function questObjectivesForMob(
+  questLog: ReadonlyMap<string, QuestProgress>,
+  mobTemplateId: string,
+): MobQuestObjective[] {
+  const out: MobQuestObjective[] = [];
+  const loot = MOBS[mobTemplateId]?.loot;
+  for (const { questId, objectiveIndex, obj } of incompleteObjectives(questLog)) {
+    const advances =
+      (obj.type === 'kill' && obj.targetMobId === mobTemplateId) ||
+      (obj.type === 'collect' &&
+        !!obj.itemId &&
+        !!loot?.some((l) => l.itemId === obj.itemId && l.questId === questId));
+    if (!advances) continue;
+    const qp = questLog.get(questId);
+    out.push({
+      questId,
+      objectiveIndex,
+      current: Math.min(qp?.counts[objectiveIndex] ?? 0, obj.count),
+      total: obj.count,
+    });
   }
-  return ids;
+  return out;
 }
 
 /**

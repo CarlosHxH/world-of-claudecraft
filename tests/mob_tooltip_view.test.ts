@@ -23,6 +23,7 @@ const model = (over: Partial<MobTooltipModel> = {}): MobTooltipModel => ({
   familyLabel: 'Beasts',
   color: '#ffe97a',
   hostile: true,
+  quests: [],
   ...over,
 });
 
@@ -56,6 +57,38 @@ describe('mobTooltipHtml', () => {
     const html = mobTooltipHtml(model({ name: '<script>alert(1)</script>' }), deps);
     expect(html).not.toContain('<script>');
     expect(html).toContain('&lt;script&gt;');
+  });
+
+  it('renders Questie-style quest lines between the family line and the reaction', () => {
+    const html = mobTooltipHtml(
+      model({
+        quests: [
+          { title: 'Wolves at the Door', progress: 'Forest Wolf slain: 3/8' },
+          { title: 'Another Errand', progress: 'Wolf Pelt: 1/4' },
+        ],
+      }),
+      deps,
+    );
+    expect(html).toContain('<div class="tt-quest-name">Wolves at the Door</div>');
+    expect(html).toContain('<div class="tt-quest-obj">Forest Wolf slain: 3/8</div>');
+    expect(html).toContain('<div class="tt-quest-name">Another Errand</div>');
+    // order: family line, then the quest lines, then the reaction line
+    const familyAt = html.indexOf('levelFamily');
+    const questAt = html.indexOf('tt-quest-name');
+    const reactionAt = html.indexOf('tt-red');
+    expect(familyAt).toBeGreaterThanOrEqual(0);
+    expect(questAt).toBeGreaterThan(familyAt);
+    expect(reactionAt).toBeGreaterThan(questAt);
+  });
+
+  it('escapes HTML inside quest lines and renders none when the list is empty', () => {
+    const evil = mobTooltipHtml(
+      model({ quests: [{ title: '<b>x</b>', progress: '<i>y</i>' }] }),
+      deps,
+    );
+    expect(evil).not.toContain('<b>');
+    expect(evil).toContain('&lt;b&gt;');
+    expect(mobTooltipHtml(model(), deps)).not.toContain('tt-quest-name');
   });
 
   it('same input produces the same output (deterministic, no DOM)', () => {

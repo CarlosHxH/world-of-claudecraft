@@ -1,12 +1,12 @@
 // Tests for the pure quest-objective target/location resolver
 // (src/sim/quest_targets.ts): the shared derivation behind the world map's
-// quest-area blobs and the nameplate quest-target mob marker. Driven with the
+// quest-area blobs and the mob tooltip's Questie-style quest lines. Driven with the
 // real content tables (QUESTS/CAMPS/MOBS/GROUND_OBJECTS) so the fixtures can
 // never drift from shipped content.
 
 import { describe, expect, it } from 'vitest';
 import { CAMPS, GROUND_OBJECTS, MOBS, QUESTS } from '../src/sim/data';
-import { questObjectiveAreas, questTargetMobIds } from '../src/sim/quest_targets';
+import { questObjectiveAreas, questObjectivesForMob } from '../src/sim/quest_targets';
 import type { QuestDef, QuestProgress } from '../src/sim/types';
 
 function activeLog(quest: QuestDef, counts?: number[]): Map<string, QuestProgress> {
@@ -61,38 +61,52 @@ function requireGroundObjectQuest(): { quest: QuestDef; itemId: string } {
   throw new Error('expected a quest fed by ground objects');
 }
 
-describe('questTargetMobIds', () => {
+describe('questObjectivesForMob (the mob tooltip quest lines)', () => {
   it('is empty with no active quests', () => {
-    expect(questTargetMobIds(new Map()).size).toBe(0);
+    expect(questObjectivesForMob(new Map(), 'forest_wolf')).toEqual([]);
   });
 
-  it('includes the kill objective target mob while incomplete', () => {
-    const { quest, mobId } = requireKillQuest();
-    expect(questTargetMobIds(activeLog(quest)).has(mobId)).toBe(true);
+  it('lists an incomplete kill objective with its live counts', () => {
+    const { quest, mobId, objIndex } = requireKillQuest();
+    const counts = quest.objectives.map(() => 0);
+    counts[objIndex] = 3;
+    const lines = questObjectivesForMob(activeLog(quest, counts), mobId);
+    expect(lines).toContainEqual({
+      questId: quest.id,
+      objectiveIndex: objIndex,
+      current: 3,
+      total: quest.objectives[objIndex].count,
+    });
+    // an unrelated mob gets no lines from this quest's kill objective
+    expect(
+      questObjectivesForMob(activeLog(quest, counts), 'no_such_mob').some(
+        (l) => l.questId === quest.id && l.objectiveIndex === objIndex,
+      ),
+    ).toBe(false);
   });
 
-  it('drops a target once its objective is complete (even while the quest is active)', () => {
+  it('drops the line once its objective is complete (even while the quest is active)', () => {
     const { quest, mobId, objIndex } = requireKillQuest();
     const counts = quest.objectives.map((o) => o.count);
     counts[objIndex] = quest.objectives[objIndex].count;
-    // every objective at full count: nothing left to point at
-    expect(questTargetMobIds(activeLog(quest, counts)).has(mobId)).toBe(false);
+    expect(questObjectivesForMob(activeLog(quest, counts), mobId)).toEqual([]);
   });
 
-  it('includes mobs whose tagged loot feeds a collect objective', () => {
+  it('lists collect objectives fed by the mob tagged loot', () => {
     const { quest, mobId } = requireLootCollectQuest();
-    expect(questTargetMobIds(activeLog(quest)).has(mobId)).toBe(true);
+    const lines = questObjectivesForMob(activeLog(quest), mobId);
+    expect(lines.some((l) => l.questId === quest.id)).toBe(true);
   });
 
-  it('contributes nothing for ready quests (turn-in is the ? marker, not a target)', () => {
-    const { quest } = requireKillQuest();
+  it('lists nothing for ready quests (turn-in is the ? marker, not a target)', () => {
+    const { quest, mobId } = requireKillQuest();
     const log: Map<string, QuestProgress> = new Map([
       [
         quest.id,
         { questId: quest.id, counts: quest.objectives.map((o) => o.count), state: 'ready' },
       ],
     ]);
-    expect(questTargetMobIds(log).size).toBe(0);
+    expect(questObjectivesForMob(log, mobId)).toEqual([]);
   });
 });
 
