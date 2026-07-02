@@ -211,13 +211,37 @@ operator-scoped `:id` routes are EXCLUDED from the owner clause and use an admin
 loader. Structured `bola_denied` deny logging. Denial status: 404 player-owned, 403
 admin/operator (see decision 5).
 
-### Security headers (Phase 21)
-`withSecurityHeaders` via a TOP-LEVEL wrapper on the createServer prefix ladder so it
-covers serveStatic, `/c/` SSR, `/p/` card, `/avatar`, sitemap, OAuth GET pages AND the
-route onion: nosniff, Referrer-Policy, Permissions-Policy deny-all, HSTS in prod, COOP/CORP
-same-origin, frame-ancestors/X-Frame-Options on OAuth, Cache-Control no-store on
-auth/token, strip Server + X-Powered-By. Explicitly NO COEP:require-corp (would break
-cross-origin GLB/HDRI). Full CSP is a SEPARATE Report-Only effort, NOT enforced here.
+### Security headers (Phase 21) - SHIPPED 2026-07-02
+`withSecurityHeaders` (server/http/middleware/security_headers.ts) is LIVE as the first
+statement of `routeHttpRequest`, ahead of `applyCorsAndPreflight`, so the headers span the
+FULL prefix ladder (static, `/c/` SSR, `/p/` card, `/avatar`, sitemap, /api, /admin/api,
+/oauth, /internal, the OPTIONS-204 short-circuit) on BOTH dispatch paths: a flag rollback
+drops nothing (pinned by tests/server/http/security_headers.test.ts under both modes).
+Set: nosniff, Referrer-Policy strict-origin-when-cross-origin, a Permissions-Policy deny
+list EXCLUDING fullscreen/gamepad (in use by the game client) and autoplay/screen-wake-lock,
+COOP + CORP same-origin, HSTS under NODE_ENV=production only, X-Frame-Options DENY +
+Cache-Control no-store on the /oauth/ prefix (the token/device_authorization JSON responses
+had no Cache-Control before), Server + X-Powered-By stripped. X-Frame-Options, NOT a
+frame-ancestors CSP: NO Content-Security-Policy header of any kind is emitted (full CSP is
+a SEPARATE Report-Only effort), and NO COEP:require-corp (would break cross-origin
+GLB/HDRI). All 88 goldens re-pinned (additive headers only); the securityHeadersAllSurfaces
+knownDeviation records the contract change.
+
+The 415 Content-Type gate (content_type.ts) and the cross-site Origin check
+(origin_check.ts) are mounted in the dispatch.ts onion (matched routes only, 'api' surface,
+mutating methods) and are LOG-ONLY pending the native-traffic audit: flipping
+API_CONTENT_TYPE_ENFORCE / API_ORIGIN_CHECK_ENFORCE to '1' enforces 415
+body.unsupported_media_type / 403 origin.cross_site. Exemptions read RouteDef metadata (the
+new RouteMeta.requestBody; POST /api/card is 'binary'); absent Content-Type and absent
+Origin ALWAYS pass (bearer-only surface, beacons + native clients). Delegate-served paths
+never see the gates (the registered-surface carve-out). Enforce-audit note: the origin
+gate's allow set is same-origin host + allowedCorsOrigin; it does NOT include the
+WEB_ORIGINS env list or the localhost dev regex isWebClientRequest accepts (deliberate,
+so that traffic appears in the audit records; reconcile or accept the 403 before the
+flip; an operator adding to WEB_ORIGINS alone does NOT widen this gate). Phase 23
+handoff (security review): the two mismatch sinks are un-throttled console.warn lines
+that run AHEAD of the route-local rate limiters, a latent log-amplification vector once
+API_DISPATCH=new; Phase 23's structured logger must sample or bound them.
 
 ### World Market realm-scope fix (Phase 20, own PR, migration-safety reviewer)
 Highest-consequence change (normal-operation item loss). Realm-scope the `world_state`

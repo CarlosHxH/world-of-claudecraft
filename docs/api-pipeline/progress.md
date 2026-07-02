@@ -55,7 +55,7 @@ Mark a row's Status as "In progress" or "Done" and fill Started / Completed
 | Phase 19 QA | Done | 2026-07-02 | 2026-07-02 |
 | Phase 20 | Done | 2026-07-02 | 2026-07-02 |
 | Phase 20 QA | Done | 2026-07-02 | 2026-07-02 |
-| Phase 21 | Not started |  |  |
+| Phase 21 | Done | 2026-07-02 | 2026-07-02 |
 | Phase 21 QA | Not started |  |  |
 | Phase 22 | Not started |  |  |
 | Phase 22 QA | Not started |  |  |
@@ -1070,17 +1070,98 @@ QA pass (phase-20-qa.md, 2026-07-02): PASS, apply-all, zero BLOCKING. Five paral
 ## Phase 21: Security headers top-level wrapper + Content-Type/Origin enforcement
 
 Deliverables:
-- [ ] withSecurityHeaders via a TOP-LEVEL wrapper covering serveStatic, /c/ SSR, /p/ card, /avatar, sitemap, OAuth GET pages AND the route onion: nosniff, Referrer-Policy, Permissions-Policy deny-all, HSTS in prod, COOP/CORP same-origin, frame-ancestors/X-Frame-Options on OAuth, no-store on auth/token, strip Server/X-Powered-By; explicitly NO COEP:require-corp
-- [ ] Enforce Content-Type: application/json on /api JSON bodies (415) in LOG-ONLY mode first, exempting binary/HTML/redirect routes, until the Capacitor native client is confirmed
-- [ ] A cheap Origin/Sec-Fetch-Site check on mutating endpoints (bearer-only, no cookies)
+- [x] withSecurityHeaders via a TOP-LEVEL wrapper covering serveStatic, /c/ SSR, /p/ card, /avatar, sitemap, OAuth GET pages AND the route onion: nosniff, Referrer-Policy, Permissions-Policy deny-all, HSTS in prod, COOP/CORP same-origin, frame-ancestors/X-Frame-Options on OAuth, no-store on auth/token, strip Server/X-Powered-By; explicitly NO COEP:require-corp
+- [x] Enforce Content-Type: application/json on /api JSON bodies (415) in LOG-ONLY mode first, exempting binary/HTML/redirect routes, until the Capacitor native client is confirmed
+- [x] A cheap Origin/Sec-Fetch-Site check on mutating endpoints (bearer-only, no cookies)
 
 QA:
-- [ ] Fixes applied
-- [ ] Tests added
-- [ ] Dead code removed
-- [ ] Reviews clean
+- [x] Fixes applied
+- [x] Tests added
+- [x] Dead code removed
+- [x] Reviews clean
 
 Notes:
+- Impl (2026-07-02). Three new modules under server/http/middleware/: security_headers.ts
+  (withSecurityHeaders, a plain top-level setter called as the FIRST statement of
+  routeHttpRequest in server/main.ts, ahead of applyCorsAndPreflight, so static, /c/ SSR,
+  /p/ card, /avatar, sitemap, all four API prefixes, the OPTIONS-204 short-circuit, and
+  BOTH dispatch arms carry identical headers; a flag-off pass is pinned by test),
+  content_type.ts (withContentType(route)) and origin_check.ts (withOriginCheck(route)),
+  the latter two mounted in dispatch.ts between withMetrics and the route-local middleware,
+  self-scoped to surface 'api' plus mutating methods, and existing ONLY on the matched-route
+  onion (the delegate-served carve-out: enforcement covers the registered surface; the 18b
+  late arrivals landed, so the remainder is the deliberately off-table set).
+- Header set: X-Content-Type-Options nosniff; Referrer-Policy strict-origin-when-cross-origin;
+  a Permissions-Policy denying 18 sensor/capability features that deliberately EXCLUDES
+  fullscreen and gamepad (in live use: src/main.ts requestFullscreen for the mobile landscape
+  lock, src/game/gamepad.ts) plus autoplay and screen-wake-lock (plausible game features);
+  COOP and CORP same-origin; HSTS max-age=31536000; includeSubDomains under
+  NODE_ENV=production ONLY; the /oauth/ prefix additionally gets X-Frame-Options DENY and
+  Cache-Control no-store (the /oauth/token and /oauth/device_authorization JSON responses
+  carried NO Cache-Control before this phase; the HTML pages already set their own).
+  X-Frame-Options was chosen over a frame-ancestors CSP because the packet forbids ANY
+  Content-Security-Policy header (full CSP is a separate report-only effort); NO COEP
+  (cross-origin GLB/HDRI).
+- 415 gate: LOG-ONLY default behind API_CONTENT_TYPE_ENFORCE ('1'/'true' enforces, read per
+  request). Exemption reads MATCHED RouteDef metadata, never a path list: the NEW
+  RouteMeta.requestBody ('json' | 'binary') with POST /api/card declared 'binary' (its error
+  ENVELOPE stays the surface problem+json; requestBody is the request-side classifier), plus
+  envelope binary/html/redirect defensively. Absent Content-Type always passes (bearer-only
+  surface). Audited: the site-presence/perf-report beacons SEND application/json, so they are
+  gated-but-passing, not exempted. Enforce throws HttpError(415, 'body.unsupported_media_type').
+- Origin check: LOG-ONLY default behind API_ORIGIN_CHECK_ENFORCE. Mutating methods only;
+  ABSENT Origin ALWAYS allowed (bearer-only, no cookies; beacons and native clients must keep
+  working); allowed = same-origin host (the Host/X-Forwarded-Host comparison mirroring
+  isWebClientRequest) OR allowedCorsOrigin (ONE allowlist shared with CORS: realm vhosts +
+  capacitor://localhost family + app://worldofclaudecraft family); the literal 'null' and any
+  unparseable Origin count as cross-site; Sec-Fetch-Site is recorded as audit context, never
+  gated on (an allowlisted realm origin is cross-site by its definition). Enforce throws
+  HttpError(403, 'origin.cross_site'). ENFORCE-AUDIT NOTE: the WEB_ORIGINS env allowlist and
+  the localhost dev regex that isWebClientRequest also accepts are NOT in this gate's allow
+  set; revisit at the flip.
+- Codes + i18n: body.unsupported_media_type and origin.cross_site appended (error_codes.ts,
+  EXPECTED_CODES, DETAILS, OAUTH_ERROR, STATUS_REASON 415). English errors.api.unsupportedMediaType
+  + errors.api.crossSiteOrigin added to shell.ts; the packet's "apiError.*" family does not
+  exist in the tree, errors.api.* is the real one. M16 (wordy English) required the five
+  non-Latin fills, which live in the i18n.locales OVERLAYS (the build reads the catalog for
+  en ONLY; shell.ts inline locale blocks are not consumed). userFacingApiError untouched
+  (Phase 22).
+- Harness: all 88 goldens re-pinned through routeHttpRequest (verified additive-headers-only,
+  zero body/status drift, byte-stable across two regens); the securityHeadersAllSurfaces
+  knownDeviation records the contract change (old-vs-new parity needs NO masking: both arms
+  share the one wrapper); onion_order.test.ts pins the two new global frames (log-only
+  records + full pass-through inside the real onion); route_dispatch.test.ts's local fakeRes
+  gained removeHeader (the wrapper's defensive Server/X-Powered-By strip); card_route.test.ts's
+  hand-built onion now applies withSecurityHeaders first, mirroring the real serving path its
+  byte-identical golden captures.
+- Validation: tsc clean; the three new suites (12 + 21 + 22 tests) green twice; parity,
+  characterization x2, completeness, ownership_coverage, known_deviations, surface_inventory,
+  onion_order, route_dispatch, error_codes, importable_spine green; full tests/server 68 files
+  / 1361 pass; S3 green; i18n_completeness (M16) green; ci:changed clean (also picked up a
+  pre-existing scripts/gate.mjs format drift from the QA-tooling commit, fixed); build:server
+  green; full npm run gate green pre-commit.
+- Reviews (all three dispatched in parallel, apply-all; a first dispatch died on a transient
+  auth outage and was re-run, zero verdicts inferred from the dead run): privacy-security-review
+  0 CRITICAL / 2 WARNING (fed the native-client coverage cross-platform-sync would otherwise
+  own; confirmed the beacons use fetch with application/json, NOT sendBeacon, and CORP
+  same-origin is safe because all web assets are same-origin); test-coverage-auditor 0 BLOCKING
+  / 2 SHOULD-FIX / 3 NIT; qa-checklist READY 0/0/2-NIT. ALL findings applied: the real card
+  RouteDef's requestBody 'binary' is now literal-pinned in card_route.test.ts (the enforce-flip
+  protection); the envelope binary/html/redirect exemption arms are tested in both modes; the
+  415/403 title + detail English prose literal-pinned; a DELETE mismatch case per gate proves
+  the mutating set is not POST-only; the WEB_ORIGINS divergence is documented IN
+  defaultAllowOrigin (an operator adding to WEB_ORIGINS does not widen the gate); the
+  un-throttled-sink log-amplification hazard is recorded as a Phase 23 handoff in state.md;
+  scripts/gate.mjs's pre-existing format drift split into its own chore commit. Adjudicated
+  no-change per the auditors' own recommendations: a dedicated new-dispatcher-served header
+  integration test (parity's both-modes full-header equality plus the migrated-route goldens
+  already pin it) and reconciling the origin allowlist with WEB_ORIGINS now (deliberately
+  deferred to the enforce-flip audit so that traffic stays visible in the log records). The
+  dedicated phase-21-qa.md gate is the SEPARATE next step.
+- Handoff: flipping either enforce flag is gated on the native/beacon traffic audit reading the
+  two log-only sinks in production; Phase 22 wires the two new codes into userFacingApiError;
+  Phase 24 may consolidate the flag reads into loadConfig; Phase 25's ladder deletion inherits
+  the top-level wrapper unchanged (it is dispatch-mode-independent by construction).
 
 ## Phase 22: REST i18n matcher + per-surface code-parity guard
 
