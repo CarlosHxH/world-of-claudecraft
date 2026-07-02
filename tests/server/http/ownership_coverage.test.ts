@@ -412,3 +412,82 @@ describe('ownership coverage: operator-scope deny-by-default sweep (Phase 17)', 
     expect(res.statusCode).not.toBe(422);
   });
 });
+
+// -------------------------------------------------------------------------
+// Admin auth-mounting sweep (Phase 17 QA).
+//
+// The operator sweep above proves the guards on the 12 :id routes; this sweep closes
+// the REST of the admin surface. Every admin route except the anonymous login must
+// mount requireAdmin, or an unauthenticated request would fall through to the handler
+// (an accidentally ungated admin read is a public data leak). There is no metadata
+// clause that can catch a forgotten gate (requireAdmin carries no meta marker), so
+// this functional sweep is the only deny-by-default guarantee for the non-:id admin
+// routes: it drives each route's real middleware chain with NO bearer at all and
+// asserts the legacy admin 401 short-circuits before the handler.
+// -------------------------------------------------------------------------
+
+// Every registered admin-surface route; login (the one anonymous route) is exempt.
+const adminSurfaceRoutes: RouteDef[] = apiRoutes.filter((route) => route.surface === 'admin');
+const authedAdminRoutes: RouteDef[] = adminSurfaceRoutes.filter(
+  (route) => !(route.method === 'POST' && route.path === '/admin/api/login'),
+);
+
+describe('admin auth-mounting sweep: every non-login admin route 401s an unauthenticated request (Phase 17 QA)', () => {
+  beforeEach(() => {
+    // A stubbed runtime + a passing db seam so a route that DID reach its handler (a
+    // regression where requireAdmin is missing) fails the 401 assertion cleanly
+    // instead of throwing on an unconfigured runtime or touching real Postgres.
+    configureAdminRuntime({} as AdminRuntime);
+    installAdminDb();
+  });
+
+  afterEach(() => {
+    resetAdminDbForTests();
+    resetAdminRuntimeForTests();
+    vi.restoreAllMocks();
+  });
+
+  it('selects the full admin surface minus exactly the anonymous login', () => {
+    expect(adminSurfaceRoutes.length).toBeGreaterThanOrEqual(32);
+    expect(authedAdminRoutes.length).toBe(adminSurfaceRoutes.length - 1);
+  });
+
+  for (const route of authedAdminRoutes) {
+    it(`refuses an unauthenticated ${route.method} ${route.path} with the legacy admin 401 before the handler`, async () => {
+      // No authorization header at all: the gate must 401 db-free (bearerToken is
+      // null, so accountForToken is never consulted) and short-circuit the chain.
+      const ctx = fakeCtx({
+        method: route.method,
+        url: concretePath(route.path),
+        params: { id: REQUESTED_ID, action: 'suspend' },
+      });
+      const { res, handler } = await runRouteWithErrors(route, ctx);
+
+      expect(res.statusCode).toBe(401);
+      expect(handler).not.toHaveBeenCalled();
+      expect(JSON.parse(res.body)).toEqual(ADMIN_AUTH_REQUIRED);
+    });
+  }
+
+  it('negative control: an admin route MISSING requireAdmin serves an unauthenticated request (200), so the sweep is non-vacuous', async () => {
+    // A synthetic admin-surface route with NO gate at all: the unauthenticated
+    // request reaches its handler and writes 200, proving the sweep's 401 assertion
+    // actually detects requireAdmin's presence on every real route.
+    const ungatedRoute: RouteDef = {
+      method: 'GET',
+      path: '/admin/api/synthetic-ungated',
+      surface: 'admin',
+      middleware: [],
+      handler: async (ctx) => {
+        json(ctx.res, 200, { success: true, data: { ok: true }, error: null });
+      },
+      meta: { envelope: 'admin' },
+    };
+    const ctx = fakeCtx({ method: 'GET', url: ungatedRoute.path });
+    const { res, handler } = await runRouteWithErrors(ungatedRoute, ctx);
+
+    expect(res.statusCode).toBe(200);
+    expect(handler).toHaveBeenCalledTimes(1);
+    expect(res.statusCode).not.toBe(401);
+  });
+});

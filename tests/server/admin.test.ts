@@ -763,3 +763,542 @@ describe('admin route wiring (apiRegistry.resolve)', () => {
     expect(apiRegistry.resolve('GET', '/admin/api/does-not-exist').kind).toBe('notFound');
   });
 });
+
+// ---------------------------------------------------------------------------
+// 10. Migrated read handlers: response bodies + query semantics (QA gate).
+// The authed parity harness defers every admin read (pool-less), so these tests
+// are what pins each migrated read's byte-parity with its frozen legacy branch.
+// ---------------------------------------------------------------------------
+
+describe('migrated read handlers (QA gate parity coverage)', () => {
+  it('online returns the live sessions as { players }', async () => {
+    authedAdminDb();
+    installAdminRuntime({ liveSessions: vi.fn(() => [{ name: 'Indexa', level: 13 }]) });
+    const r = await runRoute('GET', '/admin/api/online', { headers: { authorization: BEARER } });
+    expect(r.status).toBe(200);
+    expect(r.body).toEqual({
+      success: true,
+      data: { players: [{ name: 'Indexa', level: 13 }] },
+      error: null,
+    });
+  });
+
+  it('suspicious-players returns the bot-detector flags as { players }', async () => {
+    authedAdminDb();
+    installAdminRuntime({ suspiciousPlayers: vi.fn(() => [{ name: 'Botly', score: 0.9 }]) });
+    const r = await runRoute('GET', '/admin/api/suspicious-players', {
+      headers: { authorization: BEARER },
+    });
+    expect(r.body).toEqual({
+      success: true,
+      data: { players: [{ name: 'Botly', score: 0.9 }] },
+      error: null,
+    });
+  });
+
+  it('online-history passes the range query through (default 30d)', async () => {
+    const onlineHistory = vi.fn(async (range: string) => ({ range, buckets: [] }));
+    authedAdminDb({ onlineHistory });
+    installAdminRuntime();
+    const r = await runRoute('GET', '/admin/api/online-history', {
+      url: '/admin/api/online-history?range=7d',
+      headers: { authorization: BEARER },
+    });
+    expect(onlineHistory).toHaveBeenCalledWith('7d');
+    expect(r.body).toEqual({ success: true, data: { range: '7d', buckets: [] }, error: null });
+    await runRoute('GET', '/admin/api/online-history', { headers: { authorization: BEARER } });
+    expect(onlineHistory).toHaveBeenLastCalledWith('30d');
+  });
+
+  it('activity reads the 30-day window and keeps the days/registrations/sessions/classes/levels shape', async () => {
+    const registrationsByDay = vi.fn(async () => [{ day: 'd', count: 1 }]);
+    const sessionsByDay = vi.fn(async () => [{ day: 'd', count: 2 }]);
+    authedAdminDb({
+      registrationsByDay,
+      sessionsByDay,
+      classDistribution: async () => [{ class: 'warrior', count: 3 }],
+      levelDistribution: async () => [{ level: 1, count: 4 }],
+    });
+    installAdminRuntime();
+    const r = await runRoute('GET', '/admin/api/activity', { headers: { authorization: BEARER } });
+    expect(registrationsByDay).toHaveBeenCalledWith(30);
+    expect(sessionsByDay).toHaveBeenCalledWith(30);
+    expect(r.body).toEqual({
+      success: true,
+      data: {
+        days: 30,
+        registrations: [{ day: 'd', count: 1 }],
+        sessions: [{ day: 'd', count: 2 }],
+        classes: [{ class: 'warrior', count: 3 }],
+        levels: [{ level: 1, count: 4 }],
+      },
+      error: null,
+    });
+  });
+
+  it('perf/summary passes the hours query through (default 24)', async () => {
+    const clientPerfSummary = vi.fn(async (hours: number) => ({ hours }));
+    authedAdminDb({ clientPerfSummary });
+    installAdminRuntime();
+    await runRoute('GET', '/admin/api/perf/summary', {
+      url: '/admin/api/perf/summary?hours=12',
+      headers: { authorization: BEARER },
+    });
+    expect(clientPerfSummary).toHaveBeenCalledWith(12);
+    await runRoute('GET', '/admin/api/perf/summary', { headers: { authorization: BEARER } });
+    expect(clientPerfSummary).toHaveBeenLastCalledWith(24);
+  });
+
+  it('perf/raw preserves the keyset math: a full page reports hasMore with the last-row cursor', async () => {
+    const clientPerfRaw = vi.fn(async () => [{ id: 9 }, { id: 7 }]);
+    authedAdminDb({ clientPerfRaw });
+    installAdminRuntime();
+    const r = await runRoute('GET', '/admin/api/perf/raw', {
+      url: '/admin/api/perf/raw?hours=48&limit=2&beforeId=50',
+      headers: { authorization: BEARER },
+    });
+    expect(clientPerfRaw).toHaveBeenCalledWith(48, 2, 50);
+    // Two rows on a limit of 2: the page is full, so hasMore is true and the cursor
+    // is the LAST row's id (keyset pagination), exactly the legacy math.
+    expect(r.body).toEqual({
+      success: true,
+      data: { rows: [{ id: 9 }, { id: 7 }], nextBeforeId: 7, hasMore: true },
+      error: null,
+    });
+  });
+
+  it('perf/raw reports hasMore false on a short page and a null cursor on an empty one', async () => {
+    authedAdminDb({ clientPerfRaw: async () => [{ id: 9 }] });
+    installAdminRuntime();
+    const short = await runRoute('GET', '/admin/api/perf/raw', {
+      url: '/admin/api/perf/raw?limit=2',
+      headers: { authorization: BEARER },
+    });
+    expect(short.body).toEqual({
+      success: true,
+      data: { rows: [{ id: 9 }], nextBeforeId: 9, hasMore: false },
+      error: null,
+    });
+    const clientPerfRaw = vi.fn(async () => []);
+    authedAdminDb({ clientPerfRaw });
+    const empty = await runRoute('GET', '/admin/api/perf/raw', {
+      headers: { authorization: BEARER },
+    });
+    // An absent beforeId reaches the db read as undefined (a fresh first page).
+    expect(clientPerfRaw).toHaveBeenCalledWith(24, 100, undefined);
+    expect(empty.body).toEqual({
+      success: true,
+      data: { rows: [], nextBeforeId: null, hasMore: false },
+      error: null,
+    });
+  });
+
+  it('shared-ips online=1 serves the live slice: sorted, paged, with per-row blocked flags', async () => {
+    authedAdminDb();
+    installAdminRuntime({
+      liveSharedIps: vi.fn(() => [
+        { ip: '1.1.1.1', accountCount: 1, lastSeenAt: '2026-01-01' },
+        { ip: '2.2.2.2', accountCount: 3, lastSeenAt: '2026-01-02' },
+        { ip: '3.3.3.3', accountCount: 2, lastSeenAt: '2026-01-03' },
+      ]),
+      isIpBlocked: vi.fn((ip: string) => ip === '2.2.2.2'),
+    });
+    const r = await runRoute('GET', '/admin/api/shared-ips', {
+      url: '/admin/api/shared-ips?online=1&page=1&limit=2',
+      headers: { authorization: BEARER },
+    });
+    // Default sort: accountCount desc; page 1 with limit 2 slices the top two rows.
+    expect(r.body).toEqual({
+      success: true,
+      data: {
+        rows: [
+          { ip: '2.2.2.2', accountCount: 3, lastSeenAt: '2026-01-02', blocked: true },
+          { ip: '3.3.3.3', accountCount: 2, lastSeenAt: '2026-01-03', blocked: false },
+        ],
+        total: 3,
+        page: 1,
+        limit: 2,
+      },
+      error: null,
+    });
+  });
+
+  it('shared-ips DB branch passes page/limit/sort/dir through and maps blocked per row', async () => {
+    const listSharedIps = vi.fn(async (page: number, limit: number, sort: string, dir: string) => ({
+      rows: [{ ip: '9.9.9.9', accountCount: 2, lastSeenAt: '2026-01-01' }],
+      total: 1,
+      page,
+      limit,
+      sort,
+      dir,
+    }));
+    authedAdminDb({ listSharedIps });
+    installAdminRuntime({ isIpBlocked: vi.fn(() => true) });
+    const r = await runRoute('GET', '/admin/api/shared-ips', {
+      url: '/admin/api/shared-ips?page=2&limit=5&sort=last_seen&dir=asc',
+      headers: { authorization: BEARER },
+    });
+    expect(listSharedIps).toHaveBeenCalledWith(2, 5, 'last_seen', 'asc');
+    expect(r.body).toEqual({
+      success: true,
+      data: {
+        rows: [{ ip: '9.9.9.9', accountCount: 2, lastSeenAt: '2026-01-01', blocked: true }],
+        total: 1,
+        page: 2,
+        limit: 5,
+        sort: 'last_seen',
+        dir: 'asc',
+      },
+      error: null,
+    });
+  });
+
+  it('ip-associations maps live online flags onto the accounts and adds the blocked flag', async () => {
+    const associationsForIp = vi.fn(async (ip: string, page: number, limit: number) => ({
+      ip,
+      accounts: [{ accountId: 2 }, { accountId: 3 }],
+      total: 2,
+      page,
+      limit,
+    }));
+    authedAdminDb({ cleanIp: () => '9.9.9.9', associationsForIp });
+    installAdminRuntime({
+      liveAccountIds: vi.fn(() => new Set([2])),
+      isIpBlocked: vi.fn(() => true),
+    });
+    const r = await runRoute('GET', '/admin/api/ip-associations', {
+      url: '/admin/api/ip-associations?ip=9.9.9.9&page=1&limit=25',
+      headers: { authorization: BEARER },
+    });
+    expect(associationsForIp).toHaveBeenCalledWith('9.9.9.9', 1, 25);
+    expect(r.body).toEqual({
+      success: true,
+      data: {
+        ip: '9.9.9.9',
+        accounts: [
+          { accountId: 2, online: true },
+          { accountId: 3, online: false },
+        ],
+        total: 2,
+        page: 1,
+        limit: 25,
+        blocked: true,
+      },
+      error: null,
+    });
+  });
+
+  it('moderation/queue passes the live account ids to the queue read', async () => {
+    const live = new Set([1, 2]);
+    const moderationQueue = vi.fn(async () => [{ accountId: 1, openReports: 2 }]);
+    authedAdminDb({ moderationQueue });
+    installAdminRuntime({ liveAccountIds: vi.fn(() => live) });
+    const r = await runRoute('GET', '/admin/api/moderation/queue', {
+      headers: { authorization: BEARER },
+    });
+    expect(moderationQueue).toHaveBeenCalledWith(live);
+    expect(r.body).toEqual({
+      success: true,
+      data: { rows: [{ accountId: 1, openReports: 2 }] },
+      error: null,
+    });
+  });
+
+  it('moderation/accounts/:id composes the account/reports/chat/blockedIps detail', async () => {
+    const detail = {
+      id: 5,
+      username: 'bob',
+      lastLoginIp: '1.1.1.1',
+      recentSessions: [{ ip: '2.2.2.2' }, { ip: null }],
+    };
+    authedAdminDb({
+      accountDetail: async () => detail,
+      moderationReportsForAccount: async () => [{ id: 11 }],
+      chatModerationForAccount: async () => ({ strikes: 1 }),
+    });
+    installAdminRuntime({
+      liveAccountIds: vi.fn(() => new Set([5])),
+      isIpBlocked: vi.fn((ip: string) => ip === '2.2.2.2'),
+    });
+    const r = await runRoute('GET', '/admin/api/moderation/accounts/:id', {
+      headers: { authorization: BEARER },
+      params: { id: '5' },
+    });
+    // The detail spreads whole (online merged in); blockedIps keeps only the
+    // login/session IPs the live blocker recognizes.
+    expect(r.body).toEqual({
+      success: true,
+      data: {
+        account: { ...detail, online: true },
+        reports: [{ id: 11 }],
+        chat: { strikes: 1 },
+        blockedIps: ['2.2.2.2'],
+      },
+      error: null,
+    });
+  });
+
+  it('404s the moderation detail for an absent account (handler-owned prose)', async () => {
+    authedAdminDb({
+      accountDetail: async () => null,
+      moderationReportsForAccount: async () => [],
+      chatModerationForAccount: async () => ({}),
+    });
+    installAdminRuntime();
+    const r = await runRoute('GET', '/admin/api/moderation/accounts/:id', {
+      headers: { authorization: BEARER },
+      params: { id: '5' },
+    });
+    expect(r.status).toBe(404);
+    expect(r.body).toEqual({ success: false, data: null, error: 'account not found' });
+  });
+
+  it('accounts/:id merges the live online flag into the detail', async () => {
+    authedAdminDb({ accountDetail: async () => ({ id: 5, username: 'bob' }) });
+    installAdminRuntime({ liveAccountIds: vi.fn(() => new Set([5])) });
+    const r = await runRoute('GET', '/admin/api/accounts/:id', {
+      headers: { authorization: BEARER },
+      params: { id: '5' },
+    });
+    expect(r.body).toEqual({
+      success: true,
+      data: { id: 5, username: 'bob', online: true },
+      error: null,
+    });
+  });
+
+  it('chat-filter returns the soft/hard word lists, the config, and the moderated accounts', async () => {
+    const listFilterWords = vi.fn(async (tier: string) =>
+      tier === 'soft' ? [{ id: 1, word: 'darn' }] : [{ id: 2, word: 'worse' }],
+    );
+    authedAdminDb({
+      listFilterWords,
+      getFilterConfig: async () => ({ warningsBeforeMute: 3 }),
+      chatModeratedAccounts: async () => [{ accountId: 9 }],
+    });
+    installAdminRuntime();
+    const r = await runRoute('GET', '/admin/api/chat-filter', {
+      headers: { authorization: BEARER },
+    });
+    expect(listFilterWords).toHaveBeenCalledWith('soft');
+    expect(listFilterWords).toHaveBeenCalledWith('hard');
+    expect(r.body).toEqual({
+      success: true,
+      data: {
+        soft: [{ id: 1, word: 'darn' }],
+        hard: [{ id: 2, word: 'worse' }],
+        config: { warningsBeforeMute: 3 },
+        accounts: [{ accountId: 9 }],
+      },
+      error: null,
+    });
+  });
+
+  it('bug-reports/:id/screenshot returns the on-demand screenshot payload', async () => {
+    const getBugReportScreenshot = vi.fn(async () => 'data:image/png;base64,abc');
+    authedAdminDb({ getBugReportScreenshot });
+    installAdminRuntime();
+    const r = await runRoute('GET', '/admin/api/bug-reports/:id/screenshot', {
+      headers: { authorization: BEARER },
+      params: { id: '5' },
+    });
+    expect(getBugReportScreenshot).toHaveBeenCalledWith(5);
+    expect(r.body).toEqual({
+      success: true,
+      data: { screenshot: 'data:image/png;base64,abc' },
+      error: null,
+    });
+  });
+
+  it('characters passes search/sort/dir/page/limit through (dir whitelisted, sort defaults to level)', async () => {
+    const listCharacters = vi.fn(async () => ({ rows: [], total: 0 }));
+    authedAdminDb({ listCharacters });
+    installAdminRuntime();
+    await runRoute('GET', '/admin/api/characters', {
+      url: '/admin/api/characters?search=bob&sort=name&dir=asc&page=2&limit=10',
+      headers: { authorization: BEARER },
+    });
+    expect(listCharacters).toHaveBeenCalledWith('bob', 'name', 'asc', 2, 10);
+    await runRoute('GET', '/admin/api/characters', {
+      // Anything but asc coerces to desc; search/sort/page/limit take their defaults.
+      url: '/admin/api/characters?dir=sideways',
+      headers: { authorization: BEARER },
+    });
+    expect(listCharacters).toHaveBeenLastCalledWith('', 'level', 'desc', 1, 25);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// 11. Migrated write handlers: remaining side effects + branches (QA gate).
+// ---------------------------------------------------------------------------
+
+describe('migrated write handlers + side effects (QA gate parity coverage)', () => {
+  it('lift-mute records the lift and pushes the live unmute', async () => {
+    const liftAccountChatMute = vi.fn(async () => {});
+    authedAdminDb({ liftAccountChatMute });
+    const rt = installAdminRuntime();
+    const r = await runRoute('POST', '/admin/api/moderation/accounts/:id/lift-mute', {
+      headers: { authorization: BEARER },
+      params: { id: '5' },
+      body: { reason: 'appealed' },
+    });
+    expect(r.status).toBe(200);
+    expect(r.body).toEqual({ success: true, data: { ok: true }, error: null });
+    expect(liftAccountChatMute).toHaveBeenCalledWith({
+      accountId: 5,
+      adminAccountId: ADMIN_ACCOUNT_ID,
+      reason: 'appealed',
+    });
+    expect(rt.liftChatMuteLive).toHaveBeenCalledWith(5);
+  });
+
+  it('note appends the audit note from body.reason (the legacy field name)', async () => {
+    const addAccountNote = vi.fn(async () => {});
+    authedAdminDb({ addAccountNote });
+    installAdminRuntime();
+    const r = await runRoute('POST', '/admin/api/moderation/accounts/:id/note', {
+      headers: { authorization: BEARER },
+      params: { id: '5' },
+      body: { reason: 'watch this one' },
+    });
+    expect(r.body).toEqual({ success: true, data: { ok: true }, error: null });
+    expect(addAccountNote).toHaveBeenCalledWith({
+      accountId: 5,
+      adminAccountId: ADMIN_ACCOUNT_ID,
+      note: 'watch this one',
+    });
+  });
+
+  it('a suspend actually sends the security-incident mail with the derived reason + until', async () => {
+    const target = { id: 5, username: 'x', email: 'x@y.z', locale: 'en', marketing_opt_in: false };
+    const emailSecurityIncident = vi.fn();
+    authedAdminDb({
+      moderateAccount: async () => {},
+      accountMailTarget: async () => target,
+      emailSecurityIncident,
+    });
+    installAdminRuntime();
+    const r = await runRoute('POST', '/admin/api/moderation/accounts/:id/:action', {
+      headers: { authorization: BEARER },
+      params: { id: '5', action: 'suspend' },
+      body: { reason: '  griefing ', expiresAt: '2030-02-01' },
+    });
+    expect(r.status).toBe(200);
+    // The mail rides a floating void promise chain; flush it before asserting.
+    await new Promise((resolve) => setImmediate(resolve));
+    // The reason is trimmed; a suspend carries the expiresAt string as the until.
+    expect(emailSecurityIncident).toHaveBeenCalledWith(target, 'suspend', 'griefing', '2030-02-01');
+  });
+
+  it('a ban without a reason mails "not specified" + "permanent"', async () => {
+    const target = { id: 5, username: 'x', email: 'x@y.z', locale: 'en', marketing_opt_in: false };
+    const emailSecurityIncident = vi.fn();
+    authedAdminDb({
+      moderateAccount: async () => {},
+      accountMailTarget: async () => target,
+      emailSecurityIncident,
+    });
+    installAdminRuntime();
+    await runRoute('POST', '/admin/api/moderation/accounts/:id/:action', {
+      headers: { authorization: BEARER },
+      params: { id: '5', action: 'ban' },
+      body: {},
+    });
+    await new Promise((resolve) => setImmediate(resolve));
+    expect(emailSecurityIncident).toHaveBeenCalledWith(target, 'ban', 'not specified', 'permanent');
+  });
+
+  it('no mail is sent when the account has no mail target', async () => {
+    const emailSecurityIncident = vi.fn();
+    authedAdminDb({
+      moderateAccount: async () => {},
+      accountMailTarget: async () => null,
+      emailSecurityIncident,
+    });
+    installAdminRuntime();
+    await runRoute('POST', '/admin/api/moderation/accounts/:id/:action', {
+      headers: { authorization: BEARER },
+      params: { id: '5', action: 'suspend' },
+      body: {},
+    });
+    await new Promise((resolve) => setImmediate(resolve));
+    expect(emailSecurityIncident).not.toHaveBeenCalled();
+  });
+
+  it('a successful blocked-ips/delete reloads the live block list', async () => {
+    const removeBlockedIp = vi.fn(async () => true);
+    authedAdminDb({ cleanIp: () => '9.9.9.9', removeBlockedIp });
+    const rt = installAdminRuntime();
+    const r = await runRoute('POST', '/admin/api/blocked-ips/delete', {
+      headers: { authorization: BEARER },
+      body: { ip: '9.9.9.9' },
+    });
+    expect(r.body).toEqual({ success: true, data: { ok: true }, error: null });
+    expect(removeBlockedIp).toHaveBeenCalledWith('9.9.9.9', ADMIN_ACCOUNT_ID);
+    expect(rt.reloadBlockedIps).toHaveBeenCalledTimes(1);
+  });
+
+  it('a successful word delete reloads the live filter', async () => {
+    const removeFilterWord = vi.fn(async () => true);
+    authedAdminDb({ removeFilterWord });
+    const rt = installAdminRuntime();
+    const r = await runRoute('POST', '/admin/api/chat-filter/words/:id/delete', {
+      headers: { authorization: BEARER },
+      params: { id: '5' },
+      body: {},
+    });
+    expect(r.body).toEqual({ success: true, data: { ok: true }, error: null });
+    expect(removeFilterWord).toHaveBeenCalledWith(5);
+    expect(rt.reloadChatFilter).toHaveBeenCalledTimes(1);
+  });
+
+  it('chat-filter/config returns the UPDATED CONFIG object (not ok:true) and reloads the filter', async () => {
+    const updateFilterConfig = vi.fn(async () => ({
+      warningsBeforeMute: 2,
+      muteLadderSeconds: [60, 300],
+    }));
+    authedAdminDb({ updateFilterConfig });
+    const rt = installAdminRuntime();
+    const r = await runRoute('POST', '/admin/api/chat-filter/config', {
+      headers: { authorization: BEARER },
+      body: { warningsBeforeMute: 2, muteLadderSeconds: [60, 300] },
+    });
+    expect(updateFilterConfig).toHaveBeenCalledWith({
+      warningsBeforeMute: 2,
+      muteLadderSeconds: [60, 300],
+    });
+    expect(rt.reloadChatFilter).toHaveBeenCalledTimes(1);
+    // The config route answers with the updated config itself, a distinct body shape.
+    expect(r.body).toEqual({
+      success: true,
+      data: { warningsBeforeMute: 2, muteLadderSeconds: [60, 300] },
+      error: null,
+    });
+  });
+
+  it('404s a reset-strikes for an unknown account and skips the live push', async () => {
+    authedAdminDb({ resetChatStrikes: async () => false });
+    const rt = installAdminRuntime();
+    const r = await runRoute('POST', '/admin/api/moderation/accounts/:id/reset-strikes', {
+      headers: { authorization: BEARER },
+      params: { id: '5' },
+      body: {},
+    });
+    expect(r.status).toBe(404);
+    expect(r.body).toEqual({ success: false, data: null, error: 'account not found' });
+    expect(rt.resetChatStrikesLive).not.toHaveBeenCalled();
+  });
+
+  it('a successful report ignore resolves ok:true with the note from the body', async () => {
+    const ignoreReport = vi.fn(async () => true);
+    authedAdminDb({ ignoreReport });
+    installAdminRuntime();
+    const r = await runRoute('POST', '/admin/api/moderation/reports/:id/ignore', {
+      headers: { authorization: BEARER },
+      params: { id: '5' },
+      body: { note: 'duplicate' },
+    });
+    expect(r.body).toEqual({ success: true, data: { ok: true }, error: null });
+    expect(ignoreReport).toHaveBeenCalledWith(5, ADMIN_ACCOUNT_ID, 'duplicate');
+  });
+});
