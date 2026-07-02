@@ -23,6 +23,7 @@
 // loader.
 
 import { routes as accountRoutes } from '../account';
+import { routes as adminRoutes } from '../admin';
 import { routes as authRoutes } from '../auth_routes';
 import { routes as characterRoutes } from '../characters';
 import { routes as discordRoutes } from '../discord';
@@ -82,6 +83,7 @@ export const apiRoutes: readonly RouteDef[] = [
   ...walletRoutes,
   ...reportsRoutes,
   ...discordRoutes,
+  ...adminRoutes,
 ];
 
 /**

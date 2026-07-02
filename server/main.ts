@@ -30,7 +30,7 @@ import {
   handleEmailUnsubscribe,
   verifyLoginTwoFactor,
 } from './account';
-import { handleAdminApi } from './admin';
+import { configureAdminRuntime, handleAdminApi } from './admin';
 import { currentSitePresenceUsers, recordSitePresenceSample } from './admin_db';
 import {
   hashPassword,
@@ -110,7 +110,12 @@ import { topContributors } from './github_contributors';
 import { pruneGitHubOAuthStates } from './github_db';
 import { handleClientError } from './http/client_error';
 import { DEFAULT_DISPATCH, type DispatchMode, loadConfig } from './http/config';
-import { type ApiDispatcher, createApiDispatcher, selectApiEntry } from './http/dispatch';
+import {
+  type ApiDelegate,
+  type ApiDispatcher,
+  createApiDispatcher,
+  selectApiEntry,
+} from './http/dispatch';
 import { apiRegistry } from './http/registry';
 import { isUniqueViolation, json, readBody } from './http_util';
 import { handleInternalApi } from './internal';
@@ -1563,6 +1568,13 @@ configureDiscordRuntime({
   grantCosmetic: (accountId, chromaId) => game.grantMechChromaToAccount(accountId, chromaId),
 });
 
+// Inject the game-session methods the ported admin routes (server/admin.ts) call for
+// their live reads + side effects (adminStats/liveSessions/disconnectAccount/muteAccountChat/
+// reloadChatFilter/reloadBlockedIps/disconnectByIp/...). AdminRuntime is a subset of
+// GameServer, so the live game satisfies it directly. The legacy handleAdminApi ladder
+// stays intact as the flag-off rollback path (and is the admin dispatcher's delegate).
+configureAdminRuntime(game);
+
 // The in-house dispatcher that fronts the legacy handleApi ladder via a per-path
 // delegate. Built once; a path the registry owns (Phase 10 migrated the public
 // reads) runs the onion, every un-migrated path delegates to handleApi UNCHANGED.
@@ -1575,8 +1587,23 @@ const apiDispatcher = createApiDispatcher({ registry: apiRegistry, delegate: han
 // flag via loadConfig once at boot. Flipping the production default to 'new' is Phase 25.
 let apiEntry: ApiDispatcher = selectApiEntry(DEFAULT_DISPATCH, apiDispatcher, handleApi);
 
+// The /admin/api surface gets its OWN flag-gated dispatcher over the SAME registry
+// (admin paths are a disjoint '/admin' first segment, so they never collide with the
+// /api family) whose DELEGATE is the legacy handleAdminApi ladder (bound to the live
+// game). Under API_DISPATCH 'new' a matched admin RouteDef runs the onion; every
+// unmatched admin path (an unknown endpoint, a wrong method, a HEAD) delegates to
+// handleAdminApi UNCHANGED, so behavior stays byte-identical until Phase 25 removes it.
+const adminLegacy: ApiDelegate = (req, res) => handleAdminApi(req, res, game);
+const adminApiDispatcher = createApiDispatcher({ registry: apiRegistry, delegate: adminLegacy });
+let adminApiEntry: ApiDispatcher = selectApiEntry(
+  DEFAULT_DISPATCH,
+  adminApiDispatcher,
+  adminLegacy,
+);
+
 function setApiDispatchMode(mode: DispatchMode): void {
   apiEntry = selectApiEntry(mode, apiDispatcher, handleApi);
+  adminApiEntry = selectApiEntry(mode, adminApiDispatcher, adminLegacy);
 }
 
 // Test-only override so the parity harness can drive routeHttpRequest under both
@@ -1622,8 +1649,10 @@ function applyCorsAndPreflight(
 // handlers, the CORS + dispatch helpers) is module-level, so it moves cleanly.
 // The exact prefix order, the url-vs-path arm asymmetry, the CORS + OPTIONS-204
 // short-circuit position, and every fire-and-forget `void` are preserved 1:1; the
-// only change from Phase 8 is the /api arm now routes through apiEntry (the flag-
-// gated dispatcher) instead of calling handleApi directly.
+// only change from Phase 8 is the /api arm routes through apiEntry and the /admin/api
+// arm through adminApiEntry (both flag-gated dispatchers) instead of calling handleApi
+// / handleAdminApi directly; each dispatcher delegates its own unmatched paths to the
+// same legacy handler, so behavior is byte-identical until Phase 25.
 export function routeHttpRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
   const url = req.url ?? '';
   const path = url.split('?')[0];
@@ -1634,7 +1663,7 @@ export function routeHttpRequest(req: http.IncomingMessage, res: http.ServerResp
   const publicCorsPath = isPublicCorsPath(path);
   if (applyCorsAndPreflight(req, res, isApi, publicCorsPath)) return;
   if (url.startsWith('/internal/')) void handleInternalApi(req, res, game);
-  else if (url.startsWith('/admin/api/')) void handleAdminApi(req, res, game);
+  else if (url.startsWith('/admin/api/')) void adminApiEntry(req, res);
   else if (url.startsWith('/api/')) void apiEntry(req, res);
   else if (url.startsWith('/oauth/')) void handleOAuth(req, res);
   else if (req.method === 'GET' && url.startsWith('/p/')) void handleCardRoutes(req, res);
