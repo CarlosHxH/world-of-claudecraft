@@ -27,7 +27,7 @@ describe('withCors: api allow class', () => {
     await compose([withCors('api', () => true), async (_ctx, next) => next()])(ctx);
     expect(res.headers['access-control-allow-origin']).toBe('https://claudemoon.example.com');
     expect(res.headers.vary).toBe('Origin');
-    expect(res.headers['access-control-allow-methods']).toBe('GET, POST, DELETE, OPTIONS');
+    expect(res.headers['access-control-allow-methods']).toBe('GET, POST, PUT, DELETE, OPTIONS');
     expect(res.headers['access-control-allow-headers']).toBe('Authorization, Content-Type');
     expect(res.headers['access-control-max-age']).toBe('600');
   });

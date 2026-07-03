@@ -469,6 +469,81 @@ describe('/api dispatch parity (legacy flag vs new flag)', () => {
     expect(stableStringify(newCap)).toBe(stableStringify(oldCap));
   });
 
+  // The v0.20.0 map editor family is path-masked by its two deviation entries
+  // (mapsAssetsRateLimitedBodyToCode / mapsAssetsIdParamDecode), so its
+  // byte-identical db-free contracts are re-pinned here with dedicated
+  // assertions, mirroring the /api/card re-pin above.
+
+  it('the map-save pre-auth 413 + Connection: close is identical old-vs-new (re-pins the masked POST /api/maps)', async () => {
+    const { oldCap, newCap } = await captureBothModes(() =>
+      makeReq({
+        method: 'POST',
+        url: '/api/maps',
+        headers: { [HEADER_CONTENT_LENGTH]: OVERSIZE_CONTENT_LENGTH },
+      }),
+    );
+    expect(oldCap.status).toBe(413);
+    expect(JSON.parse(String(oldCap.body)).error).toBe('map_too_large');
+    expect(oldCap.headers.connection).toBe('close');
+    expect(newCap.headers.connection).toBe('close');
+    expect(stableStringify(newCap)).toBe(stableStringify(oldCap));
+  });
+
+  it('the asset-upload pre-auth 413 + Connection: close is identical old-vs-new (re-pins the masked POST /api/assets)', async () => {
+    const { oldCap, newCap } = await captureBothModes(() =>
+      makeReq({
+        method: 'POST',
+        url: '/api/assets',
+        headers: { [HEADER_CONTENT_LENGTH]: OVERSIZE_CONTENT_LENGTH },
+      }),
+    );
+    expect(oldCap.status).toBe(413);
+    expect(JSON.parse(String(oldCap.body)).error).toBe('asset_too_large');
+    expect(oldCap.headers.connection).toBe('close');
+    expect(newCap.headers.connection).toBe('close');
+    expect(stableStringify(newCap)).toBe(stableStringify(oldCap));
+  });
+
+  it('the owner maps list refuses no-auth with the identical db-free 401 old-vs-new', async () => {
+    const { oldCap, newCap } = await captureBothModes(() =>
+      makeReq({ method: 'GET', url: '/api/maps' }),
+    );
+    expect(oldCap.status).toBe(401);
+    expect(newCap.status).toBe(oldCap.status);
+    expect(stableStringify(newCap)).toBe(stableStringify(oldCap));
+  });
+
+  it('an unauthenticated map save 401s identically old-vs-new (guard order: 413 precheck passed, 401 before the limiter)', async () => {
+    const { oldCap, newCap } = await captureBothModes(() =>
+      makeReq({ method: 'PUT', url: '/api/maps/5', body: {} }),
+    );
+    expect(oldCap.status).toBe(401);
+    expect(newCap.status).toBe(oldCap.status);
+    expect(stableStringify(newCap)).toBe(stableStringify(oldCap));
+  });
+
+  it('a non-numeric map :id answers the ladder terminal 404 identically old-vs-new', async () => {
+    // Legacy: mapIdMatch (\d+) rejects "abc" and the ladder falls to its terminal
+    // 404. New: the registry owns GET /api/maps/:id, and the handler validates the
+    // shape in-handler, answering the same body byte-for-byte (the parity-clean arm
+    // the mapsAssetsIdParamDecode entry documents).
+    const { oldCap, newCap } = await captureBothModes(() =>
+      makeReq({ method: 'GET', url: '/api/maps/abc' }),
+    );
+    expect(oldCap.status).toBe(404);
+    expect(JSON.parse(String(oldCap.body)).error).toBe('unknown endpoint');
+    expect(stableStringify(newCap)).toBe(stableStringify(oldCap));
+  });
+
+  it('a non-sha asset :file answers the ladder terminal 404 identically old-vs-new', async () => {
+    const { oldCap, newCap } = await captureBothModes(() =>
+      makeReq({ method: 'GET', url: '/api/assets/not-a-sha.glb' }),
+    );
+    expect(oldCap.status).toBe(404);
+    expect(JSON.parse(String(oldCap.body)).error).toBe('unknown endpoint');
+    expect(stableStringify(newCap)).toBe(stableStringify(oldCap));
+  });
+
   it('the card no-auth 401 is identical old-vs-new (completes the masked /api/card re-pin)', async () => {
     // The card 413 re-pin above covers the pre-auth short-circuit, but adding /api/card to the
     // rateLimitedBodyToCode deviation masks EVERY /api/card divergence in the aggregate filter.
@@ -582,7 +657,7 @@ describe('/api dispatch parity (legacy flag vs new flag)', () => {
     expect(stableStringify(apiPreflight.newCap)).toBe(stableStringify(apiPreflight.oldCap));
     expect(apiPreflight.oldCap.headers['access-control-allow-origin']).toBe(REFLECTED_ORIGIN);
     expect(apiPreflight.oldCap.headers['access-control-allow-methods']).toBe(
-      'GET, POST, DELETE, OPTIONS',
+      'GET, POST, PUT, DELETE, OPTIONS',
     );
     expect(apiPreflight.oldCap.headers['access-control-allow-headers']).toBe(
       'Authorization, Content-Type',

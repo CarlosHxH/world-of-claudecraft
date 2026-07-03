@@ -14,7 +14,7 @@ export type OriginAllowClass = 'api' | 'public';
 
 const CORS_ALLOW_HEADERS = 'Authorization, Content-Type';
 const CORS_MAX_AGE = '600';
-const API_ALLOW_METHODS = 'GET, POST, DELETE, OPTIONS';
+const API_ALLOW_METHODS = 'GET, POST, PUT, DELETE, OPTIONS';
 const PUBLIC_ALLOW_METHODS = 'GET, OPTIONS';
 
 /**

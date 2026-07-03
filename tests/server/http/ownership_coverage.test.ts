@@ -56,7 +56,19 @@ import {
   type InternalRuntime,
   resetInternalRuntimeForTests,
 } from '../../../server/internal';
+import {
+  resetMapsGuardDbForTests,
+  resetMapsServiceForTests,
+  setMapsGuardDbForTests,
+  setMapsServiceForTests,
+} from '../../../server/maps_routes';
 import { resetRateLimits } from '../../../server/ratelimit';
+import {
+  resetUserAssetsGuardDbForTests,
+  resetUserAssetsServiceForTests,
+  setUserAssetsGuardDbForTests,
+  setUserAssetsServiceForTests,
+} from '../../../server/user_assets_routes';
 import { fakeCtx } from '../helpers/fake_ctx';
 import type { FakeRes } from '../helpers/fake_http';
 
@@ -112,6 +124,25 @@ function installDenyingCharacterDb(): void {
   });
 }
 
+// Install the maps + user-assets deny environment: the bearer guards resolve the
+// valid token to the caller, and the services' owner loaders always MISS (the
+// fake getMapForViewer returns null; the fake listMine returns no rows), so every
+// account-owned :id route in the two v0.20.0 families exercises its deny path.
+function installDenyingMapsAndAssets(): void {
+  const guardOverrides = {
+    accountAndScopeForToken: async () => ({ accountId: CALLER_ACCOUNT_ID, scope: 'full' as const }),
+    moderationStatusForAccount: async () => NOT_LOCKED,
+  };
+  setMapsGuardDbForTests(guardOverrides);
+  setUserAssetsGuardDbForTests(guardOverrides);
+  setMapsServiceForTests({
+    getMapForViewer: async () => null,
+  } as unknown as import('../../../server/maps').MapsService);
+  setUserAssetsServiceForTests({
+    listMine: async () => [],
+  } as unknown as import('../../../server/user_assets').UserAssetsService);
+}
+
 // Install a fully stubbed runtime so a handler that DID run (the negative control,
 // or a regression where the loader is missing) cannot crash on an unconfigured
 // runtime. The deny sweep never reaches these; they exist so the failure mode of a
@@ -122,6 +153,8 @@ function installFakeRuntime(): void {
     takeOverCharacter: vi.fn(async () => 'not-online' as const),
     rekeyMarketSeller: vi.fn(() => false),
     saveMarket: vi.fn(async () => {}),
+    rekeyMailOwner: vi.fn(() => false),
+    saveMail: vi.fn(async () => {}),
     // The fresh-character state is never serialized on the deny path; a bare object
     // is enough to satisfy the type for any handler that does run (negative control).
     initialCharacterState: vi.fn(
@@ -172,11 +205,16 @@ describe('ownership coverage: registry-wide deny-by-default sweep', () => {
     vi.spyOn(logger, 'warn').mockImplementation(() => {});
     installDenyingCharacterDb();
     installFakeRuntime();
+    installDenyingMapsAndAssets();
   });
 
   afterEach(() => {
     resetCharactersDbForTests();
     resetCharactersRuntimeForTests();
+    resetMapsGuardDbForTests();
+    resetMapsServiceForTests();
+    resetUserAssetsGuardDbForTests();
+    resetUserAssetsServiceForTests();
     vi.restoreAllMocks();
   });
 
@@ -196,9 +234,12 @@ describe('ownership coverage: registry-wide deny-by-default sweep', () => {
       // The handler-owned success body is NEVER produced: the loader short-circuits
       // (no next()), so control never reaches the terminal handler frame.
       expect(handler).not.toHaveBeenCalled();
-      // The denial carries a legacy player-owned prose body (exact text differs per
-      // route: 'character not found' vs 'not found'), never a success payload.
-      expect(JSON.parse(res.body).error).toMatch(/^(character not found|not found)$/);
+      // The denial carries a legacy player-owned body (exact text differs per
+      // route family: the character prose bodies, or the maps/assets snake_case
+      // codes), never a success payload.
+      expect(JSON.parse(res.body).error).toMatch(
+        /^(character not found|not found|map_not_found|asset_not_found)$/,
+      );
     });
   }
 
@@ -692,6 +733,21 @@ const AUTHED_18B_ROUTES: ReadonlyArray<{ method: string; path: string }> = [
   { method: 'GET', path: '/api/daily-rewards/history' },
   { method: 'GET', path: '/api/daily-rewards/leaderboard' },
   { method: 'POST', path: '/api/account/email/set-initial' },
+  // v0.20.0 third slice: the authed map editor routes (the two owner reads are
+  // behind the shared read guard; every mutation behind the shared active
+  // guard). GET /api/maps/:id is optional-auth (public read) and the two public
+  // reads (maps/public, assets/:file) are anonymous, so none of those belong
+  // here.
+  { method: 'GET', path: '/api/maps' },
+  { method: 'POST', path: '/api/maps' },
+  { method: 'PUT', path: '/api/maps/:id' },
+  { method: 'DELETE', path: '/api/maps/:id' },
+  { method: 'POST', path: '/api/maps/:id/fork' },
+  { method: 'POST', path: '/api/maps/:id/publish' },
+  { method: 'POST', path: '/api/maps/:id/unpublish' },
+  { method: 'POST', path: '/api/assets' },
+  { method: 'GET', path: '/api/assets/mine' },
+  { method: 'DELETE', path: '/api/assets/:id' },
 ];
 
 const authed18bRoutes: RouteDef[] = AUTHED_18B_ROUTES.map((spec) => {
@@ -712,8 +768,8 @@ describe('/api auth-mounting sweep: every authed Phase 18b route 401s an unauthe
     resetRateLimits();
   });
 
-  it('selects all nine authed routes from the registry', () => {
-    expect(authed18bRoutes.length).toBe(9);
+  it('selects all nineteen authed routes from the registry', () => {
+    expect(authed18bRoutes.length).toBe(19);
   });
 
   for (const route of authed18bRoutes) {

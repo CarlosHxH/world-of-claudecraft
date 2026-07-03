@@ -13,6 +13,17 @@ workstream), NOT a gameplay change, NOT a WS wire change.
 
 Phase 24 (validated config + server timeouts + no-magic-values + perf gate) DONE
 (2026-07-03). ONLY PHASE 25 REMAINS (docs + new:endpoint scaffold + flag-default flip).
+
+THIRD v0.20.0 RELEASE-MERGE SLICE (2026-07-03, after the Phase 24 QA gate): the map
+editor surface landed and was migrated IN-MERGE (9 custom-map + 4 uploaded-GLB /api
+routes on the wallet shared-*Core template in NEW server/maps_routes.ts +
+server/user_assets_routes.ts, 5 admin moderation RouteDefs, the housekeeping calendar
+11th member; MAP_MUTATION_POLICY + ASSET_UPLOAD_POLICY; createReadGuard joins the
+bearer-guard factories; HTTP_METHODS gained PUT; deviations mapsAssetsRateLimitedBodyToCode
++ mapsAssetsIdParamDecode). The release-merge migrated set is now 45; the migrated
+character-rename handler mirrors the release's Ravenpost mail rekey. Full record:
+progress.md "v0.20.0 release merge, third slice". Phase 25's premises updated in place
+(migrated-set count, the maps/assets 405 carve-out, the optionalViewerGuard throttle note).
 loadConfig(env) is now the validated FAIL-FAST boot edge, called once as startServer's
 first step (before the DB retry loop) and memoized behind main.ts activeConfig() (+
 resetActiveConfigForTests) so request-time consumers read lazily and a bare import stays

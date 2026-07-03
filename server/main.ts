@@ -32,7 +32,7 @@ import {
   handleEmailUnsubscribe,
   verifyLoginTwoFactor,
 } from './account';
-import { configureAdminRuntime, handleAdminApi } from './admin';
+import { configureAdminRuntime, handleAdminApi, parsePageParams } from './admin';
 import { currentSitePresenceUsers, recordSitePresenceSample } from './admin_db';
 import {
   hashPassword,
@@ -136,11 +136,29 @@ import { teeMetricSink } from './http/middleware/metric_sink';
 import { withSecurityHeaders } from './http/middleware/security_headers';
 import { apiRegistry } from './http/registry';
 import { applyServerTimeouts, MAX_HEADER_SIZE_BYTES } from './http/server_timeouts';
-import { isUniqueViolation, json, moderationErrorBody, readBody } from './http_util';
+import {
+  contentLengthExceeds,
+  isUniqueViolation,
+  json,
+  moderationErrorBody,
+  readBinaryBody,
+  readBody,
+} from './http_util';
 import { configureInternalRuntime, handleInternalApi } from './internal';
 import { isConnectionRefused } from './ip_block';
 import { pruneExpiredBlockedIps } from './ip_block_db';
 import { configureLeaderboardRuntime, type ReleaseEntry } from './leaderboard';
+import { MAX_MAP_SAVE_BYTES } from './maps';
+import {
+  mapDeleteCore,
+  mapForkCore,
+  mapGetCore,
+  mapSaveCore,
+  mapSetPublishedCore,
+  mapsCreateCore,
+  mapsListMineCore,
+  mapsPublicListCore,
+} from './maps_routes';
 import {
   cleanReportReason,
   createPlayerReport,
@@ -159,11 +177,13 @@ import {
 import { handleAvatar, handleCharacterSitemap, handleProfilePage } from './profile_page';
 import { recordUsageCacheEvent, recordUsageMetric, setUsageCacheSize } from './provider_usage';
 import {
+  assetUploadRateLimited,
   authThrottled,
   cardUploadRateLimited,
   clearAuthFailures,
   discordRateLimited,
   githubRateLimited,
+  mapMutationRateLimited,
   publicReadRateLimited,
   rateLimited,
   recordAuthFailure,
@@ -178,6 +198,13 @@ import { BUG_REPORT_MAX_BODY_BYTES, configureReportsRuntime } from './reports';
 import { handleSitePresenceHeartbeat } from './site_presence';
 import { cacheControlFor, etagFor, isNotModified } from './static_cache';
 import { passesTurnstile } from './turnstile';
+import { MAX_ASSET_BYTES } from './user_assets';
+import {
+  assetBytesCore,
+  assetDeleteCore,
+  assetsListMineCore,
+  assetUploadCore,
+} from './user_assets_routes';
 import {
   configureWalletRuntime,
   handleWalletChallenge,
@@ -238,6 +265,8 @@ const STATIC_PAGE_ALIASES = new Map([
   ['/support/', '/support.html'],
   ['/wiki', '/guide.html'],
   ['/wiki/', '/guide.html'],
+  ['/editor', '/editor.html'],
+  ['/editor/', '/editor.html'],
 ]);
 // Chat-log and perf-report retention days (0 = forever) plus the Turnstile secret
 // and the hard per-IP WS cap now live on the boot Config (see activeConfig above):
@@ -687,7 +716,7 @@ function maybeCors(req: http.IncomingMessage, res: http.ServerResponse): void {
   if (origin !== null) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Vary', 'Origin');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
     res.setHeader('Access-Control-Max-Age', '600');
   }
@@ -1141,6 +1170,9 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
         }
         if (liveGame().rekeyMarketSeller(characterId, character.name, c.name)) {
           await liveGame().saveMarket();
+        }
+        if (liveGame().rekeyMailOwner(characterId, character.name, c.name)) {
+          await liveGame().saveMail();
         }
         return json(res, 200, {
           id: c.id,
@@ -1661,6 +1693,115 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
       ]);
       return json(res, 200, { count, slug });
     }
+    // -----------------------------------------------------------------------
+    // Map editor: saved custom maps + uploaded GLB assets. The lane BODIES live
+    // in server/maps_routes.ts / server/user_assets_routes.ts as shared cores
+    // BOTH dispatch arms call (the migrated RouteDefs mount the equivalent
+    // guards), so the two paths cannot drift. These legacy arms keep only the
+    // guard order: Content-Length precheck BEFORE auth on the save/upload lanes
+    // (413 + Connection: close, the /api/card treatment), then the bearer
+    // resolver, then the fused ip+account limiter.
+    // -----------------------------------------------------------------------
+    if (url === '/api/maps' && (req.method === 'GET' || req.method === 'POST')) {
+      if (req.method === 'GET') {
+        const accountId = await bearerReadAccount(req, res);
+        if (accountId === null) return;
+        return mapsListMineCore(res, accountId);
+      }
+      if (contentLengthExceeds(req, MAX_MAP_SAVE_BYTES)) {
+        res.shouldKeepAlive = false;
+        res.setHeader('Connection', 'close');
+        return json(res, 413, { error: 'map_too_large' });
+      }
+      const accountId = await bearerActiveAccount(req, res);
+      if (accountId === null) return;
+      if (!mapMutationRateLimited(req, accountId).allowed)
+        return json(res, 429, { error: 'rate_limited' });
+      return mapsCreateCore(req, res, accountId);
+    }
+    if (req.method === 'GET' && url === '/api/maps/public') {
+      if (!publicReadRateLimited(req).allowed) return json(res, 429, { error: 'rate_limited' });
+      return mapsPublicListCore(req, res);
+    }
+    const mapIdMatch = /^\/api\/maps\/(\d+)$/.exec(url);
+    if (req.method === 'GET' && mapIdMatch) {
+      // Owner or public. Auth is optional; anonymous readers share the public
+      // read throttle like the public character sheet.
+      const accountId = await bearerAccount(req);
+      if (accountId === null && !publicReadRateLimited(req).allowed) {
+        return json(res, 429, { error: 'rate_limited' });
+      }
+      return mapGetCore(res, accountId, Number(mapIdMatch[1]));
+    }
+    if (req.method === 'PUT' && mapIdMatch) {
+      if (contentLengthExceeds(req, MAX_MAP_SAVE_BYTES)) {
+        res.shouldKeepAlive = false;
+        res.setHeader('Connection', 'close');
+        return json(res, 413, { error: 'map_too_large' });
+      }
+      const accountId = await bearerActiveAccount(req, res);
+      if (accountId === null) return;
+      if (!mapMutationRateLimited(req, accountId).allowed)
+        return json(res, 429, { error: 'rate_limited' });
+      return mapSaveCore(req, res, accountId, Number(mapIdMatch[1]));
+    }
+    if (req.method === 'DELETE' && mapIdMatch) {
+      const accountId = await bearerActiveAccount(req, res);
+      if (accountId === null) return;
+      if (!mapMutationRateLimited(req, accountId).allowed)
+        return json(res, 429, { error: 'rate_limited' });
+      return mapDeleteCore(res, accountId, Number(mapIdMatch[1]));
+    }
+    const mapForkMatch = /^\/api\/maps\/(\d+)\/fork$/.exec(url);
+    if (req.method === 'POST' && mapForkMatch) {
+      const accountId = await bearerActiveAccount(req, res);
+      if (accountId === null) return;
+      if (!mapMutationRateLimited(req, accountId).allowed)
+        return json(res, 429, { error: 'rate_limited' });
+      return mapForkCore(req, res, accountId, Number(mapForkMatch[1]));
+    }
+    const mapPublishMatch = /^\/api\/maps\/(\d+)\/(publish|unpublish)$/.exec(url);
+    if (req.method === 'POST' && mapPublishMatch) {
+      const accountId = await bearerActiveAccount(req, res);
+      if (accountId === null) return;
+      if (!mapMutationRateLimited(req, accountId).allowed)
+        return json(res, 429, { error: 'rate_limited' });
+      return mapSetPublishedCore(
+        res,
+        accountId,
+        Number(mapPublishMatch[1]),
+        mapPublishMatch[2] === 'publish',
+      );
+    }
+    if (req.method === 'POST' && url === '/api/assets') {
+      if (contentLengthExceeds(req, MAX_ASSET_BYTES)) {
+        res.shouldKeepAlive = false;
+        res.setHeader('Connection', 'close');
+        return json(res, 413, { error: 'asset_too_large' });
+      }
+      const accountId = await bearerActiveAccount(req, res);
+      if (accountId === null) return;
+      if (!assetUploadRateLimited(req, accountId).allowed) {
+        return json(res, 429, { error: 'rate_limited' });
+      }
+      return assetUploadCore(req, res, accountId);
+    }
+    if (req.method === 'GET' && url === '/api/assets/mine') {
+      const accountId = await bearerReadAccount(req, res);
+      if (accountId === null) return;
+      return assetsListMineCore(res, accountId);
+    }
+    const assetGlbMatch = /^\/api\/assets\/([a-f0-9]{64})\.glb$/.exec(url);
+    if (req.method === 'GET' && assetGlbMatch) {
+      if (!publicReadRateLimited(req).allowed) return json(res, 429, { error: 'rate_limited' });
+      return assetBytesCore(res, assetGlbMatch[1]);
+    }
+    const assetIdMatch = /^\/api\/assets\/(\d+)$/.exec(url);
+    if (req.method === 'DELETE' && assetIdMatch) {
+      const accountId = await bearerActiveAccount(req, res);
+      if (accountId === null) return;
+      return assetDeleteCore(res, accountId, Number(assetIdMatch[1]));
+    }
     json(res, 404, { error: 'unknown endpoint' });
   } catch (err: any) {
     logger.error({ err }, 'api error');
@@ -1727,6 +1868,9 @@ configureCharactersRuntime({
   rekeyMarketSeller: (characterId, oldName, newName) =>
     liveGame().rekeyMarketSeller(characterId, oldName, newName),
   saveMarket: () => liveGame().saveMarket(),
+  rekeyMailOwner: (characterId, oldName, newName) =>
+    liveGame().rekeyMailOwner(characterId, oldName, newName),
+  saveMail: () => liveGame().saveMail(),
   initialCharacterState,
   publicOrigin,
 });
@@ -2056,6 +2200,7 @@ export async function startServer(): Promise<http.Server> {
       `pruned ${prunedPerfReports} client perf report row(s) older than ${config.perfReportRetentionDays} days`,
     );
   await game.loadMarket();
+  await game.loadMail();
   await game.loadChatFilter();
   await game.loadBlockedIps();
   void game.recordOnlineSnapshot();
@@ -2165,6 +2310,7 @@ export async function startServer(): Promise<http.Server> {
     game.stop();
     await game.saveAll('shutdown');
     await game.saveMarket();
+    await game.saveMail();
     await game.endAllPlaySessions();
     await game.chatLog.stop();
     await pool.end();

@@ -26,8 +26,9 @@ export const HTML = 'html' as const;
 // so REDIRECT exists only so a future redirect route has a home to slot into.
 export const REDIRECT = 'redirect' as const;
 
-// A non-JSON binary contract. POST /api/card is the only member: it accepts a
-// binary (image) REQUEST body. The class marks the binary contract on the route.
+// A non-JSON binary contract, in either direction: POST /api/card and POST
+// /api/assets accept a binary REQUEST body (image and GLB model respectively);
+// GET /api/assets/:file answers a binary (model/gltf-binary) RESPONSE body.
 export const BINARY = 'binary' as const;
 
 // The legacy `{ ok: false }` response shape (as opposed to the `{ error }`
@@ -117,4 +118,16 @@ export const API_CONTENT_TYPE: Readonly<Record<string, ContentTypeClass>> = {
   '/api/card': BINARY,
   '/api/referrals': PROBLEM_JSON,
   '/api/discord/swag/claim': PROBLEM_JSON,
+  // v0.20.0 release merge: the map editor surface. JSON everywhere except the
+  // two binary lanes (the GLB upload request body, the byte-read response body).
+  '/api/maps': PROBLEM_JSON,
+  '/api/maps/public': PROBLEM_JSON,
+  '/api/maps/:id': PROBLEM_JSON,
+  '/api/maps/:id/fork': PROBLEM_JSON,
+  '/api/maps/:id/publish': PROBLEM_JSON,
+  '/api/maps/:id/unpublish': PROBLEM_JSON,
+  '/api/assets': BINARY,
+  '/api/assets/mine': PROBLEM_JSON,
+  '/api/assets/:file': BINARY,
+  '/api/assets/:id': PROBLEM_JSON,
 };

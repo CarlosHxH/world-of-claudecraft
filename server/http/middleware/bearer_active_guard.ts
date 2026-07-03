@@ -93,3 +93,29 @@ export function createActiveGuard(getDb: () => BearerActiveGuardDb): Middleware 
     await next();
   };
 }
+
+/**
+ * Build the READ-scope bearer guard (mirrors main.ts bearerReadAccount: a 'read'
+ * OR 'full' token is accepted, the moderation gate still applies). Same lazy
+ * `getDb` contract as createActiveGuard. Extracted as the factory's sibling for
+ * the v0.20.0 maps/user-assets migration (GET /api/maps + GET /api/assets/mine),
+ * the first registered read-scope routes outside the per-domain guard copies.
+ */
+export function createReadGuard(getDb: () => BearerActiveGuardDb): Middleware {
+  return async (ctx: Ctx, next: Next) => {
+    const token = bearerToken(ctx.req);
+    const db = getDb();
+    const info = token === null ? null : await db.accountAndScopeForToken(token);
+    if (info === null) {
+      json(ctx.res, 401, NOT_AUTHENTICATED);
+      return;
+    }
+    const status = await db.moderationStatusForAccount(info.accountId);
+    if (status.locked) {
+      json(ctx.res, 403, moderationErrorBody(status));
+      return;
+    }
+    ctx.account = { accountId: info.accountId, scope: info.scope };
+    await next();
+  };
+}

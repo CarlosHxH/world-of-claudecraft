@@ -1628,6 +1628,89 @@ in-family 404/405); at the ladder deletion they flip to the table's PRE-AUTH
 404/405 (the systemic planned405BeforeAuth class). Carve out at P25 alongside the 18b
 remainder.
 
+## v0.20.0 release merge, third slice (2026-07-03): map editor surface + Ravenpost mail
+
+Merged release/v0.20.0 (tip 2e9e59384, 108 commits since 3e1bc17c4: map editor PR #1306,
+IP-pivot renames PR #1341, craft skill PR #1180, global party invite PR #981, combo points
+PR #1367, housekeeping calendar caps PR #1371, Ravenpost mail + event calendar PR #1339)
+with the reconciliation folded into the merge commit. Twelve textual conflicts: three
+server files (db.ts import + ensureSchema DDL order, main.ts import blocks x3,
+ratelimit.ts new-bucket insertion), the i18n catalog index (apiError vs editor domain,
+kept both), five locale overlays (maintainer fill blocks, disjoint keys, kept both), and
+three generated i18n artifacts (REGENERATED via i18n:gen + i18n_resolved_hash --write;
+second-run idempotency proven).
+
+THE HAZARD THAT FIRED (the v0.20.0-slice-1 subtype, release code calling
+branch-refactored helpers): the release's new limiter buckets (mapMutationRateLimited /
+assetUploadRateLimited) were boolean-era (`ipLimited || accountLimited`) and its NINE
+main.ts call sites tested the outcome by truthiness; under this branch's Phase 19
+RateLimitOutcome contract every request would have answered 429. Adapted to
+mergeFusedOutcomes + `.allowed` during conflict resolution. Also: two bare `game.`
+references in the merged rename arm re-pointed at liveGame(); the release's PUT addition
+to maybeCors mirrored into the UNMOUNTED withCors twin (API_ALLOW_METHODS, the v0.19.0
+CORS-drift lesson) and its pins.
+
+MIGRATED-ROUTE DIVERGENCE FIXED: the release added a Ravenpost mail rekey
+(rekeyMailOwner + saveMail) to the LEGACY character-rename arm only; /api/characters/:id/
+rename is Phase 12 MIGRATED, so CharactersRuntime gained both members, the migrated
+renameHandler mirrors the arm, the injection site binds liveGame(), and two decisive
+tests pin the mirror (rekey -> saveMail; no rekey -> no save).
+
+What the merge brought onto the pipeline, migrated INSIDE the merge commit (no owning
+phase; provenance = this merge):
+- The custom-map family, 9 routes (GET/POST /api/maps, GET /api/maps/public,
+  GET/PUT/DELETE /api/maps/:id, POST fork, POST publish + unpublish as two literal-suffix
+  RouteDefs) in NEW server/maps_routes.ts, and the uploaded-GLB family, 4 routes
+  (POST /api/assets binary upload, GET /api/assets/mine, GET /api/assets/:file =
+  <sha256>.glb byte read with a binary response, DELETE /api/assets/:id) in NEW
+  server/user_assets_routes.ts. Template: the wallet *Core split. Each legacy lane's BODY
+  moved into an exported post-auth core the lane now calls; the RouteDefs mount the
+  equivalent guards (Content-Length 413 precheck BEFORE auth, createActiveGuard /
+  createReadGuard over a lazy seam-backed guard-db bundle, rateLimit(MAP_MUTATION_POLICY /
+  ASSET_UPLOAD_POLICY / PUBLIC_READ_POLICY) sharing the legacy tier-1 buckets,
+  requireOwned loaders on the owner-only :id routes) and call the SAME cores, so bodies
+  cannot drift. createReadGuard is NEW in bearer_active_guard.ts (the active factory's
+  read-scope sibling; first registered read-scope routes outside the per-domain copies).
+  GET /api/maps/:id keeps the legacy optional-auth + anonymous-only prose throttle in a
+  bespoke optionalViewerGuard (meta.publicRead); fork is public-or-owner (service-
+  enforced, meta.publicRead). The maps service singletons moved OUT of main.ts into the
+  route modules (module-scope construction is pure; setMapsServiceForTests /
+  setUserAssetsServiceForTests seams added).
+- Admin: 5 new RouteDefs in admin.ts (GET /admin/api/maps + /admin/api/user-assets lists,
+  POST /admin/api/maps/:id/unpublish, POST /admin/api/user-assets/:id/block + /unblock as
+  two literal suffixes over the legacy (block|unblock) regex arm, all requireAdmin +
+  requireAdminTarget/adminTargetMeta on :id) plus the housekeeping CALENDAR RouteDef (the
+  release added a 'calendar' suffix to handleHousekeepingApi, a freshness-gate blind spot
+  until registered; 11th member of the shared parity-by-construction handler family).
+  Admin surface is now 49 RouteDefs.
+- Known deviations: mapsAssetsRateLimitedBodyToCode (coded 429 vs the legacy prose
+  rate_limited, the wallet-class body-shape change; buckets shared so limits land
+  identically) and mapsAssetsIdParamDecode (requireOwned num() 422/401 vs the legacy \d+
+  404 fall-through, plus the loader-before-body ordering; the publicRead :id routes
+  validate IN-HANDLER and answer the ladder terminal 404 byte-identically, parity-clean).
+- Harness deltas: HTTP_METHODS gained PUT (first PUT route in the tree); SURFACE_INVENTORY
+  +13 /api rows (2 BINARY: the upload and the byte read; BINARY's "only member" docstring
+  updated) + 6 admin rows; API_CONTENT_TYPE +10 keys; MIGRATED_ROUTES +13; the /api
+  auth-mounting sweep 9 -> 19 routes; the ownership deny-by-default sweep gained the maps +
+  assets fakes (five new registry-derived deny cases run automatically); tunables POLICIES
+  pins +2 (map_mutation 30/min, asset_upload 10/min); parity gained 6 focused
+  captureBothModes re-pins (the two pre-auth 413 + Connection: close lanes, two db-free
+  401s, two ladder-terminal-404 shape parities) since the family is path-masked by its
+  deviation entries; NEW tests/server/maps_routes.test.ts (23) +
+  user_assets_routes.test.ts (15).
+- Also in the release, no pipeline interaction: the Ravenpost mail system (WS commands +
+  mail/mailU delta keys + per-realm JSONB blob; saveCharacterAndMarketState gained the
+  mail escrow param, mirrored into fake_db + the branch-side gate/rollback tests), the
+  event calendar, craft skills, combo points, the /invite social command, the IP-pivot
+  content renames + regenerated parity goldens, editor.html as the FIFTH Vite entry, maps
+  + user_assets DDL (additive, idempotent, after SCHEMA under the advisory lock).
+
+P25 handoff addition: the maps/assets wrong-method shapes flip from the ladder terminal
+404 to the table's pre-auth 405 at the ladder deletion (the systemic planned405BeforeAuth
+class; same carve-out as housekeeping/18b). The GET /api/maps/:id optional-auth throttle
+stays tier-1-only prose BY DESIGN on both arms (conditional anonymous-only, not
+expressible as a rateLimit mount) and survives P25 unchanged inside optionalViewerGuard.
+
 ## Phase 25: Docs + new:endpoint scaffold + flag-default flip
 
 Deliverables:

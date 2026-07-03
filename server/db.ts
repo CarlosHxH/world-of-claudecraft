@@ -1,13 +1,14 @@
 import { Pool } from 'pg';
 import { LEADERBOARD_MAX } from '../src/sim/leaderboard_page';
 import { sanitizeRemovedZone1Content } from '../src/sim/removed_zone1_content';
-import type { CharacterState, MarketSave } from '../src/sim/sim';
+import type { CharacterState, MailSave, MarketSave } from '../src/sim/sim';
 import type { ArenaFormat, PlayerClass } from '../src/sim/types';
 import { seedChatFilterDefaults } from './chat_filter_db';
 import type { ChatLogRow } from './chat_log';
 import { DISCORD_SCHEMA } from './discord_db';
 import { GITHUB_SCHEMA } from './github_db';
 import { isUniqueViolation } from './http_util';
+import { MAPS_SCHEMA } from './maps_db';
 import {
   LEGACY_MARKET_KEY,
   MARKET_BACKFILL_MARKER_KEY,
@@ -20,6 +21,7 @@ import { RATELIMIT_PRUNE_SQL, RATELIMIT_SCHEMA } from './ratelimit_db';
 import { REALM } from './realm';
 import { chooseArchiveName } from './reclaim_name';
 import { SOCIAL_SCHEMA } from './social_db';
+import { USER_ASSETS_SCHEMA } from './user_assets_db';
 
 // The realm-market key helpers and the backfill marker key live in
 // server/market_backfill.ts (a *_db-style module with no db.ts dependency, so
@@ -589,6 +591,11 @@ export async function ensureSchema(): Promise<void> {
     // is unaffected: only expired windows match, and a racing UPSERT on a pruned
     // key simply re-inserts a fresh row.
     await client.query(RATELIMIT_PRUNE_SQL);
+    // Map editor tables: saved/forked custom maps and uploaded GLB assets.
+    // Both FK-reference accounts(id), so they run after SCHEMA. Applied
+    // unconditionally (idempotent), like the other schema modules.
+    await client.query(MAPS_SCHEMA);
+    await client.query(USER_ASSETS_SCHEMA);
     // Seed the chat-filter word lists + config on first boot only (idempotent).
     // Runs under the same advisory lock so concurrent realm boots don't race.
     await seedChatFilterDefaults(client);
@@ -1935,18 +1942,20 @@ export async function saveCharacterState(
   );
 }
 
-// Persist a character row AND this realm's World Market blob in ONE transaction.
-// The two live in different tables (characters / world_state), but a Market
-// listing is an escrow: the item leaves the seller's bags (character state) and
-// becomes a listing (market state) in the same Sim action. Saving them as two
-// independent writes lets an unclean crash persist one half and not the other,
-// vaporising the item or duplicating it across bags and market. The leave path
-// uses this so a logout flush of bags can never tear away from the market.
+// Persist a character row AND this realm's World Market + Ravenpost mail blobs
+// in ONE transaction. They live in different tables (characters / world_state),
+// but a Market listing and a mail attachment are both escrows: the item leaves
+// the character's bags (character state) and becomes a listing / a letter
+// parcel (world state) in the same Sim action. Saving them as independent
+// writes lets an unclean crash persist one half and not the other, vaporising
+// the item or duplicating it across bags and book. The leave path uses this so
+// a logout flush of bags can never tear away from either escrow.
 export async function saveCharacterAndMarketState(
   characterId: number,
   level: number,
   state: CharacterState,
   market: MarketSave,
+  mail: MailSave,
 ): Promise<void> {
   // Gate the escrow flush on the boot backfill just like saveMarketState:
   // this writes the realm-market row, so it must not run before ensureSchema
@@ -1967,6 +1976,11 @@ export async function saveCharacterAndMarketState(
       // flush must land where the market is read back, or the escrowed listing
       // is written to a key nothing loads and the item is stranded on next boot.
       [marketStateKey(REALM), JSON.stringify(market)],
+    );
+    await client.query(
+      `INSERT INTO world_state (key, data, updated_at) VALUES ($1, $2, now())
+       ON CONFLICT (key) DO UPDATE SET data = EXCLUDED.data, updated_at = now()`,
+      [mailStateKey(REALM), JSON.stringify(mail)],
     );
     await client.query('COMMIT');
   } catch (err) {
@@ -2369,6 +2383,20 @@ export async function loadMarketState(): Promise<MarketSave | null> {
 export async function saveMarketState(save: MarketSave): Promise<void> {
   assertMarketWriteGateOpen();
   await saveWorldState(marketStateKey(REALM), save);
+}
+
+// The Ravenpost mail book: realm-scoped like the market, one JSONB blob per
+// realm under `mail:<realm>`. Born realm-scoped, so no legacy migration.
+export function mailStateKey(realm: string): string {
+  return `mail:${realm}`;
+}
+
+export async function loadMailState(): Promise<MailSave | null> {
+  return loadWorldState<MailSave>(mailStateKey(REALM));
+}
+
+export async function saveMailState(save: MailSave): Promise<void> {
+  await saveWorldState(mailStateKey(REALM), save);
 }
 
 // ---------------------------------------------------------------------------

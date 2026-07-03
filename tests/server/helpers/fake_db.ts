@@ -11,7 +11,7 @@
 // idiom in server/social.ts + server/social_db.ts.
 import type * as Db from '../../../server/db';
 import type * as ModDb from '../../../server/moderation_db';
-import type { CharacterState, MarketSave } from '../../../src/sim/sim';
+import type { CharacterState, MailSave, MarketSave } from '../../../src/sim/sim';
 import type { ArenaFormat, PlayerClass } from '../../../src/sim/types';
 
 // ---------------------------------------------------------------------------
@@ -46,6 +46,7 @@ export interface CharactersDb {
     level: number,
     state: CharacterState,
     market: MarketSave,
+    mail: MailSave,
   ): Promise<void>;
   lifetimeXpStanding(
     accountId: number,
@@ -94,8 +95,9 @@ export class FakeCharactersDb implements CharactersDb {
   // Optional seedable lookups for the standing/guild reads.
   private readonly standings = new Map<number, { rank: number; total: number }>();
   private readonly guildNames = new Map<number, string>();
-  // The last market blob saved alongside a character, for assertions.
+  // The last market and mail blobs saved alongside a character, for assertions.
   lastMarket: MarketSave | null = null;
+  lastMail: MailSave | null = null;
 
   // Test seam: insert a fully-formed row and keep nextId ahead of it.
   seed(row: Db.CharacterRow): Db.CharacterRow {
@@ -204,9 +206,11 @@ export class FakeCharactersDb implements CharactersDb {
     level: number,
     state: CharacterState,
     market: MarketSave,
+    mail: MailSave,
   ): Promise<void> {
     await this.saveCharacterState(characterId, level, state);
     this.lastMarket = market;
+    this.lastMail = mail;
   }
 
   async lifetimeXpStanding(

@@ -247,7 +247,8 @@ export function castAbility(
     ctx.error(p.id, 'Your target must dodge first.');
     return;
   }
-  if (ability.spendsCombo && (p.comboPoints <= 0 || p.comboTargetId !== p.targetId)) {
+  // combo points are character-bound: any built points finish on the current target
+  if (ability.spendsCombo && p.comboPoints <= 0) {
     ctx.error(p.id, 'That ability requires combo points.');
     return;
   }
@@ -259,7 +260,7 @@ export function castAbility(
   if (ability.requiresForm) {
     const need = ability.requiresForm === 'bear' ? 'form_bear' : 'form_cat';
     if (!form || form.kind !== need) {
-      ctx.error(p.id, `You must be in ${ability.requiresForm === 'bear' ? 'Bear' : 'Wolf'} Form.`);
+      ctx.error(p.id, `You must be in ${ability.requiresForm === 'bear' ? 'Bruin' : 'Wolf'} Form.`);
       return;
     }
   } else if (form && !isFormToggle(ability)) {

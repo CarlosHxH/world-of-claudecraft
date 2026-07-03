@@ -7,6 +7,7 @@ import { ITEM_SETS } from '../../sim/data';
 import { worldEntityText as worldNames } from '../world_entity_i18n';
 import { abilityStrings, classAbilityNames } from './abilities';
 import { apiErrorStrings } from './api_error';
+import { editorStrings } from './editor';
 import { gameStrings } from './game';
 import { guideStrings } from './guide';
 import { hudStrings } from './hud';
@@ -18,6 +19,7 @@ import { shellStrings } from './shell';
 
 export { abilityStrings, classAbilityNames } from './abilities';
 export { apiErrorStrings } from './api_error';
+export { editorStrings } from './editor';
 export {
   gameStrings,
   gameStringsDeDE,
@@ -78,6 +80,7 @@ export const en = {
   hudChrome: hudChromeStrings,
   apiError: apiErrorStrings,
   guide: guideStrings,
+  editor: editorStrings,
   // Cosmetic skin-select event overlay. Rarity names reuse itemUi.quality.*.
   skinEvent: {
     title: 'Cosmetic Cache',
@@ -127,10 +130,10 @@ export const en = {
     donate: 'Donate',
   },
   stats: {
-    title: 'Realm Status',
+    title: 'World Status',
     accountsCreated: 'Players',
     playersOnline: 'Players Online',
-    realmName: 'Realm Name',
+    realmName: 'World Name',
   },
   footer: {
     copyright: '2026 World of ClaudeCraft',
@@ -148,7 +151,7 @@ export const en = {
   },
   highscores: {
     title: 'High Scores Leaderboard',
-    desc: "Track the realm's greatest champions and compare your progress.",
+    desc: "Track the world's greatest champions and compare your progress.",
   },
   wiki: {
     title: 'Game Wiki & Guide',
@@ -170,13 +173,13 @@ export const en = {
   },
   comingSoon: {
     placeholder: 'Coming Soon...',
-    featureComingSoon: 'This feature is coming soon to the realm.',
+    featureComingSoon: 'This feature is coming soon to the world.',
   },
   mode: {
     onlineTitle: 'Play Online',
     onlineDesc:
-      "Log in to the realm. Your characters live on the server and you share the world with everyone else who's on.",
-    onlineAria: 'Play Online: log in to the persistent shared realm',
+      "Log in to the world. Your characters live on the server and you share the world with everyone else who's on.",
+    onlineAria: 'Play Online: log in to the persistent shared world',
     offlineTitle: 'Play Offline',
     offlineDesc:
       'Instant single-player world in your browser. Nothing is saved: perfect for a quick brawl or testing.',
@@ -188,8 +191,8 @@ export const en = {
     serverOffline: 'Offline',
     play: 'Play',
     playAria: 'Play World of ClaudeCraft',
-    serverLabel: 'Choose your realm',
-    serverAria: 'Select realm: Online or Offline',
+    serverLabel: 'Choose your world',
+    serverAria: 'Select world: Online or Offline',
     serverOfflineSub: 'Instant local world',
     caLabel: '$WOC Contract Address',
     caCopyAria: 'Copy contract address',
@@ -197,7 +200,7 @@ export const en = {
       'WOC is our community token. It is not needed to play. Join Discord to discuss the WOC utility and flywheel.',
   },
   auth: {
-    enterRealm: 'Enter the Realm',
+    enterRealm: 'Enter the World',
     username: 'Username',
     usernameError: 'Please enter your username.',
     usernamePlaceholder: 'Enter username',
@@ -212,16 +215,16 @@ export const en = {
     logIn: 'Log In',
     createAccount: 'Create Account',
     back: 'Back',
-    realmList: 'Realm List',
-    loadingRealms: 'Loading realms...',
-    changeRealm: 'Change Realm',
-    realm: 'Realm',
+    realmList: 'World List',
+    loadingRealms: 'Loading worlds...',
+    changeRealm: 'Change World',
+    realm: 'World',
     newCharacter: 'New Character',
     appearance: 'Appearance',
     class: 'Class',
     name: 'Name',
     chromaOption: 'Chroma {n}',
-    noAccountPrompt: 'New to the realm?',
+    noAccountPrompt: 'New to the world?',
     haveAccountPrompt: 'Already have an account?',
     characters: 'Characters:',
     createCharacter: 'Create Character',
@@ -352,7 +355,7 @@ export const en = {
     renderFailedStatus: 'Card render failed.',
     levelClass: 'Level {level} - {className}',
     topPercent: 'TOP {percent}%',
-    realmSubtitle: '{realm} Realm',
+    realmSubtitle: '{realm} World',
     defaultRealm: 'World of ClaudeCraft',
     brandWordmark: 'WORLD OF CLAUDECRAFT',
     recruited: '{count} recruited',
@@ -362,7 +365,7 @@ export const en = {
     arenaStat: 'Arena',
     shareTierBit: ', {tier}-rank $WOC holder',
     shareText:
-      "I'm forging my legend in World of ClaudeCraft: Level {level} {className}{tierBit}. Join my realm:",
+      "I'm forging my legend in World of ClaudeCraft: Level {level} {className}{tierBit}. Join my world:",
     nativeShareTitle: 'World of ClaudeCraft',
     fileNameFallback: 'player',
     actionShareX: 'Share to X',
@@ -775,7 +778,7 @@ export const en = {
     augment: {
       choose: 'Choose an Augment',
       aug_brutality: { name: 'Brutality', desc: 'Your physical strikes hit 15% harder.' },
-      aug_spellfire: { name: 'Spellfire', desc: 'Your spells deal 15% more damage.' },
+      aug_spellfire: { name: 'Grimfire', desc: 'Your spells deal 15% more damage.' },
       aug_toughness: { name: 'Toughness', desc: 'Gain 12% maximum health.' },
       aug_keen_eye: { name: 'Keen Eye', desc: 'Gain 8% critical strike chance.' },
       aug_fleetfoot: { name: 'Fleetfoot', desc: 'Move 15% faster. Run them down — or run away.' },
@@ -802,7 +805,7 @@ export const en = {
         desc: '+18% damage of all kinds and +12% move speed.',
       },
       aug_lightwell: {
-        name: 'Lightwell',
+        name: 'Gravelight',
         desc: '+30% healing and +15% maximum health. Anchor your team.',
       },
       aug_bounty_hunter: {
@@ -892,15 +895,15 @@ export const en = {
       kings_signet: { name: "King's Signet" },
       event_skin_token: { name: 'Mysterious Cosmetic Cache' },
       deathless_heartwood: { name: 'Heartwood of the Deathless Crown' },
-      kingsbane_last_oath: { name: 'Kingsbane, Last Oath of Thornpeak' },
-      crownforged_dreadhelm: { name: 'Crownforged Dreadhelm' },
-      crownforged_warspaulders: { name: 'Crownforged Warspaulders' },
-      nighttalon_crown: { name: 'Nighttalon Crown' },
-      nighttalon_shoulderguards: { name: 'Nighttalon Shoulderguards' },
-      soulflame_cowl: { name: 'Soulflame Cowl' },
-      soulflame_mantle: { name: 'Soulflame Mantle' },
-      stormcallers_crown: { name: "Stormcaller's Crown" },
-      stormcallers_spaulders: { name: "Stormcaller's Spaulders" },
+      kingsbane_last_oath: { name: 'Thronebane, Last Oath of Thornpeak' },
+      crownforged_dreadhelm: { name: 'Bonewrought Dreadhelm' },
+      crownforged_warspaulders: { name: 'Bonewrought Warspaulders' },
+      nighttalon_crown: { name: 'Direfang Crown' },
+      nighttalon_shoulderguards: { name: 'Direfang Shoulderguards' },
+      soulflame_cowl: { name: 'Wraithfire Cowl' },
+      soulflame_mantle: { name: 'Wraithfire Mantle' },
+      stormcallers_crown: { name: 'Galecall Crown' },
+      stormcallers_spaulders: { name: 'Galecall Spaulders' },
       unknown_alien_weaponry: { name: 'Unknown Alien Weaponry' },
       alien_armor_plate: { name: 'Alien Armor Plate' },
       amber_crimson_armor_plate: { name: 'Amber Crimson' },
@@ -938,6 +941,7 @@ export const en = {
     },
     dungeons: { ...worldNames.en.entities.dungeons, ...mergeExtra.en.dungeons },
     delves: { ...worldNames.en.entities.delves },
+    letters: { ...worldNames.en.entities.letters },
   },
 };
 

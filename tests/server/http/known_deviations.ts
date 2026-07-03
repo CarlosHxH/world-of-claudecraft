@@ -57,6 +57,8 @@ export const DEVIATION_ID = {
   dailyRewardsOpsBodyValidationRemap: 'daily-rewards-ops-body-validation-remap',
   rateLimit429Draft11Headers: 'rate-limit-429-draft11-headers',
   securityHeadersAllSurfaces: 'security-headers-all-surfaces',
+  mapsAssetsRateLimitedBodyToCode: 'maps-assets-rate-limited-body-to-code',
+  mapsAssetsIdParamDecode: 'maps-assets-id-param-decode-422',
 } as const;
 export type DeviationId = (typeof DEVIATION_ID)[keyof typeof DEVIATION_ID];
 
@@ -1256,6 +1258,83 @@ export const KNOWN_DEVIATIONS: readonly KnownDeviation[] = [
       'record mismatches) until their named enforce flags flip after the native ' +
       'traffic audit.',
     goldenFixtures: ['tests/server/fixtures/main/site_presence_get_405.json'],
+  },
+  {
+    id: DEVIATION_ID.mapsAssetsRateLimitedBodyToCode,
+    routes: [
+      '/api/maps',
+      '/api/maps/public',
+      '/api/maps/:id',
+      '/api/maps/:id/fork',
+      '/api/maps/:id/publish',
+      '/api/maps/:id/unpublish',
+      '/api/assets',
+      '/api/assets/:file',
+    ],
+    currentBehavior:
+      'On throttle, the map editor legacy arms answer 429 { error: "rate_limited" } ' +
+      '(application/json): every /api/maps mutation and the POST /api/assets upload check ' +
+      'their fused ip+account bucket inline in server/main.ts, and the two public reads ' +
+      '(GET /api/maps/public, the GET /api/assets byte read) plus the anonymous leg of ' +
+      'GET /api/maps/:id check the tier-1 publicReadRateLimited bucket, each returning ' +
+      'the same snake_case prose body.',
+    intendedBehavior:
+      'The v0.20.0 in-merge migration serves these routes through the new pipeline, where ' +
+      'the throttle is a rateLimit(policy) middleware (MAP_MUTATION_POLICY / ' +
+      'ASSET_UPLOAD_POLICY / PUBLIC_READ_POLICY) that throws HttpError(429, ' +
+      '"rate_limit.exceeded", { retryAfterSeconds }); the error boundary serializes it as ' +
+      'RFC 9457 application/problem+json with the stable code, the draft-11 headers, and ' +
+      'Retry-After, instead of the bare { error: "rate_limited" } prose. The tier-1 buckets ' +
+      'are SHARED with the legacy arms (the policies wrap the same ratelimit.ts functions), ' +
+      'so limits land identically; only the 429 body shape and headers differ, plus the ' +
+      'public reads gain the pg tier-2 global backstop the legacy tier-1-only checks lack. ' +
+      'GET /api/maps/:id keeps its legacy CONDITIONAL anonymous-only prose throttle inside ' +
+      'optionalViewerGuard on BOTH paths (a rateLimit mount would throttle authenticated ' +
+      'owners too), so it is listed only for completeness of the family.',
+    introducedInPhase: 24,
+    reason:
+      'Sibling to rateLimitedBodyToCode (the Phase 14 wallet/card entry): the same coded-' +
+      '429 body-shape change, applied to the v0.20.0 map editor family at its in-merge ' +
+      'migration. The 429 divergence is NOT exercised by the db-free parity corpus ' +
+      '(runParity resets every limiter bucket before each pass), so it is documented here ' +
+      'and unit-pinned in tests/server/maps_routes.test.ts / user_assets_routes.test.ts ' +
+      'rather than harness-caught.',
+  },
+  {
+    id: DEVIATION_ID.mapsAssetsIdParamDecode,
+    routes: [
+      '/api/maps/:id',
+      '/api/maps/:id/publish',
+      '/api/maps/:id/unpublish',
+      '/api/assets/:id',
+    ],
+    currentBehavior:
+      'On the legacy handleApi ladder the map editor :id arms gate on \\d+ route regexes ' +
+      '(mapIdMatch / mapPublishMatch / assetIdMatch), so a non-numeric :id matches no arm ' +
+      'and falls through to the 404 unknown-endpoint arm without the bearer ever being ' +
+      'read. On an owner-only mutation the ownership miss surfaces from the service SQL ' +
+      'AFTER the body is read: an unowned PUT /api/maps/:id with a mid-stream over-cap ' +
+      'body answers 413 (readBody trips first).',
+    intendedBehavior:
+      'The v0.20.0 in-merge migration mounts requireOwned on the owner-only :id routes ' +
+      '(PUT/DELETE /api/maps/:id, publish/unpublish, DELETE /api/assets/:id), which ' +
+      'decodes :id with num({ int: true, min: 1 }) BEFORE any DB call: a non-numeric or ' +
+      'non-positive :id is rejected 422 (validation.failed) for an authenticated caller, ' +
+      'and an unauthenticated bad-:id request 401s at the auth guard first. The owner ' +
+      'loader also runs BEFORE the handler reads the body, so the unowned + over-cap-body ' +
+      'shape answers the deny-by-default 404 instead of the legacy 413. The public-or-' +
+      'owner :id routes (GET /api/maps/:id, POST fork, the GET /api/assets byte read) ' +
+      'validate their param IN-HANDLER against the same shape the legacy regex enforced ' +
+      'and answer the ladder terminal 404 { error: "unknown endpoint" } byte-identically, ' +
+      'so they carry NO decode deviation ("/api/maps/:id" is listed for its PUT/DELETE ' +
+      'methods; its GET is parity-clean).',
+    introducedInPhase: 24,
+    reason:
+      'Sibling to characterIdParamDecode (same 422/401-vs-404 shape, same NaN-safe ' +
+      'rationale, same harness-invisibility: the parity corpus replays numeric ids only). ' +
+      'The loader-before-body ordering is the same deny-by-default posture the Phase 12 ' +
+      'rename route documents in characterBodyValidationRemap. Unit-pinned in ' +
+      'tests/server/maps_routes.test.ts; becomes the real behavior at the Phase 25 flip.',
   },
 ];
 

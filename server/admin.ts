@@ -32,6 +32,7 @@ import {
   accountMailTarget,
   findAccount,
   isAdminAccount,
+  pool,
   saveToken,
   setAccountDeactivated,
   touchLogin,
@@ -53,6 +54,7 @@ import { enum_ } from './http/schema';
 import type { Ctx, RouteDef } from './http/types';
 import { json, readBody } from './http_util';
 import { addBlockedIp, cleanIp, listBlockedIps, removeBlockedIp } from './ip_block_db';
+import { PgMapsDb } from './maps_db';
 import {
   addAccountNote,
   forceCharacterRename,
@@ -65,6 +67,7 @@ import {
 } from './moderation_db';
 import { providerUsageSnapshot } from './provider_usage';
 import { rateLimited } from './ratelimit';
+import { PgUserAssetsDb } from './user_assets_db';
 
 // Admin API: everything under /admin/api/*. Auth is a bearer token whose
 // account has is_admin = TRUE. The admin.* hostname is routing, not security.
@@ -75,6 +78,11 @@ const DEFAULT_PAGE_LIMIT = 25;
 const ACTIVITY_WINDOW_DAYS = 30;
 
 const IP_BLOCK_KICK_MESSAGE = 'Connection to the server was lost.';
+
+// Map editor moderation reads/writes go straight to the db layer (like the
+// other *_db imports here); the player-facing rules stay in maps.ts.
+const adminMapsDb = new PgMapsDb(pool);
+const adminUserAssetsDb = new PgUserAssetsDb(pool);
 
 function ok(res: http.ServerResponse, data: unknown): void {
   json(res, 200, { success: true, data, error: null });
@@ -389,6 +397,21 @@ export async function handleAdminApi(
       return removed ? ok(res, { ok: true }) : fail(res, 404, 'IP not found');
     }
 
+    // Map editor moderation: force a published map back to private, and
+    // block/unblock an uploaded GLB asset (blocked assets 404 on the public
+    // byte GET and reject re-uploads of the same hash).
+    const mapUnpublishMatch = /^\/admin\/api\/maps\/(\d+)\/unpublish$/.exec(path);
+    if (req.method === 'POST' && mapUnpublishMatch) {
+      const done = await adminMapsDb.setStatus(Number(mapUnpublishMatch[1]), null, 'private');
+      return done ? ok(res, { ok: true }) : fail(res, 404, 'map_not_found');
+    }
+    const assetBlockMatch = /^\/admin\/api\/user-assets\/(\d+)\/(block|unblock)$/.exec(path);
+    if (req.method === 'POST' && assetBlockMatch) {
+      const status = assetBlockMatch[2] === 'block' ? 'blocked' : 'active';
+      const done = await adminUserAssetsDb.setStatus(Number(assetBlockMatch[1]), status);
+      return done ? ok(res, { ok: true }) : fail(res, 404, 'asset_not_found');
+    }
+
     if (req.method !== 'GET') return fail(res, 405, 'method not allowed');
 
     if (path === '/admin/api/blocked-ips') {
@@ -555,6 +578,16 @@ export async function handleAdminApi(
       const sort = url.searchParams.get('sort') ?? 'level';
       const dir = url.searchParams.get('dir') === 'asc' ? 'asc' : 'desc';
       return ok(res, await listCharacters(search, sort, dir, page, limit));
+    }
+    if (path === '/admin/api/maps') {
+      const { page, limit } = parsePageParams(url.searchParams);
+      const { rows, total } = await adminMapsDb.listAdmin(limit, (page - 1) * limit);
+      return ok(res, { rows, total, page, limit });
+    }
+    if (path === '/admin/api/user-assets') {
+      const { page, limit } = parsePageParams(url.searchParams);
+      const { rows, total } = await adminUserAssetsDb.listAdmin(limit, (page - 1) * limit);
+      return ok(res, { rows, total, page, limit });
     }
 
     fail(res, 404, 'unknown admin endpoint');
@@ -1218,6 +1251,40 @@ async function housekeepingHandler(ctx: Ctx): Promise<void> {
   );
 }
 
+// Map editor moderation (v0.20.0 release merge, migrated in-merge). Each handler
+// mirrors its legacy handleAdminApi arm byte-for-byte over the same module-scope
+// db singletons (adminMapsDb / adminUserAssetsDb).
+
+/** GET /admin/api/maps: the paginated all-maps moderation list. */
+async function adminMapsListHandler(ctx: Ctx): Promise<void> {
+  const { page, limit } = parsePageParams(ctx.url.searchParams);
+  const { rows, total } = await adminMapsDb.listAdmin(limit, (page - 1) * limit);
+  ok(ctx.res, { rows, total, page, limit });
+}
+
+/** GET /admin/api/user-assets: the paginated uploaded-GLB moderation list. */
+async function adminUserAssetsListHandler(ctx: Ctx): Promise<void> {
+  const { page, limit } = parsePageParams(ctx.url.searchParams);
+  const { rows, total } = await adminUserAssetsDb.listAdmin(limit, (page - 1) * limit);
+  ok(ctx.res, { rows, total, page, limit });
+}
+
+/** POST /admin/api/maps/:id/unpublish: force a published map back to private. */
+async function adminMapUnpublishHandler(ctx: Ctx): Promise<void> {
+  const done = await adminMapsDb.setStatus(adminTargetId(ctx), null, 'private');
+  return done ? ok(ctx.res, { ok: true }) : fail(ctx.res, 404, 'map_not_found');
+}
+
+/** POST /admin/api/user-assets/:id/(block|unblock): flip an upload's moderation flag. */
+function adminAssetStatusHandler(status: 'blocked' | 'active') {
+  return async (ctx: Ctx): Promise<void> => {
+    const done = await adminUserAssetsDb.setStatus(adminTargetId(ctx), status);
+    return done ? ok(ctx.res, { ok: true }) : fail(ctx.res, 404, 'asset_not_found');
+  };
+}
+const adminAssetBlockHandler = adminAssetStatusHandler('blocked');
+const adminAssetUnblockHandler = adminAssetStatusHandler('active');
+
 // ---------------------------------------------------------------------------
 // The route table. registry.ts spreads this into apiRoutes. login is anonymous
 // (no requireAdmin, its own in-handler limiter); every other route carries
@@ -1523,6 +1590,14 @@ export const routes: RouteDef[] = [
   },
   {
     method: 'GET',
+    path: '/admin/api/housekeeping/calendar',
+    surface: 'admin',
+    middleware: [requireAdmin],
+    meta: ADMIN_META,
+    handler: housekeepingHandler,
+  },
+  {
+    method: 'GET',
     path: '/admin/api/housekeeping/mobs',
     surface: 'admin',
     middleware: [requireAdmin],
@@ -1584,5 +1659,49 @@ export const routes: RouteDef[] = [
     middleware: [requireAdmin],
     meta: ADMIN_META,
     handler: housekeepingHandler,
+  },
+
+  // Map editor moderation (v0.20.0 release merge, migrated in-merge). The
+  // (block|unblock) legacy regex group becomes two literal-suffix :id routes
+  // (the publish/unpublish shape), so no enum decode and no 422 surface.
+  {
+    method: 'GET',
+    path: '/admin/api/maps',
+    surface: 'admin',
+    middleware: [requireAdmin],
+    meta: ADMIN_META,
+    handler: adminMapsListHandler,
+  },
+  {
+    method: 'GET',
+    path: '/admin/api/user-assets',
+    surface: 'admin',
+    middleware: [requireAdmin],
+    meta: ADMIN_META,
+    handler: adminUserAssetsListHandler,
+  },
+  {
+    method: 'POST',
+    path: '/admin/api/maps/:id/unpublish',
+    surface: 'admin',
+    middleware: [requireAdmin, requireAdminTarget('map')],
+    meta: adminTargetMeta('map'),
+    handler: adminMapUnpublishHandler,
+  },
+  {
+    method: 'POST',
+    path: '/admin/api/user-assets/:id/block',
+    surface: 'admin',
+    middleware: [requireAdmin, requireAdminTarget('user_asset')],
+    meta: adminTargetMeta('user_asset'),
+    handler: adminAssetBlockHandler,
+  },
+  {
+    method: 'POST',
+    path: '/admin/api/user-assets/:id/unblock',
+    surface: 'admin',
+    middleware: [requireAdmin, requireAdminTarget('user_asset')],
+    meta: adminTargetMeta('user_asset'),
+    handler: adminAssetUnblockHandler,
   },
 ];

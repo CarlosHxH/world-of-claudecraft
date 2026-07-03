@@ -15,6 +15,8 @@
 // they exist for a later phase / the client code-matcher wiring.
 
 import {
+  ASSET_UPLOAD_MAX_PER_MINUTE,
+  assetUploadRateLimited,
   CARD_UPLOAD_MAX_PER_MINUTE,
   CHARACTER_MUTATION_MAX_PER_MINUTE,
   type CharacterMutationAction,
@@ -22,6 +24,8 @@ import {
   characterMutationRateLimited,
   DISCORD_MAX_PER_MINUTE,
   discordRateLimited,
+  MAP_MUTATION_MAX_PER_MINUTE,
+  mapMutationRateLimited,
   mergeFusedOutcomes,
   PUBLIC_READ_MAX_PER_MINUTE,
   publicReadRateLimited,
@@ -235,6 +239,33 @@ export const CHARACTER_TAKEOVER_POLICY: RateLimitPolicy = characterMutationPolic
 // none before): a 429 is now possible where none was, recorded as the
 // newLimiterReportsCreate known deviation. It reuses the existing
 // 'rate_limit.exceeded' code (no catalog append).
+// The map editor mutation limiter (v0.20.0 merge migration). 'ip+account' (mounts
+// BEHIND the route's auth guard) running the SAME fused mapMutationRateLimited
+// bucket the legacy /api/maps arms check, so both dispatch paths share one window.
+// The legacy arm answers a prose 429 { error: 'rate_limited' }; this policy's 429
+// is the coded rate_limit.exceeded problem (the wallet-family coded-vs-prose 429
+// deviation class, recorded in known_deviations.ts).
+export const MAP_MUTATION_POLICY: RateLimitPolicy = {
+  name: 'map_mutation',
+  keyClass: 'ip+account',
+  limit: MAP_MUTATION_MAX_PER_MINUTE,
+  windowSeconds: WINDOW_SECONDS,
+  tier1: (ctx) => mapMutationRateLimited(ctx.req, ctxAccountId(ctx)),
+  tier2: 'global',
+};
+
+// The GLB asset upload limiter (v0.20.0 merge migration). Same posture as
+// MAP_MUTATION_POLICY: fused bucket shared with the legacy POST /api/assets arm,
+// coded 429 on the new path recorded as the same deviation class.
+export const ASSET_UPLOAD_POLICY: RateLimitPolicy = {
+  name: 'asset_upload',
+  keyClass: 'ip+account',
+  limit: ASSET_UPLOAD_MAX_PER_MINUTE,
+  windowSeconds: WINDOW_SECONDS,
+  tier1: (ctx) => assetUploadRateLimited(ctx.req, ctxAccountId(ctx)),
+  tier2: 'global',
+};
+
 export const REPORTS_CREATE_POLICY: RateLimitPolicy = {
   name: 'reports_create',
   keyClass: 'ip+account',

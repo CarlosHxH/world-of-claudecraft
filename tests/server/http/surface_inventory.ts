@@ -44,8 +44,9 @@ export const DISPATCH = {
 export type DispatcherLabel = (typeof DISPATCH)[keyof typeof DISPATCH];
 
 // The HTTP methods the dispatchers branch on today. OPTIONS is the CORS
-// preflight short-circuit; no route uses PUT or PATCH.
-export const HTTP_METHODS = ['GET', 'POST', 'DELETE', 'OPTIONS'] as const;
+// preflight short-circuit; PUT exists solely for the map-save route
+// (PUT /api/maps/:id, the v0.20.0 map editor); no route uses PATCH.
+export const HTTP_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'] as const;
 export type HttpMethod = (typeof HTTP_METHODS)[number];
 
 // Auth scope a route requires before it does work. Named so the values are not
@@ -848,6 +849,155 @@ export const SURFACE_INVENTORY: readonly SurfaceRoute[] = [
     limiter: null,
     requireOwnedExpected: null,
   },
+  // v0.20.0 release merge: the map editor surface. Custom maps (owner CRUD +
+  // public browse/read, server/maps_routes.ts cores) and uploaded GLB assets
+  // (binary upload + public content-addressed byte read,
+  // server/user_assets_routes.ts cores). Migrated in-merge: the RouteDefs mount
+  // the same guards these ladder arms apply.
+  {
+    dispatcher: DISPATCH.mainApi,
+    method: 'GET',
+    path: '/api/maps',
+    handler: 'handleApi arm: /api/maps (mapsListMineCore)',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.bearer,
+    limiter: null,
+    requireOwnedExpected: null,
+  },
+  {
+    dispatcher: DISPATCH.mainApi,
+    method: 'POST',
+    path: '/api/maps',
+    handler: 'handleApi arm: /api/maps (mapsCreateCore)',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.full,
+    limiter: 'mapMutationRateLimited',
+    requireOwnedExpected: null,
+  },
+  {
+    dispatcher: DISPATCH.mainApi,
+    method: 'GET',
+    path: '/api/maps/public',
+    handler: 'handleApi arm: /api/maps/public (mapsPublicListCore)',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.public,
+    limiter: 'publicReadRateLimited',
+    requireOwnedExpected: null,
+  },
+  {
+    dispatcher: DISPATCH.mainApi,
+    method: 'GET',
+    path: '/api/maps/:id',
+    handler: 'mapIdMatch',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.public,
+    limiter: 'publicReadRateLimited',
+    requireOwnedExpected: REQUIRE_OWNED.publicRead,
+    match: /^\/api\/maps\/(\d+)$/,
+  },
+  {
+    dispatcher: DISPATCH.mainApi,
+    method: 'PUT',
+    path: '/api/maps/:id',
+    handler: 'mapIdMatch',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.full,
+    limiter: 'mapMutationRateLimited',
+    requireOwnedExpected: REQUIRE_OWNED.bola404,
+    match: /^\/api\/maps\/(\d+)$/,
+  },
+  {
+    dispatcher: DISPATCH.mainApi,
+    method: 'DELETE',
+    path: '/api/maps/:id',
+    handler: 'mapIdMatch',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.full,
+    limiter: 'mapMutationRateLimited',
+    requireOwnedExpected: REQUIRE_OWNED.bola404,
+    match: /^\/api\/maps\/(\d+)$/,
+  },
+  {
+    dispatcher: DISPATCH.mainApi,
+    method: 'POST',
+    path: '/api/maps/:id/fork',
+    handler: 'mapForkMatch',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.full,
+    limiter: 'mapMutationRateLimited',
+    requireOwnedExpected: REQUIRE_OWNED.publicRead,
+    match: /^\/api\/maps\/(\d+)\/fork$/,
+  },
+  // The (publish|unpublish) regex arm registers as two literal-suffix
+  // RouteDefs, so it carries two rows sharing one match source.
+  {
+    dispatcher: DISPATCH.mainApi,
+    method: 'POST',
+    path: '/api/maps/:id/publish',
+    handler: 'mapPublishMatch',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.full,
+    limiter: 'mapMutationRateLimited',
+    requireOwnedExpected: REQUIRE_OWNED.bola404,
+    match: /^\/api\/maps\/(\d+)\/(publish|unpublish)$/,
+  },
+  {
+    dispatcher: DISPATCH.mainApi,
+    method: 'POST',
+    path: '/api/maps/:id/unpublish',
+    handler: 'mapPublishMatch',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.full,
+    limiter: 'mapMutationRateLimited',
+    requireOwnedExpected: REQUIRE_OWNED.bola404,
+    match: /^\/api\/maps\/(\d+)\/(publish|unpublish)$/,
+  },
+  {
+    dispatcher: DISPATCH.mainApi,
+    method: 'POST',
+    path: '/api/assets',
+    handler: 'handleApi arm: /api/assets (assetUploadCore)',
+    contentType: BINARY,
+    authScope: AUTH_SCOPE.full,
+    limiter: 'assetUploadRateLimited',
+    requireOwnedExpected: null,
+  },
+  {
+    dispatcher: DISPATCH.mainApi,
+    method: 'GET',
+    path: '/api/assets/mine',
+    handler: 'handleApi arm: /api/assets/mine (assetsListMineCore)',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.bearer,
+    limiter: null,
+    requireOwnedExpected: null,
+  },
+  // The content-addressed byte read. The registered param is ':file' (one
+  // segment, `<sha256>.glb`; the handler validates the shape against the same
+  // regex this row's match carries).
+  {
+    dispatcher: DISPATCH.mainApi,
+    method: 'GET',
+    path: '/api/assets/:file',
+    handler: 'assetGlbMatch',
+    contentType: BINARY,
+    authScope: AUTH_SCOPE.public,
+    limiter: 'publicReadRateLimited',
+    requireOwnedExpected: REQUIRE_OWNED.publicRead,
+    match: /^\/api\/assets\/([a-f0-9]{64})\.glb$/,
+  },
+  {
+    dispatcher: DISPATCH.mainApi,
+    method: 'DELETE',
+    path: '/api/assets/:id',
+    handler: 'assetIdMatch',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.full,
+    limiter: null,
+    requireOwnedExpected: REQUIRE_OWNED.bola404,
+    match: /^\/api\/assets\/(\d+)$/,
+  },
+
   // Orphan: the handler is exported but no dispatcher routes to it. Excluded
   // from the freshness gate's source comparison (it has no dispatch arm).
   {
@@ -1104,6 +1254,16 @@ export const SURFACE_INVENTORY: readonly SurfaceRoute[] = [
   {
     dispatcher: DISPATCH.admin,
     method: 'GET',
+    path: '/admin/api/housekeeping/calendar',
+    handler: 'handleHousekeepingApi arm: /admin/api/housekeeping/calendar',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.admin,
+    limiter: null,
+    requireOwnedExpected: null,
+  },
+  {
+    dispatcher: DISPATCH.admin,
+    method: 'GET',
     path: '/admin/api/housekeeping/mobs',
     handler: 'handleHousekeepingApi arm: /admin/api/housekeeping/mobs',
     contentType: PROBLEM_JSON,
@@ -1180,6 +1340,62 @@ export const SURFACE_INVENTORY: readonly SurfaceRoute[] = [
     authScope: AUTH_SCOPE.admin,
     limiter: null,
     requireOwnedExpected: null,
+  },
+  // v0.20.0 release merge: map editor moderation (lists + forced unpublish +
+  // upload block/unblock). The (block|unblock) regex arm registers as two
+  // literal-suffix RouteDefs, so it carries two rows sharing one match source.
+  {
+    dispatcher: DISPATCH.admin,
+    method: 'GET',
+    path: '/admin/api/maps',
+    handler: 'handleAdminApi arm: /admin/api/maps',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.admin,
+    limiter: null,
+    requireOwnedExpected: null,
+  },
+  {
+    dispatcher: DISPATCH.admin,
+    method: 'GET',
+    path: '/admin/api/user-assets',
+    handler: 'handleAdminApi arm: /admin/api/user-assets',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.admin,
+    limiter: null,
+    requireOwnedExpected: null,
+  },
+  {
+    dispatcher: DISPATCH.admin,
+    method: 'POST',
+    path: '/admin/api/maps/:id/unpublish',
+    handler: 'mapUnpublishMatch',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.admin,
+    limiter: null,
+    requireOwnedExpected: REQUIRE_OWNED.operator404,
+    match: /^\/admin\/api\/maps\/(\d+)\/unpublish$/,
+  },
+  {
+    dispatcher: DISPATCH.admin,
+    method: 'POST',
+    path: '/admin/api/user-assets/:id/block',
+    handler: 'assetBlockMatch',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.admin,
+    limiter: null,
+    requireOwnedExpected: REQUIRE_OWNED.operator404,
+    match: /^\/admin\/api\/user-assets\/(\d+)\/(block|unblock)$/,
+  },
+  {
+    dispatcher: DISPATCH.admin,
+    method: 'POST',
+    path: '/admin/api/user-assets/:id/unblock',
+    handler: 'assetBlockMatch',
+    contentType: PROBLEM_JSON,
+    authScope: AUTH_SCOPE.admin,
+    limiter: null,
+    requireOwnedExpected: REQUIRE_OWNED.operator404,
+    match: /^\/admin\/api\/user-assets\/(\d+)\/(block|unblock)$/,
   },
   {
     dispatcher: DISPATCH.admin,

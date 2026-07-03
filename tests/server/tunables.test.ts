@@ -11,12 +11,14 @@ import * as path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { DESKTOP_LOGIN_TTL_MS } from '../../server/desktop_login';
 import {
+  ASSET_UPLOAD_POLICY,
   CARD_UPLOAD_POLICY,
   CHARACTER_CREATE_POLICY,
   CHARACTER_DELETE_POLICY,
   CHARACTER_RENAME_POLICY,
   CHARACTER_TAKEOVER_POLICY,
   DISCORD_POLICY,
+  MAP_MUTATION_POLICY,
   PUBLIC_READ_POLICY,
   type RateLimitPolicy,
   REPORTS_CREATE_POLICY,
@@ -37,10 +39,12 @@ import {
   MSG_RATE_VIOLATIONS_FOR_KICK,
 } from '../../server/msg_rate_limit';
 import {
+  ASSET_UPLOAD_MAX_PER_MINUTE,
   AUTH_MAX_PER_MINUTE,
   CARD_UPLOAD_MAX_PER_MINUTE,
   CHARACTER_MUTATION_MAX_PER_MINUTE,
   DISCORD_MAX_PER_MINUTE,
+  MAP_MUTATION_MAX_PER_MINUTE,
   PUBLIC_READ_MAX_PER_MINUTE,
   REPORTS_CREATE_MAX_PER_MINUTE,
   WALLET_LINK_MAX_PER_MINUTE,
@@ -164,6 +168,19 @@ describe('rate-limit POLICIES derive from the limiter constants and hold their v
       limit: 10,
     },
     { policy: DISCORD_POLICY, name: 'discord', source: DISCORD_MAX_PER_MINUTE, limit: 15 },
+    // v0.20.0 release merge: the map editor buckets (shared with the legacy arms).
+    {
+      policy: MAP_MUTATION_POLICY,
+      name: 'map_mutation',
+      source: MAP_MUTATION_MAX_PER_MINUTE,
+      limit: 30,
+    },
+    {
+      policy: ASSET_UPLOAD_POLICY,
+      name: 'asset_upload',
+      source: ASSET_UPLOAD_MAX_PER_MINUTE,
+      limit: 10,
+    },
   ];
 
   it.each(rows)('$name derives its limit + window and pins the literal', (row) => {

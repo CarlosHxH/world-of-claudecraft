@@ -97,6 +97,8 @@ function fakeRuntime(overrides: Partial<CharactersRuntime> = {}): CharactersRunt
     takeOverCharacter: async () => 'not-online',
     rekeyMarketSeller: () => false,
     saveMarket: async () => {},
+    rekeyMailOwner: () => false,
+    saveMail: async () => {},
     initialCharacterState: () => st(),
     publicOrigin: () => 'https://worldofclaudecraft.com',
     ...overrides,
@@ -683,6 +685,54 @@ describe('rename handler', () => {
     });
     expect(rekeyMarketSeller).toHaveBeenCalledWith(5, 'Oldname', 'Newname');
     expect(saveMarket).toHaveBeenCalledTimes(1);
+  });
+
+  it('rekeys the Ravenpost mailbox on rename (saveMail when a rekey lands), mirroring the legacy arm', async () => {
+    // v0.20.0 added the mail rekey to the LEGACY rename arm; this pins the migrated
+    // handler's mirror so the two dispatch paths cannot silently diverge.
+    const renamed = charRow({
+      id: 5,
+      name: 'Newname',
+      class: 'rogue',
+      level: 8,
+      force_rename: false,
+    });
+    setCharactersDbForTests({ renameCharacter: async () => renamed });
+    const rekeyMailOwner = vi.fn(() => true);
+    const saveMail = vi.fn(async () => {});
+    installRuntime({ isCharacterOnline: () => false, rekeyMailOwner, saveMail });
+
+    const character = charRow({
+      id: 5,
+      name: 'Oldname',
+      class: 'rogue',
+      level: 8,
+      force_rename: true,
+    });
+    const res = await callHandler('POST', '/api/characters/:id/rename', {
+      account: { accountId: 7, scope: 'full' },
+      state: stateWith(character),
+      body: { name: 'Newname' },
+    });
+    expect(res.status).toBe(200);
+    expect(rekeyMailOwner).toHaveBeenCalledWith(5, 'Oldname', 'Newname');
+    expect(saveMail).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not save mail when no mailbox rekey landed', async () => {
+    const renamed = charRow({ id: 5, name: 'Newname', force_rename: false });
+    setCharactersDbForTests({ renameCharacter: async () => renamed });
+    const saveMail = vi.fn(async () => {});
+    installRuntime({ isCharacterOnline: () => false, rekeyMailOwner: () => false, saveMail });
+
+    const character = charRow({ id: 5, name: 'Oldname', force_rename: true });
+    const res = await callHandler('POST', '/api/characters/:id/rename', {
+      account: { accountId: 7, scope: 'full' },
+      state: stateWith(character),
+      body: { name: 'Newname' },
+    });
+    expect(res.status).toBe(200);
+    expect(saveMail).not.toHaveBeenCalled();
   });
 
   it('400s an invalid new name (normalizeCharName -> null) before the force_rename gate', async () => {

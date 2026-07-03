@@ -276,6 +276,23 @@ describe('registry completeness: migrated baseline (Phase 10 public reads + Phas
     // v0.20.0: the paginated daily leaderboard read (the ops-side sibling is
     // asserted with the internal family below).
     { method: 'GET', path: '/api/daily-rewards/leaderboard' },
+    // v0.20.0 third slice: the map editor surface, migrated in-merge. The custom
+    // map family (server/maps_routes.ts) and the uploaded-GLB family
+    // (server/user_assets_routes.ts). GET /api/assets/:file is the
+    // content-addressed <sha256>.glb byte read (the handler validates the shape).
+    { method: 'GET', path: '/api/maps' },
+    { method: 'POST', path: '/api/maps' },
+    { method: 'GET', path: '/api/maps/public' },
+    { method: 'GET', path: '/api/maps/:id' },
+    { method: 'PUT', path: '/api/maps/:id' },
+    { method: 'DELETE', path: '/api/maps/:id' },
+    { method: 'POST', path: '/api/maps/:id/fork' },
+    { method: 'POST', path: '/api/maps/:id/publish' },
+    { method: 'POST', path: '/api/maps/:id/unpublish' },
+    { method: 'POST', path: '/api/assets' },
+    { method: 'GET', path: '/api/assets/mine' },
+    { method: 'GET', path: '/api/assets/:file' },
+    { method: 'DELETE', path: '/api/assets/:id' },
   ];
   const MIGRATED_PATHS = MIGRATED_ROUTES.map((r) => r.path);
 

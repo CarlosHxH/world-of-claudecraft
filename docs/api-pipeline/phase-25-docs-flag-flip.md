@@ -149,13 +149,17 @@ OUT OF SCOPE (do not do these here)
 - DELETING the old ladder. This phase only NAMES the exit criteria; the deletion is a separate
   next-release PR.
 - Migrating, adding, or changing any endpoint (all domains migrated in Phases 10 to 18 plus the
-  Phase 18b late arrivals: github, desktop-login, daily-rewards, plus FOURTEEN routes migrated
-  inside the two v0.20.0 merge commits themselves: c916d296a brought account email/set-initial,
-  the daily-rewards leaderboard pair, and admin detection-calibration; 64392ada2 brought the
-  TEN-route housekeeping family (/admin/api/housekeeping/*, one shared handler calling the
-  handleHousekeepingApi sub-dispatcher whole). The release-merge migrated set is 26 (12 18b +
-  4 + 10); a provenance sweep should attribute the fourteen to their merge commits, they have
-  no owning phase). The scaffold emits a STUB only.
+  Phase 18b late arrivals: github, desktop-login, daily-rewards, plus THIRTY-THREE routes
+  migrated inside the three v0.20.0 merge commits themselves: c916d296a brought account
+  email/set-initial, the daily-rewards leaderboard pair, and admin detection-calibration;
+  64392ada2 brought the TEN-route housekeeping family (/admin/api/housekeeping/*, one shared
+  handler calling the handleHousekeepingApi sub-dispatcher whole); the third slice brought the
+  map editor surface: the 9-route custom-map family (server/maps_routes.ts) + the 4-route
+  uploaded-GLB family (server/user_assets_routes.ts) on the wallet shared-*Core template, 5
+  admin moderation RouteDefs, and the housekeeping calendar 11th member. The release-merge
+  migrated set is 45 (12 18b + 4 + 10 + 19); a provenance sweep should attribute the
+  thirty-three to their merge commits, they have no owning phase). The scaffold emits a STUB
+  only.
   PRECONDITION: Phase 18b MUST have landed before this phase runs; if any route family in server
   source still lacks either a RouteDef or a recorded permanent-delegate decision, STOP (see the
   stopping rules). The `oauthInternalOffTable405` deviation directs THIS phase to decide the off-table
@@ -167,7 +171,11 @@ OUT OF SCOPE (do not do these here)
   shape) plus the ops family's family-wide pre-path 401. The second v0.20.0 merge (64392ada2)
   hands over the same decision for the housekeeping in-family shapes (unknown sub-path /
   non-GET/POST under /admin/api/housekeeping/: auth-then-404/405 today, table pre-auth 404/405
-  after deletion; db-free 401 pins already in parity.test.ts).
+  after deletion; db-free 401 pins already in parity.test.ts). The third v0.20.0 merge hands
+  over the maps/assets wrong-method flips (ladder terminal 404 today, table pre-auth 405 after
+  deletion, the systemic planned405BeforeAuth class) and notes GET /api/maps/:id keeps its
+  conditional anonymous-only prose throttle inside optionalViewerGuard on the surviving path
+  BY DESIGN (documented in mapsAssetsRateLimitedBodyToCode).
 - Changing the dispatch or coexistence model itself (locked in Phase 9), the metrics or logging
   (Phase 23), the config or timeouts or perf gate (Phase 24).
 - The deferred API conventions A (versioning), D (ETag), F (Deprecation/Sunset), G (OpenAPI), and

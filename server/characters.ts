@@ -150,6 +150,10 @@ export interface CharactersRuntime {
   rekeyMarketSeller(characterId: number, oldName: string, newName: string): boolean;
   /** game.saveMarket: persist the World Market after a rekey. */
   saveMarket(): Promise<void>;
+  /** game.rekeyMailOwner: re-key the character's Ravenpost mailbox after a rename. */
+  rekeyMailOwner(characterId: number, oldName: string, newName: string): boolean;
+  /** game.saveMail: persist the Ravenpost mail book after a rekey. */
+  saveMail(): Promise<void>;
   /** main.ts initialCharacterState: the serialized fresh-character state for create. */
   initialCharacterState(cls: PlayerClass, name: string, skin: number): CharacterState;
   /** main.ts publicOrigin: canonical share origin for the owner-sheet URLs. */
@@ -489,6 +493,9 @@ async function renameHandler(ctx: Ctx): Promise<void> {
     }
     if (rt.rekeyMarketSeller(character.id, character.name, c.name)) {
       await rt.saveMarket();
+    }
+    if (rt.rekeyMailOwner(character.id, character.name, c.name)) {
+      await rt.saveMail();
     }
     json(ctx.res, 200, {
       id: c.id,

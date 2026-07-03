@@ -589,7 +589,7 @@
     text-shadow: 1px 1px 1px #000;
     z-index: 3;
   }
-  /* crossed-swords combat indicator on the player portrait (classic WoW) */
+  /* crossed-swords combat indicator on the player portrait (classic style) */
   .combat-flash {
     position: absolute;
     top: -4px;
@@ -1982,7 +1982,7 @@
       0 0 14px #000c,
       inset 0 0 20px #0008;
   }
-  /* Digital clock pinned to the bottom of the minimap ring, classic-WoW style. */
+  /* Digital clock pinned to the bottom of the minimap ring, classic style. */
   #minimap-clock {
     position: absolute;
     left: 50%;
@@ -2137,7 +2137,7 @@
     line-height: 0;
   }
   /* raid-lockout badge: a small satellite button hugging the bottom-left rim of
-     the round minimap (classic-WoW tracking-button placement). Dim when every
+     the round minimap (classic tracking-button placement). Dim when every
      raid is ready, gold + glow while a lockout is active. Hover/tap shows the panel. */
   #raid-lockout {
     position: absolute;
@@ -4007,5 +4007,35 @@
   }
   #spectate-badge[hidden] {
     display: none;
+  }
+
+  /* ---------- Ravenpost envelope indicator ---------- */
+  /* Sits on the minimap disc rim (the raid-lockout button pattern): an envelope
+     glyph with an unread count, visible only while letters wait. */
+  #mail-indicator {
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 7px;
+    background: #12100acc;
+    border: 1px solid #cc9a3c88;
+    border-radius: 12px;
+    color: var(--gold);
+    pointer-events: auto;
+  }
+  #mail-indicator[hidden] {
+    display: none;
+  }
+  #mail-indicator .ui-icon {
+    width: 14px;
+    height: 14px;
+  }
+  .mail-indicator-count {
+    font: 700 11px var(--title-font);
+    letter-spacing: 0.4px;
   }
 }

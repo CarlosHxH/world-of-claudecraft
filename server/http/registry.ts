@@ -32,8 +32,10 @@ import { routes as discordRoutes } from '../discord';
 import { routes as githubRoutes } from '../github';
 import { routes as internalRoutes } from '../internal';
 import { routes as leaderboardRoutes } from '../leaderboard';
+import { routes as mapsRoutes } from '../maps_routes';
 import { routes as oauthRoutes } from '../oauth';
 import { routes as reportsRoutes } from '../reports';
+import { routes as userAssetsRoutes } from '../user_assets_routes';
 import { routes as walletRoutes } from '../wallet';
 import { type CompiledPattern, compilePattern } from './path_pattern';
 import { createRouter, type MatchResult } from './router';
@@ -94,6 +96,13 @@ export interface ApiRegistry {
  * exchange, on the fused register/login per-IP budget), and both daily-rewards
  * families (server/daily_rewards.ts: the three bearer-gated player routes plus
  * the three fail-closed secret-gated /internal/daily-rewards ops routes).
+ * The v0.20.0 release merge adds the map editor surface in the merge itself:
+ * the custom-map family (server/maps_routes.ts: the owner list/create pair,
+ * the public browse list, the public-or-owner :id read, and the owner-gated
+ * save/delete/fork/publish/unpublish :id routes behind requireOwnedMap) and
+ * the uploaded-GLB family (server/user_assets_routes.ts: the binary upload,
+ * the owner list, the public content-addressed byte read, and the owner-gated
+ * :id delete behind requireOwnedAsset).
  */
 export const apiRoutes: readonly RouteDef[] = [
   ...leaderboardRoutes,
@@ -106,6 +115,8 @@ export const apiRoutes: readonly RouteDef[] = [
   ...githubRoutes,
   ...desktopLoginRoutes,
   ...dailyRewardRoutes,
+  ...mapsRoutes,
+  ...userAssetsRoutes,
   ...adminRoutes,
   ...oauthRoutes,
   ...internalRoutes,
