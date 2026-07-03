@@ -755,8 +755,10 @@ export async function handleDiscordUnlink(
 // The additive Phase 22 machine code for each swag claim-refusal reason, alongside
 // the untouched legacy prose ('claimed' | 'tier' | 'points') the client already
 // keys on. canClaimSwag's verdict.reason widens to include 'ok' (a non-discriminated
-// union), so its index is cast to the refusal subset (this line runs only when the
-// verdict is NOT ok); claimSwag's result.reason narrows to 'claimed' | 'points'.
+// union), so the emit narrows it with an explicit === 'ok' test rather than a cast:
+// a refusal reason added to canClaimSwag later fails that index at compile time
+// instead of silently emitting no code; claimSwag's result.reason narrows to
+// 'claimed' | 'points'.
 const SWAG_REASON_CODE: Record<'claimed' | 'tier' | 'points', ErrorCode> = {
   claimed: 'discord.swag_claimed',
   tier: 'discord.swag_tier',
@@ -797,7 +799,7 @@ export async function handleSwagClaim(
   if (!verdict.ok)
     return json(res, 409, {
       error: verdict.reason,
-      code: SWAG_REASON_CODE[verdict.reason as 'claimed' | 'tier' | 'points'],
+      code: verdict.reason === 'ok' ? undefined : SWAG_REASON_CODE[verdict.reason],
     });
 
   const result = await claimSwag(pool, accountId, swag.id, swag.cost);
