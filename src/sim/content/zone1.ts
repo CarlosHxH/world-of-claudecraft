@@ -67,7 +67,7 @@ export const ZONE1_MOBS: Record<string, MobTemplate> = {
     scale: 0.65,
     color: 0xff5a2e,
     petRole: 'ranged_dps',
-    petSpell: { name: 'Firebolt', school: 'fire', min: 8, max: 11, range: 24, every: 2.0 },
+    petSpell: { name: 'Ashbolt', school: 'fire', min: 8, max: 11, range: 24, every: 2.0 },
   },
   warlock_voidwalker: {
     id: 'warlock_voidwalker',
@@ -257,7 +257,7 @@ export const ZONE1_MOBS: Record<string, MobTemplate> = {
     name: 'Mudfin Skulker',
     minLevel: 3,
     maxLevel: 5,
-    family: 'murloc',
+    family: 'mudfin',
     hpBase: 36,
     hpPerLevel: 17,
     dmgBase: 5,
@@ -281,10 +281,10 @@ export const ZONE1_MOBS: Record<string, MobTemplate> = {
   },
   tunnel_rat: {
     id: 'tunnel_rat',
-    name: 'Tunnel Rat Digger',
+    name: 'Deeprock Digger',
     minLevel: 4,
     maxLevel: 6,
-    family: 'kobold',
+    family: 'burrower',
     hpBase: 42,
     hpPerLevel: 18,
     dmgBase: 6,
@@ -308,7 +308,7 @@ export const ZONE1_MOBS: Record<string, MobTemplate> = {
     name: 'Grix the Tunnelking',
     minLevel: 7,
     maxLevel: 7,
-    family: 'kobold',
+    family: 'burrower',
     rare: true,
     elite: true,
     canSwim: true,
@@ -603,7 +603,7 @@ export const ZONE1_NPCS: Record<string, NpcDef> = {
     color: 0x2471a3,
     questIds: ['q_murlocs'],
     vendorItems: ['simple_fishing_pole'],
-    greeting: 'Grlmurlgrl— sorry, been listening to those fish-men too long.',
+    greeting: 'Blrb-glub— sorry, been listening to those fish-men too long.',
   },
   foreman_odell: {
     id: 'foreman_odell',
@@ -615,7 +615,7 @@ export const ZONE1_NPCS: Record<string, NpcDef> = {
     facing: -2.14,
     color: 0xa04000,
     questIds: ['q_mine'],
-    greeting: "Whole dig's crawling with those candle-headed vermin!",
+    greeting: "Whole dig's crawling with those dirt-caked vermin!",
   },
 };
 
@@ -660,7 +660,7 @@ export const ZONE1_QUESTS: Record<string, QuestDef> = {
   },
   q_boars: {
     id: 'q_boars',
-    name: 'Bristleback Hides',
+    name: 'Bristly Boar Hides',
     giverNpcId: 'trader_wilkes',
     turnInNpcId: 'trader_wilkes',
     text: 'Boar hide makes the finest travel packs, and the meadows west of town are crawling with the beasts. Bring me 5 Bristly Boar Hides and I will make it worth your time.',
@@ -691,7 +691,7 @@ export const ZONE1_QUESTS: Record<string, QuestDef> = {
     name: 'Trouble at the Lake',
     giverNpcId: 'fisherman_brandt',
     turnInNpcId: 'fisherman_brandt',
-    text: 'Twenty years I have fished Mirror Lake, and never lost a net until those gurgling fish-men crawled out of the shallows. Drive the Mudfin back — slay 8 of them. And watch yourself: where there is one murloc, there are five.',
+    text: 'Twenty years I have fished Mirror Lake, and never lost a net until those gurgling fish-men crawled out of the shallows. Drive the Mudfin back — slay 8 of them. And watch yourself: where there is one mudfin, there are five.',
     completionText: 'Hah! That will teach them to mind their own mudholes.',
     objectives: [
       { type: 'kill', targetMobId: 'mudfin_murloc', count: 8, label: 'Mudfin Skulker slain' },
@@ -706,10 +706,10 @@ export const ZONE1_QUESTS: Record<string, QuestDef> = {
     name: 'Rats in the Mine',
     giverNpcId: 'foreman_odell',
     turnInNpcId: 'foreman_odell',
-    text: 'We struck a fine copper vein and then those kobold vermin came boiling out of the hillside. My crew will not set foot in the dig until it is cleared. Put down 10 Tunnel Rat Diggers.',
+    text: 'We struck a fine copper vein and then those burrowing vermin came boiling out of the hillside. My crew will not set foot in the dig until it is cleared. Put down 10 Deeprock Diggers.',
     completionText: 'Ha! Back to work, lads! You have my thanks — and my coin.',
     objectives: [
-      { type: 'kill', targetMobId: 'tunnel_rat', count: 10, label: 'Tunnel Rat Digger slain' },
+      { type: 'kill', targetMobId: 'tunnel_rat', count: 10, label: 'Deeprock Digger slain' },
     ],
     xpReward: 620,
     copperReward: 220,
@@ -809,7 +809,7 @@ export const ZONE1_QUESTS: Record<string, QuestDef> = {
     name: 'The Binding Rite',
     giverNpcId: 'brother_aldric',
     turnInNpcId: 'brother_aldric',
-    text: 'The crypt beneath the chapel must be unsealed if we are to stop the Gravecaller — but only a binding rite will let the living pass. I need 4 lumps of Blessed Tallow — the kobold diggers hoard candles by the crate — and 6 Ghostly Essences from the restless dead.',
+    text: "The crypt beneath the chapel must be unsealed if we are to stop the Gravecaller — but only a binding rite will let the living pass. I need 4 lumps of Blessed Tallow — the mine's burrowers hoard tallow by the crate — and 6 Ghostly Essences from the restless dead.",
     completionText:
       'It is done. The way below stands open... and may the Light forgive me for opening it. Gather your strongest companions before you descend, $N. No one should face the Hollow alone.',
     objectives: [

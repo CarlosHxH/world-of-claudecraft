@@ -197,7 +197,7 @@ export const BASE_ITEMS: Record<string, ItemDef> = {
   },
   bristleback_maul: {
     id: 'bristleback_maul',
-    name: 'Bristleback Maul',
+    name: 'Gallowglass Hammer',
     kind: 'weapon',
     slot: 'mainhand',
     quality: 'uncommon',
@@ -1033,14 +1033,14 @@ export const BASE_ITEMS: Record<string, ItemDef> = {
   },
   mudfin_scale: {
     id: 'mudfin_scale',
-    name: 'Slimy Murloc Scale',
+    name: 'Slimy Mudfin Scale',
     kind: 'junk',
     quality: 'poor',
     sellValue: 5,
   },
   tallow_candle: {
     id: 'tallow_candle',
-    name: 'Tallow Candle',
+    name: 'Greasy Tallow Lump',
     kind: 'junk',
     quality: 'poor',
     sellValue: 5,

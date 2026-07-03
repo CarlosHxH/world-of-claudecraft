@@ -108,7 +108,7 @@ export const ZONE2_MOBS: Record<string, MobTemplate> = {
     name: 'Deepfen Snapper',
     minLevel: 8,
     maxLevel: 9,
-    family: 'murloc',
+    family: 'mudfin',
     hpBase: 48,
     hpPerLevel: 19,
     dmgBase: 7,
@@ -149,7 +149,7 @@ export const ZONE2_MOBS: Record<string, MobTemplate> = {
     name: 'Mirejaw the Ravenous',
     minLevel: 10,
     maxLevel: 10,
-    family: 'murloc',
+    family: 'mudfin',
     rare: true,
     elite: true,
     canSwim: true,
@@ -182,7 +182,7 @@ export const ZONE2_MOBS: Record<string, MobTemplate> = {
     name: 'Mirejaw Frenzy',
     minLevel: 9,
     maxLevel: 10,
-    family: 'murloc',
+    family: 'mudfin',
     hpBase: 48,
     hpPerLevel: 18,
     dmgBase: 8,
@@ -200,7 +200,7 @@ export const ZONE2_MOBS: Record<string, MobTemplate> = {
     name: 'Sloomtooth the Drowned',
     minLevel: 11,
     maxLevel: 11,
-    family: 'murloc',
+    family: 'mudfin',
     rare: true,
     elite: true,
     canSwim: true,
@@ -761,7 +761,7 @@ export const ZONE2_QUESTS: Record<string, QuestDef> = {
     name: 'The Deepfen Stirs',
     giverNpcId: 'warden_fenwick',
     turnInNpcId: 'warden_fenwick',
-    text: 'The Deepfen murlocs kept to their shallows for twenty years. Now they swarm the east bank like flies on a carcass — and my wardens say they are dragging things up from the lake bed. Whatever has them stirred, I want it stopped. Cull 12 of the snappers.',
+    text: 'The Deepfen mudfins kept to their shallows for twenty years. Now they swarm the east bank like flies on a carcass — and my wardens say they are dragging things up from the lake bed. Whatever has them stirred, I want it stopped. Cull 12 of the snappers.',
     completionText:
       'That will push them back to the mud for a while. But something set them digging, and I mean to learn what.',
     objectives: [
@@ -819,7 +819,7 @@ export const ZONE2_QUESTS: Record<string, QuestDef> = {
     name: 'Back to the Shallows',
     giverNpcId: 'warden_fenwick',
     turnInNpcId: 'warden_fenwick',
-    text: "Aldric says those idols are cult-make — which means the murlocs are hauling the marsh's old evil up one armful at a time. I will not have it washing onto my causeway. Go back to the shallows and break the dredging for good: 14 more snappers.",
+    text: "Aldric says those idols are cult-make — which means the mudfins are hauling the marsh's old evil up one armful at a time. I will not have it washing onto my causeway. Go back to the shallows and break the dredging for good: 14 more snappers.",
     completionText:
       "Ruthless and thorough. If this marsh ever dries out, there's warden's work waiting for you.",
     objectives: [

@@ -144,7 +144,7 @@ export const guideStrings = {
       valeName: 'Eastbrook Vale',
       valeBlurb: 'Green hills and old woods where every adventure begins.',
       marshName: 'Mirefen Marsh',
-      marshBlurb: 'Sunken fens and tide-worn ruins, home to murlocs and worse.',
+      marshBlurb: 'Sunken fens and tide-worn ruins, home to mudfins and worse.',
       peaksName: 'Thornpeak Heights',
       peaksBlurb: "Wind-scoured ridges climbing toward the realm's coldest dangers.",
     },
@@ -495,7 +495,7 @@ export const guideStrings = {
     conjure_water: 'Conjures drinks that restore mana, so you can refill between pulls.',
     conjure_food: 'Conjures food that restores health when you sit down to eat.',
     shadow_bolt: 'A bolt of shadow you cast at a target, your go-to nuke.',
-    summon_imp: 'Calls up an imp that flings firebolts at enemies from range.',
+    summon_imp: 'Calls up an Emberkin that flings firebolts at enemies from range.',
     demon_skin: 'A lasting self-buff that toughens your skin and adds armor.',
     immolate: 'Sets a target alight for an opening hit and a burn that lingers.',
     corruption: 'Rots a target with shadow that ticks while you do other things.',
@@ -510,13 +510,13 @@ export const guideStrings = {
 
   // Warlock demon roster flavor, keyed by pet id.
   petHook: {
-    imp: 'A ranged firebolt demon that chips at enemies from a safe distance.',
-    voidwalker: 'A sturdy demon that taunts and soaks hits so you can cast in peace.',
-    succubus: 'A fast melee demon that hits hard but folds under pressure.',
-    felhunter: 'A shadow skirmisher that hounds enemy casters.',
-    felguard: 'A durable melee bruiser, the all-rounder once you can summon it.',
-    infernal: 'A hulking juggernaut with crushing melee, summoned for raw power.',
-    doomguard: 'An elite caster that rains heavy shadow from afar.',
+    emberkin: 'A ranged firebolt demon that chips at enemies from a safe distance.',
+    gloomshade: 'A sturdy demon that taunts and soaks hits so you can cast in peace.',
+    duskborn: 'A fast melee demon that hits hard but folds under pressure.',
+    spellhound: 'A shadow skirmisher that hounds enemy casters.',
+    warfiend: 'A durable melee bruiser, the all-rounder once you can summon it.',
+    pyre_colossus: 'A hulking juggernaut with crushing melee, summoned for raw power.',
+    wraithborn: 'An elite caster that rains heavy shadow from afar.',
   },
 
   // Bestiary.
@@ -542,7 +542,7 @@ export const guideStrings = {
       // add now filtered out): the line is still translated in every locale overlay, and the
       // bestiary renders flavor only for creatures it lists, so an unused entry is harmless.
       mirejaw_frenzy:
-        'A marsh murloc that whips itself into a thrashing frenzy mid-fight, the loudest thing in a loud, territorial pack.',
+        'A marsh mudfin that whips itself into a thrashing frenzy mid-fight, the loudest thing in a loud, territorial pack.',
       gravecaller_cultist:
         'Robed servants of the death-cult whose work fouls the graves from the Vale to the peaks. Where they gather, the dead do not rest.',
     },
@@ -556,13 +556,13 @@ export const guideStrings = {
       name: 'Spiders',
       desc: 'Web-spinners and venomous lurkers that nest in dark, tangled places. Hunters can tame them, the same as beasts.',
     },
-    murloc: {
-      name: 'Murlocs',
+    mudfin: {
+      name: 'Mudfins',
       desc: 'Amphibious marsh-dwellers that swarm the shallows in noisy, territorial packs.',
     },
-    kobold: {
-      name: 'Kobolds',
-      desc: 'Candle-headed diggers that infest mines and burrows, fiercely guarding their ore.',
+    burrower: {
+      name: 'Burrowers',
+      desc: 'Dirt-caked diggers that infest mines and burrows, fiercely guarding their ore.',
     },
     humanoid: {
       name: 'Humanoids',
@@ -604,7 +604,7 @@ export const guideStrings = {
     valeBlurb:
       'The green starting valley, where new heroes cut their teeth on wolves and bandits around the town of Eastbrook.',
     marshBlurb:
-      'A drowned country of fog and ruins. Murlocs swarm the shallows and something older stirs beneath the water, watched from the bridge-town of Fenbridge.',
+      'A drowned country of fog and ruins. Mudfins swarm the shallows and something older stirs beneath the water, watched from the bridge-town of Fenbridge.',
     peaksBlurb:
       "Wind-scoured ridges and old mine-works climbing to the realm's coldest, highest dangers, held by the outpost of Highwatch.",
 
@@ -623,9 +623,9 @@ export const guideStrings = {
     valePlaceNotes:
       "Eastbrook is your first home base. Wolf Run and Boar Meadow are gentle hunting ground; Mirror Lake is quiet water to fish; the Webwood and the Copper Dig hide spiders and ore-greedy diggers; a Bandit Camp and the Fallen Chapel hold rougher work; Reliquary Hill drops into the Collapsed Reliquary, the realm's first delve; and Brightwood Glade is a quiet, sunlit grove to the north.",
     marshPlaceNotes:
-      "Fenbridge guards the only dry road. The Prowler Reeds and Deepfen Shallows teem with marsh beasts and murlocs; the Widow Thicket is spun thick with web; the Drowned Chapel and the Troll Mounds keep older dangers; the Gravecaller Encampment is the cult dug in, and the Sunken Bastion is the marsh's instanced heart.",
+      "Fenbridge guards the only dry road. The Prowler Reeds and Deepfen Shallows teem with marsh beasts and mudfins; the Widow Thicket is spun thick with web; the Drowned Chapel and the Troll Mounds keep older dangers; the Gravecaller Encampment is the cult dug in, and the Sunken Bastion is the marsh's instanced heart.",
     peaksPlaceNotes:
-      "Highwatch holds the wall. Stalker Ridge and the Deeprock Burrows belong to ridge cats and kobolds; the Ogre Foothills and Drogmar's War-Camp to brutes for hire; Stormcrag crackles with elementals and the Glimmermere glows below it; the Wyrmcult Tents and Revenant Fields ring the cult's high ground, with Gravewyrm Sanctum at its peak.",
+      "Highwatch holds the wall. Stalker Ridge and the Deeprock Burrows belong to ridge cats and burrowers; the Ogre Foothills and Drogmar's War-Camp to brutes for hire; Stormcrag crackles with elementals and the Glimmermere glows below it; the Wyrmcult Tents and Revenant Fields ring the cult's high ground, with Gravewyrm Sanctum at its peak.",
 
     // Brightwood Glade vignette, distilled spoiler-safe.
     gladeTitle: 'A quiet corner: Brightwood Glade',

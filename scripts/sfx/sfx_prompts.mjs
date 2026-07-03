@@ -84,8 +84,8 @@ export const SFX = [
   ...mob('beast', 'A wolf', 'snarling with an alert growl', 'lunging with a vicious biting snarl', 'yelping and whimpering as it dies'),
   ...mob('boar', 'A wild boar', 'snorting angrily and squealing', 'charging with a furious grunt', 'squealing as it dies'),
   ...mob('spider', 'A giant spider', 'hissing and chittering in alarm', 'lunging with a sharp hiss', 'hissing weakly as it shrivels and dies'),
-  ...mob('murloc', 'A murloc fish-man', 'warbling a startled gurgling cry', 'croaking and gurgling as it strikes', 'gurgling a wet death rattle'),
-  ...mob('kobold', 'A small kobold', 'yipping a startled bark', 'snarling and biting', 'squealing as it dies'),
+  ...mob('mudfin', 'A murloc fish-man', 'warbling a startled gurgling cry', 'croaking and gurgling as it strikes', 'gurgling a wet death rattle'),
+  ...mob('burrower', 'A small kobold', 'yipping a startled bark', 'snarling and biting', 'squealing as it dies'),
   ...mob('humanoid', 'A bandit', 'shouting an angry war cry', 'grunting with effort as he strikes', 'crying out in pain as he dies'),
   ...mob('undead', 'A skeleton', 'rattling its bones with a hollow groan', 'moaning hollowly as it strikes', 'clattering apart into a pile of bones'),
   ...mob('troll', 'A troll', 'roaring a guttural alert', 'grunting savagely as it strikes', 'groaning heavily as it dies'),
@@ -110,6 +110,6 @@ export const SFX = [
 // Family ids that have creature vocalizations (used by the integration layer to
 // know which mobs have sound; templateId overrides handled in code, e.g. boar).
 export const MOB_VOICE_FAMILIES = [
-  'beast', 'boar', 'spider', 'murloc', 'kobold', 'humanoid',
+  'beast', 'boar', 'spider', 'mudfin', 'burrower', 'humanoid',
   'undead', 'troll', 'ogre', 'elemental', 'dragonkin', 'demon',
 ];

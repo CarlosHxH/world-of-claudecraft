@@ -328,7 +328,7 @@ const FLEE_DURATION = 5;
 // FLEE_RETURN_GRACE moved to mob/locomotion.ts (M2; used only by recoverFromFlee).
 // Only sentient, cowardly families flee; beasts/undead/elementals/dragonkin fight
 // to the death. Elites, rares, and bosses never flee regardless of family.
-const FLEEING_FAMILIES: ReadonlySet<MobFamily> = new Set(['humanoid', 'kobold', 'murloc', 'troll']);
+const FLEEING_FAMILIES: ReadonlySet<MobFamily> = new Set(['humanoid', 'burrower', 'mudfin', 'troll']);
 const GRAVITY = 16;
 const JUMP_VELOCITY = 6; // apex = v^2/2g ≈ 1.125 yd
 // Exported for social/chat_readouts.ts (the /falling readout shares the landing-damage
@@ -417,7 +417,7 @@ const MAX_CLIMB_SLOPE = PLAYER_MAX_CLIMB_SLOPE; // rise/run above which a ground
 // POTION_COOLDOWN moved to items.ts (W2) with the useItem potion branch.
 const DEFAULT_SOCIAL_PULL_RADIUS = 5;
 const SOCIAL_PULL_RADIUS: Partial<Record<MobFamily, number>> = {
-  murloc: 8,
+  mudfin: 8,
 };
 // PACK_FRENZY_AURA_ID moved to mob/lifecycle.ts (M4; used only by frenzyPackmates).
 // BLOOD_FRENZY_AURA_ID moved to combat/damage.ts (C1; used only by maybeFrenzyOnHit).
@@ -2474,7 +2474,7 @@ export class Sim {
   private mobCanSpawnInWater(
     template: { family?: string; canSwim?: boolean } | undefined,
   ): boolean {
-    return !!template && (template.canSwim === true || template.family === 'murloc');
+    return !!template && (template.canSwim === true || template.family === 'mudfin');
   }
   private isControlAura(kind: AuraKind): boolean {
     return kind === 'stun' || kind === 'root' || kind === 'incapacitate' || kind === 'polymorph';

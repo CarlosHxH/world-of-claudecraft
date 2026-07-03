@@ -1065,7 +1065,7 @@ export const en_CA: EnTranslations = {
         "valeName": "Eastbrook Vale",
         "valeBlurb": "Green hills and old woods where every adventure begins.",
         "marshName": "Mirefen Marsh",
-        "marshBlurb": "Sunken fens and tide-worn ruins, home to murlocs and worse.",
+        "marshBlurb": "Sunken fens and tide-worn ruins, home to mudfins and worse.",
         "peaksName": "Thornpeak Heights",
         "peaksBlurb": "Wind-scoured ridges climbing toward the realm's coldest dangers."
       },
@@ -1340,7 +1340,7 @@ export const en_CA: EnTranslations = {
       "conjure_water": "Conjures drinks that restore mana, so you can refill between pulls.",
       "conjure_food": "Conjures food that restores health when you sit down to eat.",
       "shadow_bolt": "A bolt of shadow you cast at a target, your go-to nuke.",
-      "summon_imp": "Calls up an imp that flings firebolts at enemies from range.",
+      "summon_imp": "Calls up an Emberkin that flings firebolts at enemies from range.",
       "demon_skin": "A lasting self-buff that toughens your skin and adds armor.",
       "immolate": "Sets a target alight for an opening hit and a burn that lingers.",
       "corruption": "Rots a target with shadow that ticks while you do other things.",
@@ -1353,13 +1353,13 @@ export const en_CA: EnTranslations = {
       "thorns": "Wards an ally so melee attackers hurt themselves for striking."
     },
     "petHook": {
-      "imp": "A ranged firebolt demon that chips at enemies from a safe distance.",
-      "voidwalker": "A sturdy demon that taunts and soaks hits so you can cast in peace.",
-      "succubus": "A fast melee demon that hits hard but folds under pressure.",
-      "felhunter": "A shadow skirmisher that hounds enemy casters.",
-      "felguard": "A durable melee bruiser, the all-rounder once you can summon it.",
-      "infernal": "A hulking juggernaut with crushing melee, summoned for raw power.",
-      "doomguard": "An elite caster that rains heavy shadow from afar."
+      "emberkin": "A ranged firebolt demon that chips at enemies from a safe distance.",
+      "gloomshade": "A sturdy demon that taunts and soaks hits so you can cast in peace.",
+      "duskborn": "A fast melee demon that hits hard but folds under pressure.",
+      "spellhound": "A shadow skirmisher that hounds enemy casters.",
+      "warfiend": "A durable melee bruiser, the all-rounder once you can summon it.",
+      "pyre_colossus": "A hulking juggernaut with crushing melee, summoned for raw power.",
+      "wraithborn": "An elite caster that rains heavy shadow from afar."
     },
     "bestiary": {
       "heading": "Bestiary",
@@ -1372,7 +1372,7 @@ export const en_CA: EnTranslations = {
         "old_greyjaw": "A scarred old wolf no trap has held, blamed for three hounds and a stable boy's arm. He hunts the deep woods alone, and turns savage the longer a fight wears on.",
         "grubjaw": "A fen troll so greedy the other trolls will not dig beside him, said to have eaten a trader's last two pack-mules, harness and all.",
         "shardlord_kazzix": "A storm elemental given shoulders, walking the far crags above Stormcrag with a heartshard worth braving the lightning for.",
-        "mirejaw_frenzy": "A marsh murloc that whips itself into a thrashing frenzy mid-fight, the loudest thing in a loud, territorial pack.",
+        "mirejaw_frenzy": "A marsh mudfin that whips itself into a thrashing frenzy mid-fight, the loudest thing in a loud, territorial pack.",
         "gravecaller_cultist": "Robed servants of the death-cult whose work fouls the graves from the Vale to the peaks. Where they gather, the dead do not rest."
       }
     },
@@ -1385,13 +1385,13 @@ export const en_CA: EnTranslations = {
         "name": "Spiders",
         "desc": "Web-spinners and venomous lurkers that nest in dark, tangled places. Hunters can tame them, the same as beasts."
       },
-      "murloc": {
-        "name": "Murlocs",
+      "mudfin": {
+        "name": "Mudfins",
         "desc": "Amphibious marsh-dwellers that swarm the shallows in noisy, territorial packs."
       },
-      "kobold": {
-        "name": "Kobolds",
-        "desc": "Candle-headed diggers that infest mines and burrows, fiercely guarding their ore."
+      "burrower": {
+        "name": "Burrowers",
+        "desc": "Dirt-caked diggers that infest mines and burrows, fiercely guarding their ore."
       },
       "humanoid": {
         "name": "Humanoids",
@@ -1427,7 +1427,7 @@ export const en_CA: EnTranslations = {
       "places": "Notable places",
       "residents": "Who you will meet",
       "valeBlurb": "The green starting valley, where new heroes cut their teeth on wolves and bandits around the town of Eastbrook.",
-      "marshBlurb": "A drowned country of fog and ruins. Murlocs swarm the shallows and something older stirs beneath the water, watched from the bridge-town of Fenbridge.",
+      "marshBlurb": "A drowned country of fog and ruins. Mudfins swarm the shallows and something older stirs beneath the water, watched from the bridge-town of Fenbridge.",
       "peaksBlurb": "Wind-scoured ridges and old mine-works climbing to the realm's coldest, highest dangers, held by the outpost of Highwatch.",
       "valeGreeting": "Keep your blade close. The Vale is not what it was.",
       "valeGreeter": "Marshal Redbrook, Eastbrook",
@@ -1436,8 +1436,8 @@ export const en_CA: EnTranslations = {
       "peaksGreeting": "Two hundred years this wall has held. It will not break on my watch, but it groans.",
       "peaksGreeter": "Captain Thessaly, Highwatch",
       "valePlaceNotes": "Eastbrook is your first home base. Wolf Run and Boar Meadow are gentle hunting ground; Mirror Lake is quiet water to fish; the Webwood and the Copper Dig hide spiders and ore-greedy diggers; a Bandit Camp and the Fallen Chapel hold rougher work; Reliquary Hill drops into the Collapsed Reliquary, the realm's first delve; and Brightwood Glade is a quiet, sunlit grove to the north.",
-      "marshPlaceNotes": "Fenbridge guards the only dry road. The Prowler Reeds and Deepfen Shallows teem with marsh beasts and murlocs; the Widow Thicket is spun thick with web; the Drowned Chapel and the Troll Mounds keep older dangers; the Gravecaller Encampment is the cult dug in, and the Sunken Bastion is the marsh's instanced heart.",
-      "peaksPlaceNotes": "Highwatch holds the wall. Stalker Ridge and the Deeprock Burrows belong to ridge cats and kobolds; the Ogre Foothills and Drogmar's War-Camp to brutes for hire; Stormcrag crackles with elementals and the Glimmermere glows below it; the Wyrmcult Tents and Revenant Fields ring the cult's high ground, with Gravewyrm Sanctum at its peak.",
+      "marshPlaceNotes": "Fenbridge guards the only dry road. The Prowler Reeds and Deepfen Shallows teem with marsh beasts and mudfins; the Widow Thicket is spun thick with web; the Drowned Chapel and the Troll Mounds keep older dangers; the Gravecaller Encampment is the cult dug in, and the Sunken Bastion is the marsh's instanced heart.",
+      "peaksPlaceNotes": "Highwatch holds the wall. Stalker Ridge and the Deeprock Burrows belong to ridge cats and burrowers; the Ogre Foothills and Drogmar's War-Camp to brutes for hire; Stormcrag crackles with elementals and the Glimmermere glows below it; the Wyrmcult Tents and Revenant Fields ring the cult's high ground, with Gravewyrm Sanctum at its peak.",
       "gladeTitle": "A quiet corner: Brightwood Glade",
       "gladeBody": "Not every story in the Vale is about the dead. In the north, a sunlit grove called Brightwood Glade keeps its own gentler rhythm, all quiet paths and dappled light beneath the boughs. It is a soft counterpoint to the trail you are following, and worth seeing when the road gives you room to wander."
     },
@@ -4254,31 +4254,31 @@ export const en_CA: EnTranslations = {
       },
       "summon_imp": {
         "name": "Summon Emberkin",
-        "description": "Summons an Imp under the command of the Warlock. The Imp hurls Ashbolts at your enemies from afar. Summoning a new demon dismisses your current one. You may have one demon at a time."
+        "description": "Summons an Emberkin under the command of the Warlock. The Emberkin hurls Ashbolts at your enemies from afar. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "summon_voidwalker": {
         "name": "Summon Gloomshade",
-        "description": "Summons a Voidwalker under the command of the Warlock. The Voidwalker is a sturdy demon that taunts your enemies and soaks up punishment. Summoning a new demon dismisses your current one. You may have one demon at a time."
+        "description": "Summons a Gloomshade under the command of the Warlock. The Gloomshade is a sturdy demon that taunts your enemies and soaks up punishment. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "summon_succubus": {
         "name": "Summon Duskborn",
-        "description": "Summons a Succubus under the command of the Warlock. The Succubus is a fragile demon that strikes quickly and hits hard in melee. Summoning a new demon dismisses your current one. You may have one demon at a time."
+        "description": "Summons a Duskborn under the command of the Warlock. The Duskborn is a fragile demon that strikes quickly and hits hard in melee. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "summon_felhunter": {
         "name": "Summon Spellhound",
-        "description": "Summons a Felhunter under the command of the Warlock. The Felhunter harries enemies from range with Gloombite and excels at hunting spellcasters. Summoning a new demon dismisses your current one. You may have one demon at a time."
+        "description": "Summons a Spellhound under the command of the Warlock. The Spellhound harries enemies from range with Gloombite and excels at hunting spellcasters. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "summon_felguard": {
         "name": "Summon Warfiend",
-        "description": "Summons a Felguard under the command of the Warlock. The Felguard is a durable melee demon that wades into battle and holds its own. Summoning a new demon dismisses your current one. You may have one demon at a time."
+        "description": "Summons a Warfiend under the command of the Warlock. The Warfiend is a durable melee demon that wades into battle and holds its own. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "summon_infernal": {
         "name": "Summon Pyre Colossus",
-        "description": "Binds an Infernal to your will — a hulking juggernaut with crushing melee and the deepest health and armor of any demon. A long cooldown gates its raw power. Summoning a new demon dismisses your current one. You may have one demon at a time."
+        "description": "Binds a Pyre Colossus to your will — a hulking juggernaut with crushing melee and the deepest health and armor of any demon. A long cooldown gates its raw power. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "summon_doomguard": {
         "name": "Summon Wraithborn",
-        "description": "Binds a Doomguard to your will — an elite demon that rains heavy Shadow damage from afar. A long cooldown gates its devastating power. Summoning a new demon dismisses your current one. You may have one demon at a time."
+        "description": "Binds a Wraithborn to your will — an elite demon that rains heavy Shadow damage from afar. A long cooldown gates its devastating power. Summoning a new demon dismisses your current one. You may have one demon at a time."
       },
       "bear_charge": {
         "name": "Bruin Rush",
@@ -4453,10 +4453,10 @@ export const en_CA: EnTranslations = {
         "name": "Tough Jerky"
       },
       "mudfin_scale": {
-        "name": "Slimy Murloc Scale"
+        "name": "Slimy Mudfin Scale"
       },
       "tallow_candle": {
-        "name": "Tallow Candle"
+        "name": "Greasy Tallow Lump"
       },
       "spider_leg": {
         "name": "Twitching Spider Leg"
@@ -4834,7 +4834,7 @@ export const en_CA: EnTranslations = {
         "name": "Monarch's Crown"
       },
       "bristleback_maul": {
-        "name": "Bristleback Maul"
+        "name": "Gallowglass Hammer"
       },
       "broodmother_silk_robe": {
         "name": "Broodmother's Silk Robe"
@@ -5334,7 +5334,7 @@ export const en_CA: EnTranslations = {
         "name": "Mudfin Skulker"
       },
       "tunnel_rat": {
-        "name": "Tunnel Rat Digger"
+        "name": "Deeprock Digger"
       },
       "vale_bandit": {
         "name": "Vale Bandit"
@@ -5442,7 +5442,7 @@ export const en_CA: EnTranslations = {
         "name": "Sanctum Boneguard"
       },
       "sanctum_drakonid": {
-        "name": "Sanctum Drakonid"
+        "name": "Sanctum Scaleguard"
       },
       "raised_bonewalker": {
         "name": "Raised Bonewalker"
@@ -5537,14 +5537,14 @@ export const en_CA: EnTranslations = {
       "varkas_boneguard": {
         "name": "Varkas Boneguard"
       },
-      "imp": {
-        "name": "Imp"
+      "emberkin": {
+        "name": "Emberkin"
       },
-      "voidwalker": {
-        "name": "Voidwalker"
+      "gloomshade": {
+        "name": "Gloomshade"
       },
-      "succubus": {
-        "name": "Succubus"
+      "duskborn": {
+        "name": "Duskborn"
       },
       "grix_the_tunnelking": {
         "name": "Grix the Tunnelking"
@@ -5567,17 +5567,17 @@ export const en_CA: EnTranslations = {
       "wraithbinder_maldrec": {
         "name": "Wraithbinder Maldrec"
       },
-      "felhunter": {
-        "name": "Felhunter"
+      "spellhound": {
+        "name": "Spellhound"
       },
-      "felguard": {
-        "name": "Felguard"
+      "warfiend": {
+        "name": "Warfiend"
       },
-      "infernal": {
-        "name": "Infernal"
+      "pyre_colossus": {
+        "name": "Pyre Colossus"
       },
-      "doomguard": {
-        "name": "Doomguard"
+      "wraithborn": {
+        "name": "Wraithborn"
       },
       "choirmother_selthe": {
         "name": "Choirmother Selthe"
@@ -5650,12 +5650,12 @@ export const en_CA: EnTranslations = {
       "fisherman_brandt": {
         "name": "Fisherman Brandt",
         "title": "Old Salt",
-        "greeting": "Grlmurlgrl- sorry, been listening to those fish-men too long."
+        "greeting": "Blrb-glub- sorry, been listening to those fish-men too long."
       },
       "foreman_odell": {
         "name": "Foreman Odell",
         "title": "Mine Foreman",
-        "greeting": "Whole dig's crawling with those candle-headed vermin!"
+        "greeting": "Whole dig's crawling with those dirt-caked vermin!"
       },
       "warden_fenwick": {
         "name": "Warden Fenwick",
@@ -5755,7 +5755,7 @@ export const en_CA: EnTranslations = {
         }
       },
       "q_boars": {
-        "title": "Bristleback Hides",
+        "title": "Bristly Boar Hides",
         "text": "Boar hide makes the finest travel packs, and the meadows west of town are crawling with the beasts. Bring me 5 Bristly Boar Hides and I will make it worth your time.",
         "completion": "Ah, fine bristly hides! These will fetch a good price.",
         "objectives": {
@@ -5779,7 +5779,7 @@ export const en_CA: EnTranslations = {
       },
       "q_murlocs": {
         "title": "Trouble at the Lake",
-        "text": "Twenty years I have fished Mirror Lake, and never lost a net until those gurgling fish-men crawled out of the shallows. Drive the Mudfin back - slay 8 of them. And watch yourself: where there is one murloc, there are five.",
+        "text": "Twenty years I have fished Mirror Lake, and never lost a net until those gurgling fish-men crawled out of the shallows. Drive the Mudfin back - slay 8 of them. And watch yourself: where there is one mudfin, there are five.",
         "completion": "Hah! That will teach them to mind their own mudholes.",
         "objectives": {
           "0": {
@@ -5789,11 +5789,11 @@ export const en_CA: EnTranslations = {
       },
       "q_mine": {
         "title": "Rats in the Mine",
-        "text": "We struck a fine copper vein and then those kobold vermin came boiling out of the hillside. My crew will not set foot in the dig until it is cleared. Put down 10 Tunnel Rat Diggers.",
+        "text": "We struck a fine copper vein and then those burrowing vermin came boiling out of the hillside. My crew will not set foot in the dig until it is cleared. Put down 10 Deeprock Diggers.",
         "completion": "Ha! Back to work, lads! You have my thanks - and my coin.",
         "objectives": {
           "0": {
-            "label": "Tunnel Rat Digger slain"
+            "label": "Deeprock Digger slain"
           }
         }
       },
@@ -5849,7 +5849,7 @@ export const en_CA: EnTranslations = {
       },
       "q_rite": {
         "title": "The Binding Rite",
-        "text": "The crypt beneath the chapel must be unsealed if we are to stop the Gravecaller - but only a binding rite will let the living pass. I need 4 lumps of Blessed Tallow - the kobold diggers hoard candles by the crate - and 6 Ghostly Essences from the restless dead.",
+        "text": "The crypt beneath the chapel must be unsealed if we are to stop the Gravecaller - but only a binding rite will let the living pass. I need 4 lumps of Blessed Tallow - the mine's burrowers hoard tallow by the crate - and 6 Ghostly Essences from the restless dead.",
         "completion": "It is done. The way below stands open... and may the Light forgive me for opening it. Gather your strongest companions before you descend, {playerName}. No one should face the Hollow alone.",
         "objectives": {
           "0": {
@@ -5952,7 +5952,7 @@ export const en_CA: EnTranslations = {
       },
       "q_deepfen": {
         "title": "The Deepfen Stirs",
-        "text": "The Deepfen murlocs kept to their shallows for twenty years. Now they swarm the east bank like flies on a carcass - and my wardens say they are dragging things up from the lake bed. Whatever has them stirred, I want it stopped. Cull 12 of the snappers.",
+        "text": "The Deepfen mudfins kept to their shallows for twenty years. Now they swarm the east bank like flies on a carcass - and my wardens say they are dragging things up from the lake bed. Whatever has them stirred, I want it stopped. Cull 12 of the snappers.",
         "completion": "That will push them back to the mud for a while. But something set them digging, and I mean to learn what.",
         "objectives": {
           "0": {
@@ -5982,7 +5982,7 @@ export const en_CA: EnTranslations = {
       },
       "q_deepfen_purge": {
         "title": "Back to the Shallows",
-        "text": "Aldric says those idols are cult-make - which means the murlocs are hauling the marsh's old evil up one armful at a time. I will not have it washing onto my causeway. Go back to the shallows and break the dredging for good: 14 more snappers.",
+        "text": "Aldric says those idols are cult-make - which means the mudfins are hauling the marsh's old evil up one armful at a time. I will not have it washing onto my causeway. Go back to the shallows and break the dredging for good: 14 more snappers.",
         "completion": "Ruthless and thorough. If this marsh ever dries out, there's warden's work waiting for you.",
         "objectives": {
           "0": {
@@ -6171,8 +6171,8 @@ export const en_CA: EnTranslations = {
       },
       "q_kobold_tunnels": {
         "title": "Deeprock Trouble",
-        "text": "The kobolds at Deeprock Burrows are digging deeper than any candle-rat has business digging - straight down, as if something were calling them. Their tunnels run beneath our wall, {playerName}. Collapse the matter: kill twelve Deeprock Tunnelers.",
-        "completion": "Straight down, every shaft of it - kobolds do not dig like that on their own. I must consult my books.",
+        "text": "The tunnelers at Deeprock Burrows are digging deeper than any pit-rat has business digging - straight down, as if something were calling them. Their tunnels run beneath our wall, {playerName}. Collapse the matter: kill twelve Deeprock Tunnelers.",
+        "completion": "Straight down, every shaft of it - burrowers do not dig like that on their own. I must consult my books.",
         "objectives": {
           "0": {
             "label": "Deeprock Tunneler slain"
@@ -6181,7 +6181,7 @@ export const en_CA: EnTranslations = {
       },
       "q_glowing_wax": {
         "title": "Strange Wax",
-        "text": "Caddis showed me a candle taken off one of those tunnelers - the wax glows, {playerName}, and it is warm as a heartbeat. He wants more for study, and I want it off my requisition list. Bring back six lumps of the glowing wax.",
+        "text": "Caddis showed me a lump of wax taken off one of those tunnelers - it glows, {playerName}, and it is warm as a heartbeat. He wants more for study, and I want it off my requisition list. Bring back six lumps of the glowing wax.",
         "completion": "Still warm. The Loremaster says the glow matches no flame he knows of. I say it is mountain trouble, and I say it kindly.",
         "objectives": {
           "0": {

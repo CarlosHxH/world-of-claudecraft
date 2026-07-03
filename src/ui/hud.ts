@@ -546,8 +546,8 @@ const MAP_BG_RES = 480;
 const SFX_MOB_FAMILIES = new Set([
   'beast',
   'spider',
-  'murloc',
-  'kobold',
+  'mudfin',
+  'burrower',
   'humanoid',
   'undead',
   'troll',

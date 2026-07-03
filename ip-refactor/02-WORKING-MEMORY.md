@@ -15,10 +15,10 @@
 |----|-------|-------|------|--------|-----------------|
 | G0 | De-IP gate + verbatim-name scanner | Spine | plain | done-on-track (2026-07-02; scanner RED by design: 142 baseline violations; all behavior gates green) | feature/ip-pivot @ G0 commit |
 | G1 | Generate + lock the NAME-MAP | Spine | ULTRACODE | done-on-track (2026-07-02; 588 map rows, 603 names adversarially screened, 2 skeptic refutations fixed; scanner arms the full map: 812 RED baseline; old-column 100% hit-verified; AWAITING OPERATOR LOCK) | feature/ip-pivot @ G1 commit |
-| V1 | Ability / spell rename | Vocab | plain | done-on-track (2026-07-02; all 146 ability renames + amendment #2 applied; 20 V1 scanner rows cleared (zero abilities.* hits); goldens re-minted via UPDATE_PARITY=1; reverse-map re-digest proof green 49/49 (tests/parity/rename_state_proof.test.ts, RENAME_PROOF=1); inspector --allow-state-hashes: violations 0) | track/ip-vocab @ V1 commit |
-| V2 | Talent + spec/tree rename | Vocab | plain | done-on-track (2026-07-02; all 387 map rows applied: 27 trees + 26 masteries + 196 talents + 138 choices, kept-originals untouched; ids proven frozen; talent descriptions re-pointed at V1 ability names; talent_i18n titleOverrides re-keyed to new English keys across 19 locales, stale values kept for Z1; V1 QA 7 orphaned talent names resolved, tests/localization_fixes GREEN; parity goldens BYTE-IDENTICAL (no re-mint; inspector 0 changed / 0 violations); talents.* scanner 453 -> 7 (all 22 V2 worklist rows cleared; residuals are map-mandated collisions, see V2 slice notes); authorized gate-text edit in tests/talent_tooltip_accuracy.test.ts (Arcane Shot / Concussive Shot -> Fell Shot / Rattling Shot)) | track/ip-vocab @ V2 commit |
-| C1 | Creatures + coined family-id sweep | Creatures | ULTRACODE | not-started | — |
-| C2 | Warlock demon-pet re-theme + pet-id sweep | Creatures | ULTRACODE | not-started | — |
+| V1 | Ability / spell rename | Vocab | plain | not-started | — |
+| V2 | Talent + spec/tree rename | Vocab | plain | not-started | — |
+| C1 | Creatures + coined family-id sweep | Creatures | ULTRACODE | done-on-track (2026-07-02; family ids murloc->mudfin + kobold->burrower swept atomically; all locked C1 display renames + prose rewords applied; goldens re-minted per operator ruling, inspector green) | track/ip-creatures @ C1 commit |
+| C2 | Warlock demon-pet re-theme + pet-id sweep | Creatures | ULTRACODE | done-on-track (2026-07-02; all 7 pet ids + displays swept atomically per the locked roster; warlock_imp petSpell Firebolt->Ashbolt; goldens re-minted, inspector 0 violations, reverse-map state-hash proof committed + passing) | track/ip-creatures @ C2 commit |
 | W1 | Item / set / augment rename | World | plain | not-started | — |
 | W2 | Mob mechanic / aura name rename | World | plain | not-started | — |
 | T1 | De-brand comments / docs / realm copy | Text | plain | not-started | — |
@@ -91,68 +91,68 @@ Overpower, Frost Nova, Arcane Intellect, Holy Light, Arcane Shot, Frost Shock, F
 
 | denylist entry | owning slice | baseline hits | cleared? |
 |---|---|---|---|
-| Heroic Strike (ability-name fields) | V1 | 2 | [x] |
-| Mortal Strike (ability-name fields) | V1 | 2 | [x] |
-| Sinister Strike (ability-name fields) | V1 | 2 | [x] |
-| Sunder Armor (ability-name fields) | V1 | 2 | [x] |
-| Thunder Clap (ability-name fields) | V1 | 2 | [x] |
-| Bloodthirst (ability-name fields) | V1 | 2 | [x] |
-| Shield Slam (ability-name fields) | V1 | 2 | [x] |
-| Fireball (ability-name fields) | V1 | 2 | [x] |
-| Frostbolt (ability-name fields) | V1 | 2 | [x] |
-| Pyroblast | V1 | 2 | [x] |
-| Arcane Missiles (ability-name fields) | V1 | 2 | [x] |
-| Polymorph (ability-name fields) | V1 | 2 | [x] |
-| Ice Barrier (ability-name fields) | V1 | 2 | [x] |
-| Eviscerate (ability-name fields) | V1 | 2 | [x] |
-| Slice and Dice | V1 | 2 | [x] |
-| Judgement (ability-name fields) | V1 | 2 | [x] |
-| Hammer of Justice | V1 | 2 | [x] |
-| Lay on Hands (ability-name fields) | V1 | 2 | [x] |
-| Consecration | V1 | 2 | [x] |
-| Mind Blast (ability-name fields) | V1 | 2 | [x] |
-| Arcane (tree, whole-value) | V2 | 1 | [x] |
-| Fire (tree, whole-value) | V2 | 1 | [x] |
-| Frost (tree, whole-value) | V2 | 1 | [x] |
-| Holy (tree, whole-value) | V2 | 2 | [x] |
-| Blessing of Sanctuary | V2 | 1 | [x] |
-| Ardent Defender | V2 | 1 | [x] |
-| Improved Fireball | V2 | 1 | [x] |
-| Heroic Strike (talent-name fields) | V2 | 1 | [x] |
-| Mortal Strike (talent-name fields) | V2 | 1 | [x] |
-| Sinister Strike (talent-name fields) | V2 | 1 | [x] |
-| Sunder Armor (talent-name fields) | V2 | 1 | [x] |
-| Thunder Clap (talent-name fields) | V2 | 2 | [x] |
-| Bloodthirst (talent-name fields) | V2 | 1 | [x] |
-| Shield Slam (talent-name fields) | V2 | 1 | [x] |
-| Fireball (talent-name fields) | V2 | 1 | [x] |
-| Frostbolt (talent-name fields) | V2 | 1 | [x] |
-| Arcane Missiles (talent-name fields) | V2 | 1 | [x] |
-| Polymorph (talent-name fields) | V2 | 1 | [x] |
-| Ice Barrier (talent-name fields) | V2 | 1 | [x] |
-| Eviscerate (talent-name fields) | V2 | 1 | [x] |
-| Judgement (talent-name fields) | V2 | 2 | [x] |
-| Lay on Hands (talent-name fields) | V2 | 1 | [x] |
-| Murloc | C1 | 2 | [ ] |
-| murloc (prose, word-boundary) | C1 | 6 | [ ] |
-| Slimy Murloc Scale | C1 | 2 | [ ] |
-| candle-headed (prose) | C1 | 2 | [ ] |
-| Tallow Candle | C1 | 2 | [ ] |
-| Tallow Candle (prose) | C1 | 0 (belt-and-braces) | [ ] |
-| Bristleback | C1 | 4 | [ ] |
-| Bristleback Maul | C1 | 2 | [ ] |
-| Bristleback Hides | C1 | 2 | [ ] |
-| bristleback (prose, word-boundary) | C1 | 0 (belt-and-braces) | [ ] |
-| Drakonid | C1 | 2 | [ ] |
-| Sanctum Drakonid | C1 | 2 | [ ] |
+| Heroic Strike (ability-name fields) | V1 | 2 | [ ] |
+| Mortal Strike (ability-name fields) | V1 | 2 | [ ] |
+| Sinister Strike (ability-name fields) | V1 | 2 | [ ] |
+| Sunder Armor (ability-name fields) | V1 | 2 | [ ] |
+| Thunder Clap (ability-name fields) | V1 | 2 | [ ] |
+| Bloodthirst (ability-name fields) | V1 | 2 | [ ] |
+| Shield Slam (ability-name fields) | V1 | 2 | [ ] |
+| Fireball (ability-name fields) | V1 | 2 | [ ] |
+| Frostbolt (ability-name fields) | V1 | 2 | [ ] |
+| Pyroblast | V1 | 2 | [ ] |
+| Arcane Missiles (ability-name fields) | V1 | 2 | [ ] |
+| Polymorph (ability-name fields) | V1 | 2 | [ ] |
+| Ice Barrier (ability-name fields) | V1 | 2 | [ ] |
+| Eviscerate (ability-name fields) | V1 | 2 | [ ] |
+| Slice and Dice | V1 | 2 | [ ] |
+| Judgement (ability-name fields) | V1 | 2 | [ ] |
+| Hammer of Justice | V1 | 2 | [ ] |
+| Lay on Hands (ability-name fields) | V1 | 2 | [ ] |
+| Consecration | V1 | 2 | [ ] |
+| Mind Blast (ability-name fields) | V1 | 2 | [ ] |
+| Arcane (tree, whole-value) | V2 | 1 | [ ] |
+| Fire (tree, whole-value) | V2 | 1 | [ ] |
+| Frost (tree, whole-value) | V2 | 1 | [ ] |
+| Holy (tree, whole-value) | V2 | 2 | [ ] |
+| Blessing of Sanctuary | V2 | 1 | [ ] |
+| Ardent Defender | V2 | 1 | [ ] |
+| Improved Fireball | V2 | 1 | [ ] |
+| Heroic Strike (talent-name fields) | V2 | 1 | [ ] |
+| Mortal Strike (talent-name fields) | V2 | 1 | [ ] |
+| Sinister Strike (talent-name fields) | V2 | 1 | [ ] |
+| Sunder Armor (talent-name fields) | V2 | 1 | [ ] |
+| Thunder Clap (talent-name fields) | V2 | 2 | [ ] |
+| Bloodthirst (talent-name fields) | V2 | 1 | [ ] |
+| Shield Slam (talent-name fields) | V2 | 1 | [ ] |
+| Fireball (talent-name fields) | V2 | 1 | [ ] |
+| Frostbolt (talent-name fields) | V2 | 1 | [ ] |
+| Arcane Missiles (talent-name fields) | V2 | 1 | [ ] |
+| Polymorph (talent-name fields) | V2 | 1 | [ ] |
+| Ice Barrier (talent-name fields) | V2 | 1 | [ ] |
+| Eviscerate (talent-name fields) | V2 | 1 | [ ] |
+| Judgement (talent-name fields) | V2 | 2 | [ ] |
+| Lay on Hands (talent-name fields) | V2 | 1 | [ ] |
+| Murloc | C1 | 2 | [x] |
+| murloc (prose, word-boundary) | C1 | 6 | [x] |
+| Slimy Murloc Scale | C1 | 2 | [x] |
+| candle-headed (prose) | C1 | 2 | [x] |
+| Tallow Candle | C1 | 2 | [x] |
+| Tallow Candle (prose) | C1 | 0 (belt-and-braces) | [x] |
+| Bristleback | C1 | 4 | [x] |
+| Bristleback Maul | C1 | 2 | [x] |
+| Bristleback Hides | C1 | 2 | [x] |
+| bristleback (prose, word-boundary) | C1 | 0 (belt-and-braces) | [x] |
+| Drakonid | C1 | 2 | [x] |
+| Sanctum Drakonid | C1 | 2 | [x] |
 | Mogger | C1 | 13 | n/a - operator KEEP (parody); scanner entry removed at lock |
-| Imp | C2 | 4 | [ ] |
-| Voidwalker | C2 | 4 | [ ] |
-| Succubus | C2 | 4 | [ ] |
-| Felhunter | C2 | 4 | [ ] |
-| Felguard | C2 | 4 | [ ] |
-| Infernal | C2 | 4 | [ ] |
-| Doomguard | C2 | 4 | [ ] |
+| Imp | C2 | 4 | [x] (C2 fields zero; residual 2 = `abilities.summon_imp.name` x2 layers, V1-owned) |
+| Voidwalker | C2 | 4 | [x] (C2 fields zero; residual 2 = `abilities.summon_voidwalker.name` x2 layers, V1-owned) |
+| Succubus | C2 | 4 | [x] (C2 fields zero; residual 2 = `abilities.summon_succubus.name` x2 layers, V1-owned) |
+| Felhunter | C2 | 4 | [x] (C2 fields zero; residual 2 = `abilities.summon_felhunter.name` x2 layers, V1-owned) |
+| Felguard | C2 | 4 | [x] (C2 fields zero; residual 2 = `abilities.summon_felguard.name` x2 layers, V1-owned) |
+| Infernal | C2 | 4 | [x] (C2 fields zero; residual 2 = `abilities.summon_infernal.name` x2 layers, V1-owned) |
+| Doomguard | C2 | 4 | [x] (C2 fields zero; residual 2 = `abilities.summon_doomguard.name` x2 layers, V1-owned) |
 | Shadowmeld | W1 | 2 | [ ] |
 | Shadowmeld Tunic | W1 | 2 | [ ] |
 | Lightwell | W1 | 2 | [ ] |
@@ -168,40 +168,84 @@ Overpower, Frost Nova, Arcane Intellect, Holy Light, Arcane Shot, Frost Shock, F
 
 | artifact | last regenerated by |
 |---|---|
-| `src/ui/i18n.resolved.generated/*` | V1 (track/ip-vocab, 2026-07-02) |
-| `src/ui/i18n.resolved.sha256` | V1 (track/ip-vocab, 2026-07-02) |
-| `src/guide/content.generated.ts` | V2 (track/ip-vocab, 2026-07-02; V2 also re-ran i18n:gen + i18n:hash --write: resolved table + sha came out byte-identical - talents have no catalog mirror) |
+| `src/ui/i18n.resolved.generated/*` | C2 (2026-07-02) |
+| `src/ui/i18n.resolved.sha256` | C2 (2026-07-02) |
+| `src/guide/content.generated.ts` | C2 (2026-07-02) |
 
-## V2 slice notes (2026-07-02) - residual scanner hits NEEDING AN OPERATOR RULING
-V2 cleared 446 of 453 talents.* scanner hits (604 -> 158 total). The 7 residual talents.* hits
-are MAP-MANDATED and cannot be cleared by V2 without violating the LOCKED map or editing the
-scanner (both forbidden). Two mechanisms, both from single-generic-word old names armed by the
-map's own old column (word-boundary matching inside longer talent names):
-1. Operator-KEPT names that another armed row word-matches: 'Weapon Mastery' (kept at warrior
-   arms_tactical_mastery + rogue combat_weapon_mastery; armed by shaman enh_choice_weapon's old
-   column) and 'Vile Precision' (kept at rogue ass_choice_vile; armed by rogue combat_precision
-   old 'Precision').
-2. LOCKED new names containing an armed old word from a DIFFERENT row: 'Grim Vigor' (ass_vigor)
-   + 'Blackblood Vigor' (wlk_pact_demonology) vs armed 'Vigor' (rog_vigor old); 'Latent Charge'
-   (sha_convection) vs armed 'Charge' (warrior ability old); 'Cold Reckoning' (bal_vengeance)
-   vs armed 'Reckoning' (prot_choice_reckoning old).
-All 7 fields were already RED in the pre-V2 baseline (same or predecessor entries). Options for
-the operator: arm single-word old names as whole-value like tree entries (scanner-semantics
-refinement, Mogger-precedent edit), or amend the 6 affected map rows. None of the 22 seeded V2
-worklist rows is affected - all ticked.
-Other V2 notes:
-- Parity goldens stayed BYTE-IDENTICAL (talent names do not reach golden digests): no re-mint,
-  no UPDATE_PARITY, proof test not triggered; inspector run anyway: 0 changed / 0 violations.
-- tests/talent_tooltip_accuracy.test.ts regression lock hardcoded 'Arcane Shot'/'Concussive
-  Shot': updated to Fell Shot / Rattling Shot (same authorized gate-text class as V1's
-  tests/parity/coverage.test.ts edit).
-- Talent DESCRIPTIONS: proper ability-name references re-pointed at V1 new names (168 literals,
-  incl. 'Grants X:' and 'Choose one <spec> refinement.'); school/attributive words kept per V1
-  precedent ('Arcane spell costs', 'Shadow spell costs', 'Holy power', 'Fire spells',
-  'Affliction spell costs', 'Balance spells cost', warrior/mage flavor 'whirlwind of blows').
-  T1/Z1 may re-judge the attributive uses.
-- talents_warrior.ts header comment still says 'Arms / Fury dps, Protection tank' (comments are
-  T1's surface).
+## C2 coined-id sweep log (done-on-track, 2026-07-02, track/ip-creatures)
+- Pet ids + displays swept atomically per the locked roster: `imp`->`emberkin` (Emberkin),
+  `voidwalker`->`gloomshade` (Gloomshade), `succubus`->`duskborn` (Duskborn),
+  `felhunter`->`spellhound` (Spellhound), `felguard`->`warfiend` (Warfiend),
+  `infernal`->`pyre_colossus` (Pyre Colossus), `doomguard`->`wraithborn` (Wraithborn); plus
+  `warlock_imp` NPC petSpell Firebolt -> Ashbolt (`zone1.ts`). The `warlock_imp`/
+  `warlock_voidwalker` NPC templates untouched (already-original displays, frozen ids).
+- Sweep sites: `warlock_pets.ts` keys/.id/.name; `classes.ts` all 7 `summonDemon` `mobId:`
+  literals + summon-description demon nouns (a/an fixed: "an Emberkin", "a Pyre Colossus");
+  catalog copies in `i18n.catalog/abilities.ts` kept BYTE-IDENTICAL (machine-verified);
+  summon ability `.name` fields ("Summon Imp", ...) untouched — V1's rows, other branch;
+  Firebolts/Shadow Bite nouns inside descriptions likewise left for V1. `types.ts` comments;
+  `render/characters/manifest.ts` MOB_KEYS imp/voidwalker/succubus keys (model VALUES frozen;
+  other four fall through FAMILY_KEYS.demon); `i18n.catalog/merge.ts` MERGE_MOB_IDS + English
+  names; `i18n.catalog/guide.ts` petHook keys + English hook text; `entities.mobs.<id>.name` +
+  `guide.petHook.<id>` KEY renames in all 20 locale files (VALUES untouched per the Z1
+  reconciliation rule — da_DK/id_ID/es/fr keep verbatim 'Imp'/'Infernal'/... as their
+  translations, Z1 note must cover pet rows); tests (warlock_pets/warlock_balance/threat name
+  asserts 'Emberkin'/'Gloomshade'/pet_commands_module/pet_command/pet_owner_death_despawn/
+  pet_combat_regen/delves/nythraxis_raid/guide_viewer_embed + parity scenarios.ts +
+  coverage.test.ts titles); `scripts/pet_combat_regen_shot.mjs` + `scripts/shot_succubus.mjs`
+  id literals. `summon_*` ability ids FROZEN. Post-sweep grep for quoted old ids across
+  src/ server/ tests/ headless/ scripts/: ZERO code hits (only the proof test's sanctioned
+  reverse-map pairs; lowercase prose remainders in pet_ai.ts/pet_commands.ts/sim_context.ts
+  comments, a nythraxis_raid dev-throw message, and parity `covers` label strings stay for T1).
+- Summon integrity machine-checked: each of the 7 `summonDemon` effects' `mobId` exists as a
+  MOBS key and equals the roster id (tsc cannot catch a mismatch; a bad id silently no-ops).
+- Golden re-mint per the operator ruling (UPDATE_PARITY=1): 5 goldens shifted —
+  c4b_effect_dispatch / hunter_pet / pet_ai / pet_commands / warlock_pet (8 events-digest
+  deltas + 23 state-hash deltas; RNG fingerprints / draw counts / tick / nextId all
+  byte-identical). `golden_token_inspector.mjs --allow-state-hashes` exit 0, violations 0.
+  State-hash deltas sanctioned per the RULING ADDENDUM by the reverse-map re-digest proof:
+  `tests/parity/rename_state_proof.test.ts` NEW on this track (env-gated RENAME_PROOF=1,
+  covers state AND events digests, includes the C1+C2 coined-id pairs) — 6/6 passing vs the
+  pre-slice ref; QA re-run post-commit with RENAME_PROOF_BASE=<pre-C2 sha>.
+- ip_scrub: all 7 C2 registry rows cleared (zero hits in C2-owned mob-name fields; residual
+  2 hits each live in V1-owned `abilities.summon_*.name` fields); zero new-name
+  (Emberkin/.../Ashbolt) hits anywhere in the scan.
+- Gates: parity green (isolated run; the two "records deterministically" fails under parallel
+  load are the KNOWN Windows machine flake, green solo), tsc clean, localization_fixes (S3) +
+  architecture + i18n completeness/coverage/overlay-membership green, pet/threat/delves/
+  nythraxis/guide-embed battery 216/216. guide.test.ts / i18n_resolved_equivalence /
+  i18n_status_registry freshness subtests (`git diff --exit-code` on generated artifacts) red
+  pre-commit BY CONSTRUCTION and re-verified green after the C2 commit.
+
+## C1 coined-id sweep log (done-on-track, 2026-07-02, track/ip-creatures)
+- Family ids swept atomically, `murloc` -> `mudfin` and `kobold` -> `burrower`: `types.ts`
+  union; `sim.ts` FLEEING_FAMILIES + SOCIAL_PULL_RADIUS + mobCanSpawnInWater; content
+  `family:` fields (zone1 x2, zone2 x4, zone3 x3, temple x2); `render/characters/manifest.ts`
+  FAMILY_KEYS keys only (`mob_murloc`/`mob_kobold` model VALUES frozen, same GLBs); `hud.ts`
+  SFX_MOB_FAMILIES + full SFX chain (`public/audio/sfx/mob_{mudfin,burrower}_*.mp3` git-mv'd,
+  `sfx_manifest.generated.ts` + `scripts/sfx/sfx_prompts.mjs` updated); `icons.ts` family
+  crest keys; `guide.family.<id>` i18n keys in catalog + all 17 locale overlays (keys only;
+  locale VALUES untouched per the Z1 reconciliation rule); `scripts/wiki/build_content.mjs`
+  FAMILY_ORDER; tests/fixes.test.ts + tests/sloomtooth_drowned.test.ts. Post-sweep grep for
+  `'murloc'`/`'kobold'` across src/ server/ tests/ headless/ scripts/: ZERO hits.
+- Display renames + prose rewords applied verbatim from the LOCKED map (Mudfins/Burrowers,
+  Slimy Mudfin Scale, Greasy Tallow Lump, Gallowglass Maul, Bristly Boar Hides, Sanctum
+  Scaleguard, Deeprock Digger, Blrb-glub greeting; q_murlocs/q_mine/q_rite/q_deepfen/
+  q_deepfen_purge/q_kobold_tunnels/q_glowing_wax/foreman_odell + guide catalog prose).
+  Blessed Tallow and the whole Mogger cluster untouched per operator decisions.
+- No `src/ui/sim_i18n.ts` matcher carries any edited literal (verified by grep; S3 guard
+  green) - quest text localizes via entity keys, so no matcher edit was needed this slice.
+- Golden re-mint per the operator ruling: only `tests/parity/golden/quest_collect_turnin.json`
+  changed (4 `events`-digest deltas; all state hashes / RNG fingerprints / draw counts /
+  nextId byte-identical); `golden_token_inspector.mjs` exit 0.
+- **OPERATOR ATTENTION (scanner self-collision #5, same class as amendment 2):** the locked
+  C1 new name "Gallowglass Maul" word-boundary-hits the armed V1 denylist word "Maul"
+  (`maul` ability -> Bonecrush arms it). `tests/ip_scrub.test.ts` will keep flagging
+  `items.bristleback_maul.name` even at Z1 unless the map amends the item name or the
+  scanner whitelists it. C1 applied the locked map verbatim and did NOT invent a substitute.
+- Voice-prompt residue (out of C1 scope, Z1/T1 sweep): `scripts/voices/npc_voice_prompts.mjs`
+  still carries the old Brandt "Grlmurlgrl" gurgle and Odell "candle-headed vermin" spoken
+  lines (generation prompts for already-minted audio; voice keys frozen).
 
 ## Decisions & gotchas (honor across all sessions)
 - **Reword-staleness trap (Z1 + release):** rewording an existing English key does NOT flip its

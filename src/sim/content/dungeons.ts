@@ -282,7 +282,7 @@ export const DUNGEON_MOBS: Record<string, MobTemplate> = {
   },
   sanctum_drakonid: {
     id: 'sanctum_drakonid',
-    name: 'Sanctum Drakonid',
+    name: 'Sanctum Scaleguard',
     minLevel: 19,
     maxLevel: 20,
     family: 'dragonkin',
