@@ -739,7 +739,12 @@ export const pl_PL: EnTranslations = {
       "sortName": "Nazwa",
       "searchPlaceholder": "Szukaj przedmiotów",
       "searchAria": "Szukaj przedmiotów w torbie według nazwy",
-      "noMatch": "Żaden przedmiot nie pasuje do filtrów."
+      "noMatch": "Żaden przedmiot nie pasuje do filtrów.",
+      "capacity": "{used}/{total}",
+      "capacityAria": "Bag slots used: {used} of {total}",
+      "backpack": "Backpack",
+      "socketEmpty": "Empty bag slot",
+      "unequipHint": "Click to remove this bag"
     },
     "raidConvert": {
       "toPartyDone": "Twój rajd został z powrotem przekształcony w drużynę.",
@@ -3575,7 +3580,8 @@ export const pl_PL: EnTranslations = {
       "drink": "Napój",
       "tool": "Narzędzie",
       "potion": "Mikstura",
-      "elixir": "Eliksir"
+      "elixir": "Eliksir",
+      "bag": "Bag"
     },
     "stats": {
       "armor": "Pancerz",
@@ -3617,7 +3623,8 @@ export const pl_PL: EnTranslations = {
       "useManaPotion": "Użycie: Natychmiast przywraca {amount} many. Można użyć w walce. Czas odnowienia 1 min.",
       "clickUseInstant": "Kliknij, aby użyć natychmiast w walce",
       "clickUse": "Kliknij, aby użyć",
-      "clickBuyback": "Kliknij, aby odkupić"
+      "clickBuyback": "Kliknij, aby odkupić",
+      "bagSlots": "{slots} Slot Bag"
     },
     "bags": {
       "title": "Torby",
@@ -4918,6 +4925,21 @@ export const pl_PL: EnTranslations = {
       },
       "monarch_crown_helm": {
         "name": "Korona monarchy"
+      },
+      "linen_pouch": {
+        "name": "Lniana sakiewka"
+      },
+      "travelers_knapsack": {
+        "name": "Plecak podróżnika"
+      },
+      "wolfhide_satchel": {
+        "name": "Torba z wilczej skóry"
+      },
+      "gravewoven_bag": {
+        "name": "Grobowo tkana torba"
+      },
+      "mistcallers_duffel": {
+        "name": "Worek Przyzywacza Mgły"
       },
       "bristleback_maul": {
         "name": "Tłuk szczeciniastych"

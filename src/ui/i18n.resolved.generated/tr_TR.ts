@@ -739,7 +739,12 @@ export const tr_TR: EnTranslations = {
       "sortName": "Ad",
       "searchPlaceholder": "Öge ara",
       "searchAria": "Çanta ögelerini ada göre ara",
-      "noMatch": "Filtrelerinizle eşleşen öge yok."
+      "noMatch": "Filtrelerinizle eşleşen öge yok.",
+      "capacity": "{used}/{total}",
+      "capacityAria": "Bag slots used: {used} of {total}",
+      "backpack": "Backpack",
+      "socketEmpty": "Empty bag slot",
+      "unequipHint": "Click to remove this bag"
     },
     "raidConvert": {
       "toPartyDone": "Akının yeniden gruba dönüştü.",
@@ -3575,7 +3580,8 @@ export const tr_TR: EnTranslations = {
       "drink": "İçecek",
       "tool": "Alet",
       "potion": "Şifa İksiri",
-      "elixir": "İksir"
+      "elixir": "İksir",
+      "bag": "Bag"
     },
     "stats": {
       "armor": "Zırh",
@@ -3617,7 +3623,8 @@ export const tr_TR: EnTranslations = {
       "useManaPotion": "Kullanım: Anında {amount} mana yeniler. Savaşta kullanılabilir. 1 dk bekleme süresi.",
       "clickUseInstant": "Savaşta anında kullanmak için tıkla",
       "clickUse": "Kullanmak için tıkla",
-      "clickBuyback": "Geri satın almak için tıkla"
+      "clickBuyback": "Geri satın almak için tıkla",
+      "bagSlots": "{slots} Slot Bag"
     },
     "bags": {
       "title": "Çantalar",
@@ -4918,6 +4925,21 @@ export const tr_TR: EnTranslations = {
       },
       "monarch_crown_helm": {
         "name": "Hükümdar'ın Tacı"
+      },
+      "linen_pouch": {
+        "name": "Keten Kese"
+      },
+      "travelers_knapsack": {
+        "name": "Gezginin Sırt Çantası"
+      },
+      "wolfhide_satchel": {
+        "name": "Kurt Derisi Çanta"
+      },
+      "gravewoven_bag": {
+        "name": "Mezar Dokuması Çanta"
+      },
+      "mistcallers_duffel": {
+        "name": "Sis Çağıranın Denizci Çantası"
       },
       "bristleback_maul": {
         "name": "Dikensırt Balyozu"

@@ -739,7 +739,12 @@ export const vi_VN: EnTranslations = {
       "sortName": "Tên",
       "searchPlaceholder": "Tìm vật phẩm",
       "searchAria": "Tìm vật phẩm trong túi theo tên",
-      "noMatch": "Không có vật phẩm nào khớp với bộ lọc của bạn."
+      "noMatch": "Không có vật phẩm nào khớp với bộ lọc của bạn.",
+      "capacity": "{used}/{total}",
+      "capacityAria": "Bag slots used: {used} of {total}",
+      "backpack": "Backpack",
+      "socketEmpty": "Empty bag slot",
+      "unequipHint": "Click to remove this bag"
     },
     "raidConvert": {
       "toPartyDone": "Raid của bạn đã chuyển trở lại thành tổ đội.",
@@ -3575,7 +3580,8 @@ export const vi_VN: EnTranslations = {
       "drink": "Đồ Uống",
       "tool": "Dụng Cụ",
       "potion": "Thuốc",
-      "elixir": "Tiên Dược"
+      "elixir": "Tiên Dược",
+      "bag": "Bag"
     },
     "stats": {
       "armor": "Giáp",
@@ -3617,7 +3623,8 @@ export const vi_VN: EnTranslations = {
       "useManaPotion": "Dùng: Hồi tức thời {amount} mana. Dùng được trong chiến đấu. Hồi chiêu 1 phút.",
       "clickUseInstant": "Nhấp để dùng tức thời trong chiến đấu",
       "clickUse": "Nhấp để sử dụng",
-      "clickBuyback": "Nhấp để mua lại"
+      "clickBuyback": "Nhấp để mua lại",
+      "bagSlots": "{slots} Slot Bag"
     },
     "bags": {
       "title": "Túi Đồ",
@@ -4918,6 +4925,21 @@ export const vi_VN: EnTranslations = {
       },
       "monarch_crown_helm": {
         "name": "Vương Miện Quân Vương"
+      },
+      "linen_pouch": {
+        "name": "Túi vải lanh"
+      },
+      "travelers_knapsack": {
+        "name": "Ba lô lữ khách"
+      },
+      "wolfhide_satchel": {
+        "name": "Túi da sói"
+      },
+      "gravewoven_bag": {
+        "name": "Túi dệt mộ"
+      },
+      "mistcallers_duffel": {
+        "name": "Túi vải của Kẻ Gọi Sương"
       },
       "bristleback_maul": {
         "name": "Vồ Lưng Gai"

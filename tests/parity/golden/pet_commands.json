@@ -23,7 +23,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 390,
-      "state": "f2893d06",
+      "state": "d2b63c53",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -36,6 +36,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {},
@@ -109,7 +115,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 392,
-      "state": "824642f8",
+      "state": "4126614d",
       "events": "caa6b21d",
       "rng": {
         "draws": 0,
@@ -122,6 +128,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {},
@@ -236,7 +248,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 392,
-      "state": "8beaea91",
+      "state": "706fcefa",
       "events": "5731a74e",
       "rng": {
         "draws": 0,
@@ -249,6 +261,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {},
@@ -377,7 +395,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 392,
-      "state": "cabceb20",
+      "state": "c51984b5",
       "events": "62c3fb26",
       "rng": {
         "draws": 0,
@@ -388,7 +406,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 392,
-      "state": "2eda4b99",
+      "state": "def29c42",
       "events": "62c3fb26",
       "rng": {
         "draws": 0,
@@ -399,7 +417,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 393,
-      "state": "a91588af",
+      "state": "5dea3ec0",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -412,6 +430,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {},
@@ -601,7 +625,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 393,
-      "state": "28f0704f",
+      "state": "746faa60",
       "events": "c6f606f6",
       "rng": {
         "draws": 0,
@@ -614,6 +638,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {},
@@ -743,7 +773,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 395,
-      "state": "f8f8c81a",
+      "state": "f8578d8f",
       "events": "d31b95a1",
       "rng": {
         "draws": 0,
@@ -756,6 +786,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {},
@@ -925,7 +961,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 395,
-      "state": "a1f97ae6",
+      "state": "b7941b83",
       "events": "30072596",
       "rng": {
         "draws": 0,
@@ -938,6 +974,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {},
@@ -1107,7 +1149,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 395,
-      "state": "28f0704f",
+      "state": "746faa60",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -1120,6 +1162,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {},
@@ -1249,7 +1297,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 396,
-      "state": "28f0704f",
+      "state": "746faa60",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -1262,6 +1310,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {},
@@ -1391,7 +1445,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 398,
-      "state": "9d8cb61f",
+      "state": "1be8ba51",
       "events": "0233e839",
       "rng": {
         "draws": 0,
@@ -1404,6 +1458,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {},
@@ -1424,6 +1484,12 @@
           "activeLoadout": -1,
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warlock",
           "companionUpgrades": {},
           "counters": {},
@@ -1648,7 +1714,7 @@
       "tick": 60,
       "time": 3,
       "nextId": 398,
-      "state": "977bf716",
+      "state": "bb13431e",
       "events": "93f2d5fc",
       "rng": {
         "draws": 82,
@@ -1659,7 +1725,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 398,
-      "state": "1531d7fc",
+      "state": "b94c7d64",
       "events": "c77832ae",
       "rng": {
         "draws": 158,
@@ -1670,7 +1736,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 398,
-      "state": "1531d7fc",
+      "state": "b94c7d64",
       "events": "741638a5",
       "rng": {
         "draws": 158,
@@ -1683,6 +1749,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {
@@ -1705,6 +1777,12 @@
           "activeLoadout": -1,
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warlock",
           "companionUpgrades": {},
           "counters": {},
@@ -1938,7 +2016,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 399,
-      "state": "efa37593",
+      "state": "829bb3fb",
       "events": "c542db4e",
       "rng": {
         "draws": 158,
@@ -1951,6 +2029,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {
@@ -1973,6 +2057,12 @@
           "activeLoadout": -1,
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warlock",
           "companionUpgrades": {},
           "counters": {},
@@ -2166,7 +2256,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 401,
-      "state": "2f4186fa",
+      "state": "3d4b5c72",
       "events": "63c67103",
       "rng": {
         "draws": 158,
@@ -2179,6 +2269,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {
@@ -2201,6 +2297,12 @@
           "activeLoadout": -1,
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warlock",
           "companionUpgrades": {},
           "counters": {},
@@ -2443,7 +2545,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 401,
-      "state": "2f4186fa",
+      "state": "3d4b5c72",
       "events": "741638a5",
       "rng": {
         "draws": 158,
@@ -2456,6 +2558,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "hunter",
           "companionUpgrades": {},
           "counters": {
@@ -2478,6 +2586,12 @@
           "activeLoadout": -1,
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warlock",
           "companionUpgrades": {},
           "counters": {},

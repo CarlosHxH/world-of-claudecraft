@@ -16,7 +16,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 390,
-      "state": "c2464a3c",
+      "state": "cdc977ef",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -29,6 +29,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "rogue",
           "companionUpgrades": {},
           "counters": {},
@@ -102,7 +108,7 @@
       "tick": 10,
       "time": 0.5,
       "nextId": 401,
-      "state": "64360645",
+      "state": "00e0b342",
       "events": "d05e7b58",
       "rng": {
         "draws": 3,
@@ -113,7 +119,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 401,
-      "state": "acdcffb5",
+      "state": "963c1d92",
       "events": "741638a5",
       "rng": {
         "draws": 3,
@@ -124,7 +130,7 @@
       "tick": 30,
       "time": 1.5,
       "nextId": 401,
-      "state": "a6d4fca3",
+      "state": "fc42ece8",
       "events": "741638a5",
       "rng": {
         "draws": 3,
@@ -135,7 +141,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 401,
-      "state": "6bbe5489",
+      "state": "1394961e",
       "events": "741638a5",
       "rng": {
         "draws": 3,
@@ -146,7 +152,7 @@
       "tick": 50,
       "time": 2.5,
       "nextId": 401,
-      "state": "becf3fcb",
+      "state": "96e1d030",
       "events": "741638a5",
       "rng": {
         "draws": 3,
@@ -157,7 +163,7 @@
       "tick": 60,
       "time": 3,
       "nextId": 401,
-      "state": "f9f8b045",
+      "state": "840b7142",
       "events": "741638a5",
       "rng": {
         "draws": 3,
@@ -168,7 +174,7 @@
       "tick": 69,
       "time": 3.45,
       "nextId": 402,
-      "state": "307a0223",
+      "state": "58434d68",
       "events": "41e38ae0",
       "rng": {
         "draws": 3,
@@ -181,6 +187,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "rogue",
           "companionUpgrades": {},
           "counters": {
@@ -296,7 +308,7 @@
       "tick": 70,
       "time": 3.5,
       "nextId": 402,
-      "state": "0d81649f",
+      "state": "d8b2496c",
       "events": "741638a5",
       "rng": {
         "draws": 3,
@@ -307,7 +319,7 @@
       "tick": 71,
       "time": 3.55,
       "nextId": 402,
-      "state": "2cd39df3",
+      "state": "6a36e558",
       "events": "741638a5",
       "rng": {
         "draws": 3,
@@ -320,6 +332,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "rogue",
           "companionUpgrades": {},
           "counters": {

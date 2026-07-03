@@ -739,7 +739,12 @@ export const de_DE: EnTranslations = {
       "sortName": "Name",
       "searchPlaceholder": "Gegenstände durchsuchen",
       "searchAria": "Taschengegenstände nach Namen durchsuchen",
-      "noMatch": "Keine Gegenstände entsprechen Euren Filtern."
+      "noMatch": "Keine Gegenstände entsprechen Euren Filtern.",
+      "capacity": "{used}/{total}",
+      "capacityAria": "Bag slots used: {used} of {total}",
+      "backpack": "Backpack",
+      "socketEmpty": "Empty bag slot",
+      "unequipHint": "Click to remove this bag"
     },
     "raidConvert": {
       "toPartyDone": "Euer Schlachtzug wurde wieder in eine Gruppe umgewandelt.",
@@ -3575,7 +3580,8 @@ export const de_DE: EnTranslations = {
       "drink": "Getränk",
       "tool": "Werkzeug",
       "potion": "Trank",
-      "elixir": "Elixier"
+      "elixir": "Elixier",
+      "bag": "Bag"
     },
     "stats": {
       "armor": "Rüstung",
@@ -3617,7 +3623,8 @@ export const de_DE: EnTranslations = {
       "useManaPotion": "Benutzen: Stellt sofort {amount} Mana wieder her. Im Kampf nutzbar. 1 Min. Abklingzeit.",
       "clickUseInstant": "Zum sofortigen Benutzen im Kampf klicken",
       "clickUse": "Zum Benutzen klicken",
-      "clickBuyback": "Zum Rückkaufen klicken"
+      "clickBuyback": "Zum Rückkaufen klicken",
+      "bagSlots": "{slots} Slot Bag"
     },
     "bags": {
       "title": "Taschen",
@@ -4918,6 +4925,21 @@ export const de_DE: EnTranslations = {
       },
       "monarch_crown_helm": {
         "name": "Krone des Monarchen"
+      },
+      "linen_pouch": {
+        "name": "Leinenbeutel"
+      },
+      "travelers_knapsack": {
+        "name": "Rucksack des Reisenden"
+      },
+      "wolfhide_satchel": {
+        "name": "Wolfsledertasche"
+      },
+      "gravewoven_bag": {
+        "name": "Grabgewebte Tasche"
+      },
+      "mistcallers_duffel": {
+        "name": "Seesack des Nebelrufers"
       },
       "bristleback_maul": {
         "name": "Bristleback-Schlägel"

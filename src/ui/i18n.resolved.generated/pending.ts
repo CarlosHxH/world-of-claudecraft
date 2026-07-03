@@ -9,24 +9,156 @@
 // Reproducibility is checked by tests/i18n_resolved_equivalence.test.ts.
 
 export const pending: Record<string, readonly string[]> = {
-  "es": [],
-  "es_ES": [],
-  "fr_FR": [],
-  "fr_CA": [],
+  "es": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "es_ES": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "fr_FR": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "fr_CA": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
   "en_CA": [],
-  "it_IT": [],
-  "de_DE": [],
-  "zh_CN": [],
-  "zh_TW": [],
-  "ko_KR": [],
-  "ja_JP": [],
-  "pt_BR": [],
-  "ru_RU": [],
-  "nl_NL": [],
-  "pl_PL": [],
-  "id_ID": [],
-  "tr_TR": [],
-  "sv_SE": [],
-  "vi_VN": [],
-  "da_DK": []
+  "it_IT": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "de_DE": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "zh_CN": [
+    "hudChrome.bags.capacity",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "zh_TW": [
+    "hudChrome.bags.capacity",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "ko_KR": [
+    "hudChrome.bags.capacity",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "ja_JP": [
+    "hudChrome.bags.capacity",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "pt_BR": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "ru_RU": [
+    "hudChrome.bags.capacity",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "nl_NL": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "pl_PL": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "id_ID": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "tr_TR": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "sv_SE": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "vi_VN": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ],
+  "da_DK": [
+    "hudChrome.bags.backpack",
+    "hudChrome.bags.capacity",
+    "hudChrome.bags.capacityAria",
+    "hudChrome.bags.socketEmpty",
+    "hudChrome.bags.unequipHint",
+    "itemUi.kind.bag",
+    "itemUi.tooltip.bagSlots"
+  ]
 };

@@ -17,7 +17,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 390,
-      "state": "969c1dc9",
+      "state": "056cc550",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -30,6 +30,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warrior",
           "companionUpgrades": {},
           "counters": {},
@@ -101,7 +107,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 390,
-      "state": "363a7889",
+      "state": "659f085c",
       "events": "799cce3e",
       "rng": {
         "draws": 0,
@@ -114,6 +120,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warrior",
           "companionUpgrades": {},
           "counters": {},
@@ -190,7 +202,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 390,
-      "state": "16514c32",
+      "state": "4370dc6f",
       "events": "a8848b3e",
       "rng": {
         "draws": 0,
@@ -203,6 +215,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warrior",
           "companionUpgrades": {},
           "counters": {},
@@ -276,7 +294,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 390,
-      "state": "4bac6cc1",
+      "state": "42f3d868",
       "events": "f3824701",
       "rng": {
         "draws": 0,
@@ -288,6 +306,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warrior",
           "companionUpgrades": {},
           "counters": {},
@@ -380,7 +404,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 390,
-      "state": "08b0b9a8",
+      "state": "8bddea39",
       "events": "68e599fc",
       "rng": {
         "draws": 0,
@@ -392,6 +416,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warrior",
           "companionUpgrades": {},
           "counters": {},
@@ -484,7 +514,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 390,
-      "state": "8c93b4ec",
+      "state": "43b4e86b",
       "events": "799cce3e",
       "rng": {
         "draws": 0,
@@ -496,6 +526,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warrior",
           "companionUpgrades": {},
           "counters": {},
@@ -586,7 +622,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 390,
-      "state": "8c93b4ec",
+      "state": "43b4e86b",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -598,6 +634,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warrior",
           "companionUpgrades": {},
           "counters": {},

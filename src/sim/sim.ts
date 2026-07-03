@@ -7,6 +7,8 @@ import type {
   DelveRunInfo,
   LockpickView,
 } from '../world_api';
+import * as bagsMod from './bags';
+import { addStacked, BAG_SOCKETS, bagCapacity, canAddItem } from './bags';
 import { lineOfSightClear, resolveMovement, resolvePosition } from './colliders';
 import { auraAffectsStats, removeCancelableAura } from './combat/aura_cancel';
 import {
@@ -637,6 +639,9 @@ export interface PlayerMeta {
   // it every frame. Runtime-only signal, never serialized/persisted.
   wireRev: number;
   inventory: InvSlot[];
+  // The 4 equippable bag sockets (itemId of a kind:'bag' item, or null). The
+  // 16-slot backpack is implicit; capacity math lives in bags.ts. Persisted.
+  bags: (string | null)[];
   vendorBuyback: InvSlot[];
   copper: number;
   equipment: PlayerEquipment;
@@ -745,6 +750,9 @@ export interface CharacterState {
   facing: number;
   equipment: PlayerEquipment;
   inventory: InvSlot[];
+  // Equipped bag sockets. Optional so pre-bag saves load cleanly (defaults to
+  // 4 empty sockets; an over-capacity legacy inventory is tolerated).
+  bags?: (string | null)[];
   vendorBuyback?: InvSlot[];
   questLog: { questId: string; counts: number[]; state: 'active' | 'ready' | 'done' }[];
   questsDone: string[];
@@ -1168,6 +1176,7 @@ export class Sim {
       moveInput: emptyMoveInput(),
       wireRev: 0,
       inventory: [],
+      bags: Array<string | null>(BAG_SOCKETS).fill(null),
       vendorBuyback: [],
       copper: 0,
       equipment: { mainhand: classDef.startWeapon, chest: classDef.startChest },
@@ -1228,6 +1237,13 @@ export class Sim {
       meta.copper = s.copper;
       meta.equipment = { ...s.equipment };
       meta.inventory = s.inventory.map((i) => ({ ...i }));
+      // Pre-bag saves have no bags array (and their inventory may exceed the
+      // backpack budget); load them as-is with empty sockets. Over-capacity is
+      // tolerated: it only blocks NEW pickups until space is freed.
+      for (let i = 0; i < BAG_SOCKETS; i++) {
+        const id = s.bags?.[i];
+        meta.bags[i] = id && ITEMS[id]?.kind === 'bag' ? id : null;
+      }
       meta.vendorBuyback = (s.vendorBuyback ?? []).map((i) => ({ ...i }));
       for (const q of s.questLog) {
         if (q.state !== 'done')
@@ -1434,6 +1450,7 @@ export class Sim {
       facing: e.facing,
       equipment: { ...meta.equipment },
       inventory: meta.inventory.map((i) => ({ ...i })),
+      bags: [...meta.bags],
       vendorBuyback: meta.vendorBuyback.map((i) => ({ ...i })),
       questLog: [...meta.questLog.values()].map((q) => ({
         questId: q.questId,
@@ -1624,6 +1641,12 @@ export class Sim {
   }
   get inventory(): InvSlot[] {
     return this.primary.inventory;
+  }
+  get bags(): (string | null)[] {
+    return this.primary.bags;
+  }
+  get bagCapacity(): number {
+    return bagCapacity(this.primary.bags);
   }
   get vendorBuyback(): InvSlot[] {
     return this.primary.vendorBuyback;
@@ -2041,6 +2064,8 @@ export class Sim {
       // healingThreat/countItem are bound elsewhere in this host (C4a/C2/C3/Q1) - deduped.
       spendResource: sim.spendResource.bind(sim),
       removeItem: sim.removeItem.bind(sim),
+      // B1 bags capacity pre-check (stays on Sim next to the inventory hub).
+      canAddItem: sim.canAddItem.bind(sim),
       partyOf: sim.partyOf.bind(sim),
       removeFromParty: (pid: number, verb: string) => sim.party.removeFromParty(pid, verb),
       // dropPartyMarkers flips to the T1 marker store (targeting); lazy arrow since
@@ -4286,14 +4311,16 @@ export class Sim {
     return n;
   }
 
+  // Grants are stack-aware (bags.ts) but NEVER capacity-capped here: a grant
+  // that reaches this hub always lands, so an async award (loot roll, master
+  // loot, delve rewards) can't destroy items. Capacity is enforced by
+  // canAddItem pre-checks at the command boundaries instead.
   addItem(itemId: string, count: number, pid?: number): void {
     const r = this.resolve(pid);
     if (!r) return;
     const { meta } = r;
     const def = ITEMS[itemId];
-    const existing = meta.inventory.find((s) => s.itemId === itemId);
-    if (existing) existing.count += count;
-    else meta.inventory.push({ itemId, count });
+    addStacked(meta.inventory, itemId, count);
     this.emit({
       type: 'loot',
       // biome-ignore lint/style/useTemplate: keep this scanner-friendly shape for i18n extraction.
@@ -4319,6 +4346,24 @@ export class Sim {
       if (s.count <= 0) meta.inventory.splice(i, 1);
     }
     this.ctx.onInventoryChangedForQuests(meta);
+  }
+
+  // True when `count` copies of the item fit the player's pooled bag budget
+  // (existing stacks top up first). The capacity gate every blocking command
+  // path (buy, loot, pickup, fish, conjure, collect, trade, turn-in) pre-checks.
+  canAddItem(itemId: string, count: number, pid?: number): boolean {
+    const r = this.resolve(pid);
+    if (!r) return false;
+    const { meta } = r;
+    return canAddItem(meta.inventory, bagCapacity(meta.bags), itemId, count);
+  }
+
+  equipBag(itemId: string, socket?: number, pid?: number): void {
+    bagsMod.equipBag(this.ctx, itemId, socket, pid);
+  }
+
+  unequipBag(socket: number, pid?: number): void {
+    bagsMod.unequipBag(this.ctx, socket, pid);
   }
 
   discardItem(itemId: string, count = 1, pid?: number): void {
@@ -4393,6 +4438,9 @@ export class Sim {
 
   private completeFishing(p: Entity, meta: PlayerMeta): void {
     if (this.shouldCatchCodfather(p, meta)) {
+      // Deliberately NOT capacity-gated: this once-ever quest catch is guarded
+      // to a single copy by shouldCatchCodfather, and losing it to full bags
+      // could soft-lock the quest chain. Force-add (over-capacity tolerated).
       this.addItem(THE_CODFATHER_ITEM_ID, 1, meta.entityId);
       return;
     }
@@ -4412,6 +4460,12 @@ export class Sim {
     }
     if (caught === null) {
       this.emit({ type: 'log', text: 'No fish are biting.', color: '#999', pid: p.id });
+      return;
+    }
+    // Capacity gate AFTER the table roll so the rng draw order never depends
+    // on bag state; a catch with no room to land simply gets away.
+    if (!this.canAddItem(caught, 1, meta.entityId)) {
+      this.error(meta.entityId, 'Your bags are full.');
       return;
     }
     if (caught === FISHING_RARE_ID) {

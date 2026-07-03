@@ -15,7 +15,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 390,
-      "state": "ad30ebed",
+      "state": "26cf03f0",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -28,6 +28,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "mage",
           "companionUpgrades": {},
           "counters": {},
@@ -100,7 +106,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 391,
-      "state": "3c5a5b09",
+      "state": "81991f5a",
       "events": "97cb4b90",
       "rng": {
         "draws": 3,
@@ -111,7 +117,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 391,
-      "state": "736247ea",
+      "state": "b05b2e1b",
       "events": "083f7181",
       "rng": {
         "draws": 3,
@@ -122,7 +128,7 @@
       "tick": 60,
       "time": 3,
       "nextId": 391,
-      "state": "5b46c23e",
+      "state": "14453b57",
       "events": "a7c7771b",
       "rng": {
         "draws": 73,
@@ -133,7 +139,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 391,
-      "state": "448b877e",
+      "state": "8c14af17",
       "events": "a7c7771b",
       "rng": {
         "draws": 162,
@@ -144,7 +150,7 @@
       "tick": 100,
       "time": 5,
       "nextId": 391,
-      "state": "20899e1a",
+      "state": "d0740d2b",
       "events": "68be82c9",
       "rng": {
         "draws": 254,
@@ -155,7 +161,7 @@
       "tick": 120,
       "time": 6,
       "nextId": 391,
-      "state": "1fbd4a23",
+      "state": "34207d2c",
       "events": "a7c7771b",
       "rng": {
         "draws": 367,
@@ -166,7 +172,7 @@
       "tick": 128,
       "time": 6.4,
       "nextId": 391,
-      "state": "fe96f53f",
+      "state": "930f2330",
       "events": "741638a5",
       "rng": {
         "draws": 411,
@@ -179,6 +185,12 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "mage",
           "companionUpgrades": {},
           "counters": {},

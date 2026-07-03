@@ -739,7 +739,12 @@ export const sv_SE: EnTranslations = {
       "sortName": "Namn",
       "searchPlaceholder": "Sök föremål",
       "searchAria": "Sök väskföremål efter namn",
-      "noMatch": "Inga föremål matchar dina filter."
+      "noMatch": "Inga föremål matchar dina filter.",
+      "capacity": "{used}/{total}",
+      "capacityAria": "Bag slots used: {used} of {total}",
+      "backpack": "Backpack",
+      "socketEmpty": "Empty bag slot",
+      "unequipHint": "Click to remove this bag"
     },
     "raidConvert": {
       "toPartyDone": "Din raid har omvandlats tillbaka till en grupp.",
@@ -3575,7 +3580,8 @@ export const sv_SE: EnTranslations = {
       "drink": "Dryck",
       "tool": "Verktyg",
       "potion": "Trolldryck",
-      "elixir": "Elixir"
+      "elixir": "Elixir",
+      "bag": "Bag"
     },
     "stats": {
       "armor": "Rustning",
@@ -3617,7 +3623,8 @@ export const sv_SE: EnTranslations = {
       "useManaPotion": "Använd: Återställer omedelbart {amount} mana. Användbar i strid. 1 min nedkylning.",
       "clickUseInstant": "Klicka för att använda omedelbart i strid",
       "clickUse": "Klicka för att använda",
-      "clickBuyback": "Klicka för att köpa tillbaka"
+      "clickBuyback": "Klicka för att köpa tillbaka",
+      "bagSlots": "{slots} Slot Bag"
     },
     "bags": {
       "title": "Väskor",
@@ -4918,6 +4925,21 @@ export const sv_SE: EnTranslations = {
       },
       "monarch_crown_helm": {
         "name": "Monarkens krona"
+      },
+      "linen_pouch": {
+        "name": "Linnepung"
+      },
+      "travelers_knapsack": {
+        "name": "Resenärens ryggsäck"
+      },
+      "wolfhide_satchel": {
+        "name": "Vargskinnsväska"
+      },
+      "gravewoven_bag": {
+        "name": "Gravvävd väska"
+      },
+      "mistcallers_duffel": {
+        "name": "Dimkallarens sjösäck"
       },
       "bristleback_maul": {
         "name": "Borstryggens klubba"
