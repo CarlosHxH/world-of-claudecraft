@@ -115,23 +115,24 @@ import {
   handleGitHubStatus,
   handleGitHubUnlink,
 } from './github';
-import { topContributors } from './github_contributors';
+import { configureGithubContributorsRuntime, topContributors } from './github_contributors';
 import { pruneGitHubOAuthStates } from './github_db';
 import { createAccessLogSink } from './http/access_log';
 import { handleClientError } from './http/client_error';
-import { DEFAULT_DISPATCH, type DispatchMode, loadConfig } from './http/config';
+import { type Config, DEFAULT_DISPATCH, type DispatchMode, loadConfig } from './http/config';
 import {
   type ApiDelegate,
   type ApiDispatcher,
   createApiDispatcher,
   selectApiEntry,
 } from './http/dispatch';
-import { handleLivez, handleMetrics, handleReadyz, markDraining } from './http/health';
-import { logger } from './http/logger';
+import { handleLivez, handleMetricsGate, handleReadyz, markDraining } from './http/health';
+import { type Logger, logger } from './http/logger';
 import { createHttpMetrics } from './http/metrics';
 import { teeMetricSink } from './http/middleware/metric_sink';
 import { withSecurityHeaders } from './http/middleware/security_headers';
 import { apiRegistry } from './http/registry';
+import { applyServerTimeouts, MAX_HEADER_SIZE_BYTES } from './http/server_timeouts';
 import { isUniqueViolation, json, moderationErrorBody, readBody } from './http_util';
 import { configureInternalRuntime, handleInternalApi } from './internal';
 import { isConnectionRefused } from './ip_block';
@@ -170,7 +171,7 @@ import {
 import { createPgRateLimitStore } from './ratelimit_db';
 import { isPublicCorsPath, publicOriginFromRequest, REALM, REALM_DIRECTORY } from './realm';
 import { resolveReportTarget } from './report_target';
-import { configureReportsRuntime } from './reports';
+import { BUG_REPORT_MAX_BODY_BYTES, configureReportsRuntime } from './reports';
 import { handleSitePresenceHeartbeat } from './site_presence';
 import { cacheControlFor, etagFor, isNotModified } from './static_cache';
 import { passesTurnstile } from './turnstile';
@@ -181,12 +182,34 @@ import {
   handleWalletLink,
   handleWalletUnlink,
 } from './wallet';
-import { allowedCorsOrigin, isWebClientRequest, webLoginEnforced } from './web_login_guard';
+import { allowedCorsOrigin, isWebClientRequest } from './web_login_guard';
 import { handleWocBalance, parseWocBalanceQuery } from './woc_balance';
 import { createWsAuth } from './ws_auth';
 import { bufferHandshakeMessages } from './ws_buffer';
 
-const PORT = Number(process.env.PORT ?? 8787);
+// The one validated boot Config, loaded ONCE and memoized. Boot-consumed values
+// (port, retention, dispatch, ws cap) thread directly off the local `config` in
+// startServer, which primes this accessor as its first step. Request-time consumers
+// (handleApi, the releases feed, the leaderboard runtime, the /metrics gate) read
+// activeConfig() so a bare import of this module reads no env and calls loadConfig
+// nowhere: the read resolves lazily at first call and sees the same values the old
+// module-scope process.env consts saw. loadConfig runs at most once per process
+// (fail fast on a garbage env). resetActiveConfigForTests mirrors the existing
+// setApiDispatchModeForTests seam so a test can re-load after mutating process.env.
+let activeConfigCache: Config | null = null;
+function activeConfig(): Config {
+  if (activeConfigCache === null) activeConfigCache = loadConfig(process.env);
+  return activeConfigCache;
+}
+
+/** Test-only: drop the memoized Config so the next activeConfig() re-reads process.env. */
+export function resetActiveConfigForTests(): void {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('resetActiveConfigForTests must not be called in production');
+  }
+  activeConfigCache = null;
+}
+
 const STATIC_DIR = path.join(__dirname, '..', 'dist');
 // Pretty URLs that serve standalone static HTML pages.
 const STATIC_PAGE_ALIASES = new Map([
@@ -213,20 +236,28 @@ const STATIC_PAGE_ALIASES = new Map([
   ['/wiki', '/guide.html'],
   ['/wiki/', '/guide.html'],
 ]);
-// How long chat logs are kept (0 = forever); pruned at boot and daily.
-const CHAT_LOG_RETENTION_DAYS = Number(process.env.CHAT_LOG_RETENTION_DAYS ?? 90);
-// Client performance reports are operational telemetry, not permanent records.
-// Keep enough history for tuning runs while bounding table growth.
-const PERF_REPORT_RETENTION_DAYS = Number(process.env.PERF_REPORT_RETENTION_DAYS ?? 14);
+// Chat-log and perf-report retention days (0 = forever) plus the Turnstile secret
+// and the hard per-IP WS cap now live on the boot Config (see activeConfig above):
+// startServer reads config.chatLogRetentionDays / .perfReportRetentionDays /
+// .maxWsPerIpHard, and handleApi reads activeConfig().turnstileSecret.
 const ADMIN_ONLINE_SAMPLE_MS = 60_000;
-// Cloudflare Turnstile secret. When unset (local dev / tests) registration and
-// login skip human verification entirely, see requireTurnstile below.
-const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET ?? '';
-// Hard WS connection limit per IP. Soft threshold (adds bot evidence) is in game.ts.
-const MAX_WS_PER_IP_HARD = Number(process.env.MAX_WS_PER_IP_HARD ?? '20');
 // Each realm re-reads the blocklist on this interval so edits on another realm
 // process propagate and expired blocks fall out.
 const BLOCKED_IP_REFRESH_MS = 60_000;
+// The hard WS frame cap: the largest legitimate client message is a small JSON
+// command, so 16 KiB is generous. NEVER widen it (server/CLAUDE.md invariant):
+// without a tight cap the ws default (~100 MiB) lets one socket force a huge
+// allocation + parse before any field-level validation runs, so one socket could
+// OOM the process or stall the 20 Hz loop.
+const WS_MAX_PAYLOAD_BYTES = 16 * 1024;
+// Boot DB-readiness retry: Postgres may still be starting under docker, so poll
+// SELECT 1 up to DB_BOOT_MAX_ATTEMPTS times, DB_BOOT_RETRY_MS apart, before giving
+// up (~1 minute total at 30 attempts x 2s).
+const DB_BOOT_MAX_ATTEMPTS = 30; // attempts (count)
+const DB_BOOT_RETRY_MS = 2_000;
+// Low-frequency background prune (OAuth grants/states, chat logs, perf reports)
+// runs once a day.
+const DAILY_PRUNE_INTERVAL_MS = 24 * 3600 * 1000;
 
 const game = new GameServer();
 
@@ -337,11 +368,11 @@ async function getGuildLeaderboard(scope: 'realm' | 'global'): Promise<GuildLead
 // secret to the client; (3) we return only the small, sanitised subset the UI
 // needs. Same compute-once/serve-from-memory pattern as the leaderboard cache.
 // ---------------------------------------------------------------------------
-const GITHUB_REPO = process.env.GITHUB_REPO ?? 'levy-street/world-of-claudecraft';
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN ?? '';
+// The repo slug + optional token live on the boot Config (activeConfig().githubRepo /
+// .githubToken); read at request time so this module reads no env at import.
 const RELEASES_TTL_MS = 15 * 60_000; // 15 min, releases change rarely
-const RELEASES_SIZE = 20;
-const RELEASE_BODY_MAX = 8_000; // guard against a pathologically long body
+const RELEASES_SIZE = 20; // releases fetched + cached per refresh (count)
+const RELEASE_BODY_MAX = 8_000; // bytes; guard against a pathologically long body
 
 // ReleaseEntry is defined in server/leaderboard.ts (the module that owns the
 // public /api/releases route) and imported above; the fetch + cache stay here.
@@ -352,14 +383,15 @@ setUsageCacheSize('github.releases', 0, RELEASES_SIZE);
 async function refreshReleases(): Promise<ReleaseEntry[]> {
   recordUsageMetric('github.releases.fetch');
   try {
+    const { githubRepo, githubToken } = activeConfig();
     const res = await fetch(
-      `https://api.github.com/repos/${GITHUB_REPO}/releases?per_page=${RELEASES_SIZE}`,
+      `https://api.github.com/repos/${githubRepo}/releases?per_page=${RELEASES_SIZE}`,
       {
         headers: {
           Accept: 'application/vnd.github+json',
           'X-GitHub-Api-Version': '2022-11-28',
           'User-Agent': 'world-of-claudecraft-server',
-          ...(GITHUB_TOKEN ? { Authorization: `Bearer ${GITHUB_TOKEN}` } : {}),
+          ...(githubToken ? { Authorization: `Bearer ${githubToken}` } : {}),
         },
         signal: AbortSignal.timeout(8000),
       },
@@ -659,7 +691,8 @@ function publicCors(res: http.ServerResponse): void {
 
 // Anti-bot: when enabled, /api/login + /api/register require a same-origin browser
 // request (a recognised Origin header), so only the web client can obtain a token.
-const REQUIRE_WEB_LOGIN = webLoginEnforced();
+// Resolved once on the boot Config (activeConfig().requireWebLogin), which mirrors
+// web_login_guard.ts webLoginEnforced, replacing the former module-scope const.
 
 async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
   const url = (req.url ?? '').split('?')[0];
@@ -673,7 +706,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
       return await handleSitePresenceHeartbeat(req, res);
     }
     if (
-      REQUIRE_WEB_LOGIN &&
+      activeConfig().requireWebLogin &&
       req.method === 'POST' &&
       (url === '/api/register' || url === '/api/login') &&
       !isWebClientRequest(req)
@@ -710,7 +743,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
     }
     if (req.method === 'POST' && url === '/api/register') {
       const body = await readBody(req);
-      if (!(await passesTurnstile(req, body, TURNSTILE_SECRET)))
+      if (!(await passesTurnstile(req, body, activeConfig().turnstileSecret)))
         return json(res, 403, {
           error: 'verification failed, please try again',
           code: 'auth.verification_failed',
@@ -787,7 +820,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
     }
     if (req.method === 'POST' && url === '/api/login') {
       const body = await readBody(req);
-      if (!(await passesTurnstile(req, body, TURNSTILE_SECRET)))
+      if (!(await passesTurnstile(req, body, activeConfig().turnstileSecret)))
         return json(res, 403, {
           error: 'verification failed, please try again',
           code: 'auth.verification_failed',
@@ -1181,11 +1214,12 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
     if (req.method === 'POST' && url === '/api/bug-reports') {
       const accountId = await bearerActiveAccount(req, res);
       if (accountId === null) return;
-      // A downscaled screenshot data URL dominates the payload; allow ~1 MB
-      // (well above the 64 KB JSON default) and surface an oversize body as 413.
+      // A downscaled screenshot data URL dominates the payload; allow the roomier
+      // BUG_REPORT_MAX_BODY_BYTES (1 MiB, well above the 64 KB JSON default, owned by
+      // server/reports.ts) and surface an oversize body as 413.
       let body: any;
       try {
-        body = await readBody(req, 1024 * 1024);
+        body = await readBody(req, BUG_REPORT_MAX_BODY_BYTES);
       } catch (err) {
         if (err instanceof Error && err.message === 'body too large') {
           return json(res, 413, { error: 'bug report too large' });
@@ -1341,7 +1375,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
         Math.min(RELEASES_SIZE, Number(params.get('limit')) || RELEASES_SIZE),
       );
       const entries = await getReleases();
-      return json(res, 200, { repo: GITHUB_REPO, releases: entries.slice(0, limit) });
+      return json(res, 200, { repo: activeConfig().githubRepo, releases: entries.slice(0, limit) });
     }
     // Account self-service portal, all bearer-auth, account-scoped. Each route
     // delegates to an exported, testable handler in server/account.ts (mirroring
@@ -1629,7 +1663,13 @@ configureLeaderboardRuntime({
   getGuildLeaderboard,
   getDevLeaderboard: () => topContributors(),
   getReleases,
-  githubRepo: GITHUB_REPO,
+  // A getter, not a value: configureLeaderboardRuntime runs at module load (before
+  // startServer primes the config), but leaderboard.ts reads rt.githubRepo only at
+  // request time, so deferring the read via a getter keeps activeConfig() off the
+  // module-load path while still single-sourcing the repo slug through the Config.
+  get githubRepo() {
+    return activeConfig().githubRepo;
+  },
   releasesMaxLimit: RELEASES_SIZE,
   publicOrigin,
   toSheetRank,
@@ -1644,7 +1684,7 @@ configureAuthRuntime({
   // Bind the secret here so the migrated register/login arm runs the exact same
   // bot gate (incl. the native-attestation and desktop-origin branches) as the
   // legacy handleApi arm above.
-  passesTurnstile: (req, body) => passesTurnstile(req, body, TURNSTILE_SECRET),
+  passesTurnstile: (req, body) => passesTurnstile(req, body, activeConfig().turnstileSecret),
   requestMetadata,
 });
 
@@ -1720,6 +1760,17 @@ configureAdminRuntime(game);
 // the flag-off rollback path (and is the internal dispatcher's delegate).
 configureInternalRuntime(game);
 
+// The RED /metrics exporter (Phase 23): ONE prom-client registry with the default
+// process/runtime metrics attached, paired with the structured access-log sink
+// into ONE composite tee. Every migrated route records through this composite, so
+// each request both increments the Prometheus counter/histogram and emits one
+// structured access line; the route :param TEMPLATE bounds the metric cardinality
+// and disambiguates the four surfaces, which is why all four dispatchers below
+// share this single registry and access-log stream. Built BEFORE the tier-2 store
+// so the store can record its pg-hit counter through this same composite sink.
+const httpMetrics = createHttpMetrics({ defaultMetrics: true });
+const httpMetricSink = teeMetricSink(createAccessLogSink(logger), httpMetrics.sink);
+
 // Wire the pg-backed GLOBAL tier-2 rate-limit store (server/ratelimit_db.ts) into
 // the two-tier resolver (server/http/middleware/rate_limit.ts). Unconditional: the
 // authoritative server always has Postgres, and RATELIMIT_SCHEMA is created by
@@ -1727,18 +1778,10 @@ configureInternalRuntime(game);
 // time any request records a tier-2 hit. This only registers the store reference;
 // it opens no connection here (createPgRateLimitStore just wraps the shared pool),
 // so a bare import of main stays inert. Tier-2 fails open, so a pg outage degrades
-// to tier-1-only limiting rather than failing requests.
-setRateLimitTier2Store(createPgRateLimitStore({ pool }));
-
-// The RED /metrics exporter (Phase 23): ONE prom-client registry with the default
-// process/runtime metrics attached, paired with the structured access-log sink
-// into ONE composite tee. Every migrated route records through this composite, so
-// each request both increments the Prometheus counter/histogram and emits one
-// structured access line; the route :param TEMPLATE bounds the metric cardinality
-// and disambiguates the four surfaces, which is why all four dispatchers below
-// share this single registry and access-log stream.
-const httpMetrics = createHttpMetrics({ defaultMetrics: true });
-const httpMetricSink = teeMetricSink(createAccessLogSink(logger), httpMetrics.sink);
+// to tier-1-only limiting rather than failing requests. The store records each pg
+// hit (ratelimit.pg.hit, status 200 allowed / 429 tripped) through the composite
+// sink above, so tier-2 decisions land in both the access log and Prometheus.
+setRateLimitTier2Store(createPgRateLimitStore({ pool, metrics: httpMetricSink }));
 
 // The in-house dispatcher that fronts the legacy handleApi ladder via a per-path
 // delegate. Built once; a path the registry owns (Phase 10 migrated the public
@@ -1819,6 +1862,28 @@ function setApiDispatchMode(mode: DispatchMode): void {
   internalApiEntry = selectApiEntry(mode, internalApiDispatcher, internalLegacy);
 }
 
+/**
+ * Emit the one-line boot record of the active API dispatch path, plus a stderr
+ * ALERT when the un-hardened legacy ladder is serving in production (a later phase
+ * flips the production default to 'new', so a 'legacy' prod boot is a deliberate
+ * rollback worth flagging loudly). Logger-injected and exported so a test asserts
+ * the ALERT fires ONLY for legacy + production. Dev-channel English (no t()); the
+ * fields are static, never request-derived (logger_call_hygiene safe).
+ */
+export function logApiDispatchSelection(
+  log: Pick<Logger, 'info' | 'warn'>,
+  dispatch: DispatchMode,
+  nodeEnv: string | undefined,
+): void {
+  log.info({ dispatch }, 'api dispatch mode selected');
+  if (dispatch === 'legacy' && nodeEnv === 'production') {
+    log.warn(
+      { dispatch },
+      'ALERT: serving the un-hardened legacy API ladder in production (API_DISPATCH=legacy)',
+    );
+  }
+}
+
 // Test-only override so the parity harness can drive routeHttpRequest under both
 // flag values in-process. The flag is boot-time only in production (API_DISPATCH),
 // so this throws there, mirroring ratelimit.setRateLimitClock.
@@ -1887,7 +1952,11 @@ export function routeHttpRequest(req: http.IncomingMessage, res: http.ServerResp
   // security headers set above and carry their own Cache-Control: no-store.
   if (req.method === 'GET' && path === '/livez') handleLivez(res);
   else if (req.method === 'GET' && path === '/readyz') handleReadyz(res);
-  else if (req.method === 'GET' && path === '/metrics') void handleMetrics(res, httpMetrics);
+  // /metrics is bearer-gated by config.metricsToken: feature-off 404 when unset,
+  // 401 on a missing/wrong bearer, exposition only on a match (see handleMetricsGate).
+  // /livez and /readyz stay open above.
+  else if (req.method === 'GET' && path === '/metrics')
+    void handleMetricsGate(req, res, httpMetrics, activeConfig().metricsToken);
   else if (url.startsWith('/internal/')) {
     // The flag-gated internal dispatcher; its delegate is the exact pre-Phase-18
     // composite (daily-rewards ops tried first, then handleInternalApi), so the
@@ -1909,28 +1978,41 @@ export function routeHttpRequest(req: http.IncomingMessage, res: http.ServerResp
 // ---------------------------------------------------------------------------
 
 export async function startServer(): Promise<http.Server> {
+  // Load + validate the whole environment ONCE, before anything else (before the
+  // 30x2s DB retry loop), so a garbage flag or a missing required value fails fast
+  // with a clear message rather than after a minute of connection retries. This
+  // primes activeConfig() for the request path (a request-time read returns this
+  // same memoized Config).
+  const config = activeConfig();
+  // Point the contributor-stats reader at the one boot Config, replacing its former
+  // duplicate GITHUB_REPO/GITHUB_TOKEN module reads (configure<Domain>Runtime).
+  configureGithubContributorsRuntime({
+    githubRepo: config.githubRepo,
+    githubToken: config.githubToken,
+  });
+
   // wait for the database (it may still be starting in docker)
   for (let attempt = 1; ; attempt++) {
     try {
       await pool.query('SELECT 1');
       break;
     } catch (err) {
-      if (attempt >= 30) throw err;
+      if (attempt >= DB_BOOT_MAX_ATTEMPTS) throw err;
       console.log(`waiting for postgres (attempt ${attempt})...`);
-      await new Promise((r) => setTimeout(r, 2000));
+      await new Promise((r) => setTimeout(r, DB_BOOT_RETRY_MS));
     }
   }
   await ensureSchema();
   await seedOAuthClients();
   const orphans = await closeOrphanSessions();
   if (orphans > 0) console.log(`closed ${orphans} orphaned play session(s) from a previous run`);
-  const pruned = await pruneChatLogs(CHAT_LOG_RETENTION_DAYS);
+  const pruned = await pruneChatLogs(config.chatLogRetentionDays);
   if (pruned > 0)
-    console.log(`pruned ${pruned} chat log row(s) older than ${CHAT_LOG_RETENTION_DAYS} days`);
-  const prunedPerfReports = await pruneClientPerfReports(PERF_REPORT_RETENTION_DAYS);
+    console.log(`pruned ${pruned} chat log row(s) older than ${config.chatLogRetentionDays} days`);
+  const prunedPerfReports = await pruneClientPerfReports(config.perfReportRetentionDays);
   if (prunedPerfReports > 0)
     console.log(
-      `pruned ${prunedPerfReports} client perf report row(s) older than ${PERF_REPORT_RETENTION_DAYS} days`,
+      `pruned ${prunedPerfReports} client perf report row(s) older than ${config.perfReportRetentionDays} days`,
     );
   await game.loadMarket();
   await game.loadChatFilter();
@@ -1939,29 +2021,26 @@ export async function startServer(): Promise<http.Server> {
   void currentSitePresenceUsers()
     .then((count) => recordSitePresenceSample(count))
     .catch((err) => console.error('site presence sample failed:', err));
-  setInterval(
-    () => {
-      void pruneChatLogs(CHAT_LOG_RETENTION_DAYS).catch((err) =>
-        console.error('chat log prune failed:', err),
-      );
-      void pruneClientPerfReports(PERF_REPORT_RETENTION_DAYS).catch((err) =>
-        console.error('perf report prune failed:', err),
-      );
-      void pruneExpiredOAuthGrants(pool).catch((err) =>
-        console.error('oauth grant prune failed:', err),
-      );
-      void pruneDiscordOAuthStates(pool).catch((err) =>
-        console.error('discord oauth state prune failed:', err),
-      );
-      void pruneDiscordPendingLogins(pool).catch((err) =>
-        console.error('discord pending login prune failed:', err),
-      );
-      void pruneGitHubOAuthStates(pool).catch((err) =>
-        console.error('github oauth state prune failed:', err),
-      );
-    },
-    24 * 3600 * 1000,
-  ).unref();
+  setInterval(() => {
+    void pruneChatLogs(config.chatLogRetentionDays).catch((err) =>
+      console.error('chat log prune failed:', err),
+    );
+    void pruneClientPerfReports(config.perfReportRetentionDays).catch((err) =>
+      console.error('perf report prune failed:', err),
+    );
+    void pruneExpiredOAuthGrants(pool).catch((err) =>
+      console.error('oauth grant prune failed:', err),
+    );
+    void pruneDiscordOAuthStates(pool).catch((err) =>
+      console.error('discord oauth state prune failed:', err),
+    );
+    void pruneDiscordPendingLogins(pool).catch((err) =>
+      console.error('discord pending login prune failed:', err),
+    );
+    void pruneGitHubOAuthStates(pool).catch((err) =>
+      console.error('github oauth state prune failed:', err),
+    );
+  }, DAILY_PRUNE_INTERVAL_MS).unref();
   setInterval(() => {
     void game.recordOnlineSnapshot();
     void currentSitePresenceUsers()
@@ -1995,18 +2074,25 @@ export async function startServer(): Promise<http.Server> {
   setInterval(warmLeaderboards, LEADERBOARD_TTL_MS).unref();
   console.log('database ready');
 
-  // Select the /api dispatch path from the single API_DISPATCH flag, read once
-  // through loadConfig (never a scattered process.env read). Default is 'legacy'
-  // (Phase 25 flips the production default to 'new'); rollback is a flag flip.
-  setApiDispatchMode(loadConfig(process.env).dispatch);
+  // Select the /api dispatch path from the single API_DISPATCH flag on the one boot
+  // Config loaded above (never a scattered process.env read). Default is 'legacy'
+  // (a later phase flips the production default to 'new'); rollback is a flag flip.
+  setApiDispatchMode(config.dispatch);
+  logApiDispatchSelection(logger, config.dispatch, process.env.NODE_ENV);
 
-  const server = http.createServer(routeHttpRequest);
+  // maxHeaderSize is read-only after construction so it rides createServer here;
+  // the three mutable timeouts are set by applyServerTimeouts. Every value equals
+  // Node's own default (server/http/server_timeouts.ts), so the effective behavior
+  // is byte-equal to the prior implicit defaults; naming + pinning them is the
+  // whole change.
+  const server = http.createServer({ maxHeaderSize: MAX_HEADER_SIZE_BYTES }, routeHttpRequest);
+  applyServerTimeouts(server);
   server.on('clientError', handleClientError);
 
   // cap frame size: the largest legitimate client message is a small JSON
   // command; without this the ws default (~100 MiB) lets one socket force a
   // huge allocation + parse before any field-level validation runs
-  const wss = new WebSocketServer({ noServer: true, maxPayload: 16 * 1024 });
+  const wss = new WebSocketServer({ noServer: true, maxPayload: WS_MAX_PAYLOAD_BYTES });
   const wsAuth = createWsAuth({
     game,
     accountForToken,
@@ -2018,13 +2104,13 @@ export async function startServer(): Promise<http.Server> {
     isConnectionRefused,
     bufferHandshakeMessages,
     requestMetadata,
-    maxWsPerIpHard: MAX_WS_PER_IP_HARD,
+    maxWsPerIpHard: config.maxWsPerIpHard,
   });
   wsAuth.attachUpgrade(server, wss);
 
   game.start();
-  server.listen(PORT, () => {
-    console.log(`World of ClaudeCraft server listening on http://localhost:${PORT}`);
+  server.listen(config.port, () => {
+    console.log(`World of ClaudeCraft server listening on http://localhost:${config.port}`);
     console.log(`  REST: /api/register /api/login /api/characters /api/status`);
     console.log(`  WS:   /ws, then first message {t:"auth",token,character}`);
   });

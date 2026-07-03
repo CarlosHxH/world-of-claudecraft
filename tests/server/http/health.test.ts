@@ -221,13 +221,15 @@ describe('routeHttpRequest health + metrics arms (integration)', () => {
     }
   });
 
-  it('GET /metrics returns the prometheus exposition under both dispatch modes', async () => {
+  it('GET /metrics is feature-off (404) under both dispatch modes when METRICS_TOKEN is unset', async () => {
+    // This suite runs with no METRICS_TOKEN, so /metrics is gated off entirely
+    // (fail-closed, anti-enumeration). The token-set exposition + 401 arms are
+    // covered in metrics_gate.test.ts. The gate response still carries no-store.
     for (const mode of ['legacy', 'new'] as const) {
       const res = await driveRoute(mode, { url: '/metrics' });
-      expect(res.statusCode).toBe(200);
-      expect(res.body).toContain('http_requests_total');
+      expect(res.statusCode).toBe(404);
+      expect(res.body).toBe('not found');
       expect(res.getHeader('Cache-Control')).toBe('no-store');
-      expect(String(res.getHeader('Content-Type'))).toContain('text/plain');
     }
   });
 });
