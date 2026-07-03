@@ -238,10 +238,22 @@ never see the gates (the registered-surface carve-out). Enforce-audit note: the 
 gate's allow set is same-origin host + allowedCorsOrigin; it does NOT include the
 WEB_ORIGINS env list or the localhost dev regex isWebClientRequest accepts (deliberate,
 so that traffic appears in the audit records; reconcile or accept the 403 before the
-flip; an operator adding to WEB_ORIGINS alone does NOT widen this gate). Phase 23
+flip; an operator adding to WEB_ORIGINS alone does NOT widen this gate). The flip audit
+harvests TWO distinct sink tags: '[content-type] mismatch' (content_type.ts) and
+'[http] cross-site origin on mutating /api request' (origin_check.ts); grep for both,
+one style misses the other. Also at the flip: the same-origin arm (isSameOriginHost)
+compares the Origin host against the first X-Forwarded-Host with no trusted-proxy
+gating (contrast ratelimit.ts TRUSTED_PROXY_IPS); spoofing it only fails toward allow
+on a bearer-only surface (the spoofer could simply omit Origin), but the audit should
+consider gating that comparison behind the trusted-proxy check before enforcing.
+Phase 21 QA confirmed (privacy-security-review): an API_ORIGIN_CHECK_ENFORCE=1 flip
+today would NOT break the Electron desktop (app://worldofclaudecraft) or Capacitor
+(capacitor://localhost) clients; both ride the shared allowedCorsOrigin set, and the
+absent-Origin allowance covers any client that sends no Origin at all. Phase 23
 handoff (security review): the two mismatch sinks are un-throttled console.warn lines
 that run AHEAD of the route-local rate limiters, a latent log-amplification vector once
-API_DISPATCH=new; Phase 23's structured logger must sample or bound them.
+API_DISPATCH=new; Phase 23's structured logger must sample or bound them. Watch-item:
+do not set API_DISPATCH=new in ANY environment before Phase 23 lands those bounds.
 
 ### World Market realm-scope fix (Phase 20, own PR, migration-safety reviewer)
 Highest-consequence change (normal-operation item loss). Realm-scope the `world_state`

@@ -56,7 +56,7 @@ Mark a row's Status as "In progress" or "Done" and fill Started / Completed
 | Phase 20 | Done | 2026-07-02 | 2026-07-02 |
 | Phase 20 QA | Done | 2026-07-02 | 2026-07-02 |
 | Phase 21 | Done | 2026-07-02 | 2026-07-02 |
-| Phase 21 QA | Not started |  |  |
+| Phase 21 QA | Done | 2026-07-02 | 2026-07-02 |
 | Phase 22 | Not started |  |  |
 | Phase 22 QA | Not started |  |  |
 | Phase 23 | Not started |  |  |
@@ -1162,6 +1162,47 @@ Notes:
   two log-only sinks in production; Phase 22 wires the two new codes into userFacingApiError;
   Phase 24 may consolidate the flag reads into loadConfig; Phase 25's ladder deletion inherits
   the top-level wrapper unchanged (it is dispatch-mode-independent by construction).
+
+Phase 21 QA gate (phase-21-qa.md, dedicated independent audit, 2026-07-02): PASS, 0 BLOCKING /
+2 SHOULD-FIX (both test-coverage gaps, both applied) plus nits applied per the apply-all rule.
+A 4-auditor fan-out (correctness, test-coverage-auditor, dead-code, privacy-security-review)
+over one Explore context brief; the two custom-agentType workflow auditors returned empty
+mid-run and were re-dispatched as direct agents (zero verdicts inferred from the dead runs).
+All ten acceptance criteria plus the stopping rules verified CLEAN against HEAD, including a
+release-merge check: HEAD gained c582aec7 (release/v0.20.0) after the phase; verified 12
+client-UI files only, zero overlap with the Phase 21 surface. Applied:
+- (SHOULD-FIX) enforce-mode absent/empty Content-Type cases in content_type.test.ts: the
+  load-bearing native-client allowance was tested only in log-only mode, so a refactor moving
+  the absent-header guard below the enforce throw would have 415'd every Content-Type-less
+  client at the flip with no test failing.
+- (SHOULD-FIX) a real-dispatcher gate-mount test in dispatch.test.ts (onion_order's stack is a
+  hand-built replica): an enforce-mode cross-site, wrong-type POST resolves 403
+  origin.cross_site with exactly one sink line, ahead of route-local middleware, pinning gate
+  presence AND mount order on the real createApiDispatcher onion.
+- (nits) MUTATING_METHODS single-sourced (exported from content_type.ts, imported by
+  origin_check.ts; the two copies were divergently typed ReadonlySet of Method vs string); the
+  dead opts.env ?? process.env fallback dropped in withOriginCheck; HEAD non-gating pinned per
+  gate in both modes; the state.md enforce-flip note now names the two sink log tags to harvest
+  (one grep style misses the other), the X-Forwarded-Host same-origin caveat (spoofing fails
+  toward allow; consider trusted-proxy gating at the flip), the QA-confirmed desktop/Capacitor
+  enforce-flip safety (both origin families ride the shared allowedCorsOrigin set), and the
+  API_DISPATCH=new watch-item (not before Phase 23 bounds the sinks).
+Adjudicated no-change, per the auditors' own leans: RouteMeta.requestBody keeps the 'json'
+vocabulary arm (self-documenting; absent means json); oauth.ts's three writeHead no-store
+literals agree with the wrapper today (Phase 25 consolidation candidate); no-store stays
+scoped to /oauth/ rather than the /api login family (browsers do not cache POST responses;
+informational); the OAUTH_ERROR mappings for the two new codes are unreachable until Phase 22
+wires them (forward-looking by design); no /c/-SSR-specific header integration case (the
+wrapper is the path-independent first statement and the unit layer pins the set for an
+arbitrary URL); no WS-upgrade header test (the upgrade path bypasses routeHttpRequest by
+construction); X-Frame-Options stays scoped to /oauth/ (bearer-auth surfaces carry no ambient
+credentials; frame-ancestors belongs to the deferred CSP effort); CORP same-origin
+re-confirmed safe (OG unfurls are server-side crawls; CORS-mode asset fetches ignore CORP).
+privacy-security-review verdict: ship-safe; rejections and sink records leak nothing (route
+template only; no Authorization header, token, or body is logged). Validation green post-fix:
+tsc 0; the 11-file targeted matrix 202 pass / 3 skip (parity, characterization goldens, S3
+included); ci:changed; build:server; full npm run gate on the committed state (unpiped
+background run per the piped-tail trap).
 
 ## Phase 22: REST i18n matcher + per-surface code-parity guard
 
