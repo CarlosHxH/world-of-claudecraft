@@ -154,6 +154,7 @@ describe('login: per-account throttle', () => {
     expect(res.status).toBe(429);
     expect(res.body).toEqual({
       error: 'too many failed attempts, wait a few minutes and try again',
+      code: 'auth.too_many_failed_attempts',
     });
     // Throttled BEFORE any credential read: findAccount was never reached.
     expect(findAccount).not.toHaveBeenCalled();
@@ -169,7 +170,10 @@ describe('login: per-account throttle', () => {
     // No longer throttled: a bad-credential login now falls through to the 401.
     const res = await login({ username: USERNAME, password: 'anything' });
     expect(res.status).toBe(401);
-    expect(res.body).toEqual({ error: 'invalid username or password' });
+    expect(res.body).toEqual({
+      error: 'invalid username or password',
+      code: 'auth.invalid_credentials',
+    });
   });
 });
 
@@ -182,7 +186,10 @@ describe('login: bad credentials', () => {
     setAuthDbForTests({ findAccount: async () => null });
     const res = await login({ username: 'ghost', password: 'whatever' });
     expect(res.status).toBe(401);
-    expect(res.body).toEqual({ error: 'invalid username or password' });
+    expect(res.body).toEqual({
+      error: 'invalid username or password',
+      code: 'auth.invalid_credentials',
+    });
     // recordAuthFailure was called: one account is now tracked.
     expect(authFailureCount()).toBe(1);
   });
@@ -191,7 +198,10 @@ describe('login: bad credentials', () => {
     setAuthDbForTests({ findAccount: async () => account() });
     const res = await login({ username: USERNAME, password: 'wrong-pw' });
     expect(res.status).toBe(401);
-    expect(res.body).toEqual({ error: 'invalid username or password' });
+    expect(res.body).toEqual({
+      error: 'invalid username or password',
+      code: 'auth.invalid_credentials',
+    });
     expect(authFailureCount()).toBe(1);
   });
 
@@ -205,6 +215,7 @@ describe('login: bad credentials', () => {
     expect(last.status).toBe(429);
     expect(last.body).toEqual({
       error: 'too many failed attempts, wait a few minutes and try again',
+      code: 'auth.too_many_failed_attempts',
     });
   });
 });
@@ -219,7 +230,10 @@ describe('login: empty username', () => {
     setAuthDbForTests({ findAccount });
     const res = await login({});
     expect(res.status).toBe(401);
-    expect(res.body).toEqual({ error: 'invalid username or password' });
+    expect(res.body).toEqual({
+      error: 'invalid username or password',
+      code: 'auth.invalid_credentials',
+    });
     expect(findAccount).not.toHaveBeenCalled();
     // The empty-username guard also skips recordAuthFailure.
     expect(authFailureCount()).toBe(0);
@@ -240,7 +254,11 @@ describe('login: moderation lock', () => {
     });
     const res = await login({ username: USERNAME, password: CORRECT_PASSWORD });
     expect(res.status).toBe(403);
-    expect(res.body).toEqual({ error: message });
+    expect(res.body).toEqual({
+      error: message,
+      code: 'moderation.suspended_until',
+      date: '2099-01-01T00:00:00.000Z',
+    });
   });
 });
 
@@ -260,7 +278,10 @@ describe('login: IP block and admin bypass', () => {
     });
     const res = await login({ username: USERNAME, password: CORRECT_PASSWORD });
     expect(res.status).toBe(429);
-    expect(res.body).toEqual({ error: 'too many attempts, wait a minute and try again' });
+    expect(res.body).toEqual({
+      error: 'too many attempts, wait a minute and try again',
+      code: 'auth.too_many_attempts',
+    });
     expect(saveToken).not.toHaveBeenCalled();
   });
 
@@ -313,7 +334,11 @@ describe('login: two-factor', () => {
     });
     const res = await login({ username: USERNAME, password: CORRECT_PASSWORD, code: '000000' });
     expect(res.status).toBe(401);
-    expect(res.body).toEqual({ error: 'invalid authentication code', twoFactorRequired: true });
+    expect(res.body).toEqual({
+      error: 'invalid authentication code',
+      code: 'two_factor.code_invalid',
+      twoFactorRequired: true,
+    });
     expect(authFailureCount()).toBe(1);
   });
 
@@ -382,7 +407,10 @@ describe('login guards (through the onion)', () => {
       body: { username: USERNAME, password: CORRECT_PASSWORD },
     });
     expect(res.status).toBe(403);
-    expect(res.body).toEqual({ error: 'verification failed, please try again' });
+    expect(res.body).toEqual({
+      error: 'verification failed, please try again',
+      code: 'auth.verification_failed',
+    });
     // The Turnstile gate short-circuits before the handler reads the account.
     expect(findAccount).not.toHaveBeenCalled();
   });
@@ -397,7 +425,10 @@ describe('login guards (through the onion)', () => {
         body: { username: USERNAME, password: CORRECT_PASSWORD },
       });
       expect(res.status).toBe(403);
-      expect(res.body).toEqual({ error: 'logins are only allowed from the game client' });
+      expect(res.body).toEqual({
+        error: 'logins are only allowed from the game client',
+        code: 'auth.web_login_only',
+      });
       // The origin guard is first in the chain: nothing downstream runs.
       expect(findAccount).not.toHaveBeenCalled();
     } finally {
@@ -424,7 +455,10 @@ describe('login guards (through the onion)', () => {
       body: { username: USERNAME, password: CORRECT_PASSWORD },
     });
     expect(res.status).toBe(429);
-    expect(res.body).toEqual({ error: 'too many attempts, wait a minute and try again' });
+    expect(res.body).toEqual({
+      error: 'too many attempts, wait a minute and try again',
+      code: 'auth.too_many_attempts',
+    });
     expect(findAccount).not.toHaveBeenCalled();
   });
 

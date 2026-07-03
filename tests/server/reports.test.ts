@@ -57,7 +57,7 @@ import {
   routes,
   setReportsDbForTests,
 } from '../../server/reports';
-import { type FakeRes, fakeCtx } from './helpers';
+import { type FakeRes, fakeCtx, stableStringify } from './helpers';
 
 // The report + bug handlers self-drive getCharacter / findCharacterReportTargetByName
 // off db.ts directly (not through the reports.ts guard seam), so mock those two exports
@@ -232,8 +232,10 @@ describe('POST /api/reports activeGuard', () => {
     const r = await runRoute('POST', '/api/reports', { body: {} });
     const fx = fixture('reports_post_noauth_401');
     expect(r.status).toBe(fx.status);
-    expect(r.raw).toBe(fx.body);
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    // The golden body canonicalizes key order (code before error); the raw emit is
+    // insertion order, so canonicalize the raw the same way before the byte-compare.
+    expect(stableStringify(JSON.parse(r.raw))).toBe(fx.body);
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(r.contentType).toBe('application/json');
     expect(r.reached).toBe(false);
     // A missing bearer 401s before any db call (the no-auth golden replays DB-free).
@@ -255,7 +257,7 @@ describe('POST /api/reports activeGuard', () => {
       body: {},
     });
     expect(r.status).toBe(401);
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(r.reached).toBe(false);
     expect(accountAndScopeForToken).not.toHaveBeenCalled();
   });
@@ -267,7 +269,7 @@ describe('POST /api/reports activeGuard', () => {
       body: {},
     });
     expect(r.status).toBe(403);
-    expect(r.body).toEqual({ error: 'this token is read-only' });
+    expect(r.body).toEqual({ error: 'this token is read-only', code: 'auth.forbidden' });
     expect(r.reached).toBe(false);
   });
 
@@ -281,7 +283,7 @@ describe('POST /api/reports activeGuard', () => {
       body: {},
     });
     expect(r.status).toBe(403);
-    expect(r.body).toEqual({ error: 'this account is suspended.' });
+    expect(r.body).toEqual({ error: 'this account is suspended.', code: 'moderation.suspended' });
     expect(r.reached).toBe(false);
   });
 });
@@ -458,7 +460,7 @@ describe('POST /api/reports composition order (guard before limiter)', () => {
     authedDb();
     const r = await runRoute('POST', '/api/reports', { body: '{ not valid json' });
     expect(r).toMatchObject({ reached: false, status: 401 });
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(r.status).not.toBe(500);
     expect(r.status).not.toBe(429);
   });
@@ -477,7 +479,7 @@ describe('POST /api/bug-reports', () => {
   it('401s a missing bearer at the shared activeGuard', async () => {
     const r = await runRoute('POST', '/api/bug-reports');
     expect(r).toMatchObject({ reached: false, status: 401 });
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(r.contentType).toBe('application/json');
   });
 

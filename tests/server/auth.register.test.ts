@@ -131,21 +131,24 @@ describe('register handler', () => {
   it('rejects a username that fails the shape check with 400', async () => {
     expect(await runHandler({ username: 'ab', password: 'secret123' })).toEqual({
       status: 400,
-      body: { error: 'username must be 3-24 chars (letters, digits, _)' },
+      body: {
+        error: 'username must be 3-24 chars (letters, digits, _)',
+        code: 'account.username_invalid',
+      },
     });
   });
 
   it('rejects an offensive username with 400', async () => {
     expect(await runHandler({ username: 'hitler', password: 'secret123' })).toEqual({
       status: 400,
-      body: { error: 'username is not allowed' },
+      body: { error: 'username is not allowed', code: 'account.username_not_allowed' },
     });
   });
 
   it('rejects a password under the minimum length with 400', async () => {
     expect(await runHandler({ username: 'newhero', password: '123' })).toEqual({
       status: 400,
-      body: { error: 'password must be at least 6 chars' },
+      body: { error: 'password must be at least 6 chars', code: 'account.password_too_short' },
     });
   });
 
@@ -153,7 +156,7 @@ describe('register handler', () => {
     installDb({ findAccount: async () => ({ id: 1, username: 'newhero', password_hash: 'x' }) });
     expect(await runHandler({ username: 'newhero', password: 'secret123' })).toEqual({
       status: 409,
-      body: { error: 'username already taken' },
+      body: { error: 'username already taken', code: 'account.username_taken' },
     });
   });
 
@@ -166,7 +169,7 @@ describe('register handler', () => {
     });
     expect(await runHandler({ username: 'newhero', password: 'secret123' })).toEqual({
       status: 409,
-      body: { error: 'username already taken' },
+      body: { error: 'username already taken', code: 'account.username_taken' },
     });
   });
 
@@ -273,7 +276,10 @@ describe('register guard chain', () => {
     installRuntime({ isIpBlocked: () => true });
     expect(await runRoute('POST', '/api/register', { body: {} })).toEqual({
       status: 429,
-      body: { error: 'too many attempts, wait a minute and try again' },
+      body: {
+        error: 'too many attempts, wait a minute and try again',
+        code: 'auth.too_many_attempts',
+      },
     });
   });
 
@@ -281,7 +287,7 @@ describe('register guard chain', () => {
     installRuntime({ isIpBlocked: () => false, passesTurnstile: async () => false });
     expect(await runRoute('POST', '/api/register', { body: {} })).toEqual({
       status: 403,
-      body: { error: 'verification failed, please try again' },
+      body: { error: 'verification failed, please try again', code: 'auth.verification_failed' },
     });
   });
 
@@ -292,7 +298,10 @@ describe('register guard chain', () => {
       // No Origin header => isWebClientRequest is false => the guard short-circuits.
       expect(await runRoute('POST', '/api/register', { body: {} })).toEqual({
         status: 403,
-        body: { error: 'logins are only allowed from the game client' },
+        body: {
+          error: 'logins are only allowed from the game client',
+          code: 'auth.web_login_only',
+        },
       });
     } finally {
       if (saved === undefined) delete process.env.REQUIRE_WEB_LOGIN;
@@ -313,7 +322,10 @@ describe('register guard chain', () => {
       }),
     ).toEqual({
       status: 429,
-      body: { error: 'too many attempts, wait a minute and try again' },
+      body: {
+        error: 'too many attempts, wait a minute and try again',
+        code: 'auth.too_many_attempts',
+      },
     });
   });
 

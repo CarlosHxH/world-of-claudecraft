@@ -376,7 +376,7 @@ describe('player routes: activeGuard chain', () => {
       authedDb();
       const r = await runRoute(method, path);
       expect(r.status).toBe(401);
-      expect(r.body).toEqual({ error: 'not authenticated' });
+      expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
       expect(r.contentType).toBe('application/json');
       expect(r.reached).toBe(false);
       // A missing bearer 401s before any service read.
@@ -389,7 +389,7 @@ describe('player routes: activeGuard chain', () => {
     authedDb({ accountAndScopeForToken: async () => ({ accountId: 7, scope: 'read' }) });
     const r = await runRoute('GET', '/api/daily-rewards', { headers: { authorization: BEARER } });
     expect(r.status).toBe(403);
-    expect(r.body).toEqual({ error: 'this token is read-only' });
+    expect(r.body).toEqual({ error: 'this token is read-only', code: 'auth.forbidden' });
     expect(r.reached).toBe(false);
   });
 
@@ -405,7 +405,7 @@ describe('player routes: activeGuard chain', () => {
       headers: { authorization: BEARER },
     });
     expect(r.status).toBe(403);
-    expect(r.body).toEqual({ error: 'this account is suspended.' });
+    expect(r.body).toEqual({ error: 'this account is suspended.', code: 'moderation.suspended' });
     expect(r.reached).toBe(false);
   });
 });

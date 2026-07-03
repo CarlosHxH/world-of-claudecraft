@@ -226,7 +226,7 @@ describe('fused per-IP limiter (limiter before auth)', () => {
     drainDefaultIpBucket();
     const r = await runRoute('POST', '/api/desktop-login/create', { body: {} });
     expect(r.status).toBe(429);
-    expect(r.body).toEqual({ error: TOO_MANY });
+    expect(r.body).toEqual({ error: TOO_MANY, code: 'auth.too_many_attempts' });
     expect(r.status).not.toBe(401);
     expect(r.contentType).toBe('application/json');
     expect(r.reached).toBe(false);
@@ -236,7 +236,7 @@ describe('fused per-IP limiter (limiter before auth)', () => {
     authedDb();
     const r = await runRoute('POST', '/api/desktop-login/create', { body: {} });
     expect(r.status).toBe(401);
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(r.reached).toBe(false);
   });
 
@@ -251,7 +251,7 @@ describe('fused per-IP limiter (limiter before auth)', () => {
       body: {},
     });
     expect(r.status).toBe(429);
-    expect(r.body).toEqual({ error: TOO_MANY });
+    expect(r.body).toEqual({ error: TOO_MANY, code: 'auth.too_many_attempts' });
     expect(r.reached).toBe(false);
   });
 
@@ -259,7 +259,7 @@ describe('fused per-IP limiter (limiter before auth)', () => {
     drainDefaultIpBucket();
     const r = await runRoute('POST', '/api/desktop-login/exchange', { body: { code: 'x' } });
     expect(r.status).toBe(429);
-    expect(r.body).toEqual({ error: TOO_MANY });
+    expect(r.body).toEqual({ error: TOO_MANY, code: 'auth.too_many_attempts' });
     expect(r.reached).toBe(false);
   });
 
@@ -287,7 +287,7 @@ describe('create: full-session scope fork', () => {
     authedDb();
     const r = await runRoute('POST', '/api/desktop-login/create', { body: {} });
     expect(r.status).toBe(401);
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(r.reached).toBe(false);
     expect(desktopLoginCodeCountForTest()).toBe(0);
   });
@@ -305,7 +305,7 @@ describe('create: full-session scope fork', () => {
       body: {},
     });
     expect(r.status).toBe(401);
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(r.reached).toBe(false);
     // The resolver ran exactly once: this 401 is the account-null branch, not the
     // missing-bearer short-circuit (where the resolver is never called).
@@ -322,7 +322,7 @@ describe('create: full-session scope fork', () => {
       body: {},
     });
     expect(r.status).toBe(403);
-    expect(r.body).toEqual({ error: 'this token is read-only' });
+    expect(r.body).toEqual({ error: 'this token is read-only', code: 'auth.forbidden' });
     expect(r.reached).toBe(false);
     expect(desktopLoginCodeCountForTest()).toBe(0);
   });
@@ -340,7 +340,7 @@ describe('create: full-session scope fork', () => {
       body: {},
     });
     expect(r.status).toBe(403);
-    expect(r.body).toEqual({ error: 'this account is suspended.' });
+    expect(r.body).toEqual({ error: 'this account is suspended.', code: 'moderation.suspended' });
     expect(r.reached).toBe(false);
     expect(desktopLoginCodeCountForTest()).toBe(0);
   });
@@ -417,6 +417,10 @@ describe('exchange through the route chain', () => {
     });
     const r = await runRoute('POST', '/api/desktop-login/exchange', { body: { code } });
     expect(r.status).toBe(403);
+    // The exchange leg is code-authed (no shared bearer guard), so its inline
+    // moderation 403 stays legacy prose-only this phase (both dispatch twins share
+    // handleDesktopLoginExchange, so it is parity-identical); desktop-login's own
+    // handler bodies are the Phase-18b prose-only adjudication.
     expect(r.body).toEqual({ error: 'this account is suspended.' });
     expect(saveToken).not.toHaveBeenCalled();
   });

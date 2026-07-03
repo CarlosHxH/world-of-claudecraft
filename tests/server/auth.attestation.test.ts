@@ -167,7 +167,7 @@ describe('turnstile middleware', () => {
     expect(ran).toBe(false);
     expect(captured(ctx.res)).toEqual({
       status: 403,
-      body: { error: 'verification failed, please try again' },
+      body: { error: 'verification failed, please try again', code: 'auth.verification_failed' },
     });
   });
 

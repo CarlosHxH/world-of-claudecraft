@@ -26,15 +26,19 @@
 // the coded requireAccount path.
 
 import type * as http from 'node:http';
-import { scopeAllowsMutation, type TokenScope } from '../../db';
-import { json } from '../../http_util';
+import { type AccountModerationStatus, scopeAllowsMutation, type TokenScope } from '../../db';
+import { json, moderationErrorBody } from '../../http_util';
 import type { Ctx, Middleware, Next } from '../types';
 
-// The exact legacy { error } identities bearerActiveAccount emits. Named constants
-// so they cannot drift from the resolver they mirror. No em dash appears in any
-// (the legacy strings never used one).
-export const NOT_AUTHENTICATED = { error: 'not authenticated' } as const;
-export const READ_ONLY_TOKEN = { error: 'this token is read-only' } as const;
+// The exact legacy { error } identities bearerActiveAccount emits, plus the additive
+// Phase 22 machine `code` alongside the untouched prose. Named constants so they
+// cannot drift from the resolver they mirror. No em dash appears in any (the legacy
+// strings never used one).
+export const NOT_AUTHENTICATED = { error: 'not authenticated', code: 'auth.required' } as const;
+export const READ_ONLY_TOKEN = {
+  error: 'this token is read-only',
+  code: 'auth.forbidden',
+} as const;
 
 // The bearer token shape: a 64-hex secret behind the "Bearer " scheme. Mirrors the
 // regex the legacy bearer* resolvers in server/main.ts use.
@@ -53,7 +57,10 @@ export function bearerToken(req: http.IncomingMessage): string | null {
  */
 export interface BearerActiveGuardDb {
   accountAndScopeForToken(token: string): Promise<{ accountId: number; scope: TokenScope } | null>;
-  moderationStatusForAccount(accountId: number): Promise<{ locked: boolean; message: string }>;
+  // The full status shape so the guard can emit the additive moderation `code`
+  // (and suspension `date`) via moderationErrorBody; the real db.ts function
+  // already returns it, and the test fakes supply a full modStatus().
+  moderationStatusForAccount(accountId: number): Promise<AccountModerationStatus>;
 }
 
 /**
@@ -79,7 +86,7 @@ export function createActiveGuard(getDb: () => BearerActiveGuardDb): Middleware 
     }
     const status = await db.moderationStatusForAccount(info.accountId);
     if (status.locked) {
-      json(ctx.res, 403, { error: status.message });
+      json(ctx.res, 403, moderationErrorBody(status));
       return;
     }
     ctx.account = { accountId: info.accountId, scope: info.scope };

@@ -673,7 +673,7 @@ describe('internal secret-gate mounting sweep: every /internal route is gated (P
 // -------------------------------------------------------------------------
 
 // The legacy { error } body the shared active guard writes for a missing bearer.
-const API_NOT_AUTHENTICATED = { error: 'not authenticated' };
+const API_NOT_AUTHENTICATED = { error: 'not authenticated', code: 'auth.required' };
 
 // The (method, path) pairs of the Phase 18b authed /api routes.
 const AUTHED_18B_ROUTES: ReadonlyArray<{ method: string; path: string }> = [

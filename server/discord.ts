@@ -67,6 +67,7 @@ import {
   pkceChallengeFromVerifier,
 } from './discord_oauth';
 import { ctxAccountId } from './http/context';
+import type { ErrorCode } from './http/error_codes';
 import {
   type BearerActiveGuardDb,
   bearerToken,
@@ -75,7 +76,7 @@ import {
   READ_ONLY_TOKEN,
 } from './http/middleware/bearer_active_guard';
 import type { Ctx, Middleware, Next, RouteDef } from './http/types';
-import { isUniqueViolation, json } from './http_util';
+import { isUniqueViolation, json, moderationErrorBody } from './http_util';
 import {
   authThrottled,
   clearAuthFailures,
@@ -195,7 +196,11 @@ export async function handleDiscordStart(
 ): Promise<void> {
   note('discord.start.request');
   const cfg = discordConfig();
-  if (!cfg) return json(res, 503, { error: 'Discord integration is not configured' });
+  if (!cfg)
+    return json(res, 503, {
+      error: 'Discord integration is not configured',
+      code: 'discord.not_configured',
+    });
   if (!discordRateLimited(req, opts.accountId ?? 0).allowed) {
     note('discord.start.rate_limited');
     return json(res, 429, { error: 'rate limited' });
@@ -385,7 +390,7 @@ export async function handleDiscordLoginNew(
   const body = await readJsonBody(req);
   const linkToken = typeof body.linkToken === 'string' ? body.linkToken : '';
   const pending = await consumeDiscordPendingLogin(pool, linkToken);
-  if (!pending) return json(res, 400, { error: 'expired' });
+  if (!pending) return json(res, 400, { error: 'expired', code: 'discord.expired' });
   const meta = requestMeta(req);
   const user: DiscordUser = {
     id: pending.discord_user_id,
@@ -410,7 +415,8 @@ export async function handleDiscordLoginNew(
         // Lost the race: another account grabbed this Discord id between our check
         // and the insert. Fall back to logging into the real owner.
         const ownerId = await accountForDiscord(pool, user.id);
-        if (ownerId === null) return json(res, 409, { error: 'already_linked' });
+        if (ownerId === null)
+          return json(res, 409, { error: 'already_linked', code: 'discord.already_linked' });
         accountId = ownerId;
         username = (await accountById(ownerId))?.username ?? 'player';
       } else {
@@ -425,7 +431,7 @@ export async function handleDiscordLoginNew(
       if (pending.guild_member) await grantGuildReward(accountId);
     }
     const status = await moderationStatusForAccount(accountId);
-    if (status.locked) return json(res, 403, { error: status.message });
+    if (status.locked) return json(res, 403, moderationErrorBody(status));
     const token = await issueDiscordSession(accountId, meta);
     return json(res, 200, { token, username });
   } catch (err) {
@@ -451,21 +457,27 @@ export async function handleDiscordLoginLink(
   const body = await readJsonBody(req);
   const linkToken = typeof body.linkToken === 'string' ? body.linkToken : '';
   const pending = await peekDiscordPendingLogin(pool, linkToken);
-  if (!pending) return json(res, 400, { error: 'expired' });
+  if (!pending) return json(res, 400, { error: 'expired', code: 'discord.expired' });
   const username = typeof body.username === 'string' ? body.username : '';
   // Per-account brute-force throttle, message identical to a bad password so it
   // never reveals whether the account exists (mirrors /api/login).
   if (username && !authThrottled(username).allowed) {
-    return json(res, 429, { error: 'too many failed attempts, wait a few minutes and try again' });
+    return json(res, 429, {
+      error: 'too many failed attempts, wait a few minutes and try again',
+      code: 'auth.too_many_failed_attempts',
+    });
   }
   const account = username ? await findAccount(username) : null;
   const password = typeof body.password === 'string' ? body.password : '';
   if (!account || !(await verifyPassword(password, account.password_hash))) {
     if (username) recordAuthFailure(username);
-    return json(res, 401, { error: 'invalid username or password' });
+    return json(res, 401, {
+      error: 'invalid username or password',
+      code: 'auth.invalid_credentials',
+    });
   }
   const status = await moderationStatusForAccount(account.id);
-  if (status.locked) return json(res, 403, { error: status.message });
+  if (status.locked) return json(res, 403, moderationErrorBody(status));
   // Second factor: like /api/login, a 2FA account needs a code. With none supplied
   // we return the challenge (token NOT consumed) so the chooser can ask for it.
   if (account.totp_enabled_at) {
@@ -477,20 +489,23 @@ export async function handleDiscordLoginLink(
       // /api/login: the password is already correct here, so without this a known
       // password could brute-force TOTP codes throttled only per-IP.
       recordAuthFailure(username);
-      return json(res, 401, { error: 'that code is not valid, try again' });
+      return json(res, 401, {
+        error: 'that code is not valid, try again',
+        code: 'two_factor.code_invalid',
+      });
     }
   }
   clearAuthFailures(username);
   // Commit: consume the token (single-use guard) only now, then link + mint.
   const consumed = await consumeDiscordPendingLogin(pool, linkToken);
-  if (!consumed) return json(res, 400, { error: 'expired' });
+  if (!consumed) return json(res, 400, { error: 'expired', code: 'discord.expired' });
   const linked = await linkDiscordToAccount(pool, account.id, {
     discordUserId: consumed.discord_user_id,
     username: consumed.discord_username,
     avatar: consumed.discord_avatar,
     guildMember: consumed.guild_member,
   });
-  if (!linked) return json(res, 409, { error: 'already_linked' });
+  if (!linked) return json(res, 409, { error: 'already_linked', code: 'discord.already_linked' });
   await grantLinkRewards(account.id, consumed.guild_member);
   note('discord.login.linked_existing');
   const token = await issueDiscordSession(account.id, requestMeta(req));
@@ -716,7 +731,7 @@ export async function handleDiscordUnlink(
   accountId: number,
 ): Promise<void> {
   const acct = await accountById(accountId);
-  if (!acct) return json(res, 404, { error: 'account not found' });
+  if (!acct) return json(res, 404, { error: 'account not found', code: 'account.not_found' });
   if (!acct.password_set) {
     const body = await readJsonBody(req);
     const next = typeof body.password === 'string' ? body.password : '';
@@ -725,7 +740,7 @@ export async function handleDiscordUnlink(
       // status alone (it pre-fills the read-only username locally), so the response
       // needs only the error code.
       note('discord.unlink.password_required');
-      return json(res, 400, { error: 'password_required' });
+      return json(res, 400, { error: 'password_required', code: 'discord.password_required' });
     }
     // Set the real password first (this also flips password_set = TRUE), so the
     // account survives even if the unlink below were to fail (a benign retry).
@@ -736,6 +751,17 @@ export async function handleDiscordUnlink(
   note('discord.unlink');
   return json(res, 200, { unlinked: true });
 }
+
+// The additive Phase 22 machine code for each swag claim-refusal reason, alongside
+// the untouched legacy prose ('claimed' | 'tier' | 'points') the client already
+// keys on. canClaimSwag's verdict.reason widens to include 'ok' (a non-discriminated
+// union), so its index is cast to the refusal subset (this line runs only when the
+// verdict is NOT ok); claimSwag's result.reason narrows to 'claimed' | 'points'.
+const SWAG_REASON_CODE: Record<'claimed' | 'tier' | 'points', ErrorCode> = {
+  claimed: 'discord.swag_claimed',
+  tier: 'discord.swag_tier',
+  points: 'discord.swag_points',
+};
 
 // ── POST /api/discord/swag/claim { swagId } ────────────────────────────────────
 // Server-authoritative: re-checks link + tier + points + not-already-claimed.
@@ -755,19 +781,28 @@ export async function handleSwagClaim(
   const body = await readJsonBody(req);
   const swagId = typeof body.swagId === 'string' ? body.swagId : '';
   const swag = swagById(swagId);
-  if (!swag) return json(res, 400, { error: 'unknown swag item' });
+  if (!swag) return json(res, 400, { error: 'unknown swag item', code: 'discord.unknown_swag' });
 
   const link = await discordForAccount(pool, accountId);
-  if (!link) return json(res, 403, { error: 'link your Discord account first' });
+  if (!link)
+    return json(res, 403, {
+      error: 'link your Discord account first',
+      code: 'discord.link_required',
+    });
 
   const reward = await loadRewardState(pool, accountId);
   const statusTier = discordStatusIndexForPoints(reward.lifetimePoints);
   const claimedIds = await listSwagClaims(pool, accountId);
   const verdict = canClaimSwag({ swag, spendablePoints: reward.points, statusTier, claimedIds });
-  if (!verdict.ok) return json(res, 409, { error: verdict.reason });
+  if (!verdict.ok)
+    return json(res, 409, {
+      error: verdict.reason,
+      code: SWAG_REASON_CODE[verdict.reason as 'claimed' | 'tier' | 'points'],
+    });
 
   const result = await claimSwag(pool, accountId, swag.id, swag.cost);
-  if (!result.ok) return json(res, 409, { error: result.reason });
+  if (!result.ok)
+    return json(res, 409, { error: result.reason, code: SWAG_REASON_CODE[result.reason] });
 
   // Apply the real in-game effect for cosmetic swag (titles/physical are recorded
   // claims fulfilled by the bot/admin). Best-effort; the claim is already durable.
@@ -1007,8 +1042,9 @@ const activeGuard = createActiveGuard(() => discordDb);
  * unauthenticated, so the shared activeGuard cannot be a plain route middleware
  * here). Mirrors bearerActiveAccount / createActiveGuard EXACTLY: 401
  * { error: 'not authenticated' } no/bad/unknown token, 403 { error: 'this token is
- * read-only' } read-only scope, 403 { error: status.message } moderation-locked, in
- * that order; writes the legacy body and returns null on any reject. (A candidate
+ * read-only' } read-only scope, 403 moderationErrorBody(status) moderation-locked, in
+ * that order; writes the legacy body (plus its Phase 22 additive machine code) and
+ * returns null on any reject. (A candidate
  * for the Phase 22/25 shared bearer-resolver consolidation, alongside the three
  * inline activeGuard copies.)
  */
@@ -1025,7 +1061,7 @@ async function resolveActiveAccount(ctx: Ctx): Promise<number | null> {
   }
   const status = await discordDb.moderationStatusForAccount(info.accountId);
   if (status.locked) {
-    json(ctx.res, 403, { error: status.message });
+    json(ctx.res, 403, moderationErrorBody(status));
     return null;
   }
   return info.accountId;

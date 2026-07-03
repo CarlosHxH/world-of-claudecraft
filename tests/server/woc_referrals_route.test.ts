@@ -37,7 +37,7 @@ import {
   WOC_BALANCE_MAX_PER_MINUTE,
 } from '../../server/ratelimit';
 import { resetWalletDbForTests, routes, setWalletDbForTests } from '../../server/wallet';
-import { type FakeRes, fakeCtx } from './helpers';
+import { type FakeRes, fakeCtx, stableStringify } from './helpers';
 
 // Keep the woc happy path db-free: stub handleWocBalance so it writes a 200 without
 // the Solana RPC (parseWocBalanceQuery stays real via the ...actual spread, so the
@@ -252,7 +252,9 @@ describe('GET /api/referrals (activeGuard)', () => {
     const r = await runRoute('GET', '/api/referrals');
     const fx = fixture('referrals_get_noauth_401');
     expect(r.status).toBe(fx.status);
-    expect(r.raw).toBe(fx.body);
+    // The golden body canonicalizes key order (code before error); the raw emit is
+    // insertion order, so canonicalize the raw the same way before the byte-compare.
+    expect(stableStringify(JSON.parse(r.raw))).toBe(fx.body);
     expect(r.contentType).toBe('application/json');
     // A missing bearer short-circuits at the guard: the handler never runs.
     expect(r.reached).toBe(false);

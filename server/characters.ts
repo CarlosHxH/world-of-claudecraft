@@ -71,7 +71,7 @@ import {
 } from './http/middleware/rate_limit';
 import { requireOwned } from './http/middleware/require_owned';
 import type { Ctx, Middleware, RouteDef } from './http/types';
-import { isUniqueViolation, json } from './http_util';
+import { isUniqueViolation, json, moderationErrorBody } from './http_util';
 import { REALM } from './realm';
 
 // ---------------------------------------------------------------------------
@@ -81,20 +81,38 @@ import { REALM } from './realm';
 // character strings never used one).
 // ---------------------------------------------------------------------------
 
-const NOT_AUTHENTICATED = { error: 'not authenticated' } as const;
-const READ_ONLY_TOKEN = { error: 'this token is read-only' } as const;
-const INVALID_CHAR_NAME = { error: 'invalid character name (2-16 letters)' } as const;
-const CHAR_NAME_NOT_ALLOWED = { error: 'character name is not allowed' } as const;
-const INVALID_CLASS = { error: 'invalid class' } as const;
-const CHARACTER_LIMIT_REACHED = { error: 'character limit reached' } as const;
-const NAME_TAKEN = { error: 'that name is taken' } as const;
+const NOT_AUTHENTICATED = { error: 'not authenticated', code: 'auth.required' } as const;
+const READ_ONLY_TOKEN = { error: 'this token is read-only', code: 'auth.forbidden' } as const;
+const INVALID_CHAR_NAME = {
+  error: 'invalid character name (2-16 letters)',
+  code: 'character.name_invalid',
+} as const;
+const CHAR_NAME_NOT_ALLOWED = {
+  error: 'character name is not allowed',
+  code: 'character.name_not_allowed',
+} as const;
+const INVALID_CLASS = { error: 'invalid class', code: 'character.invalid_class' } as const;
+const CHARACTER_LIMIT_REACHED = {
+  error: 'character limit reached',
+  code: 'character.limit_reached',
+} as const;
+const NAME_TAKEN = { error: 'that name is taken', code: 'character.name_taken' } as const;
 // The owner sheet / standing / rename 404 body; takeover + delete use the shorter
 // 'not found', byte-for-byte with their legacy arms (both are player-owned 404s).
-const CHARACTER_NOT_FOUND = { error: 'character not found' } as const;
-const NOT_FOUND = { error: 'not found' } as const;
-const RENAME_NOT_PERMITTED = { error: 'character rename is not permitted' } as const;
-const CHARACTER_ONLINE = { error: 'character is currently online' } as const;
-const DELETE_CONFIRM = { error: 'type the character name to confirm deletion' } as const;
+const CHARACTER_NOT_FOUND = { error: 'character not found', code: 'character.not_found' } as const;
+const NOT_FOUND = { error: 'not found', code: 'character.not_found' } as const;
+const RENAME_NOT_PERMITTED = {
+  error: 'character rename is not permitted',
+  code: 'character.rename_not_permitted',
+} as const;
+const CHARACTER_ONLINE = {
+  error: 'character is currently online',
+  code: 'character.online',
+} as const;
+const DELETE_CONFIRM = {
+  error: 'type the character name to confirm deletion',
+  code: 'character.delete_confirm',
+} as const;
 
 /** The ctx.state key the owned, authorized character row is stashed under. */
 const CHARACTER_RESOURCE = 'character';
@@ -260,7 +278,7 @@ const readGuard: Middleware = async (ctx, next) => {
   }
   const status = await charactersDb.moderationStatusForAccount(info.accountId);
   if (status.locked) {
-    json(ctx.res, 403, { error: status.message });
+    json(ctx.res, 403, moderationErrorBody(status));
     return;
   }
   ctx.account = { accountId: info.accountId, scope: info.scope };
@@ -279,7 +297,7 @@ const activeGuard: Middleware = async (ctx, next) => {
   }
   const status = await charactersDb.moderationStatusForAccount(info.accountId);
   if (status.locked) {
-    json(ctx.res, 403, { error: status.message });
+    json(ctx.res, 403, moderationErrorBody(status));
     return;
   }
   ctx.account = { accountId: info.accountId, scope: info.scope };

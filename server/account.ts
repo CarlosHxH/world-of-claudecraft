@@ -61,7 +61,7 @@ import {
 } from './email';
 import { ctxAccountId } from './http/context';
 import type { Ctx, Middleware, RouteDef } from './http/types';
-import { json, readBody } from './http_util';
+import { json, moderationErrorBody, readBody } from './http_util';
 import { clearAuthFailures, rateLimited, recordAuthFailure } from './ratelimit';
 import {
   generateRecoveryCodes,
@@ -97,7 +97,7 @@ export async function handleAccountWhoami(
   accountId: number,
 ): Promise<void> {
   const acct = await accountById(accountId);
-  if (!acct) return json(res, 404, { error: 'account not found' });
+  if (!acct) return json(res, 404, { error: 'account not found', code: 'account.not_found' });
   const characterCount = await characterCountForAccount(accountId);
   const twoFactorEnabled = await accountTwoFactorEnabled(accountId);
   return json(res, 200, {
@@ -122,20 +122,29 @@ export async function handleAccountChangePassword(
   if (!rateLimited(req).allowed) return json(res, 429, { error: 'too many attempts, slow down' });
   const body = await readBody(req);
   const acct = await accountById(accountId);
-  if (!acct) return json(res, 404, { error: 'account not found' });
+  if (!acct) return json(res, 404, { error: 'account not found', code: 'account.not_found' });
   if (!(await verifyPassword(String(body.current ?? ''), acct.password_hash))) {
     recordAuthFailure(acct.username);
-    return json(res, 401, { error: 'current password is incorrect' });
+    return json(res, 401, {
+      error: 'current password is incorrect',
+      code: 'auth.current_password_incorrect',
+    });
   }
   // Correct password: forgive earlier portal mis-types so a re-verify here never
   // throttles the user's own subsequent login. Mirrors the login success path.
   clearAuthFailures(acct.username);
   const next = body.next;
   if (typeof next !== 'string' || next.length < MIN_PASSWORD_LENGTH) {
-    return json(res, 400, { error: `password must be at least ${MIN_PASSWORD_LENGTH} chars` });
+    return json(res, 400, {
+      error: `password must be at least ${MIN_PASSWORD_LENGTH} chars`,
+      code: 'account.password_too_short',
+    });
   }
   if (next.length > MAX_PASSWORD_LENGTH) {
-    return json(res, 400, { error: `password must be at most ${MAX_PASSWORD_LENGTH} chars` });
+    return json(res, 400, {
+      error: `password must be at most ${MAX_PASSWORD_LENGTH} chars`,
+      code: 'account.password_too_long',
+    });
   }
   await updatePasswordHash(accountId, await hashPassword(next));
   await revokeTokensExcept(accountId, callerToken);
@@ -180,20 +189,23 @@ export async function handleAccountDeactivate(
   if (!rateLimited(req).allowed) return json(res, 429, { error: 'too many attempts, slow down' });
   const body = await readBody(req);
   const acct = await accountById(accountId);
-  if (!acct) return json(res, 404, { error: 'account not found' });
+  if (!acct) return json(res, 404, { error: 'account not found', code: 'account.not_found' });
   if (String(body.username ?? '') !== acct.username) {
-    return json(res, 400, { error: 'username does not match' });
+    return json(res, 400, { error: 'username does not match', code: 'account.username_mismatch' });
   }
   if (!(await verifyPassword(String(body.password ?? ''), acct.password_hash))) {
     recordAuthFailure(acct.username);
-    return json(res, 401, { error: 'password is incorrect' });
+    return json(res, 401, { error: 'password is incorrect', code: 'auth.password_incorrect' });
   }
   // Correct password: forgive earlier portal mis-types so a re-verify here never
   // throttles the user's own subsequent login. Mirrors the login success path.
   clearAuthFailures(acct.username);
   const chars = await listCharacters(accountId);
   if (hooks.anyCharacterOnline(chars.map((c) => c.id))) {
-    return json(res, 409, { error: 'log out all characters before deactivating' });
+    return json(res, 409, {
+      error: 'log out all characters before deactivating',
+      code: 'account.characters_online',
+    });
   }
   await setAccountDeactivated(accountId, true);
   await revokeTokensExcept(accountId, null);
@@ -214,18 +226,18 @@ export async function handleAccountEmailChange(
   if (!rateLimited(req).allowed) return json(res, 429, { error: 'too many attempts, slow down' });
   const body = await readBody(req);
   const acct = await accountById(accountId);
-  if (!acct) return json(res, 404, { error: 'account not found' });
+  if (!acct) return json(res, 404, { error: 'account not found', code: 'account.not_found' });
   if (!(await verifyPassword(String(body.password ?? ''), acct.password_hash))) {
     recordAuthFailure(acct.username);
-    return json(res, 401, { error: 'password is incorrect' });
+    return json(res, 401, { error: 'password is incorrect', code: 'auth.password_incorrect' });
   }
   clearAuthFailures(acct.username);
   const newEmail = typeof body.newEmail === 'string' ? body.newEmail.trim() : '';
   if (newEmail.length > EMAIL_MAX_LENGTH || !EMAIL_SHAPE.test(newEmail)) {
-    return json(res, 400, { error: 'enter a valid email address' });
+    return json(res, 400, { error: 'enter a valid email address', code: 'email.invalid' });
   }
   if (newEmail.toLowerCase() === (acct.email ?? '').toLowerCase()) {
-    return json(res, 400, { error: 'that is already your email address' });
+    return json(res, 400, { error: 'that is already your email address', code: 'email.unchanged' });
   }
   const { token, tokenHash } = makeEmailToken();
   await createEmailChangeRequest(accountId, newEmail, tokenHash, EMAIL_CHANGE_TTL_HOURS);
@@ -258,7 +270,7 @@ export async function handleAccountExport(
 ): Promise<void> {
   if (!rateLimited(req).allowed) return json(res, 429, { error: 'too many attempts, slow down' });
   const bundle = await exportAccountData(accountId);
-  if (!bundle) return json(res, 404, { error: 'account not found' });
+  if (!bundle) return json(res, 404, { error: 'account not found', code: 'account.not_found' });
   const acct = await accountById(accountId);
   if (acct) emailDataExport(acct);
   res.writeHead(200, {
@@ -303,14 +315,18 @@ export async function handleAccount2faSetup(
   if (!rateLimited(req).allowed) return json(res, 429, { error: 'too many attempts, slow down' });
   const body = await readBody(req);
   const acct = await accountById(accountId);
-  if (!acct) return json(res, 404, { error: 'account not found' });
+  if (!acct) return json(res, 404, { error: 'account not found', code: 'account.not_found' });
   if (!(await verifyPassword(String(body.password ?? ''), acct.password_hash))) {
     recordAuthFailure(acct.username);
-    return json(res, 401, { error: 'password is incorrect' });
+    return json(res, 401, { error: 'password is incorrect', code: 'auth.password_incorrect' });
   }
   clearAuthFailures(acct.username);
   const state = await getTotpState(accountId);
-  if (state?.enabledAt) return json(res, 409, { error: 'two-factor is already enabled' });
+  if (state?.enabledAt)
+    return json(res, 409, {
+      error: 'two-factor is already enabled',
+      code: 'two_factor.already_enabled',
+    });
   const secret = generateSecret();
   await setTotpPending(accountId, secret);
   return json(res, 200, { secret, otpauthUri: otpauthUri(secret, acct.username, TOTP_ISSUER) });
@@ -327,12 +343,24 @@ export async function handleAccount2faEnable(
   if (!rateLimited(req).allowed) return json(res, 429, { error: 'too many attempts, slow down' });
   const body = await readBody(req);
   const state = await getTotpState(accountId);
-  if (!state) return json(res, 404, { error: 'account not found' });
-  if (state.enabledAt) return json(res, 409, { error: 'two-factor is already enabled' });
-  if (!state.pendingSecret) return json(res, 400, { error: 'start two-factor setup first' });
+  if (!state) return json(res, 404, { error: 'account not found', code: 'account.not_found' });
+  if (state.enabledAt)
+    return json(res, 409, {
+      error: 'two-factor is already enabled',
+      code: 'two_factor.already_enabled',
+    });
+  if (!state.pendingSecret) {
+    return json(res, 400, {
+      error: 'start two-factor setup first',
+      code: 'two_factor.setup_required',
+    });
+  }
   const code = String(body.code ?? '');
   if (verifyTotp(state.pendingSecret, code, now) === null) {
-    return json(res, 400, { error: 'that code is not valid, try again' });
+    return json(res, 400, {
+      error: 'that code is not valid, try again',
+      code: 'two_factor.code_invalid',
+    });
   }
   const recoveryCodes = generateRecoveryCodes();
   await enableTotp(accountId, state.pendingSecret, recoveryCodes.map(hashRecoveryCode));
@@ -351,14 +379,15 @@ export async function handleAccount2faDisable(
   if (!rateLimited(req).allowed) return json(res, 429, { error: 'too many attempts, slow down' });
   const body = await readBody(req);
   const acct = await accountById(accountId);
-  if (!acct) return json(res, 404, { error: 'account not found' });
+  if (!acct) return json(res, 404, { error: 'account not found', code: 'account.not_found' });
   if (!(await verifyPassword(String(body.password ?? ''), acct.password_hash))) {
     recordAuthFailure(acct.username);
-    return json(res, 401, { error: 'password is incorrect' });
+    return json(res, 401, { error: 'password is incorrect', code: 'auth.password_incorrect' });
   }
   clearAuthFailures(acct.username);
   const state = await getTotpState(accountId);
-  if (!state?.enabledAt) return json(res, 400, { error: 'two-factor is not enabled' });
+  if (!state?.enabledAt)
+    return json(res, 400, { error: 'two-factor is not enabled', code: 'two_factor.not_enabled' });
   await disableTotp(accountId);
   emailTwoFactorDisabled(acct);
   return json(res, 200, { ok: true });
@@ -441,8 +470,8 @@ export async function handleEmailUnsubscribe(
 // The exact legacy { error } identities the guards emit. Named constants so the
 // guards cannot drift from the bearerActiveAccount / logout arms they mirror. No
 // em dash appears in any of these (the legacy account strings never used one).
-const NOT_AUTHENTICATED = { error: 'not authenticated' } as const;
-const READ_ONLY_TOKEN = { error: 'this token is read-only' } as const;
+const NOT_AUTHENTICATED = { error: 'not authenticated', code: 'auth.required' } as const;
+const READ_ONLY_TOKEN = { error: 'this token is read-only', code: 'auth.forbidden' } as const;
 const COMPANION_TOKEN_NOT_FOUND = { error: 'token not found' } as const;
 
 // The bearer token shape: a 64-hex secret behind the "Bearer " scheme. Mirrors
@@ -554,7 +583,7 @@ const activeGuard: Middleware = async (ctx, next) => {
   }
   const status = await accountDb.moderationStatusForAccount(info.accountId);
   if (status.locked) {
-    json(ctx.res, 403, { error: status.message });
+    json(ctx.res, 403, moderationErrorBody(status));
     return;
   }
   ctx.account = { accountId: info.accountId, scope: info.scope };

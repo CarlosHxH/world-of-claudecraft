@@ -45,7 +45,7 @@ import {
   setWalletDbForTests,
   type WalletGameHooks,
 } from '../../server/wallet';
-import { type FakeRes, fakeCtx } from './helpers';
+import { type FakeRes, fakeCtx, stableStringify } from './helpers';
 
 // The GET /api/wallet + DELETE /api/wallet/link handlers self-read walletForAccount /
 // unlinkWallet off db.ts directly (not through the wallet.ts guard seam), so mock those two
@@ -206,7 +206,7 @@ describe('activeGuard', () => {
 
     const r = await runChain([activeGuard], fakeCtx({}));
     expect(r).toMatchObject({ reached: false, status: 401 });
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     // A missing/bad-shape bearer 401s before any db call (so the no-auth golden replays
     // DB-free through both dispatch paths).
     expect(accountAndScopeForToken).not.toHaveBeenCalled();
@@ -221,7 +221,7 @@ describe('activeGuard', () => {
     });
     const r = await runChain([activeGuard], fakeCtx({ headers: { authorization: BEARER } }));
     expect(r).toMatchObject({ reached: false, status: 401 });
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(moderationStatusForAccount).not.toHaveBeenCalled();
   });
 
@@ -230,7 +230,7 @@ describe('activeGuard', () => {
     setWalletDbForTests({ accountAndScopeForToken: scopeOf('read'), moderationStatusForAccount });
     const r = await runChain([activeGuard], fakeCtx({ headers: { authorization: BEARER } }));
     expect(r).toMatchObject({ reached: false, status: 403 });
-    expect(r.body).toEqual({ error: 'this token is read-only' });
+    expect(r.body).toEqual({ error: 'this token is read-only', code: 'auth.forbidden' });
     // The read-only rejection precedes the moderation gate.
     expect(moderationStatusForAccount).not.toHaveBeenCalled();
   });
@@ -242,7 +242,7 @@ describe('activeGuard', () => {
     });
     const r = await runChain([activeGuard], fakeCtx({ headers: { authorization: BEARER } }));
     expect(r).toMatchObject({ reached: false, status: 403 });
-    expect(r.body).toEqual({ error: 'Your account is suspended.' });
+    expect(r.body).toEqual({ error: 'Your account is suspended.', code: 'moderation.suspended' });
   });
 
   it('proceeds and stashes ctx.account for a full, non-locked token', async () => {
@@ -263,7 +263,9 @@ describe('full route chain: no-auth 401 (byte-identical to the golden)', () => {
     const r = await runRoute('GET', '/api/wallet');
     const fx = fixture('wallet_get_noauth_401');
     expect(r.status).toBe(fx.status);
-    expect(r.raw).toBe(fx.body);
+    // The golden body canonicalizes key order (code before error); the raw emit is
+    // insertion order, so canonicalize the raw the same way before the byte-compare.
+    expect(stableStringify(JSON.parse(r.raw))).toBe(fx.body);
     expect(r.contentType).toBe('application/json');
     expect(r.reached).toBe(false);
   });
@@ -405,7 +407,7 @@ describe('limiter order (ip+account limiter mounts after activeGuard)', () => {
     // No Authorization header: activeGuard rejects before the rateLimit middleware runs.
     const unauth = await runRoute('POST', '/api/wallet/link/challenge');
     expect(unauth).toMatchObject({ reached: false, status: 401 });
-    expect(unauth.body).toEqual({ error: 'not authenticated' });
+    expect(unauth.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(unauth.status).not.toBe(429);
     expect(unauth.status).not.toBe(500);
   });
@@ -426,7 +428,7 @@ describe('DELETE /api/wallet/link (migrated chain)', () => {
   it('401s a no-bearer request at the shared activeGuard, never reaching the handler', async () => {
     const r = await runRoute('DELETE', '/api/wallet/link');
     expect(r).toMatchObject({ reached: false, status: 401 });
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(r.contentType).toBe('application/json');
     expect(vi.mocked(unlinkWallet)).not.toHaveBeenCalled();
   });

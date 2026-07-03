@@ -46,7 +46,7 @@ import { compose } from '../../server/http/compose';
 import { withErrors } from '../../server/http/middleware/with_errors';
 import { apiRegistry } from '../../server/http/registry';
 import type { Ctx, Method, Middleware } from '../../server/http/types';
-import { type FakeRes, fakeCtx } from './helpers';
+import { type FakeRes, fakeCtx, stableStringify } from './helpers';
 
 // The deactivate handler self-drives db/auth/email reads (accountById, verifyPassword,
 // listCharacters, setAccountDeactivated, revokeTokensExcept, emailAccountDeleted) that
@@ -280,7 +280,7 @@ describe('activeGuard', () => {
 
     const r = await runChain([activeGuard], fakeCtx({}));
     expect(r).toMatchObject({ reached: false, status: 401 });
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     // A missing bearer 401s before any db call (so the no-auth golden replays DB-free).
     expect(accountAndScopeForToken).not.toHaveBeenCalled();
     expect(moderationStatusForAccount).not.toHaveBeenCalled();
@@ -294,7 +294,7 @@ describe('activeGuard', () => {
     });
     const r = await runChain([activeGuard], fakeCtx({ headers: { authorization: BEARER } }));
     expect(r).toMatchObject({ reached: false, status: 401 });
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(moderationStatusForAccount).not.toHaveBeenCalled();
   });
 
@@ -303,7 +303,7 @@ describe('activeGuard', () => {
     setAccountDbForTests({ accountAndScopeForToken: scopeOf('read'), moderationStatusForAccount });
     const r = await runChain([activeGuard], fakeCtx({ headers: { authorization: BEARER } }));
     expect(r).toMatchObject({ reached: false, status: 403 });
-    expect(r.body).toEqual({ error: 'this token is read-only' });
+    expect(r.body).toEqual({ error: 'this token is read-only', code: 'auth.forbidden' });
     expect(moderationStatusForAccount).not.toHaveBeenCalled();
   });
 
@@ -314,7 +314,7 @@ describe('activeGuard', () => {
     });
     const r = await runChain([activeGuard], fakeCtx({ headers: { authorization: BEARER } }));
     expect(r).toMatchObject({ reached: false, status: 403 });
-    expect(r.body).toEqual({ error: 'you are banned' });
+    expect(r.body).toEqual({ error: 'you are banned', code: 'moderation.suspended' });
   });
 
   it('proceeds and stashes ctx.account for a full, non-locked token', async () => {
@@ -337,7 +337,7 @@ describe('logoutGuard', () => {
     setAccountDbForTests({ accountForToken });
     const r = await runChain([logoutGuard], fakeCtx({}));
     expect(r).toMatchObject({ reached: false, status: 401 });
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(accountForToken).not.toHaveBeenCalled();
   });
 
@@ -345,7 +345,7 @@ describe('logoutGuard', () => {
     setAccountDbForTests({ accountForToken: async () => null });
     const r = await runChain([logoutGuard], fakeCtx({ headers: { authorization: BEARER } }));
     expect(r).toMatchObject({ reached: false, status: 401 });
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
   });
 
   it('proceeds for a valid token WITHOUT a scope or moderation gate (banned can sign out)', async () => {
@@ -498,7 +498,9 @@ describe('email link routes (no token, db-free)', () => {
     });
     const fx = fixture('email_unsubscribe_no_token');
     expect(r.status).toBe(fx.status);
-    expect(r.raw).toBe(fx.body);
+    // The golden body canonicalizes key order (code before error); the raw emit is
+    // insertion order, so canonicalize the raw the same way before the byte-compare.
+    expect(stableStringify(JSON.parse(r.raw))).toBe(fx.body);
     expect(r.contentType).toBe('application/json');
   });
 
@@ -508,7 +510,9 @@ describe('email link routes (no token, db-free)', () => {
     });
     const fx = fixture('email_verify_no_token_400');
     expect(r.status).toBe(fx.status);
-    expect(r.raw).toBe(fx.body);
+    // The golden body canonicalizes key order (code before error); the raw emit is
+    // insertion order, so canonicalize the raw the same way before the byte-compare.
+    expect(stableStringify(JSON.parse(r.raw))).toBe(fx.body);
     expect(r.contentType).toBe('application/json');
   });
 
@@ -533,7 +537,9 @@ describe('full route chain: no-auth 401 (byte-identical to the golden)', () => {
     const r = await runRoute('GET', '/api/account');
     const fx = fixture('account_get_noauth_401');
     expect(r.status).toBe(fx.status);
-    expect(r.raw).toBe(fx.body);
+    // The golden body canonicalizes key order (code before error); the raw emit is
+    // insertion order, so canonicalize the raw the same way before the byte-compare.
+    expect(stableStringify(JSON.parse(r.raw))).toBe(fx.body);
     expect(r.reached).toBe(false);
   });
 
@@ -541,7 +547,9 @@ describe('full route chain: no-auth 401 (byte-identical to the golden)', () => {
     const r = await runRoute('POST', '/api/account/logout', { body: {} });
     const fx = fixture('account_logout_post_noauth_401');
     expect(r.status).toBe(fx.status);
-    expect(r.raw).toBe(fx.body);
+    // The golden body canonicalizes key order (code before error); the raw emit is
+    // insertion order, so canonicalize the raw the same way before the byte-compare.
+    expect(stableStringify(JSON.parse(r.raw))).toBe(fx.body);
     expect(r.reached).toBe(false);
   });
 });
@@ -591,7 +599,10 @@ describe('deactivate route: injected hooks + runtime wiring', () => {
 
     const r = await callHandler('POST', '/api/account/deactivate', { account, body: goodBody });
     expect(r.status).toBe(409);
-    expect(r.body).toEqual({ error: 'log out all characters before deactivating' });
+    expect(r.body).toEqual({
+      error: 'log out all characters before deactivating',
+      code: 'account.characters_online',
+    });
     expect(disconnectAccount).not.toHaveBeenCalled();
     expect(setAccountDeactivated).not.toHaveBeenCalled();
   });
@@ -619,12 +630,12 @@ describe('handler defensive callerToken re-guard', () => {
   it('passwordHandler 401s a ctx with no bearer header (unreachable-after-guard branch)', async () => {
     const r = await callHandler('POST', '/api/account/password', { account, body: {} });
     expect(r.status).toBe(401);
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
   });
 
   it('logoutHandler 401s a ctx with no bearer header (unreachable-after-guard branch)', async () => {
     const r = await callHandler('POST', '/api/account/logout', { account, body: {} });
     expect(r.status).toBe(401);
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
   });
 });

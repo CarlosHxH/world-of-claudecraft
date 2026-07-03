@@ -58,7 +58,7 @@ import { emailAccountCreated } from './email';
 import { withBody } from './http/middleware/body';
 import { turnstile } from './http/middleware/turnstile';
 import type { Ctx, Middleware, RouteDef } from './http/types';
-import { isUniqueViolation, json } from './http_util';
+import { isUniqueViolation, json, moderationErrorBody } from './http_util';
 import { createSuspiciousRegistrationReport } from './moderation_db';
 import { createNativeAttestationChallenge } from './native_attestation';
 import { captureReferral } from './player_card';
@@ -190,7 +190,7 @@ export function resetAuthDbForTests(): void {
 // it keeps the guard unit-testable (a test can flip REQUIRE_WEB_LOGIN after import).
 const webLoginGuard: Middleware = async (ctx, next) => {
   if (webLoginEnforced() && !isWebClientRequest(ctx.req)) {
-    json(ctx.res, 403, { error: WEB_LOGIN_ONLY });
+    json(ctx.res, 403, { error: WEB_LOGIN_ONLY, code: 'auth.web_login_only' });
     return;
   }
   await next();
@@ -199,7 +199,7 @@ const webLoginGuard: Middleware = async (ctx, next) => {
 /** IP-keyed sliding-window rate limit, BEFORE the body is read or any DB call. */
 const ipRateLimitGuard: Middleware = async (ctx, next) => {
   if (!rateLimited(ctx.req).allowed) {
-    json(ctx.res, 429, { error: TOO_MANY_ATTEMPTS });
+    json(ctx.res, 429, { error: TOO_MANY_ATTEMPTS, code: 'auth.too_many_attempts' });
     return;
   }
   await next();
@@ -212,7 +212,7 @@ const ipRateLimitGuard: Middleware = async (ctx, next) => {
  */
 const registerIpBlockGuard: Middleware = async (ctx, next) => {
   if (useRuntime().isIpBlocked(requestIp(ctx.req))) {
-    json(ctx.res, 429, { error: TOO_MANY_ATTEMPTS });
+    json(ctx.res, 429, { error: TOO_MANY_ATTEMPTS, code: 'auth.too_many_attempts' });
     return;
   }
   await next();
@@ -234,20 +234,20 @@ async function registerHandler(ctx: Ctx): Promise<void> {
   const rt = useRuntime();
   const body = (ctx.body ?? {}) as Record<string, unknown>;
   if (!validUsernameShape(body.username)) {
-    json(ctx.res, 400, { error: USERNAME_SHAPE });
+    json(ctx.res, 400, { error: USERNAME_SHAPE, code: 'account.username_invalid' });
     return;
   }
   if (offensiveName(body.username)) {
-    json(ctx.res, 400, { error: USERNAME_NOT_ALLOWED });
+    json(ctx.res, 400, { error: USERNAME_NOT_ALLOWED, code: 'account.username_not_allowed' });
     return;
   }
   if (!validPassword(body.password)) {
-    json(ctx.res, 400, { error: PASSWORD_TOO_SHORT });
+    json(ctx.res, 400, { error: PASSWORD_TOO_SHORT, code: 'account.password_too_short' });
     return;
   }
   const existing = await authDb.findAccount(body.username);
   if (existing) {
-    json(ctx.res, 409, { error: USERNAME_TAKEN });
+    json(ctx.res, 409, { error: USERNAME_TAKEN, code: 'account.username_taken' });
     return;
   }
   let account: AccountRow;
@@ -261,7 +261,7 @@ async function registerHandler(ctx: Ctx): Promise<void> {
     // A concurrent registration can win the insert after our findAccount check; the
     // username UNIQUE index is the real guard. Surface it as the same 409, not a 500.
     if (isUniqueViolation(err)) {
-      json(ctx.res, 409, { error: USERNAME_TAKEN });
+      json(ctx.res, 409, { error: USERNAME_TAKEN, code: 'account.username_taken' });
       return;
     }
     throw err;
@@ -308,25 +308,25 @@ async function loginHandler(ctx: Ctx): Promise<void> {
   // Per-account brute-force throttle (#93). The message matches a bad-password
   // response so it never reveals whether the account exists.
   if (username && !authThrottled(username).allowed) {
-    json(ctx.res, 429, { error: TOO_MANY_FAILED_ATTEMPTS });
+    json(ctx.res, 429, { error: TOO_MANY_FAILED_ATTEMPTS, code: 'auth.too_many_failed_attempts' });
     return;
   }
   const account = username ? await authDb.findAccount(username) : null;
   if (!account || !(await verifyPassword(String(body.password ?? ''), account.password_hash))) {
     if (username) recordAuthFailure(username);
-    json(ctx.res, 401, { error: INVALID_CREDENTIALS });
+    json(ctx.res, 401, { error: INVALID_CREDENTIALS, code: 'auth.invalid_credentials' });
     return;
   }
   const status = await authDb.moderationStatusForAccount(account.id);
   if (status.locked) {
-    json(ctx.res, 403, { error: status.message });
+    json(ctx.res, 403, moderationErrorBody(status));
     return;
   }
   // Checked only now the account is known, so admins (verified after the password)
   // are never locked out by an IP block. Reuses the rate-limit message, so a blocked
   // client gets no signal the block exists.
   if (rt.isIpBlocked(requestIp(ctx.req)) && !(await authDb.isAdminAccount(account.id))) {
-    json(ctx.res, 429, { error: TOO_MANY_ATTEMPTS });
+    json(ctx.res, 429, { error: TOO_MANY_ATTEMPTS, code: 'auth.too_many_attempts' });
     return;
   }
   // Second factor: with 2FA on, the password alone is not enough. With no code we
@@ -341,7 +341,11 @@ async function loginHandler(ctx: Ctx): Promise<void> {
     }
     if (!(await authDb.verifyLoginTwoFactor(account, code, recoveryCode))) {
       recordAuthFailure(username);
-      json(ctx.res, 401, { error: INVALID_TWO_FACTOR_CODE, twoFactorRequired: true });
+      json(ctx.res, 401, {
+        error: INVALID_TWO_FACTOR_CODE,
+        code: 'two_factor.code_invalid',
+        twoFactorRequired: true,
+      });
       return;
     }
   }

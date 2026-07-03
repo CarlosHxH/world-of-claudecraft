@@ -228,7 +228,7 @@ describe('content-length gate precedes auth (401 after a normal content-length)'
   it('401s not-authenticated for a normal content-length with no bearer', async () => {
     const r = await runCard({ headers: { 'content-length': '100' } });
     expect(r.status).toBe(401);
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(r.contentType).toBe('application/json');
     expect(r.reached).toBe(false);
   });

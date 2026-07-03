@@ -224,11 +224,11 @@ describe('auth guards', () => {
 
     const read = await runChain([readGuard], fakeCtx({}));
     expect(read).toMatchObject({ reached: false, status: 401 });
-    expect(read.body).toEqual({ error: 'not authenticated' });
+    expect(read.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
 
     const active = await runChain([activeGuard], fakeCtx({}));
     expect(active).toMatchObject({ reached: false, status: 401 });
-    expect(active.body).toEqual({ error: 'not authenticated' });
+    expect(active.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
 
     // A malformed/absent bearer 401s before any db call (so the goldens replay DB-free).
     expect(accountAndScopeForToken).not.toHaveBeenCalled();
@@ -243,7 +243,7 @@ describe('auth guards', () => {
     });
     const r = await runChain([activeGuard], fakeCtx({ headers: { authorization: BEARER } }));
     expect(r).toMatchObject({ reached: false, status: 401 });
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(moderationStatusForAccount).not.toHaveBeenCalled();
   });
 
@@ -256,7 +256,7 @@ describe('auth guards', () => {
 
     const active = await runChain([activeGuard], fakeCtx({ headers: { authorization: BEARER } }));
     expect(active).toMatchObject({ reached: false, status: 403 });
-    expect(active.body).toEqual({ error: 'this token is read-only' });
+    expect(active.body).toEqual({ error: 'this token is read-only', code: 'auth.forbidden' });
     // The read-only rejection precedes the moderation gate.
     expect(moderationStatusForAccount).not.toHaveBeenCalled();
 
@@ -269,15 +269,21 @@ describe('auth guards', () => {
     setCharactersDbForTests({
       accountAndScopeForToken: scopeOf('full'),
       moderationStatusForAccount: async () =>
-        modStatus({ locked: true, message: 'this account has been banned.' }),
+        modStatus({ locked: true, banned: true, message: 'this account has been banned.' }),
     });
     const active = await runChain([activeGuard], fakeCtx({ headers: { authorization: BEARER } }));
     expect(active).toMatchObject({ reached: false, status: 403 });
-    expect(active.body).toEqual({ error: 'this account has been banned.' });
+    expect(active.body).toEqual({
+      error: 'this account has been banned.',
+      code: 'moderation.banned',
+    });
 
     const read = await runChain([readGuard], fakeCtx({ headers: { authorization: BEARER } }));
     expect(read).toMatchObject({ reached: false, status: 403 });
-    expect(read.body).toEqual({ error: 'this account has been banned.' });
+    expect(read.body).toEqual({
+      error: 'this account has been banned.',
+      code: 'moderation.banned',
+    });
   });
 
   it('happy path sets ctx.account and proceeds (activeGuard, full token)', async () => {
@@ -382,7 +388,7 @@ describe('standing handler', () => {
       state: stateWith(charRow({ id: 1 })),
     });
     expect(res.status).toBe(404);
-    expect(res.body).toEqual({ error: 'character not found' });
+    expect(res.body).toEqual({ error: 'character not found', code: 'character.not_found' });
   });
 });
 
@@ -471,7 +477,10 @@ describe('create handler', () => {
       body: { name: 'A', class: 'warrior' }, // one letter fails the 2-16 shape
     });
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'invalid character name (2-16 letters)' });
+    expect(res.body).toEqual({
+      error: 'invalid character name (2-16 letters)',
+      code: 'character.name_invalid',
+    });
     expect(createCharacterCapped).not.toHaveBeenCalled();
   });
 
@@ -483,7 +492,10 @@ describe('create handler', () => {
       body: { name: 'Hitler', class: 'warrior' }, // in the built-in banlist
     });
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'character name is not allowed' });
+    expect(res.body).toEqual({
+      error: 'character name is not allowed',
+      code: 'character.name_not_allowed',
+    });
     expect(createCharacterCapped).not.toHaveBeenCalled();
   });
 
@@ -494,7 +506,7 @@ describe('create handler', () => {
       body: { name: 'Valid', class: 'jester' },
     });
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'invalid class' });
+    expect(res.body).toEqual({ error: 'invalid class', code: 'character.invalid_class' });
   });
 
   it('400s the character limit when createCharacterCapped returns null', async () => {
@@ -504,7 +516,7 @@ describe('create handler', () => {
       body: { name: 'Valid', class: 'warrior' },
     });
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'character limit reached' });
+    expect(res.body).toEqual({ error: 'character limit reached', code: 'character.limit_reached' });
   });
 
   it('409s a unique violation when the freed name cannot be reclaimed', async () => {
@@ -519,7 +531,7 @@ describe('create handler', () => {
       body: { name: 'Valid', class: 'warrior' },
     });
     expect(res.status).toBe(409);
-    expect(res.body).toEqual({ error: 'that name is taken' });
+    expect(res.body).toEqual({ error: 'that name is taken', code: 'character.name_taken' });
   });
 
   it('reclaims a freed name, retries once, and 200s on the second create', async () => {
@@ -557,7 +569,7 @@ describe('create handler', () => {
       body: { name: 'Valid', class: 'warrior' },
     });
     expect(res.status).toBe(409);
-    expect(res.body).toEqual({ error: 'that name is taken' });
+    expect(res.body).toEqual({ error: 'that name is taken', code: 'character.name_taken' });
     expect(createCharacterCapped).toHaveBeenCalledTimes(2);
   });
 
@@ -588,7 +600,7 @@ describe('create handler', () => {
       body: { name: 'Valid', class: 'warrior' },
     });
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'character limit reached' });
+    expect(res.body).toEqual({ error: 'character limit reached', code: 'character.limit_reached' });
     expect(createCharacterCapped).toHaveBeenCalledTimes(2);
   });
 
@@ -685,7 +697,10 @@ describe('rename handler', () => {
       body: { name: 'A' }, // one letter fails the 2-16 shape
     });
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'invalid character name (2-16 letters)' });
+    expect(res.body).toEqual({
+      error: 'invalid character name (2-16 letters)',
+      code: 'character.name_invalid',
+    });
     expect(renameCharacter).not.toHaveBeenCalled();
   });
 
@@ -702,7 +717,10 @@ describe('rename handler', () => {
       body: { name: 'Hitler' }, // in the built-in banlist
     });
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'character name is not allowed' });
+    expect(res.body).toEqual({
+      error: 'character name is not allowed',
+      code: 'character.name_not_allowed',
+    });
     expect(renameCharacter).not.toHaveBeenCalled();
   });
 
@@ -716,7 +734,10 @@ describe('rename handler', () => {
       body: { name: 'Newname' },
     });
     expect(res.status).toBe(403);
-    expect(res.body).toEqual({ error: 'character rename is not permitted' });
+    expect(res.body).toEqual({
+      error: 'character rename is not permitted',
+      code: 'character.rename_not_permitted',
+    });
     expect(renameCharacter).not.toHaveBeenCalled();
   });
 
@@ -731,7 +752,7 @@ describe('rename handler', () => {
       body: { name: 'Newname' },
     });
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'character is currently online' });
+    expect(res.body).toEqual({ error: 'character is currently online', code: 'character.online' });
     expect(renameCharacter).not.toHaveBeenCalled();
   });
 
@@ -748,7 +769,10 @@ describe('rename handler', () => {
       body: { name: 'Newname' },
     });
     expect(res.status).toBe(403);
-    expect(res.body).toEqual({ error: 'character rename is not permitted' });
+    expect(res.body).toEqual({
+      error: 'character rename is not permitted',
+      code: 'character.rename_not_permitted',
+    });
   });
 
   it('404s when the UPDATE matched no row and the character is gone', async () => {
@@ -764,7 +788,7 @@ describe('rename handler', () => {
       body: { name: 'Newname' },
     });
     expect(res.status).toBe(404);
-    expect(res.body).toEqual({ error: 'character not found' });
+    expect(res.body).toEqual({ error: 'character not found', code: 'character.not_found' });
   });
 
   it('409s a unique violation on rename', async () => {
@@ -781,7 +805,7 @@ describe('rename handler', () => {
       body: { name: 'Newname' },
     });
     expect(res.status).toBe(409);
-    expect(res.body).toEqual({ error: 'that name is taken' });
+    expect(res.body).toEqual({ error: 'that name is taken', code: 'character.name_taken' });
   });
 
   it('rethrows a non-unique rename error (surfaces as a 500 through withErrors)', async () => {
@@ -854,7 +878,7 @@ describe('delete handler', () => {
       body: { name: 'Deleteme' },
     });
     expect(res.status).toBe(404);
-    expect(res.body).toEqual({ error: 'not found' });
+    expect(res.body).toEqual({ error: 'not found', code: 'character.not_found' });
   });
 
   it('400s when the character is currently online', async () => {
@@ -867,7 +891,7 @@ describe('delete handler', () => {
       body: { name: 'Deleteme' },
     });
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'character is currently online' });
+    expect(res.body).toEqual({ error: 'character is currently online', code: 'character.online' });
     expect(deleteCharacter).not.toHaveBeenCalled();
   });
 
@@ -881,7 +905,10 @@ describe('delete handler', () => {
       body: { name: 'wrong' },
     });
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ error: 'type the character name to confirm deletion' });
+    expect(res.body).toEqual({
+      error: 'type the character name to confirm deletion',
+      code: 'character.delete_confirm',
+    });
     expect(deleteCharacter).not.toHaveBeenCalled();
   });
 });
@@ -902,13 +929,13 @@ describe('BOLA cross-account 404 (full route chain)', () => {
   it('standing 404s character-not-found, handler unreached', async () => {
     const r = await runRoute('GET', '/api/characters/:id/standing', { params: { id: '1' } });
     expect(r).toMatchObject({ status: 404, reached: false });
-    expect(r.body).toEqual({ error: 'character not found' });
+    expect(r.body).toEqual({ error: 'character not found', code: 'character.not_found' });
   });
 
   it('owner sheet 404s character-not-found, handler unreached', async () => {
     const r = await runRoute('GET', '/api/characters/:id/sheet', { params: { id: '1' } });
     expect(r).toMatchObject({ status: 404, reached: false });
-    expect(r.body).toEqual({ error: 'character not found' });
+    expect(r.body).toEqual({ error: 'character not found', code: 'character.not_found' });
   });
 
   it('rename 404s character-not-found, handler unreached', async () => {
@@ -917,7 +944,7 @@ describe('BOLA cross-account 404 (full route chain)', () => {
       body: { name: 'Newname' },
     });
     expect(r).toMatchObject({ status: 404, reached: false });
-    expect(r.body).toEqual({ error: 'character not found' });
+    expect(r.body).toEqual({ error: 'character not found', code: 'character.not_found' });
   });
 
   it('rename checks ownership BEFORE name validation: a non-owned id + invalid name 404s (not 400)', async () => {
@@ -931,13 +958,13 @@ describe('BOLA cross-account 404 (full route chain)', () => {
       body: { name: 'A' }, // one letter: a 400 invalid-name only if the handler ran
     });
     expect(r).toMatchObject({ status: 404, reached: false });
-    expect(r.body).toEqual({ error: 'character not found' });
+    expect(r.body).toEqual({ error: 'character not found', code: 'character.not_found' });
   });
 
   it('takeover 404s not-found, handler unreached', async () => {
     const r = await runRoute('POST', '/api/characters/:id/takeover', { params: { id: '1' } });
     expect(r).toMatchObject({ status: 404, reached: false });
-    expect(r.body).toEqual({ error: 'not found' });
+    expect(r.body).toEqual({ error: 'not found', code: 'character.not_found' });
   });
 
   it('delete 404s not-found, handler unreached', async () => {
@@ -946,7 +973,7 @@ describe('BOLA cross-account 404 (full route chain)', () => {
       body: { name: 'whatever' },
     });
     expect(r).toMatchObject({ status: 404, reached: false });
-    expect(r.body).toEqual({ error: 'not found' });
+    expect(r.body).toEqual({ error: 'not found', code: 'character.not_found' });
   });
 });
 

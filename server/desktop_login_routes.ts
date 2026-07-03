@@ -116,7 +116,7 @@ function routeDeps(): DesktopLoginRouteDeps {
  */
 const desktopLoginRateGuard: Middleware = async (ctx: Ctx, next: Next) => {
   if (!rateLimited(ctx.req).allowed) {
-    json(ctx.res, 429, { error: TOO_MANY_ATTEMPTS });
+    json(ctx.res, 429, { error: TOO_MANY_ATTEMPTS, code: 'auth.too_many_attempts' });
     return;
   }
   await next();

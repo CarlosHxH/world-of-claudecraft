@@ -1034,7 +1034,10 @@ describe('/api + /internal Phase 18b late-arrival dispatch parity (legacy flag v
     it(`${method} ${url} with no auth is identical old-vs-new and is a 401`, async () => {
       const { oldCap, newCap } = await captureBothModes(() => makeReq({ method, url, body }));
       expect(oldCap.status).toBe(401);
-      expect(JSON.parse(oldCap.body as string)).toEqual({ error: 'not authenticated' });
+      expect(JSON.parse(oldCap.body as string)).toEqual({
+        error: 'not authenticated',
+        code: 'auth.required',
+      });
       expect(stableStringify(newCap)).toBe(stableStringify(oldCap));
     });
   }
@@ -1048,7 +1051,10 @@ describe('/api + /internal Phase 18b late-arrival dispatch parity (legacy flag v
       makeReq({ method: 'DELETE', url: '/api/daily-rewards' }),
     );
     expect(oldCap.status).toBe(401);
-    expect(JSON.parse(oldCap.body as string)).toEqual({ error: 'not authenticated' });
+    expect(JSON.parse(oldCap.body as string)).toEqual({
+      error: 'not authenticated',
+      code: 'auth.required',
+    });
     expect(stableStringify(newCap)).toBe(stableStringify(oldCap));
   });
 
@@ -1135,6 +1141,7 @@ describe('/api + /internal Phase 18b late-arrival dispatch parity (legacy flag v
     expect(oldCap.status).toBe(429);
     expect(JSON.parse(oldCap.body as string)).toEqual({
       error: 'too many attempts, wait a minute and try again',
+      code: 'auth.too_many_attempts',
     });
     expect(stableStringify(newCap)).toBe(stableStringify(oldCap));
   });

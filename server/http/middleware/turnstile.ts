@@ -22,7 +22,10 @@ import type { Ctx, Middleware } from '../types';
  * The legacy Turnstile-failure body. Kept as a single constant so the string the
  * client matcher keys on ("verification failed, please try again") cannot drift.
  */
-const TURNSTILE_FAILED_BODY = { error: 'verification failed, please try again' } as const;
+const TURNSTILE_FAILED_BODY = {
+  error: 'verification failed, please try again',
+  code: 'auth.verification_failed',
+} as const;
 
 /** The one dependency the middleware needs: the anti-bot verifier to run. */
 export interface TurnstileDeps {

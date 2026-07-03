@@ -1,7 +1,7 @@
 {
-  "body": "{\"error\":\"username must be 3-24 chars (letters, digits, _)\"}",
+  "body": "{\"code\":\"account.username_invalid\",\"error\":\"username must be 3-24 chars (letters, digits, _)\"}",
   "headers": {
-    "content-length": 60,
+    "content-length": 94,
     "content-type": "application/json",
     "cross-origin-opener-policy": "same-origin",
     "cross-origin-resource-policy": "same-origin",

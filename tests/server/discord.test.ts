@@ -298,7 +298,7 @@ describe('activeGuard on the mutating Discord routes', () => {
 
       const r = await runRoute(method, path);
       expect(r.status).toBe(401);
-      expect(r.body).toEqual({ error: 'not authenticated' });
+      expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
       expect(r.contentType).toBe('application/json');
       expect(r.reached).toBe(false);
       // A missing bearer 401s before any db call (the token === null branch).
@@ -311,7 +311,7 @@ describe('activeGuard on the mutating Discord routes', () => {
     authedDb({ accountAndScopeForToken: scopeOf('read') });
     const r = await runRoute('GET', '/api/discord', { headers: { authorization: BEARER } });
     expect(r.status).toBe(403);
-    expect(r.body).toEqual({ error: 'this token is read-only' });
+    expect(r.body).toEqual({ error: 'this token is read-only', code: 'auth.forbidden' });
     expect(r.reached).toBe(false);
   });
 
@@ -322,7 +322,7 @@ describe('activeGuard on the mutating Discord routes', () => {
     });
     const r = await runRoute('DELETE', '/api/discord', { headers: { authorization: BEARER } });
     expect(r.status).toBe(403);
-    expect(r.body).toEqual({ error: 'this account is suspended.' });
+    expect(r.body).toEqual({ error: 'this account is suspended.', code: 'moderation.suspended' });
     expect(r.reached).toBe(false);
   });
 });
@@ -364,7 +364,7 @@ describe('discordActiveRateGuard on status + unlink', () => {
     drainDiscordBucket();
     const r = await runRoute('GET', '/api/discord');
     expect(r.status).toBe(401);
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(r.status).not.toBe(429);
     expect(r.reached).toBe(false);
   });
@@ -421,7 +421,10 @@ describe('POST /api/auth/discord/start', () => {
     // handleDiscordStart answers 503 before createDiscordOAuthState.
     const r = await runRoute('POST', '/api/auth/discord/start', { body: {} });
     expect(r.status).toBe(503);
-    expect(r.body).toEqual({ error: 'Discord integration is not configured' });
+    expect(r.body).toEqual({
+      error: 'Discord integration is not configured',
+      code: 'discord.not_configured',
+    });
     expect(r.contentType).toBe('application/json');
   });
 
@@ -434,7 +437,7 @@ describe('POST /api/auth/discord/start', () => {
       body: {},
     });
     expect(r.status).toBe(401);
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(r.contentType).toBe('application/json');
   });
 
@@ -447,7 +450,7 @@ describe('POST /api/auth/discord/start', () => {
       body: {},
     });
     expect(r.status).toBe(403);
-    expect(r.body).toEqual({ error: 'this token is read-only' });
+    expect(r.body).toEqual({ error: 'this token is read-only', code: 'auth.forbidden' });
   });
 
   it('403s a link-mode start for a moderation-locked account with the status message', async () => {
@@ -462,7 +465,7 @@ describe('POST /api/auth/discord/start', () => {
       body: {},
     });
     expect(r.status).toBe(403);
-    expect(r.body).toEqual({ error: 'this account is suspended.' });
+    expect(r.body).toEqual({ error: 'this account is suspended.', code: 'moderation.suspended' });
   });
 
   it('resolves the link-mode bearer BEFORE the IP gate: no bearer + blocked IP is 401, never 429', async () => {
@@ -474,7 +477,7 @@ describe('POST /api/auth/discord/start', () => {
       body: {},
     });
     expect(r.status).toBe(401);
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
   });
 
   it('429s an authed link-mode start when the IP is blocked (the gate covers BOTH modes)', async () => {
@@ -512,7 +515,10 @@ describe('POST /api/auth/discord/start', () => {
     drainDiscordBucket();
     const r = await runRoute('POST', '/api/auth/discord/start', { body: {} });
     expect(r.status).toBe(503);
-    expect(r.body).toEqual({ error: 'Discord integration is not configured' });
+    expect(r.body).toEqual({
+      error: 'Discord integration is not configured',
+      code: 'discord.not_configured',
+    });
     expect(r.status).not.toBe(429);
   });
 });

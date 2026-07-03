@@ -1,5 +1,7 @@
 import type * as http from 'node:http';
 import { inflateSync } from 'node:zlib';
+import type { AccountModerationStatus } from './db';
+import type { ErrorCode } from './http/error_codes';
 
 export function json(res: http.ServerResponse, status: number, body: unknown): void {
   const data = JSON.stringify(body);
@@ -8,6 +10,32 @@ export function json(res: http.ServerResponse, status: number, body: unknown): v
     'Content-Length': Buffer.byteLength(data),
   });
   res.end(data);
+}
+
+/**
+ * The legacy 403 moderation-lock body, PLUS the additive Phase 22 machine `code`
+ * (and, for a timed suspension, the machine-readable `date` the client formats).
+ * The prose `status.message` stays byte-identical; the code is derived from the
+ * same status fields, mirroring the problem+json requireAccount mapping EXACTLY
+ * (server/http/middleware/require_account.ts: banned -> moderation.banned;
+ * an active suspension -> moderation.suspended_until { date }; a self-deactivation
+ * -> account.deactivated; the fallback -> moderation.suspended). Callers invoke
+ * this only when status.locked is true. One source so the ~10 legacy emit sites
+ * (both the migrated RouteDef guards and their legacy main.ts twins) cannot drift.
+ */
+export function moderationErrorBody(
+  status: Pick<AccountModerationStatus, 'message' | 'banned' | 'suspendedUntil' | 'deactivated'>,
+): { error: string; code: ErrorCode; date?: string } {
+  if (status.banned) return { error: status.message, code: 'moderation.banned' };
+  if (status.suspendedUntil) {
+    return {
+      error: status.message,
+      code: 'moderation.suspended_until',
+      date: status.suspendedUntil,
+    };
+  }
+  if (status.deactivated) return { error: status.message, code: 'account.deactivated' };
+  return { error: status.message, code: 'moderation.suspended' };
 }
 
 // A Postgres unique-constraint violation (SQLSTATE 23505). The REST layer maps

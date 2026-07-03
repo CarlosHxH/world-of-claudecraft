@@ -325,7 +325,7 @@ describe('activeGuard on the mutating GitHub routes', () => {
 
       const r = await runRoute(method, path);
       expect(r.status).toBe(401);
-      expect(r.body).toEqual({ error: 'not authenticated' });
+      expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
       expect(r.contentType).toBe('application/json');
       expect(r.reached).toBe(false);
       // A missing bearer 401s before any db call (the token === null branch).
@@ -338,7 +338,7 @@ describe('activeGuard on the mutating GitHub routes', () => {
     authedDb({ accountAndScopeForToken: scopeOf('read') });
     const r = await runRoute('GET', '/api/github', { headers: { authorization: BEARER } });
     expect(r.status).toBe(403);
-    expect(r.body).toEqual({ error: 'this token is read-only' });
+    expect(r.body).toEqual({ error: 'this token is read-only', code: 'auth.forbidden' });
     expect(r.reached).toBe(false);
   });
 
@@ -349,7 +349,7 @@ describe('activeGuard on the mutating GitHub routes', () => {
     });
     const r = await runRoute('DELETE', '/api/github', { headers: { authorization: BEARER } });
     expect(r.status).toBe(403);
-    expect(r.body).toEqual({ error: 'this account is suspended.' });
+    expect(r.body).toEqual({ error: 'this account is suspended.', code: 'moderation.suspended' });
     expect(r.reached).toBe(false);
   });
 });
@@ -403,7 +403,7 @@ describe('GitHub rate guards (mounted behind the auth guard)', () => {
     drainGithubBucket();
     const r = await runRoute('GET', '/api/github');
     expect(r.status).toBe(401);
-    expect(r.body).toEqual({ error: 'not authenticated' });
+    expect(r.body).toEqual({ error: 'not authenticated', code: 'auth.required' });
     expect(r.status).not.toBe(429);
     expect(r.reached).toBe(false);
   });

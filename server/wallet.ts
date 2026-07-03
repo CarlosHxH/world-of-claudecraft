@@ -29,7 +29,7 @@ import {
   WOC_BALANCE_POLICY,
 } from './http/middleware/rate_limit';
 import type { Ctx, Middleware, RouteDef } from './http/types';
-import { json, readBody } from './http_util';
+import { json, moderationErrorBody, readBody } from './http_util';
 import { cardUploadContentLengthTooLarge, handleCardUpload } from './player_card';
 import { recordUsageMetric } from './provider_usage';
 import { walletLinkRateLimited } from './ratelimit';
@@ -199,8 +199,8 @@ export async function handleWalletUnlink(
 // The exact legacy { error } identities the guard + card pre-auth check emit.
 // Named constants so they cannot drift from the bearerActiveAccount / card arms
 // they mirror. No em dash appears in any (the legacy strings never used one).
-const NOT_AUTHENTICATED = { error: 'not authenticated' } as const;
-const READ_ONLY_TOKEN = { error: 'this token is read-only' } as const;
+const NOT_AUTHENTICATED = { error: 'not authenticated', code: 'auth.required' } as const;
+const READ_ONLY_TOKEN = { error: 'this token is read-only', code: 'auth.forbidden' } as const;
 const IMAGE_TOO_LARGE = { error: 'image too large' } as const;
 
 // The bearer token shape: a 64-hex secret behind the "Bearer " scheme. Mirrors
@@ -302,7 +302,7 @@ const activeGuard: Middleware = async (ctx, next) => {
   }
   const status = await walletDb.moderationStatusForAccount(info.accountId);
   if (status.locked) {
-    json(ctx.res, 403, { error: status.message });
+    json(ctx.res, 403, moderationErrorBody(status));
     return;
   }
   ctx.account = { accountId: info.accountId, scope: info.scope };

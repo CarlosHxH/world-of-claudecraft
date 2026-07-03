@@ -125,7 +125,7 @@ import {
 } from './http/dispatch';
 import { withSecurityHeaders } from './http/middleware/security_headers';
 import { apiRegistry } from './http/registry';
-import { isUniqueViolation, json, readBody } from './http_util';
+import { isUniqueViolation, json, moderationErrorBody, readBody } from './http_util';
 import { configureInternalRuntime, handleInternalApi } from './internal';
 import { isConnectionRefused } from './ip_block';
 import { pruneExpiredBlockedIps } from './ip_block_db';
@@ -471,16 +471,16 @@ async function bearerActiveAccount(
 ): Promise<number | null> {
   const info = await bearerScopeAccount(req);
   if (info === null) {
-    json(res, 401, { error: 'not authenticated' });
+    json(res, 401, { error: 'not authenticated', code: 'auth.required' });
     return null;
   }
   if (!scopeAllowsMutation(info.scope)) {
-    json(res, 403, { error: 'this token is read-only' });
+    json(res, 403, { error: 'this token is read-only', code: 'auth.forbidden' });
     return null;
   }
   const status = await moderationStatusForAccount(info.accountId);
   if (status.locked) {
-    json(res, 403, { error: status.message });
+    json(res, 403, moderationErrorBody(status));
     return null;
   }
   return info.accountId;
@@ -494,12 +494,12 @@ async function bearerReadAccount(
 ): Promise<number | null> {
   const info = await bearerScopeAccount(req);
   if (info === null) {
-    json(res, 401, { error: 'not authenticated' });
+    json(res, 401, { error: 'not authenticated', code: 'auth.required' });
     return null;
   }
   const status = await moderationStatusForAccount(info.accountId);
   if (status.locked) {
-    json(res, 403, { error: status.message });
+    json(res, 403, moderationErrorBody(status));
     return null;
   }
   return info.accountId;
@@ -671,7 +671,10 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
       (url === '/api/register' || url === '/api/login') &&
       !isWebClientRequest(req)
     ) {
-      return json(res, 403, { error: 'logins are only allowed from the game client' });
+      return json(res, 403, {
+        error: 'logins are only allowed from the game client',
+        code: 'auth.web_login_only',
+      });
     }
     // The desktop-login handoff shares the same per-IP budget: exchange is
     // unauthenticated (defense in depth on top of the 160-bit single-use code)
@@ -684,25 +687,45 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
         url === '/api/desktop-login/exchange') &&
       !rateLimited(req).allowed
     ) {
-      return json(res, 429, { error: 'too many attempts, wait a minute and try again' });
+      return json(res, 429, {
+        error: 'too many attempts, wait a minute and try again',
+        code: 'auth.too_many_attempts',
+      });
     }
     // Reuse the rate-limit message so a blocked client gets no signal that the
     // block exists. Login is gated separately below, after the account is known,
     // so admins can bypass; registration has no account to check.
     if (req.method === 'POST' && url === '/api/register' && game.isIpBlocked(requestIp(req))) {
-      return json(res, 429, { error: 'too many attempts, wait a minute and try again' });
+      return json(res, 429, {
+        error: 'too many attempts, wait a minute and try again',
+        code: 'auth.too_many_attempts',
+      });
     }
     if (req.method === 'POST' && url === '/api/register') {
       const body = await readBody(req);
       if (!(await passesTurnstile(req, body, TURNSTILE_SECRET)))
-        return json(res, 403, { error: 'verification failed, please try again' });
+        return json(res, 403, {
+          error: 'verification failed, please try again',
+          code: 'auth.verification_failed',
+        });
       if (!validUsernameShape(body.username))
-        return json(res, 400, { error: 'username must be 3-24 chars (letters, digits, _)' });
-      if (offensiveName(body.username)) return json(res, 400, { error: 'username is not allowed' });
+        return json(res, 400, {
+          error: 'username must be 3-24 chars (letters, digits, _)',
+          code: 'account.username_invalid',
+        });
+      if (offensiveName(body.username))
+        return json(res, 400, {
+          error: 'username is not allowed',
+          code: 'account.username_not_allowed',
+        });
       if (!validPassword(body.password))
-        return json(res, 400, { error: 'password must be at least 6 chars' });
+        return json(res, 400, {
+          error: 'password must be at least 6 chars',
+          code: 'account.password_too_short',
+        });
       const existing = await findAccount(body.username);
-      if (existing) return json(res, 409, { error: 'username already taken' });
+      if (existing)
+        return json(res, 409, { error: 'username already taken', code: 'account.username_taken' });
       let account: Awaited<ReturnType<typeof createAccount>>;
       try {
         account = await createAccount(
@@ -714,7 +737,11 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
         // a concurrent registration can win the insert after our findAccount
         // check; the username UNIQUE index is the real guard. Surface it as a
         // 409 like the duplicate path above, not a generic 500.
-        if (isUniqueViolation(err)) return json(res, 409, { error: 'username already taken' });
+        if (isUniqueViolation(err))
+          return json(res, 409, {
+            error: 'username already taken',
+            code: 'account.username_taken',
+          });
         throw err;
       }
       const token = newToken();
@@ -753,28 +780,38 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
     if (req.method === 'POST' && url === '/api/login') {
       const body = await readBody(req);
       if (!(await passesTurnstile(req, body, TURNSTILE_SECRET)))
-        return json(res, 403, { error: 'verification failed, please try again' });
+        return json(res, 403, {
+          error: 'verification failed, please try again',
+          code: 'auth.verification_failed',
+        });
       const username = typeof body.username === 'string' ? body.username : '';
       // Per-account brute-force throttle (#93). The message is identical to a
       // bad-password response so it never reveals whether the account exists.
       if (username && !authThrottled(username).allowed) {
         return json(res, 429, {
           error: 'too many failed attempts, wait a few minutes and try again',
+          code: 'auth.too_many_failed_attempts',
         });
       }
       const account = username ? await findAccount(username) : null;
       if (!account || !(await verifyPassword(String(body.password ?? ''), account.password_hash))) {
         if (username) recordAuthFailure(username);
-        return json(res, 401, { error: 'invalid username or password' });
+        return json(res, 401, {
+          error: 'invalid username or password',
+          code: 'auth.invalid_credentials',
+        });
       }
       const status = await moderationStatusForAccount(account.id);
-      if (status.locked) return json(res, 403, { error: status.message });
+      if (status.locked) return json(res, 403, moderationErrorBody(status));
       // Checked only now that the account is known, so admins (verified after the
       // password) are never locked out. This does mean a blocked IP gets 429 on a
       // correct password vs 401 on a wrong one, a small credential-validity tell
       // we accept, since moving the check before the password would lock admins out.
       if (game.isIpBlocked(requestIp(req)) && !(await isAdminAccount(account.id))) {
-        return json(res, 429, { error: 'too many attempts, wait a minute and try again' });
+        return json(res, 429, {
+          error: 'too many attempts, wait a minute and try again',
+          code: 'auth.too_many_attempts',
+        });
       }
       // Second factor: if 2FA is enabled, the password alone is not enough. With
       // no code supplied we return a challenge (not a token) so the client shows
@@ -787,7 +824,11 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
         }
         if (!(await verifyLoginTwoFactor(account, code, recoveryCode))) {
           recordAuthFailure(username);
-          return json(res, 401, { error: 'invalid authentication code', twoFactorRequired: true });
+          return json(res, 401, {
+            error: 'invalid authentication code',
+            code: 'two_factor.code_invalid',
+            twoFactorRequired: true,
+          });
         }
       }
       clearAuthFailures(username); // correct password: forgive earlier typos
@@ -831,8 +872,15 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
         const body = await readBody(req);
         const name = normalizeCharName(body.name);
         if (name === null)
-          return json(res, 400, { error: 'invalid character name (2-16 letters)' });
-        if (offensiveName(name)) return json(res, 400, { error: 'character name is not allowed' });
+          return json(res, 400, {
+            error: 'invalid character name (2-16 letters)',
+            code: 'character.name_invalid',
+          });
+        if (offensiveName(name))
+          return json(res, 400, {
+            error: 'character name is not allowed',
+            code: 'character.name_not_allowed',
+          });
         const validClasses = [
           'warrior',
           'paladin',
@@ -844,7 +892,8 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
           'warlock',
           'druid',
         ];
-        if (!validClasses.includes(body.class)) return json(res, 400, { error: 'invalid class' });
+        if (!validClasses.includes(body.class))
+          return json(res, 400, { error: 'invalid class', code: 'character.invalid_class' });
         const skin = Math.max(
           0,
           Math.min(7, Math.floor(typeof body.skin === 'number' ? body.skin : 0)),
@@ -868,7 +917,11 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
           });
         try {
           const c = await create();
-          if (!c) return json(res, 400, { error: 'character limit reached' });
+          if (!c)
+            return json(res, 400, {
+              error: 'character limit reached',
+              code: 'character.limit_reached',
+            });
           return created(c);
         } catch (err: any) {
           if (!isUniqueViolation(err)) throw err;
@@ -877,13 +930,18 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
           // otherwise it is genuinely taken. This is the self-service path that
           // replaces the hidden admin-only reactivate/force-rename recovery.
           if (!(await reclaimDeactivatedName(name)))
-            return json(res, 409, { error: 'that name is taken' });
+            return json(res, 409, { error: 'that name is taken', code: 'character.name_taken' });
           try {
             const c = await create();
-            if (!c) return json(res, 400, { error: 'character limit reached' });
+            if (!c)
+              return json(res, 400, {
+                error: 'character limit reached',
+                code: 'character.limit_reached',
+              });
             return created(c);
           } catch (err2: any) {
-            if (isUniqueViolation(err2)) return json(res, 409, { error: 'that name is taken' });
+            if (isUniqueViolation(err2))
+              return json(res, 409, { error: 'that name is taken', code: 'character.name_taken' });
             throw err2;
           }
         }
@@ -897,9 +955,11 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
       if (!publicReadRateLimited(req).allowed) return json(res, 429, { error: 'rate limited' });
       const rawName = decodeURIComponent(publicSheetMatch[1]);
       const target = await findCharacterReportTargetByName(rawName);
-      if (!target) return json(res, 404, { error: 'character not found' });
+      if (!target)
+        return json(res, 404, { error: 'character not found', code: 'character.not_found' });
       const row = await getCharacterById(target.characterId);
-      if (!row) return json(res, 404, { error: 'character not found' });
+      if (!row)
+        return json(res, 404, { error: 'character not found', code: 'character.not_found' });
       const [guild, rank] = await Promise.all([
         guildNameForCharacter(row.id),
         lifetimeXpRankForCharacter(row.id),
@@ -922,7 +982,8 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
       const accountId = await bearerReadAccount(req, res);
       if (accountId === null) return;
       const row = await getCharacter(accountId, Number(ownerSheetMatch[1]));
-      if (!row) return json(res, 404, { error: 'character not found' });
+      if (!row)
+        return json(res, 404, { error: 'character not found', code: 'character.not_found' });
       const [guild, rank] = await Promise.all([
         guildNameForCharacter(row.id),
         lifetimeXpRankForCharacter(row.id),
@@ -948,7 +1009,8 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
       const accountId = await bearerActiveAccount(req, res);
       if (accountId === null) return;
       const standing = await lifetimeXpStanding(accountId, Number(standingMatch[1]));
-      if (!standing) return json(res, 404, { error: 'character not found' });
+      if (!standing)
+        return json(res, 404, { error: 'character not found', code: 'character.not_found' });
       return json(res, 200, standing);
     }
     if (req.method === 'POST' && renameMatch) {
@@ -956,11 +1018,20 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
       if (accountId === null) return;
       const body = await readBody(req);
       const name = normalizeCharName(body.name);
-      if (name === null) return json(res, 400, { error: 'invalid character name (2-16 letters)' });
-      if (offensiveName(name)) return json(res, 400, { error: 'character name is not allowed' });
+      if (name === null)
+        return json(res, 400, {
+          error: 'invalid character name (2-16 letters)',
+          code: 'character.name_invalid',
+        });
+      if (offensiveName(name))
+        return json(res, 400, {
+          error: 'character name is not allowed',
+          code: 'character.name_not_allowed',
+        });
       const characterId = Number(renameMatch[1]);
       const character = await getCharacter(accountId, characterId);
-      if (!character) return json(res, 404, { error: 'character not found' });
+      if (!character)
+        return json(res, 404, { error: 'character not found', code: 'character.not_found' });
       // A rename is a moderator-sanctioned action: the character-select UI only
       // shows the rename control when a moderator has set force_rename. The UI is
       // not a security boundary, so gate here too: a normal owner hitting this
@@ -968,7 +1039,10 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
       // UPDATE in renameCharacter re-checks the flag race-free; this returns a
       // clear 403 instead of a misleading 404.)
       if (!character.force_rename) {
-        return json(res, 403, { error: 'character rename is not permitted' });
+        return json(res, 403, {
+          error: 'character rename is not permitted',
+          code: 'character.rename_not_permitted',
+        });
       }
       // A rename mutates the DB name and clears force_rename, but a live
       // ClientSession keeps its own copy of the name (used by reports, chat and
@@ -976,7 +1050,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
       // lets a force-renamed player already in the world clear the moderation
       // flag without ever leaving. Mirror the DELETE guard and require offline.
       if ([...game.clients.values()].some((s) => s.characterId === characterId)) {
-        return json(res, 400, { error: 'character is currently online' });
+        return json(res, 400, { error: 'character is currently online', code: 'character.online' });
       }
       try {
         const c = await renameCharacter(accountId, characterId, name);
@@ -988,9 +1062,12 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
           // instead of always answering a misleading 404.
           const still = await getCharacter(accountId, characterId);
           if (still && !still.force_rename) {
-            return json(res, 403, { error: 'character rename is not permitted' });
+            return json(res, 403, {
+              error: 'character rename is not permitted',
+              code: 'character.rename_not_permitted',
+            });
           }
-          return json(res, 404, { error: 'character not found' });
+          return json(res, 404, { error: 'character not found', code: 'character.not_found' });
         }
         if (game.rekeyMarketSeller(characterId, character.name, c.name)) {
           await game.saveMarket();
@@ -1003,7 +1080,8 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
           forceRename: c.force_rename,
         });
       } catch (err: any) {
-        if (isUniqueViolation(err)) return json(res, 409, { error: 'that name is taken' });
+        if (isUniqueViolation(err))
+          return json(res, 409, { error: 'that name is taken', code: 'character.name_taken' });
         throw err;
       }
     }
@@ -1015,7 +1093,7 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
       if (accountId === null) return;
       const characterId = Number(takeoverMatch[1]);
       const character = await getCharacter(accountId, characterId);
-      if (!character) return json(res, 404, { error: 'not found' });
+      if (!character) return json(res, 404, { error: 'not found', code: 'character.not_found' });
       const result = await game.takeOverCharacter(accountId, characterId);
       return json(res, 200, { ok: true, takenOver: result === 'taken-over' });
     }
@@ -1025,15 +1103,22 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
       const characterId = Number(delMatch[1]);
       const body = await readBody(req);
       const character = await getCharacter(accountId, characterId);
-      if (!character) return json(res, 404, { error: 'not found' });
+      if (!character) return json(res, 404, { error: 'not found', code: 'character.not_found' });
       if ([...game.clients.values()].some((s) => s.characterId === characterId)) {
-        return json(res, 400, { error: 'character is currently online' });
+        return json(res, 400, { error: 'character is currently online', code: 'character.online' });
       }
       if (normalizeDeleteConfirmation(body.name) !== normalizeDeleteConfirmation(character.name)) {
-        return json(res, 400, { error: 'type the character name to confirm deletion' });
+        return json(res, 400, {
+          error: 'type the character name to confirm deletion',
+          code: 'character.delete_confirm',
+        });
       }
       const ok = await deleteCharacter(accountId, characterId);
-      return json(res, ok ? 200 : 404, ok ? { ok: true } : { error: 'not found' });
+      return json(
+        res,
+        ok ? 200 : 404,
+        ok ? { ok: true } : { error: 'not found', code: 'character.not_found' },
+      );
     }
     if (req.method === 'GET' && url === '/api/realms') {
       // optionally authenticated: with a token we also return how many
@@ -1261,13 +1346,14 @@ async function handleApi(req: http.IncomingMessage, res: http.ServerResponse): P
       // Resolve the caller's own token once so the revoke inside the handler can
       // never accidentally fall back to null (which would nuke this session too).
       const callerToken = bearerToken(req);
-      if (!callerToken) return json(res, 401, { error: 'not authenticated' });
+      if (!callerToken)
+        return json(res, 401, { error: 'not authenticated', code: 'auth.required' });
       return handleAccountChangePassword(req, res, accountId, callerToken);
     }
     if (req.method === 'POST' && url === '/api/account/logout') {
       const callerToken = bearerToken(req);
       if (!callerToken || (await accountForToken(callerToken)) === null)
-        return json(res, 401, { error: 'not authenticated' });
+        return json(res, 401, { error: 'not authenticated', code: 'auth.required' });
       return handleAccountLogout(res, callerToken);
     }
     if (req.method === 'POST' && url === '/api/account/email') {
