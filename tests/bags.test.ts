@@ -10,6 +10,7 @@ import {
   canAddItem,
   countFit,
   fitsAll,
+  migrationBagsFor,
   stackSizeOf,
 } from '../src/sim/bags';
 import { ITEMS } from '../src/sim/data';
@@ -287,5 +288,99 @@ describe('persistence and back-compat', () => {
     )!;
     expect(m2.inventory).toHaveLength(20); // nothing destroyed
     expect(sim2.canAddItem('wolf_fang', 1, pid)).toBe(false);
+  });
+});
+
+describe('pre-bag save migration (equivalent bags for earned space)', () => {
+  it('grants nothing at or under the backpack budget', () => {
+    expect(migrationBagsFor(0)).toEqual([]);
+    expect(migrationBagsFor(BACKPACK_SLOTS)).toEqual([]);
+  });
+
+  it('covers small overflows with the lowest quality tier that suffices', () => {
+    expect(migrationBagsFor(20)).toEqual(['linen_pouch']); // needs 4
+    expect(migrationBagsFor(24)).toEqual(['travelers_knapsack']); // needs 8
+    // needs 14: two commons, never a free epic duffel
+    expect(migrationBagsFor(30)).toEqual(['travelers_knapsack', 'linen_pouch']);
+    expect(migrationBagsFor(30).length).toBeLessThanOrEqual(BAG_SOCKETS);
+  });
+
+  it('escalates tiers only when a lower tier cannot cover the need', () => {
+    // needs 44: commons max out at 32 and uncommons at 40, so rare tier
+    expect(migrationBagsFor(60)).toEqual([
+      'gravewoven_bag',
+      'gravewoven_bag',
+      'gravewoven_bag',
+      'travelers_knapsack',
+    ]);
+    // needs 56: exactly four epics (the 72-slot ceiling)
+    expect(migrationBagsFor(72)).toEqual([
+      'mistcallers_duffel',
+      'mistcallers_duffel',
+      'mistcallers_duffel',
+      'mistcallers_duffel',
+    ]);
+    // past the ceiling: still four epics, the rest stays tolerated overflow
+    expect(migrationBagsFor(90)).toHaveLength(4);
+  });
+
+  it('equips migration bags on loading a pre-bag save and covers the used space', () => {
+    const sim = makeSim();
+    const state = sim.serializeCharacter(sim.playerId)!;
+    delete (state as { bags?: unknown }).bags;
+    state.inventory = Array.from({ length: 30 }, (_, i) => ({
+      itemId: i % 2 ? 'worn_sword' : 'rusty_dagger',
+      count: 1,
+    }));
+    const sim2 = new Sim({ seed: 7, playerClass: 'warrior', noPlayer: true });
+    const pid = sim2.addPlayer('warrior', 'Veteran', { state });
+    const m2 = (sim2 as never as { players: Map<number, { bags: (string | null)[] }> }).players.get(
+      pid,
+    )!;
+    expect(m2.bags).toEqual(['travelers_knapsack', 'linen_pouch', null, null]);
+    // exact coverage: everything owned fits (30/30), nothing was lost
+    expect(bagCapacity(m2.bags)).toBeGreaterThanOrEqual(30);
+    sim2.discardItem('worn_sword', 1, pid);
+    expect(sim2.canAddItem('wolf_fang', 1, pid)).toBe(true); // freeing one slot re-opens pickups
+    const ev = sim2.tick();
+    expect(
+      ev.some(
+        (e) => e.type === 'log' && e.text === 'Your belongings have been packed into new bags.',
+      ),
+    ).toBe(true);
+  });
+
+  it('is idempotent: the migrated save round-trips without a second grant', () => {
+    const sim = makeSim();
+    const state = sim.serializeCharacter(sim.playerId)!;
+    delete (state as { bags?: unknown }).bags;
+    state.inventory = Array.from({ length: 20 }, () => ({ itemId: 'worn_sword', count: 1 }));
+    const sim2 = new Sim({ seed: 7, playerClass: 'warrior', noPlayer: true });
+    const pid = sim2.addPlayer('warrior', 'Veteran', { state });
+    const migrated = sim2.serializeCharacter(pid)!;
+    expect(migrated.bags).toEqual(['linen_pouch', null, null, null]);
+    // discard down to an empty backpack-sized load, then unequip the granted bag
+    const sim3 = new Sim({ seed: 7, playerClass: 'warrior', noPlayer: true });
+    const pid3 = sim3.addPlayer('warrior', 'Veteran', { state: migrated });
+    const m3 = (sim3 as never as { players: Map<number, { bags: (string | null)[] }> }).players.get(
+      pid3,
+    )!;
+    expect(m3.bags).toEqual(['linen_pouch', null, null, null]); // loaded, not re-granted
+    const ev = sim3.tick();
+    expect(ev.some((e) => e.type === 'log' && /packed into new bags/.test(e.text))).toBe(false);
+  });
+
+  it('does not grant on a post-bag save even if it is over capacity (tampered)', () => {
+    const sim = makeSim();
+    const state = sim.serializeCharacter(sim.playerId)!;
+    state.bags = [null, null, null, null];
+    state.inventory = Array.from({ length: 30 }, () => ({ itemId: 'worn_sword', count: 1 }));
+    const sim2 = new Sim({ seed: 7, playerClass: 'warrior', noPlayer: true });
+    const pid = sim2.addPlayer('warrior', 'Tamper', { state });
+    const m2 = (sim2 as never as { players: Map<number, { bags: (string | null)[] }> }).players.get(
+      pid,
+    )!;
+    expect(m2.bags).toEqual([null, null, null, null]);
+    expect(sim2.canAddItem('wolf_fang', 1, pid)).toBe(false); // overflow just blocks pickups
   });
 });

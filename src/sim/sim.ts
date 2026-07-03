@@ -10,7 +10,7 @@ import type {
   PlayerProfessionsView,
 } from '../world_api';
 import * as bagsMod from './bags';
-import { addStacked, BAG_SOCKETS, bagCapacity, canAddItem } from './bags';
+import { addStacked, BAG_SOCKETS, bagCapacity, canAddItem, migrationBagsFor } from './bags';
 import { lineOfSightClear, resolveMovement, resolvePosition } from './colliders';
 import { auraAffectsStats, removeCancelableAura } from './combat/aura_cancel';
 import {
@@ -1359,12 +1359,22 @@ export class Sim {
       meta.copper = s.copper;
       meta.equipment = { ...s.equipment };
       meta.inventory = s.inventory.map(cloneInvSlot);
-      // Pre-bag saves have no bags array (and their inventory may exceed the
-      // backpack budget); load them as-is with empty sockets. Over-capacity is
-      // tolerated: it only blocks NEW pickups until space is freed.
-      for (let i = 0; i < BAG_SOCKETS; i++) {
-        const id = s.bags?.[i];
-        meta.bags[i] = id && ITEMS[id]?.kind === 'bag' ? id : null;
+      if (s.bags === undefined) {
+        // PRE-BAG save: the character earned this space under the infinite
+        // inventory, so grant + equip bags that cover it (lowest quality tier
+        // that suffices; see migrationBagsFor). Runs once: the next save writes
+        // the bags field, so a re-login never double-grants. A hoard past the
+        // 72-slot ceiling keeps the tolerated overflow.
+        const grantedBags = migrationBagsFor(meta.inventory.length);
+        for (let i = 0; i < grantedBags.length; i++) meta.bags[i] = grantedBags[i];
+        if (grantedBags.length > 0) {
+          this.notice(player.id, 'Your belongings have been packed into new bags.');
+        }
+      } else {
+        for (let i = 0; i < BAG_SOCKETS; i++) {
+          const id = s.bags[i];
+          meta.bags[i] = id && ITEMS[id]?.kind === 'bag' ? id : null;
+        }
       }
       meta.vendorBuyback = (s.vendorBuyback ?? []).map(cloneInvSlot);
       for (const q of s.questLog) {

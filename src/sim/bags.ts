@@ -152,6 +152,43 @@ export function bagsFullError(ctx: SimContext, pid: number): void {
   ctx.error(pid, 'Your bags are full.');
 }
 
+// The bag ladder the pre-bag save migration draws from, ordered by quality
+// tier then size. Mirrors the shipped bag items in content/items.ts.
+const MIGRATION_BAGS: { id: string; slots: number; tier: number }[] = [
+  { id: 'linen_pouch', slots: 6, tier: 0 }, // common
+  { id: 'travelers_knapsack', slots: 8, tier: 0 }, // common
+  { id: 'wolfhide_satchel', slots: 10, tier: 1 }, // uncommon
+  { id: 'gravewoven_bag', slots: 12, tier: 2 }, // rare
+  { id: 'mistcallers_duffel', slots: 14, tier: 3 }, // epic
+];
+
+/** Back-compat grant for a PRE-BAG save (no `bags` field) whose inventory
+ *  already exceeds the backpack: the bags to equip (socket order) so nothing
+ *  the player owned stops fitting. Policy: the LOWEST quality tier whose bags
+ *  can cover the need on their own wins (a 30-slot save gets two common bags,
+ *  never a free epic), then the fewest bags within that tier (largest-first,
+ *  with the tail socket downsized to the smallest bag that still covers it).
+ *  A hoard past the 72-slot ceiling gets the four largest bags and keeps the
+ *  tolerated overflow. Deterministic, no rng; runs only at load time. */
+export function migrationBagsFor(usedSlots: number): string[] {
+  let remaining = usedSlots - BACKPACK_SLOTS;
+  if (remaining <= 0) return [];
+  const tierMax = (tier: number): number =>
+    Math.max(...MIGRATION_BAGS.filter((b) => b.tier <= tier).map((b) => b.slots));
+  const topTier = MIGRATION_BAGS[MIGRATION_BAGS.length - 1].tier;
+  let tier = 0;
+  while (tier < topTier && tierMax(tier) * BAG_SOCKETS < remaining) tier++;
+  const allowed = MIGRATION_BAGS.filter((b) => b.tier <= tier);
+  const largest = allowed[allowed.length - 1];
+  const granted: string[] = [];
+  while (remaining > 0 && granted.length < BAG_SOCKETS) {
+    const pick = allowed.find((b) => b.slots >= remaining) ?? largest;
+    granted.push(pick.id);
+    remaining -= pick.slots;
+  }
+  return granted;
+}
+
 const inRange = (socket: number): boolean =>
   Number.isInteger(socket) && socket >= 0 && socket < BAG_SOCKETS;
 
