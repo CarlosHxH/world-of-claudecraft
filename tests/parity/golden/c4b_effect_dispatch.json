@@ -35,7 +35,7 @@
       "tick": 5,
       "time": 0.25,
       "nextId": 399,
-      "state": "fac98241",
+      "state": "9c1cd777",
       "events": "63e55e94",
       "rng": {
         "draws": 2,
@@ -46,7 +46,7 @@
       "tick": 10,
       "time": 0.5,
       "nextId": 399,
-      "state": "ab14e0f7",
+      "state": "7faf941d",
       "events": "741638a5",
       "rng": {
         "draws": 2,
@@ -57,7 +57,7 @@
       "tick": 15,
       "time": 0.75,
       "nextId": 399,
-      "state": "45ffa7b5",
+      "state": "48b3e5a7",
       "events": "741638a5",
       "rng": {
         "draws": 2,
@@ -68,7 +68,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 399,
-      "state": "f5bc1909",
+      "state": "ddac164b",
       "events": "da482e88",
       "rng": {
         "draws": 2,
@@ -79,7 +79,7 @@
       "tick": 25,
       "time": 1.25,
       "nextId": 399,
-      "state": "769de5b6",
+      "state": "68abab48",
       "events": "741638a5",
       "rng": {
         "draws": 2,
@@ -90,7 +90,7 @@
       "tick": 30,
       "time": 1.5,
       "nextId": 399,
-      "state": "6c161cbf",
+      "state": "938c23d5",
       "events": "9bcb1f56",
       "rng": {
         "draws": 2,
@@ -101,7 +101,7 @@
       "tick": 32,
       "time": 1.6,
       "nextId": 399,
-      "state": "ec8aa9d4",
+      "state": "3c8c0776",
       "events": "f22a8c79",
       "rng": {
         "draws": 4,
@@ -259,6 +259,7 @@
           "aiState": "idle",
           "attackPower": 122,
           "combatTimer": 100.6,
+          "comboUntil": -1,
           "critChance": 0.0695,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.0695,
@@ -307,6 +308,7 @@
           "aiState": "idle",
           "attackPower": 10,
           "combatTimer": 100.6,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -356,6 +358,7 @@
           "aiState": "idle",
           "attackPower": 118,
           "combatTimer": 100.6,
+          "comboUntil": -1,
           "critChance": 0.091,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.091,
@@ -406,6 +409,7 @@
           "aiState": "idle",
           "attackPower": 120,
           "combatTimer": 100.6,
+          "comboUntil": -1,
           "critChance": 0.068,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.068,
@@ -454,6 +458,7 @@
           "aiState": "idle",
           "attackPower": 68,
           "combatTimer": 100.6,
+          "comboUntil": -1,
           "critChance": 0.067,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.067,
@@ -504,6 +509,7 @@
           "attackPower": 11,
           "castTotal": 1.5,
           "combatTimer": 0.05,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -568,6 +574,7 @@
             }
           ],
           "combatTimer": 0.05,
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -630,7 +637,7 @@
       "tick": 35,
       "time": 1.75,
       "nextId": 399,
-      "state": "f89efc96",
+      "state": "62343fe4",
       "events": "a72a10ef",
       "rng": {
         "draws": 4,
@@ -641,7 +648,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 399,
-      "state": "0c9010ac",
+      "state": "88dccc82",
       "events": "741638a5",
       "rng": {
         "draws": 4,
@@ -652,7 +659,7 @@
       "tick": 45,
       "time": 2.25,
       "nextId": 399,
-      "state": "fb55d1e6",
+      "state": "21c2985c",
       "events": "741638a5",
       "rng": {
         "draws": 36,
@@ -663,7 +670,7 @@
       "tick": 50,
       "time": 2.5,
       "nextId": 399,
-      "state": "e6852aff",
+      "state": "a802194d",
       "events": "741638a5",
       "rng": {
         "draws": 50,
@@ -674,7 +681,7 @@
       "tick": 55,
       "time": 2.75,
       "nextId": 399,
-      "state": "eac0109d",
+      "state": "ff715ccf",
       "events": "741638a5",
       "rng": {
         "draws": 66,
@@ -685,7 +692,7 @@
       "tick": 60,
       "time": 3,
       "nextId": 399,
-      "state": "71b02818",
+      "state": "56311e86",
       "events": "741638a5",
       "rng": {
         "draws": 80,
@@ -696,7 +703,7 @@
       "tick": 65,
       "time": 3.25,
       "nextId": 399,
-      "state": "d0e9ffd9",
+      "state": "fa8bac8f",
       "events": "741638a5",
       "rng": {
         "draws": 101,
@@ -707,7 +714,7 @@
       "tick": 70,
       "time": 3.5,
       "nextId": 399,
-      "state": "4fe71562",
+      "state": "e76a2570",
       "events": "741638a5",
       "rng": {
         "draws": 127,
@@ -718,7 +725,7 @@
       "tick": 75,
       "time": 3.75,
       "nextId": 399,
-      "state": "7cf1576b",
+      "state": "7b1f9a5d",
       "events": "741638a5",
       "rng": {
         "draws": 152,
@@ -729,7 +736,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 399,
-      "state": "acb294ac",
+      "state": "7f75d11a",
       "events": "741638a5",
       "rng": {
         "draws": 174,
@@ -740,7 +747,7 @@
       "tick": 85,
       "time": 4.25,
       "nextId": 399,
-      "state": "a42d9c60",
+      "state": "aefc4b4e",
       "events": "741638a5",
       "rng": {
         "draws": 203,
@@ -751,7 +758,7 @@
       "tick": 90,
       "time": 4.5,
       "nextId": 399,
-      "state": "bfeafd73",
+      "state": "f56bed6d",
       "events": "741638a5",
       "rng": {
         "draws": 230,
@@ -762,7 +769,7 @@
       "tick": 95,
       "time": 4.75,
       "nextId": 399,
-      "state": "9927a01d",
+      "state": "67152067",
       "events": "741638a5",
       "rng": {
         "draws": 253,
@@ -773,7 +780,7 @@
       "tick": 100,
       "time": 5,
       "nextId": 399,
-      "state": "ac8e87d2",
+      "state": "4b1d0f98",
       "events": "741638a5",
       "rng": {
         "draws": 276,
@@ -784,7 +791,7 @@
       "tick": 105,
       "time": 5.25,
       "nextId": 399,
-      "state": "7d5842df",
+      "state": "4a1755f1",
       "events": "741638a5",
       "rng": {
         "draws": 304,
@@ -795,7 +802,7 @@
       "tick": 110,
       "time": 5.5,
       "nextId": 399,
-      "state": "be6a6d6d",
+      "state": "7ee76d7f",
       "events": "741638a5",
       "rng": {
         "draws": 328,
@@ -806,7 +813,7 @@
       "tick": 115,
       "time": 5.75,
       "nextId": 399,
-      "state": "c11ea666",
+      "state": "acc6d2a8",
       "events": "741638a5",
       "rng": {
         "draws": 360,
@@ -817,7 +824,7 @@
       "tick": 120,
       "time": 6,
       "nextId": 399,
-      "state": "c36ae505",
+      "state": "d6ddc953",
       "events": "741638a5",
       "rng": {
         "draws": 387,
@@ -828,7 +835,7 @@
       "tick": 125,
       "time": 6.25,
       "nextId": 399,
-      "state": "12d795aa",
+      "state": "cf4a72d0",
       "events": "741638a5",
       "rng": {
         "draws": 407,
@@ -839,7 +846,7 @@
       "tick": 130,
       "time": 6.5,
       "nextId": 399,
-      "state": "f4846d6b",
+      "state": "f46566a1",
       "events": "741638a5",
       "rng": {
         "draws": 434,
@@ -850,7 +857,7 @@
       "tick": 133,
       "time": 6.65,
       "nextId": 400,
-      "state": "a0ab3da4",
+      "state": "c996540a",
       "events": "8871317f",
       "rng": {
         "draws": 444,
@@ -1008,6 +1015,7 @@
           "aiState": "idle",
           "attackPower": 122,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.0695,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.0695,
@@ -1056,6 +1064,7 @@
           "aiState": "idle",
           "attackPower": 10,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -1105,6 +1114,7 @@
           "aiState": "idle",
           "attackPower": 118,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.091,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.091,
@@ -1155,6 +1165,7 @@
           "aiState": "idle",
           "attackPower": 120,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.068,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.068,
@@ -1203,6 +1214,7 @@
           "aiState": "idle",
           "attackPower": 68,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.067,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.067,
@@ -1253,6 +1265,7 @@
           "attackPower": 11,
           "castTotal": 5,
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -1317,6 +1330,7 @@
             }
           ],
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -1379,7 +1393,7 @@
       "tick": 133,
       "time": 6.65,
       "nextId": 401,
-      "state": "844337cc",
+      "state": "18fe6664",
       "events": "280b028d",
       "rng": {
         "draws": 445,
@@ -1536,6 +1550,7 @@
         {
           "aiState": "idle",
           "attackPower": 122,
+          "comboUntil": -1,
           "critChance": 0.0695,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.0695,
@@ -1588,6 +1603,7 @@
           "aiState": "idle",
           "attackPower": 10,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -1637,6 +1653,7 @@
           "aiState": "idle",
           "attackPower": 118,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.091,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.091,
@@ -1687,6 +1704,7 @@
           "aiState": "idle",
           "attackPower": 120,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.068,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.068,
@@ -1735,6 +1753,7 @@
           "aiState": "idle",
           "attackPower": 68,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.067,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.067,
@@ -1785,6 +1804,7 @@
           "attackPower": 11,
           "castTotal": 5,
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -1849,6 +1869,7 @@
             }
           ],
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -1921,6 +1942,7 @@
               "value": 40
             }
           ],
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -1976,7 +1998,7 @@
       "tick": 133,
       "time": 6.65,
       "nextId": 403,
-      "state": "5ce20cb6",
+      "state": "699e9cfe",
       "events": "1ae6edb5",
       "rng": {
         "draws": 447,
@@ -2135,6 +2157,7 @@
         {
           "aiState": "idle",
           "attackPower": 122,
+          "comboUntil": -1,
           "critChance": 0.0695,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.0695,
@@ -2186,6 +2209,7 @@
         {
           "aiState": "idle",
           "attackPower": 10,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -2236,6 +2260,7 @@
           "aiState": "idle",
           "attackPower": 118,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.091,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.091,
@@ -2286,6 +2311,7 @@
           "aiState": "idle",
           "attackPower": 120,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.068,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.068,
@@ -2334,6 +2360,7 @@
           "aiState": "idle",
           "attackPower": 68,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.067,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.067,
@@ -2384,6 +2411,7 @@
           "attackPower": 11,
           "castTotal": 5,
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -2448,6 +2476,7 @@
             }
           ],
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -2520,6 +2549,7 @@
               "value": 40
             }
           ],
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -2572,6 +2602,7 @@
         {
           "aggroTargetId": 393,
           "aiState": "chase",
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -2625,6 +2656,7 @@
         {
           "aggroTargetId": 393,
           "aiState": "chase",
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -2681,7 +2713,7 @@
       "tick": 133,
       "time": 6.65,
       "nextId": 404,
-      "state": "5a67905d",
+      "state": "a02fea5c",
       "events": "81920d5b",
       "rng": {
         "draws": 452,
@@ -2842,6 +2874,7 @@
         {
           "aiState": "idle",
           "attackPower": 122,
+          "comboUntil": -1,
           "critChance": 0.0695,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.0695,
@@ -2893,6 +2926,7 @@
         {
           "aiState": "idle",
           "attackPower": 10,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -2942,7 +2976,7 @@
         {
           "aiState": "idle",
           "attackPower": 118,
-          "comboTargetId": 403,
+          "comboUntil": 36.65,
           "cooldowns": [
             [
               "kidney_shot",
@@ -3002,6 +3036,7 @@
           "aiState": "idle",
           "attackPower": 120,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.068,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.068,
@@ -3050,6 +3085,7 @@
           "aiState": "idle",
           "attackPower": 68,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.067,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.067,
@@ -3100,6 +3136,7 @@
           "attackPower": 11,
           "castTotal": 5,
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -3164,6 +3201,7 @@
             }
           ],
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -3236,6 +3274,7 @@
               "value": 40
             }
           ],
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -3288,6 +3327,7 @@
         {
           "aggroTargetId": 393,
           "aiState": "chase",
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -3341,6 +3381,7 @@
         {
           "aggroTargetId": 393,
           "aiState": "chase",
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -3405,6 +3446,7 @@
               "sourceId": 394
             }
           ],
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -3461,7 +3503,7 @@
       "tick": 133,
       "time": 6.65,
       "nextId": 405,
-      "state": "e9f125f1",
+      "state": "cef5689a",
       "events": "7e299c92",
       "rng": {
         "draws": 453,
@@ -3624,6 +3666,7 @@
         {
           "aiState": "idle",
           "attackPower": 122,
+          "comboUntil": -1,
           "critChance": 0.0695,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.0695,
@@ -3675,6 +3718,7 @@
         {
           "aiState": "idle",
           "attackPower": 10,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -3724,7 +3768,7 @@
         {
           "aiState": "idle",
           "attackPower": 118,
-          "comboTargetId": 403,
+          "comboUntil": 36.65,
           "cooldowns": [
             [
               "kidney_shot",
@@ -3797,6 +3841,7 @@
               "value3": 44
             }
           ],
+          "comboUntil": -1,
           "cooldowns": [
             [
               "consecration",
@@ -3857,6 +3902,7 @@
           "aiState": "idle",
           "attackPower": 68,
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.067,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.067,
@@ -3907,6 +3953,7 @@
           "attackPower": 11,
           "castTotal": 5,
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -3971,6 +4018,7 @@
             }
           ],
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -4043,6 +4091,7 @@
               "value": 40
             }
           ],
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -4095,6 +4144,7 @@
         {
           "aggroTargetId": 393,
           "aiState": "chase",
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -4148,6 +4198,7 @@
         {
           "aggroTargetId": 393,
           "aiState": "chase",
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -4212,6 +4263,7 @@
               "sourceId": 394
             }
           ],
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -4265,6 +4317,7 @@
         {
           "aggroTargetId": 395,
           "aiState": "chase",
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -4318,7 +4371,7 @@
       "tick": 133,
       "time": 6.65,
       "nextId": 406,
-      "state": "052c02ab",
+      "state": "c0ebb7a8",
       "events": "259c818d",
       "rng": {
         "draws": 453,
@@ -4481,6 +4534,7 @@
         {
           "aiState": "idle",
           "attackPower": 122,
+          "comboUntil": -1,
           "critChance": 0.0695,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.0695,
@@ -4532,6 +4586,7 @@
         {
           "aiState": "idle",
           "attackPower": 10,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -4581,7 +4636,7 @@
         {
           "aiState": "idle",
           "attackPower": 118,
-          "comboTargetId": 403,
+          "comboUntil": 36.65,
           "cooldowns": [
             [
               "kidney_shot",
@@ -4654,6 +4709,7 @@
               "value3": 44
             }
           ],
+          "comboUntil": -1,
           "cooldowns": [
             [
               "consecration",
@@ -4726,6 +4782,7 @@
             }
           ],
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.072,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.072,
@@ -4777,6 +4834,7 @@
           "attackPower": 11,
           "castTotal": 5,
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -4841,6 +4899,7 @@
             }
           ],
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -4913,6 +4972,7 @@
               "value": 40
             }
           ],
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -4965,6 +5025,7 @@
         {
           "aggroTargetId": 393,
           "aiState": "chase",
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -5018,6 +5079,7 @@
         {
           "aggroTargetId": 393,
           "aiState": "chase",
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -5082,6 +5144,7 @@
               "sourceId": 394
             }
           ],
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -5135,6 +5198,7 @@
         {
           "aggroTargetId": 395,
           "aiState": "chase",
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -5185,6 +5249,7 @@
         {
           "aiState": "idle",
           "combatTimer": 99,
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -5228,7 +5293,7 @@
       "tick": 133,
       "time": 6.65,
       "nextId": 406,
-      "state": "052c02ab",
+      "state": "c0ebb7a8",
       "events": "741638a5",
       "rng": {
         "draws": 453,
@@ -5391,6 +5456,7 @@
         {
           "aiState": "idle",
           "attackPower": 122,
+          "comboUntil": -1,
           "critChance": 0.0695,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.0695,
@@ -5442,6 +5508,7 @@
         {
           "aiState": "idle",
           "attackPower": 10,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -5491,7 +5558,7 @@
         {
           "aiState": "idle",
           "attackPower": 118,
-          "comboTargetId": 403,
+          "comboUntil": 36.65,
           "cooldowns": [
             [
               "kidney_shot",
@@ -5564,6 +5631,7 @@
               "value3": 44
             }
           ],
+          "comboUntil": -1,
           "cooldowns": [
             [
               "consecration",
@@ -5636,6 +5704,7 @@
             }
           ],
           "combatTimer": 105.65,
+          "comboUntil": -1,
           "critChance": 0.072,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.072,
@@ -5687,6 +5756,7 @@
           "attackPower": 11,
           "castTotal": 5,
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.056,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.056,
@@ -5751,6 +5821,7 @@
             }
           ],
           "combatTimer": 5.1,
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -5823,6 +5894,7 @@
               "value": 40
             }
           ],
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -5875,6 +5947,7 @@
         {
           "aggroTargetId": 393,
           "aiState": "chase",
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -5928,6 +6001,7 @@
         {
           "aggroTargetId": 393,
           "aiState": "chase",
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -5992,6 +6066,7 @@
               "sourceId": 394
             }
           ],
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -6045,6 +6120,7 @@
         {
           "aggroTargetId": 395,
           "aiState": "chase",
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
@@ -6095,6 +6171,7 @@
         {
           "aiState": "idle",
           "combatTimer": 99,
+          "comboUntil": -1,
           "critChance": 0.05,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.05,
