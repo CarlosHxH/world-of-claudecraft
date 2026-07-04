@@ -62,13 +62,8 @@ describe('mailbox_window: recipient autocomplete wiring', () => {
     expect(painter).toContain('searchCharacters(');
   });
 
-  it('excludes the current player name from suggestions', () => {
-    // The filter uses player.name to exclude self (matches social_window behavior).
-    expect(painter).toMatch(/filter[\s\S]{0,80}player\.name/);
-  });
-
-  it('limits suggestions to RECIPIENT_SUGGEST_MAX results', () => {
-    expect(painter).toContain('RECIPIENT_SUGGEST_MAX');
+  it('routes filtering/limit logic through recipientSuggestions view helper', () => {
+    expect(painter).toContain('recipientSuggestions(');
   });
 
   it('selecting a suggestion writes the name into the recipient input', () => {
@@ -93,13 +88,24 @@ describe('mailbox_window: recipient autocomplete wiring', () => {
     expect(painter).toContain('RECIPIENT_SUGGEST_BLUR_CLEAR_MS');
   });
 
-  it('aria-expanded toggles when suggestions appear or disappear', () => {
-    expect(painter).toContain("'aria-expanded', 'true'");
-    expect(painter).toContain("'aria-expanded', 'false'");
+  it('sets aria-expanded false in the empty-results branch and true in the non-empty branch', () => {
+    expect(painter).toMatch(/results\.length === 0[\s\S]{0,240}'aria-expanded', 'false'/);
+    expect(painter).toMatch(/results\.length === 0[\s\S]{0,900}'aria-expanded', 'true'/);
   });
 
   it('aria-activedescendant is set on the highlighted option', () => {
     expect(painter).toContain('aria-activedescendant');
+  });
+
+  it('resets suggestion model and debounce timer when the send form is rebuilt and on close', () => {
+    expect(painter).toMatch(/renderSend\([\s\S]{0,220}clearTimeout\(this\.recipientSuggestTimer\)/);
+    expect(painter).toMatch(/renderSend\([\s\S]{0,320}this\.recipientSuggest = \{ items: \[], index: -1 \}/);
+    expect(painter).toMatch(/close\([\s\S]{0,220}clearTimeout\(this\.recipientSuggestTimer\)/);
+    expect(painter).toMatch(/close\([\s\S]{0,320}this\.recipientSuggest = \{ items: \[], index: -1 \}/);
+  });
+
+  it('routes keyboard wrap-around through wrappedSuggestionIndex view helper', () => {
+    expect(painter).toContain('wrappedSuggestionIndex(');
   });
 });
 

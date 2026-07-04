@@ -5245,6 +5245,10 @@
     overflow-y: auto;
     box-shadow: 0 6px 18px #000a;
   }
+  .mail-to-suggest.up {
+    top: auto;
+    bottom: calc(100% + 3px);
+  }
   .mail-coin-row {
     flex-direction: row;
     align-items: center;

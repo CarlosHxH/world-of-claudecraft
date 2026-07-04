@@ -27,6 +27,8 @@ import {
   type MailSendBody,
   type MailTab,
   mailSendBlocked,
+  recipientSuggestions,
+  wrappedSuggestionIndex,
 } from './mailbox_view';
 import type { PainterHostPresentation } from './painter_host';
 import { svgIcon } from './ui_icons';
@@ -102,6 +104,8 @@ export class MailboxWindow {
 
   close(): void {
     if (!this.opened) return;
+    window.clearTimeout(this.recipientSuggestTimer);
+    this.recipientSuggest = { items: [], index: -1 };
     this.opened = false;
     this.openedId = null;
     this.attachments = [];
@@ -369,6 +373,8 @@ export class MailboxWindow {
   }
 
   private renderSend(body: HTMLElement, view: MailSendBody): void {
+    window.clearTimeout(this.recipientSuggestTimer);
+    this.recipientSuggest = { items: [], index: -1 };
     body.innerHTML =
       `<div class="mail-send-form">` +
       `<div class="mail-field"><label for="mail-to">${esc(t('hudChrome.mailbox.toLabel'))}</label>` +
@@ -452,10 +458,11 @@ export class MailboxWindow {
       }
       this.recipientSuggestTimer = window.setTimeout(async () => {
         const results = await this.deps.world().searchCharacters(q);
-        // Exclude current player; limit to max suggestions.
-        const filtered = results
-          .filter((r) => r.name !== this.deps.world().player.name)
-          .slice(0, RECIPIENT_SUGGEST_MAX);
+        const filtered = recipientSuggestions(
+          results,
+          this.deps.world().player.name,
+          RECIPIENT_SUGGEST_MAX,
+        );
         this.renderRecipientSuggest(body, filtered);
       }, RECIPIENT_SUGGEST_DEBOUNCE_MS);
     });
@@ -517,6 +524,7 @@ export class MailboxWindow {
           `<div id="mail-to-sugg-${i}" class="soc-sugg-item" data-i="${i}" data-name="${esc(r.name)}" role="option" aria-selected="false"><span class="soc-name">${esc(r.name)}</span></div>`,
       )
       .join('');
+    this.placeRecipientSuggest(body, box);
     box.style.display = 'block';
     input?.setAttribute('aria-expanded', 'true');
     input?.removeAttribute('aria-activedescendant');
@@ -536,13 +544,25 @@ export class MailboxWindow {
   private moveRecipientSuggest(body: HTMLElement, delta: number): void {
     const n = this.recipientSuggest.items.length;
     if (n === 0) return;
-    this.recipientSuggest.index =
-      this.recipientSuggest.index < 0
-        ? delta > 0
-          ? 0
-          : n - 1
-        : (this.recipientSuggest.index + delta + n) % n;
+    this.recipientSuggest.index = wrappedSuggestionIndex(this.recipientSuggest.index, delta, n);
     this.highlightRecipientSuggest(body);
+  }
+
+  private placeRecipientSuggest(body: HTMLElement, box: HTMLElement): void {
+    const wrap = body.querySelector<HTMLElement>('.mail-to-wrap');
+    if (!wrap) return;
+    box.classList.remove('up');
+    box.style.maxHeight = '';
+    const bodyRect = body.getBoundingClientRect();
+    const wrapRect = wrap.getBoundingClientRect();
+    const gap = 3;
+    const spaceBelow = Math.floor(bodyRect.bottom - wrapRect.bottom - gap);
+    const spaceAbove = Math.floor(wrapRect.top - bodyRect.top - gap);
+    const openUp = spaceBelow < 110 && spaceAbove > spaceBelow;
+    if (openUp) box.classList.add('up');
+    const available = openUp ? spaceAbove : spaceBelow;
+    const maxHeight = Math.min(210, Math.max(80, available));
+    box.style.maxHeight = `${maxHeight}px`;
   }
 
   private highlightRecipientSuggest(body: HTMLElement): void {
