@@ -1,4 +1,4 @@
-// Unit tests for the Phase 5 onion runner (server/http/compose.ts): onion
+// Unit tests for the onion runner (server/http/compose.ts): onion
 // ordering and reverse unwind, the double-next guard, short-circuit on throw and
 // async reject, the optional trailing next, the idempotent respondOnce sender,
 // and the runOnion outermost one-response wrapper (structural 404 fallback, bare

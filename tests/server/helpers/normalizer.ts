@@ -4,14 +4,14 @@
 // field that merely looks numeric or id-like (a score, a level) is left untouched.
 //
 // The placeholder set (NORMALIZER_PLACEHOLDERS) is a load-bearing, exported named
-// constant: Phase 3 imports it to assert that a fixture's dynamic fields were
+// constant: the characterization corpus imports it to assert that a fixture's dynamic fields were
 // masked to the expected stable tokens. The field-name matchers are likewise
 // single-source named constants, never inline literals (server "no magic values").
 
 /**
  * The stable placeholder tokens this normalizer masks dynamic fields to. EXPORTED
- * and load-bearing: Phase 3 imports this exact set. Each masked category maps to
- * exactly one of these tokens.
+ * and load-bearing: the characterization corpus imports this exact set. Each masked category
+ * maps to exactly one of these tokens.
  */
 export const NORMALIZER_PLACEHOLDERS = {
   id: '<ID>',
@@ -43,8 +43,8 @@ const EXPIRES_KEYS: ReadonlySet<string> = new Set(['expires', 'expiresin', 'expi
 const TOKEN_KEYS: ReadonlySet<string> = new Set(['token', 'accesstoken', 'refreshtoken', 'bearer']);
 /** Nonces / CSRF tokens. NOTE: the generic key 'state' is deliberately NOT here:
  *  it is too broad a field name (characters.state, moderation state, etc.) and
- *  would over-mask non-CSRF bodies, hiding real divergences in the Phase 3 corpus.
- *  OAuth's CSRF `state` is masked by the oauth phase, which has surface context. */
+ *  would over-mask non-CSRF bodies, hiding real divergences in the characterization corpus.
+ *  OAuth's CSRF `state` is masked by the oauth surface capture, which has surface context. */
 const NONCE_KEYS: ReadonlySet<string> = new Set(['nonce', 'csrf', 'csrftoken']);
 /** Per-request ids carried in the body. Checked before the generic *Id id rule. */
 const REQUEST_ID_KEYS: ReadonlySet<string> = new Set(['reqid', 'requestid']);

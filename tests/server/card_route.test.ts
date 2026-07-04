@@ -1,8 +1,8 @@
-// Unit coverage for the Phase 14 binary player-card upload route (server/wallet.ts).
+// Unit coverage for the binary player-card upload route (server/wallet.ts).
 //
 // POST /api/card carries a THREE-middleware chain that must run in a load-bearing
 // order: [cardContentLengthGuard, activeGuard, rateLimit(CARD_UPLOAD_POLICY)]. This
-// file pins that order by BEHAVIOR (never by array length, per the Phase 11 lesson):
+// file pins that order by BEHAVIOR (never by array length, per the auth-migration lesson):
 //  - step 1: an oversize declared Content-Length is rejected 413 with Connection: close
 //    by the FIRST guard, BEFORE any bearer is checked and BEFORE the body is read;
 //  - step 2: a normal Content-Length with no bearer falls through to activeGuard, the
@@ -10,7 +10,7 @@
 //  - step 3: the fused ip+account limiter is the THIRD middleware, mounted AFTER
 //    activeGuard (it needs ctx.account), and emits the coded problem+json 429.
 // It also pins that the card handler / pre-auth guard write plain application/json
-// { error } bodies (json() directly), NOT RFC 9457 problem+json (correcting a phase-doc
+// { error } bodies (json() directly), NOT RFC 9457 problem+json (correcting a planning-doc
 // claim): only the middleware-thrown 429 is problem+json.
 //
 // server/db.ts builds a pg Pool at module load and throws if DATABASE_URL is unset;
@@ -111,7 +111,7 @@ function routeFor(method: Method, path: string) {
   return route;
 }
 
-/** Load a Phase 3 golden fixture (status + raw body + headers) by its main-surface name. */
+/** Load a characterization golden (status + raw body + headers) by its main-surface name. */
 function fixture(name: string): {
   status: number;
   body: string;
@@ -141,7 +141,7 @@ async function runCard(opts: { headers?: Record<string, string>; url?: string } 
     url: opts.url ?? '/api/card',
     headers: opts.headers,
   });
-  // Mirror the real serving path: routeHttpRequest applies the Phase 21 top-level
+  // Mirror the real serving path: routeHttpRequest applies the top-level
   // security headers BEFORE any dispatch, so the byte-identical golden (re-pinned
   // through routeHttpRequest) carries them on every response, this 413 included.
   withSecurityHeaders(ctx.req, ctx.res);
@@ -176,12 +176,12 @@ afterEach(() => {
 });
 
 // ---------------------------------------------------------------------------
-// Phase 21 wiring pin: the REAL card RouteDef declares its binary request body.
+// Content-Type gate wiring pin: the REAL card RouteDef declares its binary request body.
 // ---------------------------------------------------------------------------
 
 describe('content-type gate exemption wiring', () => {
   it("declares meta.requestBody 'binary' on the real POST /api/card RouteDef", () => {
-    // The Phase 21 Content-Type 415 gate exempts by MATCHED-RouteDef metadata,
+    // The Content-Type 415 gate exempts by MATCHED-RouteDef metadata,
     // so this literal is the ONLY thing standing between an enforce-mode flip
     // (API_CONTENT_TYPE_ENFORCE=1) and a 415 on every image/png card upload.
     // Dropping it would break no other test until that flip; this pin makes the
@@ -200,7 +200,7 @@ describe('pre-auth content-length 413 (byte-identical to the golden)', () => {
     const r = await runCard({ headers: { 'content-length': OVERSIZE_CONTENT_LENGTH } });
     // Byte-for-byte: status 413, body {"error":"image too large"}, and exactly the route's
     // three headers { connection: 'close', content-length: 27, content-type: application/json }
-    // plus the Phase 21 top-level security-header set the golden now carries.
+    // plus the top-level security-header set the golden now carries.
     const golden = fixture('card_too_large_413');
     expect({ status: r.status, body: r.raw, headers: r.headers }).toEqual(golden);
     // The terminal (the handler) is never reached: the guard short-circuits with no next().
@@ -212,7 +212,7 @@ describe('pre-auth content-length 413 (byte-identical to the golden)', () => {
     expect(r.status).toBe(413);
     expect(r.body).toEqual({ error: 'image too large' });
     // The card guard writes json() directly: a plain application/json { error } body, NOT the
-    // RFC 9457 problem+json the limiter 429 uses (correcting the phase-doc mis-statement).
+    // RFC 9457 problem+json the limiter 429 uses (correcting the planning-doc mis-statement).
     expect(r.contentType).toBe('application/json');
     // Connection: close tells the socket to stop streaming a huge upload rather than keep-alive.
     expect(r.headers.connection).toBe('close');
@@ -254,7 +254,7 @@ describe('character-id-required 400 (JSON, not problem+json)', () => {
 // ---------------------------------------------------------------------------
 // Functional order proof, step 3: the fused ip+account CARD_UPLOAD_POLICY limiter is the
 // THIRD middleware, mounted AFTER activeGuard (it reads ctx.account). It is the
-// rateLimitedBodyToCode Phase 14 deviation: a coded problem+json 429, not a legacy { error }.
+// rateLimitedBodyToCode known deviation: a coded problem+json 429, not a legacy { error }.
 // ---------------------------------------------------------------------------
 
 describe('coded 429 (rateLimitedBodyToCode deviation)', () => {
@@ -276,7 +276,7 @@ describe('coded 429 (rateLimitedBodyToCode deviation)', () => {
 
 // ---------------------------------------------------------------------------
 // Success + not-found bodies pass through the migrated chain as plain application/json,
-// pinning the phase's headline correction (the card response is JSON, NOT withRawBody/binary)
+// pinning the migration's headline correction (the card response is JSON, NOT withRawBody/binary)
 // on the 200 and 404 paths. handleCardUpload itself (unchanged, covered directly in
 // tests/player_card_server.test.ts) is stubbed here so the assertion isolates the ROUTE: the
 // [cardContentLengthGuard, activeGuard, rateLimit] chain admits an authed request, threads the

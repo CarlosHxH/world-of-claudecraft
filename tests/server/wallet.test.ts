@@ -1,7 +1,7 @@
-// Unit coverage for the Phase 14 wallet-link route family (server/wallet.ts).
+// Unit coverage for the wallet-link route family (server/wallet.ts).
 //
 // The migrated routes preserve their LEGACY { error } bodies byte-for-byte (RFC 9457
-// is Phase 22), so every assertion pins the exact legacy status + body. This slice
+// is the client code-matcher), so every assertion pins the exact legacy status + body. This slice
 // exercises the wallet LINK family (POST /api/wallet/link/challenge, POST /api/wallet/link,
 // DELETE /api/wallet/link, GET /api/wallet) and its NEW wiring:
 //  - the module-private activeGuard (mirrors bearerActiveAccount: full-session, read-only
@@ -176,7 +176,7 @@ async function runRoute(
   return { reached, ...readRes(ctx.res) };
 }
 
-/** Load a Phase 3 golden fixture (status + raw body string) by its main-surface name. */
+/** Load a characterization golden (status + raw body string) by its main-surface name. */
 function fixture(name: string): { status: number; body: string } {
   const url = new URL(`./fixtures/main/${name}.json`, import.meta.url);
   return JSON.parse(readFileSync(url, 'utf8'));
@@ -315,7 +315,7 @@ describe('wallet body-read 500 remap (walletBodyValidationRemap deviation)', () 
     authedDb();
     // The guard passes and walletChallengeCore self-reads the raw stream; readBody rejects
     // 'bad json', the throw propagates past the limiter to withErrors, which serializes the
-    // Phase 7 internal.error as application/problem+json (not the handler's plain json()).
+    // coded internal.error as application/problem+json (not the handler's plain json()).
     const r = await runRoute('POST', '/api/wallet/link/challenge', {
       headers: { authorization: BEARER },
       body: '{ not valid json',

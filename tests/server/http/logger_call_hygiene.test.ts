@@ -4,7 +4,7 @@
 // header blob carrying a non-hex secret (a PKCE code_verifier, a base32 TOTP
 // secret, an OAuth state) would reach the log unredacted. This scans every logger
 // call site under server/ and fails when one passes those raw request surfaces,
-// so the convention holds as new log sites land, not just for the Phase 23 sweep.
+// so the convention holds as new log sites land, not just for the initial logging sweep.
 
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';

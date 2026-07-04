@@ -52,7 +52,7 @@ describe('ensureSchema wires every schema module at boot', () => {
     await ensureSchema();
     const applied = h.calls.join('\n');
     // The whole Discord integration depends on all six tables being created at boot:
-    // the five the Phase 16 route surface reads (discord_links, discord_oauth_states,
+    // the five the Discord route surface reads (discord_links, discord_oauth_states,
     // reward_points, reward_ledger, swag_claims) plus the discord_pending_logins
     // chooser table (PR #1075).
     expect(applied).toContain('CREATE TABLE IF NOT EXISTS discord_links');
@@ -70,7 +70,7 @@ describe('ensureSchema wires every schema module at boot', () => {
   });
 
   it('applies the Discord schema idempotently (a second boot is a no-op: only guarded DDL)', async () => {
-    // Phase 16 migrates the Discord routes onto the pipeline and relies on the schema
+    // The Discord routes run on the API request pipeline and rely on the schema
     // being wired (it was, since PR #1075). This pins that re-running ensureSchema (every
     // boot re-applies it under the advisory lock) is safe: the whole boot is deterministic
     // and the Discord DDL is entirely IF NOT EXISTS / ADD COLUMN IF NOT EXISTS, so a
@@ -142,7 +142,7 @@ describe('ensureSchema wires every schema module at boot', () => {
 
   it('prunes expired tier-2 windows at boot with the static reclaim statement', async () => {
     // The boot prune is the reclaim path for the deferred row-pruning decision
-    // (security review, Phase 19): expired (older than two windows) rate_limits
+    // (the two-tier rate limiter's security review): expired (older than two windows) rate_limits
     // rows are deleted at every realm boot, under the same advisory lock. The
     // statement is STATIC (database clock, no params) so this pin, and the
     // byte-identical second-boot pin above, hold across runs.
@@ -153,8 +153,8 @@ describe('ensureSchema wires every schema module at boot', () => {
     expect(RATELIMIT_PRUNE_SQL).not.toMatch(/\$\d/);
   });
 
-  it('runs the Phase 20 market backfill inside the boot transaction', async () => {
-    // Phase 20 moves the market migration into ensureSchema's advisory-lock
+  it('runs the market backfill inside the boot transaction', async () => {
+    // The partitioned World Market backfill runs inside ensureSchema's advisory-lock
     // transaction (server/market_backfill.ts): a marker probe, the legacy row
     // claim (FOR UPDATE), and the marker upsert all run under the same lock as
     // the schema DDL. Pinned with literal SQL fragments so a refactor that
@@ -175,7 +175,7 @@ describe('ensureSchema wires every schema module at boot', () => {
   });
 
   it('opens the market write gate only after the boot transaction commits', async () => {
-    // The Phase 20 boot-ordering gate: a market write before ensureSchema has
+    // The market-backfill boot-ordering gate: a market write before ensureSchema has
     // confirmed the backfill marker must throw, and a successful boot must open
     // the gate (openMarketWriteGate runs after COMMIT in ensureSchema).
     closeMarketWriteGateForTests();

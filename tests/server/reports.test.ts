@@ -1,9 +1,9 @@
-// Unit coverage for the Phase 15 reports + telemetry route layer (server/reports.ts).
+// Unit coverage for the reports + telemetry route layer (server/reports.ts).
 //
 // This slice pins the two account-gated WRITE routes (POST /api/reports, POST
 // /api/bug-reports) that moved off the inline handleApi ladder onto the shared
 // server/http/ pipeline. The migrated handlers preserve their LEGACY { error } /
-// { ok } bodies byte-for-byte (RFC 9457 is Phase 22), so every handler-owned
+// { ok } bodies byte-for-byte (RFC 9457 is the client code-matcher), so every handler-owned
 // assertion pins the exact legacy status + body; only the middleware-thrown 429
 // limiter and the framework-error 500 (readBody reject / non-rate-limit throw) go
 // through the withErrors boundary as application/problem+json. It exercises:
@@ -197,7 +197,7 @@ async function runRoute(
   return { reached, ...readRes(ctx.res) };
 }
 
-/** Load a Phase 3 golden fixture (status + raw body string) by its main-surface name. */
+/** Load a characterization golden (status + raw body string) by its main-surface name. */
 function fixture(name: string): { status: number; body: string } {
   const url = new URL(`./fixtures/main/${name}.json`, import.meta.url);
   return JSON.parse(readFileSync(url, 'utf8'));

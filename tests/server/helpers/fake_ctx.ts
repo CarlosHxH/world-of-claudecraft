@@ -2,7 +2,7 @@
 // well-formed Ctx with sane, deterministic defaults (method GET, url
 // http://localhost/, ip 127.0.0.1, a fixed reqId, an empty state Map), wiring a
 // FakeRes and a makeReq req unless the caller overrides them. The overrides object
-// shape is intentionally stable so Phase 5 can re-point fakeCtx at the real
+// shape is intentionally stable so fakeCtx can be re-pointed at the real
 // buildContext with no test churn: callers always pass the same descriptor.
 // nextGuard is a harness primitive that models the onion's "next() called multiple
 // times" guard; it is NOT the real compose runtime.
@@ -12,7 +12,7 @@ import { FakeRes, makeReq } from './fake_http';
 
 /**
  * Everything a test may override on a fakeCtx. All fields are optional; the shape
- * stays stable across phases (Phase 5 re-points fakeCtx at buildContext without
+ * stays stable across refactors (fakeCtx can be re-pointed at buildContext without
  * touching any caller). `headers` flow into the built req; `url` may be a string
  * (resolved against http://localhost) or a ready URL.
  */

@@ -1,10 +1,10 @@
-// Unit coverage for the Phase 14 WOC balance proxy + referrals route layer
+// Unit coverage for the WOC balance proxy + referrals route layer
 // (server/wallet.ts).
 //
-// Phase 14 ported the public $WOC balance proxy and the referrals route onto
-// RouteDefs and gave four previously-raw { error: 'rate limited' } 429s a stable
+// The wallet migration ported the public $WOC balance proxy and the referrals route
+// onto RouteDefs and gave four previously-raw { error: 'rate limited' } 429s a stable
 // machine code. This file exercises that NEW wiring on the two routes this slice
-// owns, preserving the LEGACY bodies byte-for-byte (RFC 9457 is Phase 22):
+// owns, preserving the LEGACY bodies byte-for-byte (RFC 9457 is the client code-matcher):
 //  - GET /api/woc/balance is PUBLIC (on-chain balances are public), so it carries
 //    NO activeGuard, only rateLimit(WOC_BALANCE_POLICY): an unauthenticated request
 //    reaches the handler (200), never a 401, and the 21st request in a window is a
@@ -12,8 +12,8 @@
 //  - GET /api/referrals is guarded by the shared activeGuard + referralsHandler,
 //    which Promise.all([referralCountForAccount, primarySlugForAccount]) into a
 //    { count, slug } 200 (byte-identical to the legacy inline arm), and 401s a
-//    no-bearer request byte-identical to its Phase 3 golden fixture;
-//  - 'rate_limit.exceeded' is ALREADY a registered ErrorCode (Phase 14 reused it
+//    no-bearer request byte-identical to its characterization golden;
+//  - 'rate_limit.exceeded' is ALREADY a registered ErrorCode (this migration reused it
 //    and appended nothing to the catalog).
 //
 // server/db.ts builds a pg Pool at module load and throws if DATABASE_URL is unset;
@@ -133,7 +133,7 @@ function authedDb(overrides: DbOverrides = {}): void {
   });
 }
 
-/** Load a Phase 3 golden fixture (status + raw body string) by its main-surface name. */
+/** Load a characterization golden (status + raw body string) by its main-surface name. */
 function fixture(name: string): { status: number; body: string } {
   const url = new URL(`./fixtures/main/${name}.json`, import.meta.url);
   return JSON.parse(readFileSync(url, 'utf8'));
@@ -234,8 +234,8 @@ describe('GET /api/woc/balance (public, IP rate-limited)', () => {
     expect(limited.contentType).toBe('application/problem+json');
     const body = limited.body as Record<string, unknown>;
     expect(body.code).toBe('rate_limit.exceeded');
-    // The coded 429's retryAfterSeconds is the limiter outcome's resetSeconds (Phase 19
-    // made it the accurate per-request value); at a freshly-drained window that is the
+    // The coded 429's retryAfterSeconds is the limiter outcome's resetSeconds (the two-tier
+    // limiter made it the accurate per-request value); at a freshly-drained window that is the
     // full 60s (the shared sliding-window size), and the Retry-After header mirrors it,
     // so the client can honor it.
     expect(body.retryAfterSeconds).toBe(60);
@@ -274,13 +274,13 @@ describe('GET /api/referrals (activeGuard)', () => {
 });
 
 // ---------------------------------------------------------------------------
-// The stable code Phase 14 reused (no catalog append).
+// The stable code this migration reused (no catalog append).
 // ---------------------------------------------------------------------------
 
-describe('rate_limit.exceeded stable code (no Phase 14 catalog append)', () => {
+describe('rate_limit.exceeded stable code (no catalog append)', () => {
   it('is already a registered ErrorCode with a retryAfterSeconds param', () => {
-    // The coded 429 the woc/wallet/card limiters throw reuses this existing code; Phase
-    // 14 appended nothing to the catalog. Its single param is the Retry-After source.
+    // The coded 429 the woc/wallet/card limiters throw reuses this existing code; the
+    // migration appended nothing to the catalog. Its single param is the Retry-After source.
     expect('rate_limit.exceeded' in ERROR_CODES).toBe(true);
     expect(ERROR_CODES['rate_limit.exceeded'].params).toEqual(['retryAfterSeconds']);
   });

@@ -1,5 +1,5 @@
 // Unit tests for routeHttpRequest, the HTTP prefix-dispatch ladder exposed as a
-// pure function from server/main.ts (Phase 1). They pin the two things a
+// pure function from server/main.ts. They pin the two things a
 // move-behind-a-seam can silently break: the OPTIONS-204 + CORS short-circuit
 // that must run BEFORE any handler, and the prefix ladder routing each request
 // to the right sub-dispatcher in the right order. The DB-backed sub-dispatchers
@@ -50,7 +50,7 @@ function fakeRes() {
     getHeader(k: string) {
       return this.headers[k.toLowerCase()];
     },
-    // The Phase 21 withSecurityHeaders wrapper defensively strips Server /
+    // The top-level withSecurityHeaders wrapper defensively strips Server /
     // X-Powered-By on every routeHttpRequest call, so the double must accept it.
     removeHeader(k: string) {
       delete this.headers[k.toLowerCase()];
@@ -79,7 +79,7 @@ async function loadRoute() {
   // These tests pin the LEGACY prefix-ladder delegation: the four sub-dispatchers
   // are observed via the mocked handleAdminApi / handleInternalApi /
   // handleDailyRewardInternalApi spies, which only fire on the legacy delegate path.
-  // Phase 25 flipped the boot default to 'new', where a MATCHED migrated path
+  // The production boot default is 'new', where a MATCHED migrated path
   // (/internal/restart-countdown, /internal/daily-rewards/*) runs the onion instead
   // of the delegate, so pin the mode to 'legacy' EXPLICITLY here.
   main.setApiDispatchModeForTests('legacy');

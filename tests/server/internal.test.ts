@@ -1,6 +1,6 @@
-// Unit coverage for the Phase 18 internal route layer (server/internal.ts).
+// Unit coverage for the internal route layer (server/internal.ts).
 //
-// Phase 18 moved all 11 /internal endpoints (the deploy-gated restart-countdown
+// The migration moved all 11 /internal endpoints (the deploy-gated restart-countdown
 // plus the 10 Discord-bot-gated routes) off the inline handleInternalApi ladder
 // onto RouteDefs the shared dispatcher serves under API_DISPATCH 'new'. It is a
 // PARITY-FIRST migration: each thin handler REPRODUCES its frozen legacy branch

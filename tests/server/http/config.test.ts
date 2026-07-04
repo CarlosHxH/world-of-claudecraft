@@ -45,7 +45,7 @@ describe('loadConfig', () => {
   });
 
   it('defaults an unset or empty API_DISPATCH to new but THROWS on a garbage value', () => {
-    // Phase 25 flipped DEFAULT_DISPATCH to 'new' (the new pipeline is the production
+    // DEFAULT_DISPATCH is 'new' (the new pipeline is the production
     // default); an unset or empty API_DISPATCH resolves to that default.
     expect(loadConfig({ ...MIN_ENV, API_DISPATCH: '' }).dispatch).toBe('new');
     expect(loadConfig({ ...MIN_ENV }).dispatch).toBe('new');
@@ -198,14 +198,13 @@ describe('loadConfig', () => {
   });
 
   it('treats a SET-BUT-EMPTY numeric as unset (default), a documented deploy hazard', () => {
-    // DELIBERATE semantic pin: pre-Phase-24 main.ts used Number(env.KEY ?? default),
+    // DELIBERATE semantic pin: before loadConfig, main.ts used Number(env.KEY ?? default),
     // so 'CHAT_LOG_RETENTION_DAYS=' (an empty .env placeholder line) meant
     // Number('') = 0 = keep chat logs forever (pruneChatLogs(0) no-ops). numberOr
     // now reads empty as unset, so the SAME env line means the 90-day default and
-    // pruning turns ON. The deploy-env audit (phase-24-config-timeouts.md maintainer
-    // actions + the DEPLOY.md env-hygiene note) carries this; keep-forever is an
-    // EXPLICIT 'CHAT_LOG_RETENTION_DAYS=0' now. If this pin surprises you, read
-    // those notes before changing numberOr.
+    // pruning turns ON. The pre-ship deploy-env audit and the DEPLOY.md env-hygiene
+    // note carry this; keep-forever is an EXPLICIT 'CHAT_LOG_RETENTION_DAYS=0' now.
+    // If this pin surprises you, read those notes before changing numberOr.
     const cfg = loadConfig({ ...MIN_ENV, CHAT_LOG_RETENTION_DAYS: '', PORT: '' });
     expect(cfg.chatLogRetentionDays).toBe(90);
     expect(cfg.port).toBe(8787);

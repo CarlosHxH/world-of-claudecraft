@@ -1,4 +1,4 @@
-// Tests for the Phase 5 request-context builder and the reqId AsyncLocalStorage
+// Tests for the request-context builder and the reqId AsyncLocalStorage
 // carrier (server/http/context.ts). Covers field population, method-case
 // normalization, query single-vs-repeated and null-proto shape, per-variant
 // params (fresh, null-proto, never shared), reqId uniqueness, IP resolution via

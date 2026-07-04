@@ -185,7 +185,7 @@ describe('createRouter: registration guards', () => {
   it('allows two dynamic patterns of different shape and resolves them in registration order', () => {
     // '/:resource/special' and '/characters/:id' have different shapes and both
     // match '/characters/special'; the FIRST registered wins. Ordering overlaps
-    // by specificity is the Phase 9 registry's responsibility, not the router's.
+    // by specificity is the registry's responsibility, not the router's.
     const r = createRouter([route('GET', '/:resource/special'), route('GET', '/characters/:id')]);
     const m = r.match('GET', '/characters/special');
     expect(m.kind).toBe('matched');
@@ -205,7 +205,7 @@ describe('createRouter: registration guards', () => {
 });
 
 describe('createRouter: real multi-method paths (OPTIONS/405 Allow synthesis)', () => {
-  // Mirrors the Phase 3 surface inventory: the paths registered under more than
+  // Mirrors the surface inventory: the paths registered under more than
   // one method. The Allow set is sorted by the canonical method order.
   const r = createRouter([
     route('GET', '/api/characters'),

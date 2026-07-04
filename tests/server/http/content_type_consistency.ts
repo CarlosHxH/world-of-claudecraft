@@ -1,5 +1,5 @@
 // Cross-check that a captured golden's RESPONSE content-type is consistent with the
-// content-type CLASS its route carries in SURFACE_INVENTORY. Phase 3's completeness
+// content-type CLASS its route carries in SURFACE_INVENTORY. The inventory's completeness
 // gate only checks that the inventory row and the API_CONTENT_TYPE map agree with
 // EACH OTHER (two hand-authored structures); it never compares either against what
 // the route actually emits. That blind spot let two JSON routes (/api/account/email/

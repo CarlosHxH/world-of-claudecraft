@@ -4,8 +4,7 @@ import { API_ERROR_KEYS } from '../src/ui/api_error_i18n';
 import { ensureLocaleLoaded, setLanguage, supportedLanguages, tOptional } from '../src/ui/i18n';
 import { apiErrorStrings } from '../src/ui/i18n.catalog/api_error';
 
-// Per-surface code-parity guard for the REST error matcher (Phase 22 of the API
-// pipeline, docs/api-pipeline/phase-22-rest-i18n.md). The S3 guard
+// Per-surface code-parity guard for the REST error matcher. The S3 guard
 // (tests/localization_fixes.test.ts) scans only the WS path (server/game.ts) and never
 // reads the REST matcher, so a server-emitted stable code with no client-side apiError.*
 // entry would ship raw / unresolved to every locale unnoticed. This test closes that gap:
@@ -96,7 +95,7 @@ const KNOWN_CODES = [
   'validation.failed',
 ];
 
-// The parametric contract pins (docs/api-pipeline/phase-22-rest-i18n.md): the matcher
+// The parametric contract pins: the matcher
 // (Agent A) formats and passes these tokens client-side, so the catalog English value
 // (Agent B) MUST carry exactly these tokens. Pinning the exact token catches an English
 // reword that drops the token across ALL locales together, which the per-locale
@@ -121,7 +120,7 @@ beforeAll(async () => {
   await Promise.all(supportedLanguages.map((lang) => ensureLocaleLoaded(lang)));
 });
 
-describe('REST apiError.* code parity (Phase 22)', () => {
+describe('REST apiError.* code parity', () => {
   it('dimension 1: enumerates every code from the ERROR_CODES single source of truth', () => {
     // The single source of truth drives every downstream loop below; never a hand-copied
     // list. This tripwire catches a broken import and any code that is not domain.reason

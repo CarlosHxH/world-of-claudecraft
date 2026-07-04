@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { ERROR_CODES, type ErrorCode } from '../../../server/http/error_codes';
 
 // APPEND-ONLY (AIP-193): add new codes to this list; NEVER remove or rename an
-// existing one. This sorted set is the contract every later phase and the Phase 22
-// client matcher depend on; the snapshot assertion below fails on any drift.
+// existing one. This sorted set is the contract every migrated surface and the
+// client code-matcher depend on; the snapshot assertion below fails on any drift.
 const EXPECTED_CODES = [
   'account.characters_online',
   'account.deactivated',

@@ -131,7 +131,7 @@ describe('compilePattern: the no-regex routing guard THROWS', () => {
     expect(() => compilePattern('')).toThrow();
   });
 
-  it('rejects the real admin enum-alternation route (restructured to :param + schema in Phase 17)', () => {
+  it('rejects the real admin enum-alternation route (restructured to :param + schema in the migrated admin surface)', () => {
     expect(() =>
       compilePattern('/admin/api/moderation/accounts/:id/(suspend|unsuspend|ban|unban)'),
     ).toThrow();
@@ -231,7 +231,7 @@ describe('no regex usage (structural)', () => {
 describe('server-only purity (structural)', () => {
   it('imports nothing from a parent dir (src/sim/render/ui/game/net) or a node builtin', () => {
     // Criterion 16: the router and its helper stay pure server-only descriptor
-    // code so Phase 5/7/9 own every req/res write. They may import only sibling
+    // code so compose/errors/dispatch own every req/res write. They may import only sibling
     // './' modules; a parent-relative import ('../') or any node: builtin import
     // is forbidden. The match signatures take no req/res, so tsc already
     // guarantees the no-req/res half of the invariant; this pins the imports.

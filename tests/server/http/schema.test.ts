@@ -1,4 +1,4 @@
-// Tests for the Phase 6 in-house typed schema validator (server/http/schema.ts).
+// Tests for the in-house typed schema validator (server/http/schema.ts).
 //
 // Covers: scalar decode + string-to-number/boolean coercion; the one-pass collection
 // (an object with N bad fields yields N issues, never first-fail); each stable code

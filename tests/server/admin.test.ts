@@ -1,7 +1,7 @@
-// Unit coverage for the Phase 17 admin route layer (server/admin.ts).
+// Unit coverage for the admin route layer (server/admin.ts).
 //
 // The ~30 handleAdminApi branches moved off the inline if-ladder onto RouteDefs the
-// Phase 9 dispatcher serves under API_DISPATCH 'new' (main.ts routes /admin/api
+// shared dispatcher serves under API_DISPATCH 'new' (main.ts routes /admin/api
 // through its own flag-gated dispatcher whose delegate is the legacy handleAdminApi).
 // It is a PARITY-FIRST migration: every handler reproduces its legacy branch and
 // writes the SAME { success, data, error } admin envelope byte-for-byte. This slice
@@ -70,7 +70,7 @@ function setDb(overrides: DbOverrides): void {
 
 // The one seam the loose bag must NOT blind: the limiter stub. Its return type
 // derives from the REAL bundle, so a RateLimitOutcome shape change fails here at
-// tsc time instead of surfacing as runtime-only spurious 429s (the Phase 19
+// tsc time instead of surfacing as runtime-only spurious 429s (the two-tier-limiter
 // gotcha: the loose Record cast hid the boolean-to-outcome flip from tsc).
 type AdminDbBundle = Parameters<typeof setAdminDbForTests>[0];
 const allowedRateLimit = (): ReturnType<NonNullable<AdminDbBundle['rateLimited']>> => ({
@@ -1324,7 +1324,7 @@ describe('migrated write handlers + side effects (QA gate parity coverage)', () 
 });
 
 // ---------------------------------------------------------------------------
-// 12. Re-verification pins (Phase 17 audit): the overview merge math, the
+// 12. Re-verification pins (the admin-migration audit): the overview merge math, the
 // catch -> 400 err.message remaps, and the remaining legacy guard negatives.
 // ---------------------------------------------------------------------------
 

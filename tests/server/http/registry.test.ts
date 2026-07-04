@@ -1,5 +1,5 @@
-// Unit tests for the Phase 9 route registry (server/http/registry.ts): resolve()
-// reuses the Phase 4 router, the specificity sort orders overlapping dynamic
+// Unit tests for the route registry (server/http/registry.ts): resolve()
+// reuses the table router, the specificity sort orders overlapping dynamic
 // routes, duplicate registrations are rejected at build time, and the BOLA-shadow
 // guard fails a construction that would leave an account-owned route interceptable
 // by an earlier, non-owned catch-all.
@@ -147,9 +147,9 @@ describe('assertNoOwnedRouteShadowing', () => {
 });
 
 describe('apiRoutes / apiRegistry defaults', () => {
-  it('registers the Phase 10 public-read domain and matches its paths', () => {
-    // Phase 10 migrated the first domain (server/leaderboard.ts public reads), so
-    // apiRoutes is no longer empty; the default registry now owns those GET paths.
+  it('registers the public-read domain and matches its paths', () => {
+    // The public-read domain (server/leaderboard.ts) lives on the RouteDef table,
+    // so apiRoutes is non-empty; the default registry owns those GET paths.
     expect(apiRoutes.length).toBeGreaterThan(0);
     expect(apiRegistry.resolve('GET', '/api/leaderboard').kind).toBe('matched');
     expect(apiRegistry.resolve('GET', '/api/public/characters/someone/sheet').kind).toBe('matched');

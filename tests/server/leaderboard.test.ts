@@ -1,6 +1,6 @@
-// Unit + parity-shape coverage for the Phase 10 public-read domain
+// Unit + parity-shape coverage for the public-read domain
 // (server/leaderboard.ts). The pure decoders and response builders are tested
-// directly; the db-touching read functions are tested against the Phase 2 FakeDb
+// directly; the db-touching read functions are tested against the shared FakeDb
 // (FakeCharactersDb / FakeLeaderboardDb); and the runtime-only handlers (status,
 // perf, leaderboard, releases) are driven through the exported `routes` array with
 // a fakeCtx + an injected fake runtime, which is where the two labeled deviations
@@ -257,7 +257,7 @@ describe('response builders (convention B deferred: leaders key preserved)', () 
 });
 
 // ---------------------------------------------------------------------------
-// Read functions via the Phase 2 FakeDb.
+// Read functions via the shared FakeDb.
 // ---------------------------------------------------------------------------
 
 describe('readArenaLeaderboard (FakeLeaderboardDb)', () => {

@@ -1,12 +1,12 @@
-// Registry-completeness gate for the Phase 9 API pipeline (docs/api-pipeline/).
+// Registry-completeness gate for the API request pipeline.
 //
-// The Phase 9 dispatcher (server/http/dispatch.ts) places the new route registry
+// The dispatcher (server/http/dispatch.ts) places the new route registry
 // in FRONT of the legacy /api handleApi ladder: for a path the registry OWNS (a
 // matched RouteDef) it runs the onion; for ANY OTHER /api path it delegates to
 // the legacy handleApi UNCHANGED. So the dispatcher's real coverage is
 //   (router-owned paths) UNION (paths the legacy handler still serves).
 //
-// This gate HARD-FAILS if any legacy /api ladder path (from the Phase 3 surface
+// This gate HARD-FAILS if any legacy /api ladder path (from the surface
 // inventory) would be served by NEITHER the new router NOR the legacy delegate: a
 // dropped route is a production 404. It stays meaningful as routes migrate,
 // because each route moves from delegate-covered to router-owned and coverage is
@@ -162,13 +162,13 @@ describe('registry completeness: the legacy /api ladder is fully covered', () =>
 
   it('retains the legacy rollback arm for every migrated (router-owned) route', () => {
     // A migrated route is deliberately BOTH router-owned (flag 'new') and
-    // legacy-served (flag 'legacy'): Phase 10 keeps each migrated route's legacy
-    // handleApi arm as the flag-off rollback path (removed only in Phase 25). That
+    // legacy-served (flag 'legacy'): the migration keeps each route's legacy
+    // handleApi arm as the flag-off rollback path (removed only at the ladder deletion). That
     // is not a runtime double-serve, since the dispatcher runs exactly one arm per
     // request (the API_DISPATCH flag picks) and the parity harness proves the two
     // arms are byte-identical. The real migration hazard is a rollback arm removed
     // too early (which would 404 under flag 'legacy'), so the invariant flips: every
-    // router-owned ladder path MUST still be legacy-served until Phase 25.
+    // router-owned ladder path MUST still be legacy-served until the legacy ladder is removed.
     const missingRollbackArm = legacyLadder
       .filter((r) => isRouterOwned(apiRegistry, r) && !legacyServes(r, legacyServed))
       .map((r) => `${r.method} ${r.path}`);
@@ -176,14 +176,14 @@ describe('registry completeness: the legacy /api ladder is fully covered', () =>
   });
 });
 
-describe('registry completeness: migrated baseline (Phase 10 public reads + Phase 11 auth + Phase 12 characters + Phase 13 account + Phase 14 wallet + Phase 15 reports/telemetry + Phase 16 discord)', () => {
-  // The exact routes migrated onto RouteDefs so far: Phase 10 moved the public
-  // reads (GET, server/leaderboard.ts), Phase 11 the auth credential surface (POST,
-  // server/auth_routes.ts), Phase 12 the owner-gated character surface
+describe('registry completeness: migrated baseline (public reads + auth + characters + account + wallet + reports/telemetry + discord)', () => {
+  // The exact routes migrated onto RouteDefs so far: the public
+  // reads (GET, server/leaderboard.ts), the auth credential surface (POST,
+  // server/auth_routes.ts), the owner-gated character surface
   // (server/characters.ts: the list pair, create, and the account-owned :id
-  // subroutes behind requireOwnedCharacter), Phase 13 the account-portal surface
+  // subroutes behind requireOwnedCharacter), the account-portal surface
   // (server/account.ts: the /api/account/* family, the companion-token method trio,
-  // and /api/email/unsubscribe), and Phase 14 the wallet / card / referral surface
+  // and /api/email/unsubscribe), and the wallet / card / referral surface
   // (server/wallet.ts: the wallet-link family, GET /api/wallet, the public GET
   // /api/woc/balance, the binary POST /api/card, and GET /api/referrals). The router
   // owns each under flag 'new'; their legacy arms stay for rollback. Method-aware,
@@ -212,7 +212,7 @@ describe('registry completeness: migrated baseline (Phase 10 public reads + Phas
     { method: 'POST', path: '/api/characters/:id/rename' },
     { method: 'POST', path: '/api/characters/:id/takeover' },
     { method: 'DELETE', path: '/api/characters/:id' },
-    // Phase 13: the account portal (server/account.ts).
+    // The account portal (server/account.ts).
     { method: 'GET', path: '/api/account' },
     { method: 'POST', path: '/api/account/password' },
     { method: 'POST', path: '/api/account/logout' },
@@ -231,7 +231,7 @@ describe('registry completeness: migrated baseline (Phase 10 public reads + Phas
     { method: 'POST', path: '/api/account/2fa/enable' },
     { method: 'POST', path: '/api/account/2fa/disable' },
     { method: 'GET', path: '/api/email/unsubscribe' },
-    // Phase 14: the wallet / card / referral surface (server/wallet.ts).
+    // The wallet / card / referral surface (server/wallet.ts).
     { method: 'POST', path: '/api/wallet/link/challenge' },
     { method: 'POST', path: '/api/wallet/link' },
     { method: 'DELETE', path: '/api/wallet/link' },
@@ -239,7 +239,7 @@ describe('registry completeness: migrated baseline (Phase 10 public reads + Phas
     { method: 'GET', path: '/api/woc/balance' },
     { method: 'POST', path: '/api/card' },
     { method: 'GET', path: '/api/referrals' },
-    // Phase 15: the reports + telemetry surface (server/reports.ts). All POST; the
+    // The reports + telemetry surface (server/reports.ts). All POST; the
     // two public beacons (perf-report, site-presence) are registered POST-only so a
     // non-POST delegates to the retained legacy arm (perf-report's 404 fall-through,
     // site-presence's handler-owned 405 { ok: false }).
@@ -247,7 +247,7 @@ describe('registry completeness: migrated baseline (Phase 10 public reads + Phas
     { method: 'POST', path: '/api/bug-reports' },
     { method: 'POST', path: '/api/perf-report' },
     { method: 'POST', path: '/api/site-presence' },
-    // Phase 16: the Discord family (server/discord.ts). The OAuth start/callback
+    // The Discord family (server/discord.ts). The OAuth start/callback
     // pair, the two first-login chooser routes, the GET/DELETE /api/discord status +
     // unlink pair, and the previously-orphaned swag claim (now reachable).
     { method: 'POST', path: '/api/auth/discord/start' },
@@ -257,13 +257,13 @@ describe('registry completeness: migrated baseline (Phase 10 public reads + Phas
     { method: 'GET', path: '/api/discord' },
     { method: 'DELETE', path: '/api/discord' },
     { method: 'POST', path: '/api/discord/swag/claim' },
-    // Phase 18b: the release-merge late-arrival families. The GitHub link family
+    // The release-merge late-arrival families. The GitHub link family
     // (server/github.ts), the desktop-login handoff pair
     // (server/desktop_login_routes.ts, on the fused register/login budget), and
     // the daily-rewards player trio (server/daily_rewards.ts, served under the
     // ladder's startsWith prefix arm; the off-table subpath/method shapes stay
-    // delegate-served until Phase 25). The ops trio is asserted in the Phase 18
-    // internal block below (it flips from delegate-only to registered).
+    // delegate-served until the legacy ladder is removed). The ops trio is asserted
+    // in the internal-surface block below (it flips from delegate-only to registered).
     { method: 'POST', path: '/api/auth/github/start' },
     { method: 'GET', path: '/api/auth/github/callback' },
     { method: 'GET', path: '/api/github' },
@@ -297,8 +297,8 @@ describe('registry completeness: migrated baseline (Phase 10 public reads + Phas
   const MIGRATED_PATHS = MIGRATED_ROUTES.map((r) => r.path);
 
   it('registers exactly the migrated /api routes (one RouteDef per path)', () => {
-    // Scoped to the /api family: the /admin/api surface (Phase 17) and the /oauth
-    // + /internal surfaces (Phase 18) have their own registration assertions
+    // Scoped to the /api family: the /admin/api surface and the /oauth
+    // + /internal surfaces have their own registration assertions
     // below, each derived from its ladder.
     const registered = [...apiRoutes]
       .filter(
@@ -322,8 +322,8 @@ describe('registry completeness: migrated baseline (Phase 10 public reads + Phas
     // Each migrated route must also be an inventory ladder route AND retain its
     // legacy arm (rollback), so the flag can roll each one back per route.
     for (const route of MIGRATED_ROUTES) {
-      // The Phase 16 swag-claim is the one exception: it was an unreachable orphan
-      // (no legacy arm ever existed), so Phase 16 registers it router-owned ONLY.
+      // The Discord swag-claim is the one exception: it was an unreachable orphan
+      // (no legacy arm ever existed), so it is registered router-owned ONLY.
       // It has no rollback arm to retain, so assert the orphan shape (router-owned,
       // NOT legacy-served) and skip the must-be-a-ladder-route requirement. Its
       // dedicated 'excludes the documented unreachable swag-claim orphan' test pins
@@ -374,9 +374,9 @@ describe('registry completeness: migrated baseline (Phase 10 public reads + Phas
   });
 });
 
-describe('registry completeness: Phase 17 admin surface (server/admin.ts)', () => {
+describe('registry completeness: admin surface (server/admin.ts)', () => {
   // The admin ladder is the legacy handleAdminApi surface (SURFACE_INVENTORY rows
-  // whose dispatcher is DISPATCH.admin). Phase 17 migrated EVERY branch onto a
+  // whose dispatcher is DISPATCH.admin). The migration moved EVERY branch onto a
   // RouteDef, restructuring the one enum-alternation route to a :action param. These
   // assertions derive the expected admin route set FROM the ladder, so a dropped or
   // added admin branch fails the gate without a hand-maintained parallel list.
@@ -470,17 +470,17 @@ describe('registry completeness: Phase 17 admin surface (server/admin.ts)', () =
   });
 });
 
-describe('registry completeness: Phase 18/18b oauth + internal surfaces (server/oauth.ts, server/internal.ts, server/daily_rewards.ts)', () => {
+describe('registry completeness: oauth + internal surfaces (server/oauth.ts, server/internal.ts, server/daily_rewards.ts)', () => {
   // Both expected sets derive FROM the SURFACE_INVENTORY ladders (the admin-block
   // pattern), so a dropped or added branch reds the gate without a hand-maintained
   // parallel list. The oauth surface migrates ONLY its POST JSON rows: the two GET
   // consent/device HTML pages stay on the top-level ladder, off the route table,
-  // served through the dispatcher's delegate. Phase 18 migrated EVERY
+  // served through the dispatcher's delegate. The internal migration moved EVERY
   // handleInternalApi row (11: restart-countdown + the 10 Discord-bot routes) and
-  // left the separate /internal/daily-rewards/* ops family delegate-only; Phase
-  // 18b put that family on the table too (behind the fail-closed
+  // at first left the separate /internal/daily-rewards/* ops family delegate-only;
+  // the late-arrival pass put that family on the table too (behind the fail-closed
   // requireInternalSecretFailClosed gate), so the internal derivation now spans
-  // ALL 14 internal rows and the ops pins flip from delegate-only to registered.
+  // EVERY internal row and the ops pins flip from delegate-only to registered.
   const oauthPostLadder = SURFACE_INVENTORY.filter(
     (r) => r.dispatcher === DISPATCH.oauth && r.method === 'POST',
   );
@@ -496,7 +496,7 @@ describe('registry completeness: Phase 18/18b oauth + internal surfaces (server/
   it('derives the expected non-empty ladders', () => {
     expect(oauthPostLadder.length).toBe(5);
     expect(oauthGetLadder.length).toBe(2);
-    // 15 = the Phase 18 eleven (restart-countdown + the 10 Discord-bot routes)
+    // 15 = the handleInternalApi eleven (restart-countdown + the 10 Discord-bot routes)
     // plus the ops family below (v0.20.0 added its paginated leaderboard read).
     expect(internalLadder.length).toBe(15);
     expect(opsFamilyRows.length).toBe(4);
@@ -552,8 +552,8 @@ describe('registry completeness: Phase 18/18b oauth + internal surfaces (server/
 
   it('every internal RouteDef selects the { success, data, error } envelope', () => {
     // The internal envelope IS the admin { success, data, error } shape;
-    // EnvelopeKind is a frozen Phase 2 contract with no separate 'internal'
-    // member, so the routes carry surface 'internal' + meta.envelope 'admin'.
+    // EnvelopeKind is a frozen contract (server/http/types.ts) with no separate
+    // 'internal' member, so the routes carry surface 'internal' + meta.envelope 'admin'.
     const internalRoutes = [...apiRoutes].filter((r) => r.path.startsWith('/internal/'));
     expect(internalRoutes.length).toBeGreaterThan(0);
     for (const r of internalRoutes) {
@@ -562,12 +562,13 @@ describe('registry completeness: Phase 18/18b oauth + internal surfaces (server/
     }
   });
 
-  it('registers the /internal/daily-rewards ops family (Phase 18b flips the delegate-only pin)', () => {
-    // Phase 18 pinned these three rows delegate-only (notFound); Phase 18b puts
+  it('registers the /internal/daily-rewards ops family (flips the delegate-only pin)', () => {
+    // These three rows started delegate-only (notFound); the late-arrival pass puts
     // the family on the table, so each real ops route now resolves matched. The
     // synthetic never-existing subpaths still resolve notFound and delegate to
     // the composite (handleDailyRewardInternalApi first), which keeps serving
-    // every off-table shape (unknown subpath, wrong method, HEAD) until Phase 25.
+    // every off-table shape (unknown subpath, wrong method, HEAD) until the legacy
+    // ladder is removed.
     for (const r of opsFamilyRows) {
       expect(apiRegistry.resolve(r.method, r.path).kind, r.path).toBe('matched');
     }

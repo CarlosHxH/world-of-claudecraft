@@ -1,4 +1,4 @@
-// Unit coverage for the Phase 11 auth-migration login route (POST /api/login in
+// Unit coverage for the auth-migration login route (POST /api/login in
 // server/auth_routes.ts). The credential-check branches are driven by calling the
 // exported route handler directly with a fakeCtx and a fake auth db + injected
 // runtime; the two per-route guards (Turnstile, the web-login Origin gate) are

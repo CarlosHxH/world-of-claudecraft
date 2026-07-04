@@ -1,10 +1,10 @@
-// Unit coverage for the Phase 18b GitHub route layer (server/github.ts).
+// Unit coverage for the GitHub route layer (server/github.ts).
 //
 // This slice pins the four GitHub-link endpoints that moved off the inline
 // handleApi ladder in server/main.ts onto the shared server/http/ pipeline. It is
 // a PARITY-FIRST migration: every migrated route reuses the SAME handleGitHub*
 // function unchanged, so each response is the legacy { error } / { url } /
-// { unlinked } / HTML-bounce body byte-for-byte (RFC 9457 is Phase 22). The auth
+// { unlinked } / HTML-bounce body byte-for-byte (RFC 9457 is the client code-matcher). The auth
 // gate is the shared legacy-body activeGuard (NOT problem+json requireAccount),
 // the rate limit stays legacy prose { error: 'rate limited' }, and the callback
 // stays HTML (never application/problem+json). The deeper handler branches (state

@@ -1,4 +1,4 @@
-// Phase 7 of the API Pipeline re-architecture: the 500-NO-LEAK HARD GATE.
+// The error model's 500-NO-LEAK HARD GATE (server/http/errors.ts).
 //
 // This file writes NO implementation. It is the adversarial security gate that
 // proves the unexpected-error (500) path leaks NOTHING internal. It feeds a set

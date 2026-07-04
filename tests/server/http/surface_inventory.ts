@@ -1,5 +1,5 @@
 // Surface inventory: the data ledger of every (method, path) the World of
-// ClaudeCraft server dispatches today (Phase 3 spine).
+// ClaudeCraft server dispatches today.
 //
 // This is a CHARACTERIZATION artifact. It records what exists across the four
 // HTTP dispatchers (main handleApi, admin, oauth, internal) plus the
@@ -15,11 +15,11 @@
 // SSR, GET /sitemap-characters.xml, and the serveStatic catch-all) are
 // DELIBERATELY NOT rows here. Their content types (image bytes, XML,
 // server-rendered HTML for share unfurls) fall outside the five-class API
-// content scheme this phase classifies (the sitemap is XML, a type none of the
-// five classes name), and they are not part of the REST API being
+// content scheme this inventory classifies (the sitemap is XML, a type none of
+// the five classes name), and they are not part of the REST API being
 // re-architected: they stay on the top-level createServer ladder (the
 // route-table migration only moves the four /api sub-dispatchers; the static
-// ladder gets only the security-headers wrapper, in a later phase), so they have
+// ladder gets only the top-level security-headers wrapper), so they have
 // no RouteDef, no error-model envelope, and no golden baseline here. The
 // OPTIONS-204 preflight IS the one createServer-prefix row included, because it
 // is the CORS contract guarding the whole /api surface.
@@ -182,9 +182,9 @@ export const SURFACE_INVENTORY: readonly SurfaceRoute[] = [
   // Electron desktop shell trades for a session token (exchange,
   // unauthenticated by design: the 160-bit code IS the credential). Both share
   // the register/login per-IP rateLimited budget. Create requires a FULL active
-  // session since the Phase 18b scope fix (bearerActiveAccount in the arm; the
-  // pre-18b scope-blind accountForToken let a read token escalate to the full
-  // session exchange mints: see the desktopLoginCreateFullScope deviation).
+  // session since the desktop-login create scope fix (bearerActiveAccount in the
+  // arm; the earlier scope-blind accountForToken let a read token escalate to the
+  // full session exchange mints: see the desktopLoginCreateFullScope deviation).
   {
     dispatcher: DISPATCH.mainApi,
     method: 'POST',
@@ -1608,8 +1608,8 @@ export const SURFACE_INVENTORY: readonly SurfaceRoute[] = [
   // handleDailyRewardInternalApi sub-dispatcher, which the /internal composite
   // delegate tries FIRST (before handleInternalApi, whose terminal 404 would
   // otherwise swallow the family: the ordering is load-bearing and parity-pinned).
-  // NEVER part of handleInternalApi; since Phase 18b the family is ALSO on the
-  // RouteDef table (fail-closed secret gate + the same sub-dispatcher core), with
+  // NEVER part of handleInternalApi; the family is ALSO on the RouteDef table
+  // (fail-closed secret gate + the same sub-dispatcher core), with
   // the composite delegate kept as the rollback arm. The whole `/internal/daily-rewards/` prefix
   // is secret-gated BEFORE path/method resolution, fail-closed (see AUTH_SCOPE),
   // and answers in the admin { success, data, error } envelope on every branch.

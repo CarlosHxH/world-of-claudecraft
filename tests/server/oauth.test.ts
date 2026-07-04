@@ -1,7 +1,7 @@
-// Route-layer coverage for the Phase 18 OAuth surface (server/oauth.ts).
+// Route-layer coverage for the OAuth surface (server/oauth.ts).
 //
 // The 5 OAuth POST JSON endpoints moved off the inline handleOAuth if-ladder onto
-// RouteDefs the Phase 9 dispatcher serves under API_DISPATCH 'new'. It is a
+// RouteDefs the shared dispatcher serves under API_DISPATCH 'new'. It is a
 // PARITY-FIRST migration: each thin Ctx handler calls the EXISTING private core
 // (approveAuthorize, tokenEndpoint, revokeEndpoint, deviceAuthorization,
 // approveDevice) UNCHANGED. Those cores self-read their body via readForm, resolve
@@ -25,7 +25,7 @@
 //    additive divergence from the legacy bare-500 catch;
 //  - the frozen RFC 6749 error envelope (keys are a subset of error/
 //    error_description, never problem+json, never { success, data, error });
-//  - the Phase 9 registry boundary (the HTML GET pages stay off the table and fall
+//  - the registry boundary (the HTML GET pages stay off the table and fall
 //    through to the legacy ladder as methodNotAllowed).
 //
 // server/db.ts builds a pg Pool at module load and throws if DATABASE_URL is unset;
@@ -159,7 +159,7 @@ function routeFor(method: Method, path: string) {
 
 /**
  * Drive a full route chain (its real middleware + handler) under withErrors,
- * exactly as the Phase 9 dispatcher onion does. A JSON content-type is set
+ * exactly as the dispatcher onion does. A JSON content-type is set
  * whenever a body is supplied so readForm parses it as JSON (matching the browser
  * consent fetch); a body-less call leaves the headers as-is (the auth-gated cores
  * return before ever reading the body).
@@ -232,7 +232,7 @@ afterEach(() => {
 // 1. Route registration shape.
 // ---------------------------------------------------------------------------
 
-describe('OAuth route registration (Phase 18)', () => {
+describe('OAuth route registration', () => {
   it('exports exactly the 5 POST oauth endpoints', () => {
     expect(routes).toHaveLength(5);
     expect(routes.map((r) => r.path).sort()).toEqual([...OAUTH_PATHS].sort());
@@ -637,7 +637,7 @@ describe('oauth error envelope contract (frozen RFC 6749)', () => {
 });
 
 // ---------------------------------------------------------------------------
-// 9. Phase 9 registry boundary (the HTML GET pages stay off the table).
+// 9. Registry boundary (the HTML GET pages stay off the table).
 // ---------------------------------------------------------------------------
 
 describe('registry boundary', () => {

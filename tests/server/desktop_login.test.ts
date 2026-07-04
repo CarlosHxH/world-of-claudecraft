@@ -1,4 +1,4 @@
-// Unit coverage for the Phase 18b desktop-login route layer (server/desktop_login_routes.ts).
+// Unit coverage for the desktop-login route layer (server/desktop_login_routes.ts).
 //
 // This slice pins the handoff pair that moved off the inline handleApi arms in
 // server/main.ts onto RouteDefs on the shared server/http/ pipeline:
@@ -9,7 +9,7 @@
 // the legacy { error } / { code, expiresInMs } / { token, username } byte-for-byte.
 // The post-auth cores themselves are covered against fixtures in tests/security.test.ts
 // ('desktop login route handlers'); this file covers the ROUTE LAYER: the route table
-// shape, the FUSED limiter-before-auth ordering, the Phase 18b full-session scope fork
+// shape, the FUSED limiter-before-auth ordering, the full-session scope fork
 // (a read-scope token can no longer mint a handoff code), the exchange chain, the
 // malformed-body deviation (desktopLoginBodyValidationRemap, a 500 problem+json where
 // the legacy bare-return arm would HANG), and the single-use IP binding.
@@ -276,7 +276,7 @@ describe('fused per-IP limiter (limiter before auth)', () => {
 });
 
 // ---------------------------------------------------------------------------
-// 3. The Phase 18b scope fork on create: a full ACTIVE session is required. The
+// 3. The scope fork on create: a full ACTIVE session is required. The
 // activeGuard (createActiveGuard) mirrors bearerActiveAccount, so a read-scope
 // companion/OAuth token can no longer mint a handoff code that exchange trades for
 // a full session. Every rejection short-circuits before a code is minted.
@@ -418,9 +418,9 @@ describe('exchange through the route chain', () => {
     const r = await runRoute('POST', '/api/desktop-login/exchange', { body: { code } });
     expect(r.status).toBe(403);
     // The exchange leg is code-authed (no shared bearer guard), so its inline
-    // moderation 403 stays legacy prose-only this phase (both dispatch twins share
-    // handleDesktopLoginExchange, so it is parity-identical); desktop-login's own
-    // handler bodies are the Phase-18b prose-only adjudication.
+    // moderation 403 stays legacy prose-only (both dispatch twins share
+    // handleDesktopLoginExchange, so it is parity-identical); prose-only handler
+    // bodies are desktop-login's adjudicated contract.
     expect(r.body).toEqual({ error: 'this account is suspended.' });
     expect(saveToken).not.toHaveBeenCalled();
   });

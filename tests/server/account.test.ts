@@ -1,8 +1,8 @@
-// Unit coverage for the Phase 13 account-portal route layer (server/account.ts).
+// Unit coverage for the account-portal route layer (server/account.ts).
 //
 // The migrated routes preserve their LEGACY { error } / success bodies byte-for-byte
-// (RFC 9457 is Phase 22), so every assertion pins the exact legacy status + body. The
-// account handlers self-read their body and delegate to the existing handleAccount*
+// (RFC 9457 is the client code-matcher), so every assertion pins the exact legacy status +
+// body. The account handlers self-read their body and delegate to the existing handleAccount*
 // domain functions (already covered end-to-end by tests/account_server.test.ts via a
 // pg-mock), so this file exercises the NEW wiring:
 //  - the two per-route auth guards (activeGuard / logoutGuard), driven through the real
@@ -11,7 +11,7 @@
 //  - the companion-token create/list/revoke handlers (they DO use the account.ts db
 //    seam), driven directly with a fakeCtx + a fake db bundle;
 //  - the two token-in-query link handlers (email/verify + email/unsubscribe) on their
-//    db-free no-token path, asserted byte-identical to their Phase 3 golden fixtures;
+//    db-free no-token path, asserted byte-identical to their characterization goldens;
 //  - the companion-token method-fan: an unsupported method now resolves 405 + Allow via
 //    the registry (the companionTokenMethodFan known deviation).
 //
@@ -195,7 +195,7 @@ async function runRoute(
   return { reached, ...readRes(ctx.res) };
 }
 
-/** Load a Phase 3 golden fixture (status + raw body string) by its main-surface name. */
+/** Load a characterization golden (status + raw body string) by its main-surface name. */
 function fixture(name: string): { status: number; body: string } {
   const url = new URL(`./fixtures/main/${name}.json`, import.meta.url);
   return JSON.parse(readFileSync(url, 'utf8'));
@@ -489,7 +489,7 @@ describe('accountBodyValidationRemap deviation (self-read body throw -> 500 prob
 
 // ---------------------------------------------------------------------------
 // The two token-in-query link handlers (db-free no-token path), byte-identical to
-// their Phase 3 golden fixtures.
+// their characterization goldens.
 // ---------------------------------------------------------------------------
 
 describe('email link routes (no token, db-free)', () => {

@@ -1,11 +1,11 @@
-// Phase 13 em-dash copy guard for the rate-limit strings.
+// Em-dash copy guard for the rate-limit strings.
 //
-// Phase 13 swapped the U+2014 em dash for a comma in the login/register throttle
-// 429 strings (server/main.ts legacy arms + server/auth_routes.ts migrated arms) and
+// The account-portal migration swapped the U+2014 em dash for a comma in the login/register
+// throttle 429 strings (server/main.ts legacy arms + server/auth_routes.ts migrated arms) and
 // the admin operator copy (src/admin/i18n.locales/en_CA.ts), and retired the
 // authRateLimitDashToComma known deviation. The swap MUST stay matcher-safe: the
-// client prose-matcher (userFacingApiError, extracted to src/ui/api_error_i18n.ts in
-// Phase 22) keys on the "too many attempts" / "too many failed attempts" PREFIX,
+// client prose-matcher (userFacingApiError, extracted to src/ui/api_error_i18n.ts)
+// keys on the "too many attempts" / "too many failed attempts" PREFIX,
 // which sits BEFORE the punctuation, so the localized message is unchanged. This gate
 // reads the SOURCE files (server/main.ts builds a pg pool, so it is never imported;
 // the matcher's runtime behavior is covered by tests/main_api_error.test.ts) and pins:
@@ -28,7 +28,7 @@ const EM_DASH = String.fromCharCode(0x2014);
 // The two matcher prefixes userFacingApiError keys on (before the punctuation).
 const ATTEMPTS_PREFIX = 'too many attempts';
 const FAILED_PREFIX = 'too many failed attempts';
-// The exact comma-form strings after the Phase 13 swap.
+// The exact comma-form strings after the dash-to-comma swap.
 const ATTEMPTS_COMMA = 'too many attempts, wait a minute and try again';
 const FAILED_COMMA = 'too many failed attempts, wait a few minutes and try again';
 
@@ -39,7 +39,7 @@ const TARGET_FILES = [
   'src/admin/i18n.resolved.generated/en_CA.ts',
 ];
 
-describe('Phase 13 rate-limit copy: no em dash', () => {
+describe('rate-limit copy: no em dash', () => {
   it('none of the four touched files contains a U+2014 em dash', () => {
     for (const rel of TARGET_FILES) {
       expect(read(rel).includes(EM_DASH), `${rel} still contains an em dash`).toBe(false);
@@ -64,7 +64,7 @@ describe('Phase 13 rate-limit copy: no em dash', () => {
   });
 });
 
-describe('Phase 13 rate-limit copy: matcher-safe (prefix before the comma)', () => {
+describe('rate-limit copy: matcher-safe (prefix before the comma)', () => {
   it('each comma-form string STARTS WITH its matcher prefix', () => {
     // The dash-to-comma swap only touches the punctuation AFTER the prefix, so the
     // userFacingApiError startsWith() checks still match.
@@ -81,11 +81,11 @@ describe('Phase 13 rate-limit copy: matcher-safe (prefix before the comma)', () 
     expect(client).toContain(`normalized.startsWith('${FAILED_PREFIX}')`);
   });
 
-  it("userFacingApiError keeps the Phase 16 exact-match arm for the discord 'rate limited' 429", () => {
-    // Phase 16 closed the discordRateLimited gap with one exact-match arm reusing the
-    // existing errors.api.tooManyAttempts key. The Phase 22 extraction made the matcher
-    // unit-testable (tests/main_api_error.test.ts); this text pin stays as the cheap
-    // source-level guard against a silent removal of the arm.
+  it("userFacingApiError keeps the exact-match arm for the discord 'rate limited' 429", () => {
+    // The Discord-family migration closed the discordRateLimited gap with one exact-match
+    // arm reusing the existing errors.api.tooManyAttempts key. The api_error_i18n.ts
+    // extraction made the matcher unit-testable (tests/main_api_error.test.ts); this text
+    // pin stays as the cheap source-level guard against a silent removal of the arm.
     const client = read('src/ui/api_error_i18n.ts');
     expect(client).toContain("normalized === 'rate limited'");
   });

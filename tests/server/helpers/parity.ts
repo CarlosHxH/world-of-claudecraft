@@ -7,8 +7,8 @@
 // sliding windows, the per-account failed-login bucket, and the clock) plus the
 // optional injected `reset` hook, so a limiter tripped on the old pass cannot
 // bleed into the new pass (or vice-versa) and falsely register as a divergence.
-// The injected hook is where a later phase adds a fresh-AsyncLocalStorage run and
-// a reloaded config; this phase only needs the limiter resets.
+// The injected hook is where a caller adds a fresh-AsyncLocalStorage run and
+// a reloaded config; the parity driver itself only needs the limiter resets.
 import type * as http from 'node:http';
 import {
   resetAuthFailures,
@@ -68,10 +68,10 @@ async function isolatePass(extraReset?: () => Promise<void> | void): Promise<voi
   resetDiscordRateLimits();
   resetWocBalanceRateLimits();
   resetPublicReadRateLimits();
-  // The Phase 12 per-account character-mutation limiters are separate buckets, so a
+  // The per-account character-mutation limiters are separate buckets, so a
   // create/rename/delete/takeover 429 on one pass must not bleed into the next.
   resetCharacterMutationRateLimits();
-  // The Phase 15 per-account reports.create limiter is a separate bucket, so a
+  // The per-account reports.create limiter is a separate bucket, so a
   // report-create 429 on one pass must not bleed into the next (harmless today,
   // since the reports corpus request 401s at activeGuard before the limiter runs).
   resetReportsCreateRateLimits();

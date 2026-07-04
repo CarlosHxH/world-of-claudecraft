@@ -1,9 +1,9 @@
 // Characterization goldens for the admin, oauth, and internal HTTP dispatchers
-// (Phase 3, Agent C). Every case drives a REAL request through
+// (Agent C). Every case drives a REAL request through
 // routeHttpRequest (server/main.ts) and freezes the response (status, headers,
 // body) the server emits TODAY into a golden fixture. These are characterization
 // snapshots, not assertions of desired behavior: they record the contract that
-// exists so a later phase's re-architecture can prove byte-for-byte parity.
+// exists so the pipeline re-architecture can prove byte-for-byte parity.
 //
 // Scope (Agent C): /admin/api/*, /oauth/*, /internal/* ONLY. The /api/* main
 // surface is Agent B's; the surface-inventory ledger is Agent A's.
@@ -18,7 +18,7 @@
 //
 // Determinism: the captured bodies here carry no dynamic fields (auth-denied
 // envelopes, RFC 6749 error objects, a static consent-error HTML page), so the
-// default Phase 2 normalizer is a pass-through for them. The token-bearing oauth
+// default harness normalizer is a pass-through for them. The token-bearing oauth
 // SUCCESS paths (device_authorization, authorize, the token endpoint) are
 // deferred because their snake_case dynamic fields are unmasked and the device
 // HTML page embeds a pre-existing em dash; see the deferral ledger.
@@ -96,8 +96,8 @@ let dispatch: Dispatch;
 let main: typeof import('../../../server/main');
 beforeAll(async () => {
   main = await import('../../../server/main');
-  // These goldens characterize the LEGACY admin/oauth/internal ladders. Phase 25
-  // flipped the boot default to 'new', so pin the dispatch mode to 'legacy'
+  // These goldens characterize the LEGACY admin/oauth/internal ladders. The boot
+  // default flipped to 'new', so pin the dispatch mode to 'legacy'
   // EXPLICITLY: the captured contracts are the legacy delegate shapes, and pinning
   // the mode keeps this the legacy characterization it has always been, immune to
   // the default flip.
@@ -311,8 +311,8 @@ describe('characterization: internal handleInternalApi', () => {
   // The DISCORD_BOT_SECRET gate in handleDiscordInternal runs BEFORE any route or
   // method branch, so the 401 (and the 404 feature-off) contract is identical for
   // all ten; we capture each route so the security gate is documented per route.
-  // (The two daily-rewards-winners routes postdate the original Phase 3 capture;
-  // Phase 18 backfills their goldens under the same shared-gate rationale.)
+  // (The two daily-rewards-winners routes postdate the original characterization
+  // capture; their goldens were backfilled under the same shared-gate rationale.)
   const DISCORD_ROUTES = [
     { method: 'GET', path: '/internal/discord/flex', name: 'discord_flex' },
     { method: 'GET', path: '/internal/discord/roles', name: 'discord_roles' },
@@ -337,7 +337,7 @@ describe('characterization: internal handleInternalApi', () => {
   // Feature-off gate, captured PER ROUTE: with DISCORD_BOT_SECRET unset, the whole
   // /internal/discord/* surface answers 404 unknown endpoint at the shared gate.
   // Looping all ten (mirroring the 401 loop below) freezes each route's feature-off
-  // baseline, so a later phase that moves any one off the shared gate is caught.
+  // baseline, so a later change that moves any one off the shared gate is caught.
   for (const route of DISCORD_ROUTES) {
     it(`${route.method} ${route.path} (bot secret unset) -> 404 unknown endpoint`, async () => {
       await withEnv(SECRET_ENV.discordBot, undefined, async () => {
@@ -376,16 +376,16 @@ describe('characterization: internal handleInternalApi', () => {
 });
 
 // -----------------------------------------------------------------------------
-// internal handleDailyRewardInternalApi (/internal/daily-rewards/*): the Phase
-// 18b late-arrival backfill (the family arrived with the v0.19.0 merge, after
-// the Phase 3 capture, so its legacy contract is frozen write-if-absent here
-// before the Phase 25 flag flip). The x-woc-daily-reward-secret gate FAILS
+// internal handleDailyRewardInternalApi (/internal/daily-rewards/*): the
+// late-arrival backfill (the family arrived with the v0.19.0 merge, after
+// the original characterization capture, so its legacy contract is frozen here
+// write-if-absent before the default flipped to 'new'). The x-woc-daily-reward-secret gate FAILS
 // CLOSED, unlike the two gates above: an unset env secret answers 401 not
 // authenticated (never the feature-off 404), and there is no
 // RESTART_COUNTDOWN_SECRET fallback. The gate spans the whole prefix BEFORE
 // path/method resolution.
 // -----------------------------------------------------------------------------
-describe('characterization: internal handleDailyRewardInternalApi (Phase 18b backfill)', () => {
+describe('characterization: internal handleDailyRewardInternalApi (late-arrival backfill)', () => {
   const OPS_ROUTES = [
     { path: '/internal/daily-rewards/pending-payouts', name: 'daily_rewards_pending_payouts' },
     { path: '/internal/daily-rewards/payout-history', name: 'daily_rewards_payout_history' },
@@ -464,15 +464,16 @@ afterAll(() => {
 // -----------------------------------------------------------------------------
 // DEFERRAL LEDGER (paths NOT captured here, and why) -- surfaced, not applied:
 //
-//  - GET /oauth/device (200 text/html, renderDevicePage): the SOURCE HTML embeds
-//    a pre-existing em dash (server/oauth.ts renderDevicePage inline script,
-//    "Device approved ... return to your device"). The normalizer returns HTML
-//    bodies VERBATIM, so the golden would carry that em dash into a .json fixture,
-//    violating the repo copy rule (and tripping the QA Stop hook). Deferred and
-//    flagged for the copy/i18n reviewer (the source line is the real defect).
+//  - GET /oauth/device (200 text/html, renderDevicePage): originally deferred
+//    because the SOURCE HTML embedded an em dash (server/oauth.ts renderDevicePage
+//    inline script) that the verbatim HTML normalizer would have carried into a
+//    .json fixture, violating the repo copy rule. That source line has since been
+//    fixed ("Device approved. You can return to your device."), so the golden is
+//    now capturable; it remains uncaptured, a deliberate scope call left to the
+//    ladder-deletion PR's corpus decisions.
 //  - POST /oauth/device_authorization SUCCESS: snake_case device_code / user_code
 //    / verification_uri / verification_uri_complete are dynamic and UNMASKED by
-//    the key-name normalizer; non-deterministic until a Phase 2 normalizer
+//    the key-name normalizer; non-deterministic until a normalizer
 //    enhancement masks them. Deferred.
 //  - POST /oauth/authorize SUCCESS ({ redirect }): the redirect embeds a dynamic
 //    auth code + state in a query string, unmasked. Deferred.
@@ -481,7 +482,7 @@ afterAll(() => {
 //    token-dynamic. Deferred.
 //  - POST /admin/api/login 403 ("no admin access") and the authenticated admin
 //    GET reads (overview/online/accounts/...): all require a real account/admin
-//    lookup against the db; pool-less here. Deferred (a future phase mocks the db).
+//    lookup against the db; pool-less here. Deferred (needs a mocked db).
 //  - Every /internal secret-PASS path (correct x-woc-deploy-secret /
 //    x-woc-discord-secret): reaches the pool-less db and (no try/catch) hangs the
 //    poller. Never captured; the gate-contract paths above are the safe surface.

@@ -1,9 +1,9 @@
-// Unit coverage for the Phase 15 PUBLIC TELEMETRY beacons on the migrated
+// Unit coverage for the PUBLIC TELEMETRY beacons on the migrated
 // server/reports.ts: POST /api/perf-report and POST /api/site-presence.
 //
 // Both beacons are PUBLIC (no auth guard, no middleware at all): they self-read
 // their body inside handlePerfReport / handleSitePresenceHeartbeat and own their
-// legacy { ok } / { ok: false, error } bodies byte-for-byte (RFC 9457 is Phase 22).
+// legacy { ok } / { ok: false, error } bodies byte-for-byte (RFC 9457 is the client code-matcher).
 // So every happy / validation assertion pins the exact legacy status + body, and
 // the ONLY framework-error divergence is the 500 SHAPE: an over-cap readBody reject
 // the handler does NOT catch surfaces through the shared withErrors boundary as 500
@@ -141,7 +141,7 @@ describe('POST /api/site-presence (public site-presence beacon)', () => {
   });
 
   it('GET resolves methodNotAllowed (the route is registered POST-only)', () => {
-    // The Phase 9 dispatcher DELEGATES a methodNotAllowed resolve to the retained
+    // The shared dispatcher DELEGATES a methodNotAllowed resolve to the retained
     // legacy ladder, whose URL-only arm keeps the handler-owned 405
     // { ok: false, error: 'method not allowed' } (pinned byte-identical old-vs-new
     // in tests/server/http/parity.test.ts); so the router never synthesizes a
@@ -166,7 +166,7 @@ describe('POST /api/site-presence (public site-presence beacon)', () => {
   it('over-cap body is 500 problem+json (reportsBodyValidationRemap deviation)', async () => {
     // A >1024-byte raw string trips readBody's 1024 cap ('body too large'), which
     // handleSitePresenceHeartbeat does NOT catch; the throw propagates past the
-    // handler to withErrors, which serializes the Phase 7 internal.error as
+    // handler to withErrors, which serializes the coded internal.error as
     // application/problem+json (vs the legacy outer-catch 500 { error: 'internal
     // error' }: same 500 STATUS, different body shape).
     const r = await runRoute('POST', '/api/site-presence', { body: 'x'.repeat(2048) });

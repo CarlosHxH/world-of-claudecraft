@@ -1,7 +1,6 @@
-// THE API-pipeline realtime-neutrality acceptance gate (Phase 24 of
-// docs/api-pipeline/). The non-goal Phase 24 must protect is "no realtime
-// regression": the in-house /api onion runs on the SAME single event-loop thread
-// as the authoritative 20 Hz world loop, so any per-request overhead it adds is
+// THE API-pipeline realtime-neutrality acceptance gate. The non-goal it must protect is
+// "no realtime regression": the in-house /api onion runs on the SAME single event-loop
+// thread as the authoritative 20 Hz world loop, so any per-request overhead it adds is
 // time stolen from the next sim tick. This file gates that, split by host the same
 // way tests/hud_perf_budget.test.ts splits its client budget: deterministic arms
 // that run in every `npm test`, and a wall-clock arm env-gated off by default.
@@ -46,7 +45,7 @@
 //     seam call: an O(routes) matcher scan inside one dispatch still counts 1 at
 //     every seam, so that class, plus the constant-FACTOR ms overhead, belongs to
 //     the wall-clock arm (ARM C) and the perf:load soak. Run ARM C before the
-//     Phase 25 flag flip and on release cadence; it is not part of `npm test`.
+//     ladder deletion and on release cadence; it is not part of `npm test`.
 //
 //   ARM C - WALL-CLOCK (env PERF_GATE_WALLCLOCK=1, SKIPPED by default). The real p99
 //     comparison: warm up, then run >= 2000 iterations through the onion path and the

@@ -1,9 +1,10 @@
-// Content-type classification for the server REST surface (Phase 3 spine).
+// Content-type classification for the server REST surface.
 //
 // This module names the response content-type CONTRACT classes the server
 // emits today and maps every dispatched `/api/*` route onto exactly one class.
-// It is a CHARACTERIZATION of current behavior, not a target: Phase 7/22 own any
-// migration toward a single shape. Nothing here renames or adds a class.
+// It is a CHARACTERIZATION of current behavior, not a target: the error model and
+// the REST error i18n own any migration toward a single shape. Nothing here
+// renames or adds a class.
 //
 // The five classes are mutually exclusive named constants. Every class value is
 // a constant (never an inline string literal) so the inventory and the
@@ -11,8 +12,8 @@
 
 // application/json bodies. This is the catch-all class for every JSON-shaped
 // route (success payloads AND `{ error }` problem bodies alike); the name marks
-// the RFC 7807 problem+json shape Phase 7 moves toward, but today it simply means
-// "the response is application/json".
+// the RFC 7807 problem+json shape the error model standardizes on, but today it
+// simply means "the response is application/json".
 export const PROBLEM_JSON = 'problem-json' as const;
 
 // text/html bodies. Server-rendered pages and the Discord OAuth bounce page

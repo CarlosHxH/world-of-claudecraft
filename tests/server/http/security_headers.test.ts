@@ -1,4 +1,4 @@
-// Phase 21 security-headers wrapper (server/http/middleware/security_headers.ts).
+// Security-headers wrapper (server/http/middleware/security_headers.ts).
 //
 // Two layers:
 //   a) UNIT: drive withSecurityHeaders directly against the FakeRes/makeReq fakes

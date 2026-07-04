@@ -1,4 +1,4 @@
-// Phase 24 of docs/api-pipeline/: pins every consolidated server tunable to BOTH
+// The consolidated-tunables gate: pins every consolidated server tunable to BOTH
 // its literal value and (for the rate-limit policies) its derivation source, so a
 // value can never drift silently and a re-inlined magic literal is caught. The
 // repo's known trap is the constant-self-comparison pin (asserting only the SAME
@@ -62,7 +62,7 @@ const count = (haystack: string, needle: string): number => haystack.split(needl
 
 describe('server timeouts (server/http/server_timeouts.ts)', () => {
   it('the four constants equal the installed Node http defaults', () => {
-    // Proof the phase is byte-equal: a bare createServer() (Node defaults) must
+    // Proof the codification is byte-equal: a bare createServer() (Node defaults) must
     // already carry each value, so setting them explicitly changes nothing.
     const bare = http.createServer();
     expect(bare.requestTimeout).toBe(REQUEST_TIMEOUT_MS);
@@ -242,10 +242,10 @@ describe('byte caps + page sizes hold their literal values', () => {
 
 // Source-scan guard: each consolidated literal must live in exactly ONE place (its
 // owning module) and every call site must reference the named constant, never a
-// re-inlined magic number. Scoped to the SPECIFIC literals consolidated in this
-// phase (enumerated site + owner), not a generic all-numbers ban: 16 * 1024 and
+// re-inlined magic number. Scoped to the SPECIFIC literals consolidated here
+// (enumerated site + owner), not a generic all-numbers ban: 16 * 1024 and
 // 1024 * 1024 each have OTHER independent owners (oauth request cap, perf-report
-// summary; card + png-decode caps) that this phase deliberately does not touch.
+// summary; card + png-decode caps) that this consolidation deliberately does not touch.
 describe('no consolidated tunable literal is duplicated at a call site', () => {
   const mainSrc = read('server/main.ts');
   const dbSrc = read('server/db.ts');

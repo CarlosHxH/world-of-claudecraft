@@ -94,7 +94,7 @@ describe('withBody: valid JSON', () => {
 
 describe('withBody: no Content-Type enforcement (no 415)', () => {
   it('parses a valid JSON body even when Content-Type is not application/json', async () => {
-    // Content-Type enforcement (415) is Phase 21, log-only first; withBody must
+    // Content-Type enforcement (415) is the global gate's job, log-only by default; withBody must
     // never impose it. A valid JSON body under a text/plain header still parses.
     const payload = { note: 'plain-labeled but valid json' };
     const req = makeReq({

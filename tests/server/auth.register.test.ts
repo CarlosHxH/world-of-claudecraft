@@ -1,4 +1,4 @@
-// Unit coverage for the Phase 11 auth migration's register route
+// Unit coverage for the auth migration's register route
 // (server/auth_routes.ts). The pure handler branches (validation, taken-name,
 // the concurrent-insert 409, the non-unique rethrow, the success token + optional
 // signup email, and the best-effort side effects) are driven directly through the

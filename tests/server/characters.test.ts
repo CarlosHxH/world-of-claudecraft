@@ -1,8 +1,8 @@
-// Unit coverage for the Phase 12 owner-gated character domain (server/characters.ts).
+// Unit coverage for the owner-gated character domain (server/characters.ts).
 //
 // The migrated routes preserve their LEGACY { error } bodies byte-for-byte (RFC 9457
-// is Phase 22), so every assertion pins the exact legacy status + body. Three layers
-// are exercised:
+// is the client code-matcher), so every assertion pins the exact legacy status + body. Three
+// layers are exercised:
 //  - the two per-route auth guards (readGuard / activeGuard), driven alone through the
 //    real compose() onion so their short-circuit + moderation gate are pinned;
 //  - the handlers, driven directly with a fakeCtx (account + the owned row preset on

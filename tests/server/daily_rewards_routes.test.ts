@@ -1,6 +1,6 @@
-// Unit coverage for the Phase 18b daily-rewards route layer (server/daily_rewards.ts).
+// Unit coverage for the daily-rewards route layer (server/daily_rewards.ts).
 //
-// Phase 18b lifted BOTH daily-rewards families off their legacy ladders onto RouteDefs
+// The migration lifted BOTH daily-rewards families off their legacy ladders onto RouteDefs
 // the shared dispatcher serves (v0.20.0 grew each family by its paginated leaderboard):
 //   - the PLAYER family (GET /api/daily-rewards, GET /api/daily-rewards/leaderboard,
 //     POST /api/daily-rewards/spin, GET /api/daily-rewards/history), each gated by the
@@ -17,7 +17,7 @@
 // validation prose are byte-identical. There is NO withBody anywhere (spin reads no body;
 // mark-payout self-reads via the core's un-caught readBody, the
 // dailyRewardsOpsBodyValidationRemap deviation) and NO rate limiter on any of the eight
-// (legacy has none; the spin throttle decision is Phase 19's).
+// (legacy has none; the spin throttle decision is the two-tier rate limiter's).
 //
 // This file pins the ROUTE LAYER. The existing tests/daily_rewards.test.ts covers the
 // DailyRewardService internals against a hand-written FakeDailyRewardDb; here the service

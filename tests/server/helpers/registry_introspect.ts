@@ -9,7 +9,7 @@
 //    'account'. Operator-scoped routes (surface 'admin', or an operator-scoped
 //    requireOwned) are EXEMPT from the missing-loader clause; so is a route
 //    explicitly marked meta.publicRead (an intentional no-owner public read,
-//    e.g. a Phase 10 public character/leaderboard :id read). An operator
+//    e.g. a public character/leaderboard :id read). An operator
 //    ownerScope on a NON-admin surface is itself a wrong-owner-scope error.
 import type { RouteDef } from '../../../server/http/types';
 

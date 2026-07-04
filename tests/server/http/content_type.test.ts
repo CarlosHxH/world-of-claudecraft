@@ -231,8 +231,8 @@ describe('withContentType: enforce mode', () => {
     const body = JSON.parse(res.body);
     expect(body.code).toBe('body.unsupported_media_type');
     // Pin the serialized English developer text to LITERALS: the STATUS_REASON
-    // 415 title and the DETAILS sentence added for this code (Phase 22 localizes
-    // by code, but the emitted prose is still contract).
+    // 415 title and the DETAILS sentence added for this code (the client
+    // code-matcher localizes by code, but the emitted prose is still contract).
     expect(body.title).toBe('Unsupported Media Type');
     expect(body.detail).toBe('The request Content-Type must be application/json.');
     expect(state.ran).toBe(false);

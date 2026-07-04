@@ -1,5 +1,5 @@
 // Route-count freshness gate + content-type classification completeness for the
-// Phase 3 surface inventory.
+// surface inventory.
 //
 // Assertion 1 (FRESHNESS): re-derive the set of dispatched route descriptors
 // directly from the dispatcher SOURCE files (as text: the four dispatchers plus
@@ -91,8 +91,9 @@ const API_REGEX_PREFIXES = ['^\\/api\\/', '^\\/admin\\/api\\/', '^\\/internal\\/
 // that do not pair method and path in one condition (internal restart-countdown
 // gates the method inside the block; the admin/internal `*Match` param arms compare
 // against a RegExp, not a literal) are simply not captured here and stay covered by
-// the path-set and param-regex gates. (Phase 4's table router supersedes this whole
-// scan; until then this keeps method drift from slipping in silently.)
+// the path-set and param-regex gates. (The table router supersedes this whole scan
+// once the legacy ladder is removed; until then it keeps method drift from
+// slipping in silently.)
 const EXACT_METHOD_ROUTE_RE = new RegExp(
   `(?:req\\.)?method\\s*===\\s*'([A-Z]+)'\\s*&&\\s*(?:url\\.pathname|url|path|pathname)\\s*===\\s*(['"])(\\/${API_PREFIX_ALTERNATION}\\/[^'"]*)\\2`,
   'g',

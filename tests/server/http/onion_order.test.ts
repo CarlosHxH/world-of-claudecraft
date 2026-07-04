@@ -1,7 +1,7 @@
-// Onion-order integration test for the Phase 8 middleware set. It composes the
-// real middlewares in the ONE canonical order Phase 9 mounts them in (plus the
-// Phase 21 global hardening gates, which dispatch.ts inserts right after the
-// metric hook, ahead of every route-local frame):
+// Onion-order integration test for the pipeline middleware set. It composes the
+// real middlewares in the ONE canonical order the dispatcher mounts them in
+// (plus the global origin/content-type hardening gates, which dispatch.ts
+// inserts right after the metric hook, ahead of every route-local frame):
 //
 //   withErrors -> metric hook -> originCheck -> contentType -> requestId
 //     -> withCors -> rateLimit(ip) -> withBody -> requireAccount
@@ -56,7 +56,7 @@ const ROUTE = '/api/probe';
 const ORIGIN = 'https://example.test';
 const PINNED = 1_000_000;
 
-// The matched RouteDef the Phase 21 gates close over (dispatch.ts builds them
+// The matched RouteDef the global gates close over (dispatch.ts builds them
 // per matched route). Plain 'api' surface, no exemption metadata, so both gates
 // actively inspect the probe request.
 const GATE_ROUTE: RouteDef = {
@@ -128,7 +128,7 @@ function canonicalStack(opts: StackOpts): Middleware[] {
   return [
     withErrors({ surface: 'problem' }),
     withMetrics(opts.sink, ROUTE, opts.clock),
-    // The Phase 21 global gates, in dispatch.ts's mounted order (origin first,
+    // The global gates, in dispatch.ts's mounted order (origin first,
     // both ahead of every route-local frame). Log-only by default (env {}), so
     // they record and pass through; the probes prove nothing downstream is lost.
     withOriginCheck(GATE_ROUTE, { sink: (m) => opts.originRecords.push(m) }),
@@ -220,7 +220,7 @@ describe('onion order: successful request', () => {
     expect(handlerRan).toBe(true);
     expect(resOf(ctx).statusCode).toBe(200);
 
-    // The Phase 21 gates in LOG-ONLY mode: the probe Origin is neither
+    // The global gates in LOG-ONLY mode: the probe Origin is neither
     // same-origin (no Host on the fake req) nor allowlisted, so the origin gate
     // RECORDED the mismatch yet every downstream stage still ran (the 200 above);
     // the JSON Content-Type is a match, so the 415 gate recorded nothing.
@@ -282,7 +282,7 @@ describe('onion order: cheap-reject-first', () => {
     await compose(stack)(ctx);
 
     // Stopped at rateLimit(ip): the ip-limit probe, body, auth, and handler never
-    // ran. The log-only Phase 21 gates upstream passed the request through.
+    // ran. The log-only global gates upstream passed the request through.
     expect(seq).toEqual(['origin', 'content-type', 'reqId', 'cors']);
     expect(handlerRan).toBe(false);
     expect(ctx.body).toBeUndefined();

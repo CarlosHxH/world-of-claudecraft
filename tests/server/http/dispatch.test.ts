@@ -1,6 +1,6 @@
-// Unit tests for the Phase 9 dispatcher-in-front (server/http/dispatch.ts).
+// Unit tests for the dispatcher-in-front (server/http/dispatch.ts).
 //
-// The dispatcher runs the Phase 5 onion for a registry-matched RouteDef and
+// The dispatcher runs the middleware onion for a registry-matched RouteDef and
 // delegates every other /api path to the legacy handleApi UNCHANGED. These tests
 // pin: a matched path runs the onion exactly once and emits exactly one response;
 // an unmatched path calls the delegate with the untouched req/res; a handler throw
@@ -92,7 +92,7 @@ describe('createApiDispatcher', () => {
     expect(res.writableEnded).toBe(true);
     expect(JSON.parse(res.body)).toEqual({ ok: true, id: '42' });
     // The metric hook observes the FINAL status against the :param TEMPLATE, and
-    // carries the resolved client IP (Phase 23, for the access log).
+    // carries the resolved client IP (for the access log).
     expect(events).toEqual([
       {
         route: '/api/things/:id',
@@ -146,7 +146,7 @@ describe('createApiDispatcher', () => {
   });
 
   it('delegates a HEAD request (a synthesized GET match) to the legacy handleApi, never the onion', () => {
-    // The Phase 4 router synthesizes HEAD from GET: a HEAD to a registered GET route
+    // The table router synthesizes HEAD from GET: a HEAD to a registered GET route
     // resolves matched with head:true. While the legacy arms are retained the
     // migration must stay byte-identical, and the legacy ladder 404s HEAD, so the
     // dispatcher delegates a HEAD match instead of running the handler.
@@ -240,7 +240,7 @@ describe('createApiDispatcher', () => {
     errLog.mockRestore();
   });
 
-  it('mounts the Phase 21 gates on the REAL onion: an enforce-mode cross-site, wrong-type POST is rejected 403 ahead of route-local middleware (the origin gate outranks the 415)', async () => {
+  it('mounts the global gates on the REAL onion: an enforce-mode cross-site, wrong-type POST is rejected 403 ahead of route-local middleware (the origin gate outranks the 415)', async () => {
     // The onion_order.test.ts stack is a hand-built replica; this drives the real
     // createApiDispatcher mount. The gates are mounted with no opts, so they read
     // their enforce flags from process.env PER REQUEST: stubbing the env flips the

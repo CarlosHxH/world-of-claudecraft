@@ -1,11 +1,11 @@
-// Unit coverage for the Phase 16 Discord route layer (server/discord.ts).
+// Unit coverage for the Discord route layer (server/discord.ts).
 //
 // This slice pins the seven Discord endpoints that moved off the inline handleApi
 // ladder in server/main.ts onto the shared server/http/ pipeline. It is a
 // PARITY-FIRST migration: every migrated handler reuses the SAME handleDiscord*
 // function unchanged, so each response is the legacy { error } / { ok } / { url } /
-// HTML-bounce body byte-for-byte (RFC 9457 is Phase 22). The rate limit stays legacy
-// prose { error: 'rate limited' } (NOT coded problem+json), the auth is the shared
+// HTML-bounce body byte-for-byte (RFC 9457 is the client code-matcher). The rate limit
+// stays legacy prose { error: 'rate limited' } (NOT coded problem+json), the auth is the shared
 // legacy-body activeGuard (NOT problem+json requireAccount), and the callback stays
 // HTML (never application/problem+json). It exercises:
 //  - the route wiring, via apiRegistry.resolve: each (method, path) is matched, a
@@ -271,13 +271,13 @@ describe('Discord route wiring (apiRegistry.resolve)', () => {
   });
 
   it('resolves POST /api/discord/swag/claim to matched (the orphaned handler is now reachable)', () => {
-    // The swag claim had no dispatch arm before Phase 16 (an unreachable orphan); a
-    // matched resolve proves it is now served by the router.
+    // The swag claim had no dispatch arm before the Discord-family migration (an
+    // unreachable orphan); a matched resolve proves it is now served by the router.
     expect(apiRegistry.resolve('POST', '/api/discord/swag/claim').kind).toBe('matched');
   });
 
   it('marks the callback RouteDef meta.envelope html (errors serialize as HTML, never problem+json)', () => {
-    // The contract test the phase requires: an unexpected throw escaping the callback
+    // The contract the migration requires: an unexpected throw escaping the callback
     // is serialized as an HTML error (dispatch.ts threads meta.envelope into withErrors),
     // never application/problem+json, which would break window.opener.postMessage.
     expect(routeFor('GET', '/api/auth/discord/callback').meta?.envelope).toBe('html');

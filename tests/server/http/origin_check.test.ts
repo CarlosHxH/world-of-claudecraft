@@ -245,8 +245,8 @@ describe('withOriginCheck: clear cross-site Origin', () => {
     const body = JSON.parse(res.body);
     expect(body.code).toBe('origin.cross_site');
     // Pin the serialized English developer text to LITERALS: the 403 reason
-    // phrase and the DETAILS sentence added for this code (Phase 22 localizes by
-    // code, but the emitted prose is still contract).
+    // phrase and the DETAILS sentence added for this code (the client code-matcher
+    // localizes by code, but the emitted prose is still contract).
     expect(body.title).toBe('Forbidden');
     expect(body.detail).toBe('The request origin is not allowed.');
     expect(ran).toBe(false);

@@ -1,4 +1,4 @@
-// Phase 7 error-model tests (server/http/errors.ts). mapError is called DIRECTLY with a fakeCtx
+// Error-model tests (server/http/errors.ts). mapError is called DIRECTLY with a fakeCtx
 // and returns a SerializedError (no compose/FakeRes drive). Covers the exhaustive toAppError
 // table, the code-implied headers, one-pass validation issues, the seven per-surface shapes,
 // normalizeSurface (exercised through mapError), the onUnexpected sink, and 500 leak-freedom.

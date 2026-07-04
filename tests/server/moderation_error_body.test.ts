@@ -1,4 +1,4 @@
-// Unit coverage for moderationErrorBody (server/http_util.ts): the Phase 22
+// Unit coverage for moderationErrorBody (server/http_util.ts): the coded
 // legacy-body moderation formatter. It rides the additive machine `code` (and, for
 // a timed suspension, the machine-readable `date`) alongside the UNTOUCHED legacy
 // prose, deriving the code from the status fields EXACTLY as the problem+json

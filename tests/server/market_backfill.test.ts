@@ -1,4 +1,4 @@
-// Unit test for the Phase 20 partitioned World Market backfill
+// Unit test for the partitioned World Market backfill
 // (server/market_backfill.ts). Postgres is a plain recording fake: every call
 // records { text, params } and returns a scripted rows array, so every path is
 // deterministic with no live database. The pure helpers are exercised directly.

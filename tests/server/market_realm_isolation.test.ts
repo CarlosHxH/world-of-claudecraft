@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, it, vi } from 'vitest';
 import type { MarketSave } from '../../src/sim/sim';
 
-// Two-realm World Market isolation regression (Phase 20).
+// Two-realm World Market isolation regression.
 //
 // WHAT THIS PINS: every realm process shares one DATABASE_URL. Before realm
 // scoping the market persisted to the single bare world_state row 'market', so

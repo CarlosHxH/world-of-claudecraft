@@ -210,7 +210,7 @@ describe('requireAccount: success', () => {
   });
 });
 
-// The Phase 10 authz-gap-close mode: a route serves anonymously when NO token is
+// The public-read authz-gap-close mode: a route serves anonymously when NO token is
 // present, but a token that IS present is still validated (an invalid token is
 // rejected, never silently treated as anonymous). Only the absent-header branch
 // changes; everything past it is the required-mode behavior.

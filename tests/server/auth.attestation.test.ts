@@ -1,4 +1,4 @@
-// Unit coverage for the Phase 11 auth migration (server/auth_routes.ts +
+// Unit coverage for the auth migration (server/auth_routes.ts +
 // server/http/middleware/turnstile.ts). Three surfaces are pinned here without a
 // live server or Postgres:
 //   (a) the native-attestation challenge handler, driven through the exported

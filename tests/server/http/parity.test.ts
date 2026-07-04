@@ -1,4 +1,4 @@
-// Phase 9 old-vs-new /api dispatch parity (docs/api-pipeline/phase-09-registry-parity.md).
+// Old-vs-new /api dispatch parity.
 //
 // This harness proves the new in-house /api dispatcher is byte-for-byte identical
 // to today. It replays a corpus of /api requests through routeHttpRequest under
@@ -9,8 +9,8 @@
 // The parity contract as routes migrate: an un-migrated /api path still delegates
 // to the legacy handleApi ladder UNCHANGED, so old and new resolve through the
 // exact same handler and are byte-identical. A migrated route is byte-identical
-// too UNLESS it carries a labeled known deviation. Phase 10 (public reads) is the
-// first migration and lands two deviations: the /api/status name-list trim and the
+// too UNLESS it carries a labeled known deviation. The public-reads migration was
+// the first and landed two deviations: the /api/status name-list trim and the
 // /api/realms + /api/search authz-gap-close. So the raw old-vs-new divergence list
 // is no longer empty; the known-deviations filter removes exactly those, and any
 // residual divergence is a real parity break.
@@ -133,10 +133,10 @@ const API_REQUEST_CORPUS: readonly ApiRequestSpec[] = [
   { name: 'leaderboard_scope_global', method: 'GET', url: '/api/leaderboard?scope=global' },
   { name: 'leaderboard_scope_realm', method: 'GET', url: '/api/leaderboard?scope=realm' },
   { name: 'leaderboard_limit5', method: 'GET', url: '/api/leaderboard?limit=5' },
-  // HEAD parity: the Phase 4 router synthesizes HEAD from GET, but the dispatcher
+  // HEAD parity: the table router synthesizes HEAD from GET, but the dispatcher
   // delegates a HEAD match to the legacy ladder (which 404s HEAD) so HEAD stays
   // byte-identical old-vs-new while the legacy arms are retained (serving HEAD as
-  // GET is deferred to the Phase 25 flag flip). This pins it: a HEAD to a migrated
+  // GET is deferred to the ladder deletion). This pins it: a HEAD to a migrated
   // GET route must 404 on BOTH paths, with no divergence and no known-deviation.
   { name: 'leaderboard_head_404', method: 'HEAD', url: '/api/leaderboard' },
 
@@ -184,7 +184,7 @@ const API_REQUEST_CORPUS: readonly ApiRequestSpec[] = [
   { name: 'wallet_get_noauth_401', method: 'GET', url: '/api/wallet' },
   { name: 'referrals_get_noauth_401', method: 'GET', url: '/api/referrals' },
   { name: 'reports_post_noauth_401', method: 'POST', url: '/api/reports', body: {} },
-  // Phase 10 authz-gap-close: /api/search is now anonymous-friendly, so a no-token
+  // The public-reads authz-gap-close: /api/search is now anonymous-friendly, so a no-token
   // request serves 200 { results: [] } (empty query) instead of the legacy 401.
   // The query is intentionally dropped so the served path stays db-free (a
   // non-empty ?q would reach searchCharacters); old 401 vs new 200 is the
@@ -261,11 +261,11 @@ function isolate(): void {
   resetDiscordRateLimits();
   resetWocBalanceRateLimits();
   resetPublicReadRateLimits();
-  // Keep in lockstep with isolatePass: the Phase 12 per-account character-mutation
+  // Keep in lockstep with isolatePass: the per-account character-mutation
   // buckets are separate, so a create/rename/delete/takeover 429 on one pass must not
   // bleed into the next (harmless today, since no captureBothModes case mutates).
   resetCharacterMutationRateLimits();
-  // The Phase 15 reports.create limiter bucket, likewise (the reports re-pin 401s at
+  // The reports.create limiter bucket, likewise (the reports re-pin 401s at
   // activeGuard before the limiter, so this is lockstep hygiene, not load-bearing).
   resetReportsCreateRateLimits();
   resetAuthFailures();
@@ -355,7 +355,7 @@ afterAll(async () => {
 
 describe('/api dispatch parity (legacy flag vs new flag)', () => {
   it('has zero UNEXPECTED divergences across the whole corpus (after the known-deviations filter)', () => {
-    // Phase 10 migrates real routes onto the new dispatcher. For an un-migrated or a
+    // Real routes are migrated onto the new dispatcher. For an un-migrated or a
     // parity-clean migrated route old-vs-new is byte-identical; the only permitted
     // divergences are the labeled known deviations (the /api/status name-list trim
     // and the /api/realms + /api/search authz-gap-close). A divergence on any other
@@ -429,7 +429,7 @@ describe('/api dispatch parity (legacy flag vs new flag)', () => {
   });
 
   it('POST /api/reports with no auth is identical old-vs-new and is a 401 (re-pins the masked /api/reports)', async () => {
-    // Phase 15 registers POST /api/reports behind the shared legacy-body activeGuard
+    // The migration registers POST /api/reports behind the shared legacy-body activeGuard
     // and lists /api/reports in the newLimiterReportsCreate + reportsBodyValidationRemap
     // deviations, which mark the whole path as a known deviation in the aggregate
     // filter. The reports_post_noauth_401 corpus request never reaches the limiter or
@@ -446,7 +446,7 @@ describe('/api dispatch parity (legacy flag vs new flag)', () => {
   });
 
   it('the card pre-auth 413 + Connection: close is identical old-vs-new (re-pins the masked /api/card)', async () => {
-    // Phase 14 registers POST /api/card and lists it in the rateLimitedBodyToCode
+    // The migration registers POST /api/card and lists it in the rateLimitedBodyToCode
     // deviation (its 429 body becomes a code), which marks the whole /api/card path
     // as a known deviation in the aggregate filter. The card_too_large_413 corpus
     // request never hits the limiter (it 413s pre-auth on Content-Length), so it must
@@ -558,7 +558,7 @@ describe('/api dispatch parity (legacy flag vs new flag)', () => {
     expect(stableStringify(newCap)).toBe(stableStringify(oldCap));
   });
 
-  // ---- Phase 16 Discord re-pins ------------------------------------------
+  // ---- Discord re-pins ------------------------------------------
   // The newLimiterDiscord deviation lists /api/auth/discord/start,
   // /api/auth/discord/callback and /api/discord, so the aggregate path-scoped filter
   // masks EVERY divergence on those paths. The four discord corpus fixtures never hit
@@ -681,7 +681,7 @@ describe('/api dispatch parity (legacy flag vs new flag)', () => {
 });
 
 // -----------------------------------------------------------------------------
-// Phase 17: /admin/api dual-path parity. Phase 17 routes /admin/api through its OWN
+// /admin/api dual-path parity. The admin surface runs through its OWN
 // flag-gated dispatcher (main.ts adminApiEntry) whose delegate is the legacy
 // handleAdminApi, so makeModedDispatch (which flips the shared API_DISPATCH flag)
 // drives the admin surface old-vs-new too. The admin authenticated reads/writes need
@@ -761,7 +761,7 @@ describe('/admin/api dispatch parity (legacy flag vs new flag)', () => {
 });
 
 // -----------------------------------------------------------------------------
-// Phase 18: /oauth dual-path parity. Phase 18 routes /oauth through its OWN
+// /oauth dual-path parity. The oauth surface runs through its OWN
 // flag-gated dispatcher (main.ts oauthApiEntry) whose delegate is the legacy
 // handleOAuth, so makeModedDispatch drives the oauth surface old-vs-new too. Only
 // the 5 POST JSON routes are registered; the GET consent/device HTML pages, HEAD,
@@ -880,9 +880,9 @@ describe('/oauth dispatch parity (legacy flag vs new flag)', () => {
 });
 
 // -----------------------------------------------------------------------------
-// Phase 18: /internal dual-path parity. Phase 18 routes /internal through its OWN
+// /internal dual-path parity. The internal surface runs through its OWN
 // flag-gated dispatcher (main.ts internalApiEntry) whose delegate is the EXACT
-// pre-Phase-18 composite (the /internal/daily-rewards/* ops family tried first,
+// pre-migration composite (the /internal/daily-rewards/* ops family tried first,
 // then handleInternalApi), so makeModedDispatch drives the internal surface
 // old-vs-new too. The secret gates read their env var PER REQUEST, so each case
 // pins its env inside the test and restores it; captureBothModes runs both passes
@@ -1034,8 +1034,8 @@ describe('/internal dispatch parity (legacy flag vs new flag)', () => {
     // its own x-woc-daily-reward-secret gate fails CLOSED (401 'not authenticated'
     // when its env secret is unset), whereas the ladder would answer its terminal
     // 404 'unknown endpoint' for this path. If the composite ordering ever flipped,
-    // this pin catches it on the LEGACY pass. Since Phase 18b the route is ALSO on
-    // the table: under 'new' the matched RouteDef's fail-closed
+    // this pin catches it on the LEGACY pass. Since the late-arrival migration the
+    // route is ALSO on the table: under 'new' the matched RouteDef's fail-closed
     // requireInternalSecretFailClosed gate answers the SAME 401 byte-for-byte, so
     // the pin now proves gate-parity under 'new' AND composite ordering under
     // 'legacy'; db-free (both gates reject before any query).
@@ -1067,19 +1067,19 @@ describe('/internal dispatch parity (legacy flag vs new flag)', () => {
 });
 
 // -----------------------------------------------------------------------------
-// Phase 18b: the release-merge late-arrival families (github, desktop-login,
-// daily-rewards), dual-path pins. Every route below carries a Phase 18b known
+// The release-merge late-arrival families (github, desktop-login,
+// daily-rewards), dual-path pins. Every route below carries a late-arrival known
 // deviation (the *BodyValidationRemap hang-counterfactual class), which MASKS
 // its whole path in the corpus-wide known-deviations filter above, so these
 // dedicated captureBothModes assertions re-pin the db-free contract points
-// byte-identical old-vs-new (the Phase 15/16 re-pin rule; the head-parity
+// byte-identical old-vs-new (the reports/discord re-pin rule; the head-parity
 // gotcha). All cases are db-free: the no-auth 401s reject a missing bearer
 // before any resolver, the github callback answers its unconfigured 503 before
 // any state read, the exchange 401 is an in-process Map miss, and the ops
 // mark-payout 400 validates before its first query.
 // -----------------------------------------------------------------------------
 
-describe('/api + /internal Phase 18b late-arrival dispatch parity (legacy flag vs new flag)', () => {
+describe('/api + /internal late-arrival dispatch parity (legacy flag vs new flag)', () => {
   const GITHUB_ID_ENV = 'GITHUB_OAUTH_CLIENT_ID';
   const GITHUB_SECRET_ENV = 'GITHUB_OAUTH_CLIENT_SECRET';
   const DAILY_ENV = 'WOC_DAILY_REWARD_SERVICE_SECRET';
@@ -1089,7 +1089,7 @@ describe('/api + /internal Phase 18b late-arrival dispatch parity (legacy flag v
   // The no-auth 401 pins: both paths reject a missing bearer db-free with the
   // legacy { error: 'not authenticated' } body (legacy arm: bearerActiveAccount;
   // new path: the shared createActiveGuard), including the desktop-login create
-  // arm's Phase 18b full-scope fix, which is identical on BOTH paths by design.
+  // arm's full-scope fix, which is identical on BOTH paths by design.
   const NOAUTH_18B_REQUESTS: ReadonlyArray<{ method: string; url: string; body?: unknown }> = [
     { method: 'POST', url: '/api/auth/github/start', body: {} },
     { method: 'GET', url: '/api/github' },
@@ -1168,9 +1168,9 @@ describe('/api + /internal Phase 18b late-arrival dispatch parity (legacy flag v
     // Only GET is registered for the callback, so the registry resolves
     // methodNotAllowed and the dispatcher DELEGATES; the exact-path ladder arm
     // gates on GET, so a POST falls through to the terminal 404, byte-identical.
-    // At the Phase 25 ladder deletion this shape flips to the table 405 (the
-    // systemic planned405BeforeAuth framing; named in the state.md Phase 25
-    // carve-out at the 18b QA gate).
+    // At the ladder deletion this shape flips to the table 405 (the
+    // systemic planned405BeforeAuth framing; named in the state.md ladder-deletion
+    // carve-out at the late-arrival QA gate).
     const { oldCap, newCap } = await captureBothModes(() =>
       makeReq({ method: 'POST', url: '/api/auth/github/callback', body: {} }),
     );
@@ -1332,7 +1332,7 @@ describe('/api + /internal Phase 18b late-arrival dispatch parity (legacy flag v
   it('an unknown /internal/daily-rewards subpath with the correct secret delegates to the gate-then-404, identical old-vs-new', async () => {
     // Off the route table: the dispatcher delegates, the composite's first arm
     // gates (pass) and answers the in-family 404, byte-identical. The family-wide
-    // pre-path gate is a Phase 25 handoff (see dailyRewardsOpsBodyValidationRemap).
+    // pre-path gate is a ladder-deletion handoff (see dailyRewardsOpsBodyValidationRemap).
     const { oldCap, newCap } = await captureWithEnv({ [DAILY_ENV]: PARITY_SECRET }, () =>
       makeReq({
         method: 'POST',
@@ -1359,24 +1359,24 @@ describe('/api + /internal Phase 18b late-arrival dispatch parity (legacy flag v
 //     inlined HTML the normalizer returns verbatim (non-deterministic + a privacy
 //     flag); only the error bounce is replayed.
 //   - The /admin/api authenticated reads/writes: they reach pool.query against the
-//     pool-less test db. Phase 17 routes /admin/api through its own flag-gated
+//     pool-less test db. The admin surface runs through its own flag-gated
 //     dispatcher, so the DB-FREE admin contract paths ARE replayed old-vs-new in the
 //     '/admin/api dispatch parity' block above (the 401 gate + the login db-free 401);
 //     only the authed bodies are deferred, exactly as characterization defers them.
 //   - The /oauth/* and /internal/* db-touching success paths (a real token exchange,
 //     a consent approval, the discord flex/roles/grant/member/relay/activity/winners
 //     reads and writes, the authed restart-countdown): all reach pool.query or the
-//     singleton GameServer. Phase 18 routes both surfaces through their own
+//     singleton GameServer. Both surfaces run through their own
 //     flag-gated dispatchers, so the DB-FREE contract paths ARE replayed old-vs-new
 //     in the '/oauth dispatch parity' and '/internal dispatch parity' blocks above
 //     (including two real gate-pass 200s: presence and members-meta); only the
 //     db-touching bodies are deferred, exactly as characterization defers them, and
 //     pinned with fakes in tests/server/oauth.test.ts + tests/server/internal.test.ts.
-//   - The Phase 18b authed success bodies (an authed github start/status/unlink, a
+//   - The late-arrival authed success bodies (an authed github start/status/unlink, a
 //     desktop-login create 200 mint, the daily-rewards status/spin/history 200s, the
 //     ops pending-payouts/payout-history 200s): all resolve a bearer or read payouts
 //     against the pool-less db. The db-free contract points ARE replayed old-vs-new
-//     in the Phase 18b block above (incl. one real ops gate-pass through the
+//     in the late-arrival block above (incl. one real ops gate-pass through the
 //     migrated chain: the mark-payout 400); the success bodies are pinned with fakes
 //     in tests/server/{github,desktop_login,daily_rewards_routes}.test.ts.
 // -----------------------------------------------------------------------------

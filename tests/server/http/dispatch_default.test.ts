@@ -1,4 +1,4 @@
-// Phase 25 dispatch-default flip (docs/api-pipeline/phase-25-docs-flag-flip.md):
+// The dispatch-default flip:
 // the new in-house pipeline is now the PRODUCTION default, with API_DISPATCH=legacy
 // the one-flag rollback to the retained legacy ladder. This proves BOTH directions
 // on ALL FOUR flag-gated entries (api, admin, oauth, internal), db-free.
@@ -8,7 +8,7 @@
 //      or empty API_DISPATCH is that default; 'legacy' is one flag away; a garbage
 //      value throws (no silent default).
 //   2. ROUTING through the REAL routeHttpRequest under both modes:
-//      - /api has a db-free VISIBLE new-vs-legacy discriminator (the Phase 10
+//      - /api has a db-free VISIBLE new-vs-legacy discriminator (the public-read
 //        realmsSearchAuthzGapClose + statusNameListTrim deviations): GET /api/search
 //        with no bearer is 200 { results: [] } on the NEW pipeline vs 401 on the
 //        legacy ladder, and GET /api/status trims names[] on the NEW pipeline. So the
@@ -130,7 +130,7 @@ afterEach(() => {
 // Layer 1: the config default IS the flip.
 // ---------------------------------------------------------------------------
 
-describe('Phase 25 dispatch default: loadConfig', () => {
+describe('dispatch default: loadConfig', () => {
   it('defaults an unset API_DISPATCH to the new pipeline', () => {
     // The literal, never DEFAULT_DISPATCH compared to itself: pin 'new'.
     expect(loadConfig({ ...MIN_ENV }).dispatch).toBe('new');
@@ -154,7 +154,7 @@ describe('Phase 25 dispatch default: loadConfig', () => {
 // Layer 2a: the /api entry, VISIBLE discriminator (search + status deviations).
 // ---------------------------------------------------------------------------
 
-describe('Phase 25 dispatch default: the /api entry (visible discriminator)', () => {
+describe('dispatch default: the /api entry (visible discriminator)', () => {
   it('serves GET /api/search through the NEW pipeline under the boot default (200 empty results)', async () => {
     main.resetApiDispatchModeForTests(); // the boot default, now 'new'
     const cap = await captureResponse(drive, makeReq({ method: 'GET', url: '/api/search' }));
@@ -192,7 +192,7 @@ describe('Phase 25 dispatch default: the /api entry (visible discriminator)', ()
 // -circuit pre-Postgres on the onion path.
 // ---------------------------------------------------------------------------
 
-describe('Phase 25 dispatch default: the /admin/api entry', () => {
+describe('dispatch default: the /admin/api entry', () => {
   const matched = () => makeReq({ method: 'GET', url: '/admin/api/overview' });
 
   it('runs a matched admin route through the onion under the new default (handleAdminApi NOT called)', async () => {
@@ -219,7 +219,7 @@ describe('Phase 25 dispatch default: the /admin/api entry', () => {
   });
 });
 
-describe('Phase 25 dispatch default: the /oauth entry', () => {
+describe('dispatch default: the /oauth entry', () => {
   const matched = () => makeReq({ method: 'POST', url: '/oauth/token', body: {} });
 
   it('runs a matched oauth route through the onion under the new default (handleOAuth NOT called)', async () => {
@@ -246,7 +246,7 @@ describe('Phase 25 dispatch default: the /oauth entry', () => {
   });
 });
 
-describe('Phase 25 dispatch default: the /internal entry (the daily-rewards + handleInternalApi composite)', () => {
+describe('dispatch default: the /internal entry (the daily-rewards + handleInternalApi composite)', () => {
   const matched = () => makeReq({ method: 'POST', url: '/internal/restart-countdown', body: {} });
 
   it('runs a matched internal route through the onion under the new default (composite NOT called)', async () => {

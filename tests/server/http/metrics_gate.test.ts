@@ -1,4 +1,4 @@
-// Phase 24 tests for the /metrics exposure gate plus the two boot-wiring effects
+// Tests for the /metrics exposure gate plus the two boot-wiring effects
 // it rides in with:
 //   a) UNIT: handleMetricsGate (server/http/health.ts) directly over FakeRes: the
 //      feature-off 404 (token unset), the exposition on a correct Bearer, and the

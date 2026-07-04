@@ -1,5 +1,5 @@
-// Registry-wide DENY-BY-DEFAULT functional coverage gate for the Phase 12 BOLA
-// seam (docs/api-pipeline/).
+// Registry-wide DENY-BY-DEFAULT functional coverage gate for the BOLA
+// requireOwned seam.
 //
 // tests/server/http/completeness.test.ts already asserts the METADATA marker:
 // checkRequireOwnedCoverage([...apiRoutes]) is empty, so every account-owned :id
@@ -94,7 +94,7 @@ const NOT_LOCKED = {
 };
 
 // The account-owned :id routes the sweep covers: every registry route whose
-// meta.requireOwned is account-scoped. Phase 12's character :id subroutes
+// meta.requireOwned is account-scoped. The character :id subroutes
 // (standing, sheet, rename, takeover, delete) are the only ones today.
 const accountOwnedRoutes: RouteDef[] = apiRoutes.filter(
   (route) => route.meta?.requireOwned?.ownerScope === 'account',
@@ -280,9 +280,9 @@ describe('ownership coverage: registry-wide deny-by-default sweep', () => {
 });
 
 // -------------------------------------------------------------------------
-// Operator-scope deny-by-default sweep (Phase 17).
+// Operator-scope deny-by-default sweep.
 //
-// Phase 17 introduced the admin/operator surface, so the forward guard that once
+// The admin migration introduced the operator surface, so the forward guard that once
 // asserted "no operator route exists" is replaced by a real sweep. The operator
 // :id routes (server/admin.ts) authorize NO cross-scope object (an admin has
 // universal authority over every target), so unlike the account loader they emit no
@@ -347,7 +347,7 @@ async function runRouteWithErrors(
   return { res: resOf(ctx), handler };
 }
 
-describe('ownership coverage: operator-scope deny-by-default sweep (Phase 17)', () => {
+describe('ownership coverage: operator-scope deny-by-default sweep', () => {
   beforeEach(() => {
     // A stubbed runtime so a handler that unexpectedly ran (a regression) fails on a
     // clean assertion, not an unconfigured-runtime throw. The sweep never reaches it
@@ -471,7 +471,7 @@ describe('ownership coverage: operator-scope deny-by-default sweep (Phase 17)', 
 });
 
 // -------------------------------------------------------------------------
-// Admin auth-mounting sweep (Phase 17 QA).
+// Admin auth-mounting sweep.
 //
 // The operator sweep above proves the guards on the 12 :id routes; this sweep closes
 // the REST of the admin surface. Every admin route except the anonymous login must
@@ -489,7 +489,7 @@ const authedAdminRoutes: RouteDef[] = adminSurfaceRoutes.filter(
   (route) => !(route.method === 'POST' && route.path === '/admin/api/login'),
 );
 
-describe('admin auth-mounting sweep: every non-login admin route 401s an unauthenticated request (Phase 17 QA)', () => {
+describe('admin auth-mounting sweep: every non-login admin route 401s an unauthenticated request', () => {
   beforeEach(() => {
     // A stubbed runtime + a passing db seam so a route that DID reach its handler (a
     // regression where requireAdmin is missing) fails the 401 assertion cleanly
@@ -550,16 +550,16 @@ describe('admin auth-mounting sweep: every non-login admin route 401s an unauthe
 });
 
 // -------------------------------------------------------------------------
-// Internal secret-gate mounting sweep (Phase 18; the third gate pair 18b).
+// Internal secret-gate mounting sweep.
 //
-// The analogous gate-mounting sweep the Phase 17 QA mandated for every future
+// The analogous gate-mounting sweep the admin-surface QA mandated for every future
 // authed surface: requireInternalSecret carries no meta marker, so no metadata
 // clause can catch a forgotten gate; only this functional sweep can. An ungated
 // /internal route would serve the Discord-bot / deploy / payout ops surface to
 // the open internet. It drives each route's real middleware chain twice,
 // asserting the gate short-circuits with the legacy bodies BEFORE the handler:
 //   1. env secret UNSET  -> the deploy/discord gates hide with the feature-off
-//      404 { ...error: 'unknown endpoint' } (anti-enumeration); the Phase 18b
+//      404 { ...error: 'unknown endpoint' } (anti-enumeration); the late-arrival
 //      daily-reward gate FAILS CLOSED with 401 { ...error: 'not authenticated' }
 //      instead (daily_rewards.ts internalAuthorized semantics, no fallback);
 //   2. env secret SET + a WRONG header secret -> 401 { ...error: 'not
@@ -616,7 +616,7 @@ function gatePairFor(route: RouteDef): {
 
 const SWEPT_SECRET_ENVS = [DEPLOY_SECRET_ENV, DISCORD_SECRET_ENV, DAILY_REWARD_SECRET_ENV] as const;
 
-describe('internal secret-gate mounting sweep: every /internal route is gated (Phase 18 + 18b)', () => {
+describe('internal secret-gate mounting sweep: every /internal route is gated', () => {
   const savedSecrets = new Map<string, string | undefined>();
 
   beforeEach(() => {
@@ -643,9 +643,9 @@ describe('internal secret-gate mounting sweep: every /internal route is gated (P
     vi.restoreAllMocks();
   });
 
-  it('selects the full 15-route internal surface (11 Phase 18 + the 4 ops routes)', () => {
+  it('selects the full 15-route internal surface (the handleInternalApi 11 + the 4 ops routes)', () => {
     // The ops family is 4 since v0.20.0 added its paginated leaderboard read to
-    // the 3 Phase 18b rows.
+    // the 3 late-arrival rows.
     expect(internalSurfaceRoutes.length).toBe(15);
   });
 
@@ -702,10 +702,10 @@ describe('internal secret-gate mounting sweep: every /internal route is gated (P
 });
 
 // -------------------------------------------------------------------------
-// /api auth-mounting sweep (Phase 18b).
+// /api auth-mounting sweep.
 //
-// The Phase 17 QA mandate applied to the /api surface: the authed routes the
-// 18b late-arrival migration registered must actually MOUNT their bearer guard
+// The admin-surface QA mandate applied to the /api surface: the authed routes the
+// late-arrival migration registered must actually MOUNT their bearer guard
 // (createActiveGuard carries no meta marker, so only a functional sweep can
 // catch a forgotten gate; an ungated github/daily-rewards read would leak
 // account-linked data, and an ungated desktop-login create would mint session
@@ -714,13 +714,13 @@ describe('internal secret-gate mounting sweep: every /internal route is gated (P
 // guard rejects a null bearer before consulting any resolver) without ever
 // reaching the handler. desktop-login create's fused rate guard runs BEFORE the
 // auth guard (the legacy order), so the limiter buckets are reset per test.
-// Future /api phases extend this list with their authed routes.
+// Future authed /api surfaces extend this list with their routes.
 // -------------------------------------------------------------------------
 
 // The legacy { error } body the shared active guard writes for a missing bearer.
 const API_NOT_AUTHENTICATED = { error: 'not authenticated', code: 'auth.required' };
 
-// The (method, path) pairs of the Phase 18b authed /api routes, extended with
+// The (method, path) pairs of the late-arrival authed /api routes, extended with
 // the v0.20.0 release-merge arrivals (the account email backfill + the
 // paginated daily leaderboard, both behind the shared active guard).
 const AUTHED_18B_ROUTES: ReadonlyArray<{ method: string; path: string }> = [
@@ -752,12 +752,11 @@ const AUTHED_18B_ROUTES: ReadonlyArray<{ method: string; path: string }> = [
 
 const authed18bRoutes: RouteDef[] = AUTHED_18B_ROUTES.map((spec) => {
   const route = apiRoutes.find((r) => r.method === spec.method && r.path === spec.path);
-  if (!route)
-    throw new Error(`Phase 18b authed route missing from registry: ${spec.method} ${spec.path}`);
+  if (!route) throw new Error(`authed route missing from registry: ${spec.method} ${spec.path}`);
   return route;
 });
 
-describe('/api auth-mounting sweep: every authed Phase 18b route 401s an unauthenticated request', () => {
+describe('/api auth-mounting sweep: every authed late-arrival route 401s an unauthenticated request', () => {
   beforeEach(() => {
     // The desktop-login create chain consumes the fused register/login budget
     // before auth; a clean bucket per test keeps the sweep order-independent.

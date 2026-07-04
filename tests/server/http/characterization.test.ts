@@ -1,11 +1,11 @@
-// Phase 3 characterization goldens for the MAIN /api surface (the handleApi
+// Characterization goldens for the MAIN /api surface (the handleApi
 // route table in server/main.ts). Every case drives a real request through the
 // exported routeHttpRequest, which exercises the genuine CORS + prefix ladder and
 // the module-scope (pool-less) GameServer, then captures the deterministic
 // CONTRACT response (status + normalized body + contracted headers) into a golden
 // fixture under tests/server/fixtures/main/. These goldens record what the server
 // emits TODAY; they assert nothing about whether that behavior is correct, so a
-// later phase (7/22) that renames a code or relocalizes a string updates the
+// later change that renames a code or relocalizes a string updates the
 // golden in the same change.
 //
 // Determinism rules this file obeys:
@@ -14,7 +14,7 @@
 //     because the leaderboard cache swallows the db error. Db-dependent success
 //     paths (project-stats, arena ladder, populated leaderboards, the OAuth/Discord
 //     success bounces) are DEFERRED, see the trailing comment block.
-//   - The phase-2 normalizer masks the dynamic fields (challengeId/nonce) by key, so
+//   - The harness normalizer masks the dynamic fields (challengeId/nonce) by key, so
 //     the native-attestation challenge golden is byte-stable across runs.
 //   - The GitHub releases proxy does a network fetch; it is pinned deterministic by
 //     stubbing global fetch to reject (the real graceful-degradation contract when
@@ -59,8 +59,8 @@ let main: typeof import('../../../server/main');
 
 beforeAll(async () => {
   main = await import('../../../server/main');
-  // These goldens characterize the LEGACY handleApi ladder. Phase 25 flipped the
-  // boot default to 'new', so pin the dispatch mode to 'legacy' EXPLICITLY here:
+  // These goldens characterize the LEGACY handleApi ladder. The boot default
+  // flipped to 'new', so pin the dispatch mode to 'legacy' EXPLICITLY here:
   // otherwise status_get and search_get_noauth_401 would capture the migrated
   // new-pipeline shapes, which are intentionally DIFFERENT (the statusNameListTrim
   // and realmsSearchAuthzGapClose deviations). Making it explicit keeps this the
@@ -216,7 +216,7 @@ describe('main /api characterization: email link endpoints (public, no token = n
 
 // Wrong-method-on-a-known-path baseline for the planned405BeforeAuth deviation:
 // today a known path requested with an unsupported method falls through to the
-// shared 404 "unknown endpoint" arm (no method-aware 405). Phase 4's table router
+// shared 404 "unknown endpoint" arm (no method-aware 405). The table router
 // flips these to a uniform pre-auth 405; these goldens anchor today's 404 so that
 // change diffs against a real baseline rather than an unstated assumption.
 describe('main /api characterization: wrong-method fallthrough (planned 405 baseline)', () => {
@@ -347,12 +347,12 @@ describe('main /api characterization: register + login validation (empty body, p
   });
 });
 
-describe('main /api characterization: Phase 18b late-arrival backfill (github + desktop-login + daily-rewards)', () => {
-  // These routes arrived via release merges AFTER the Phase 3 capture (the
+describe('main /api characterization: late-arrival backfill (github + desktop-login + daily-rewards)', () => {
+  // These routes arrived via release merges AFTER the original capture (the
   // v0.18.0 github family, the v0.19.0 desktop-login pair and daily-rewards
   // player trio), so their db-free contract points are backfilled here
-  // write-if-absent, freezing the legacy contract on disk before the Phase 25
-  // flag flip. The desktop-login create 401 reflects the Phase 18b full-scope
+  // write-if-absent, freezing the legacy contract on disk before the dispatch
+  // default flipped to 'new'. The desktop-login create 401 reflects the full-scope
   // arm (bearerActiveAccount), identical prose to the pre-fix no-auth reject.
   it('POST /api/auth/github/start with no auth is the bearer 401', async () => {
     await characterize(

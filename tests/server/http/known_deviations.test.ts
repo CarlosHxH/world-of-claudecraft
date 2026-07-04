@@ -1,11 +1,11 @@
-// Freshness + grounding gate for the known-deviations ledger (Phase 3 spine).
+// Freshness + grounding gate for the known-deviations ledger (characterization spine).
 //
 // The ledger only earns its keep if every entry stays grounded in reality: it
 // must name routes that actually exist in the surface inventory, phases inside
 // the real re-architecture window, unique ids, and golden fixtures that are
 // genuinely on disk. This test hard-fails the moment a deviation drifts from any
 // of those (a renamed route, a typo phase number, a duplicate id, a missing
-// fixture), so the later phases land their changes against a true baseline.
+// fixture), so later changes land against a true baseline.
 //
 // It anchors on route STRINGS and fixture PATHS, never line numbers.
 
