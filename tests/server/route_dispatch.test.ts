@@ -8,7 +8,7 @@
 // handleApi/serveStatic arms are exercised only via the OPTIONS short-circuit,
 // which returns before reaching them.
 import type * as http from 'node:http';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../../server/admin', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../../server/admin')>();
@@ -68,11 +68,21 @@ function fakeRes() {
   };
 }
 
+let mainMod: typeof import('../../server/main') | undefined;
+
 async function loadRoute() {
   // db.ts reads DATABASE_URL at module scope (throws if unset); a dummy URL lets
   // the bare import resolve without binding a socket or opening a connection.
   process.env.DATABASE_URL ||= 'postgres://test:test@127.0.0.1:5433/wocc_phase1_test';
   const main = await import('../../server/main');
+  mainMod = main;
+  // These tests pin the LEGACY prefix-ladder delegation: the four sub-dispatchers
+  // are observed via the mocked handleAdminApi / handleInternalApi /
+  // handleDailyRewardInternalApi spies, which only fire on the legacy delegate path.
+  // Phase 25 flipped the boot default to 'new', where a MATCHED migrated path
+  // (/internal/restart-countdown, /internal/daily-rewards/*) runs the onion instead
+  // of the delegate, so pin the mode to 'legacy' EXPLICITLY here.
+  main.setApiDispatchModeForTests('legacy');
   const admin = await import('../../server/admin');
   const internal = await import('../../server/internal');
   const dailyRewards = await import('../../server/daily_rewards');
@@ -83,6 +93,11 @@ async function loadRoute() {
     handleDailyRewardInternalApi: vi.mocked(dailyRewards.handleDailyRewardInternalApi),
   };
 }
+
+// Restore the boot-default dispatch mode after each test (loadRoute pins 'legacy').
+afterEach(() => {
+  mainMod?.resetApiDispatchModeForTests();
+});
 
 describe('routeHttpRequest: OPTIONS-204 + CORS short-circuit', () => {
   it('short-circuits an OPTIONS /api preflight with 204 before any dispatch', async () => {

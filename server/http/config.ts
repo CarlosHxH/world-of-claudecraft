@@ -32,10 +32,12 @@
 //       per-command cheat gates (alongside ANTIBOT_ENFORCE, PERF_TICK_LOG,
 //       SELF_SNAPSHOT_FULL) and the two /api/perf report gates (the main.ts legacy
 //       arm and the leaderboard.ts migrated arm, each kept a live per-request read
-//       so the two dispatch arms cannot diverge before the Phase 25 ladder
-//       deletion). ALLOW_DEV_COMMANDS is also surfaced on Config (allowDevCommands)
-//       as the validated single-source pin for a later-phase consumer; every live
-//       cheat gate stays a per-command env read on purpose.
+//       so the two dispatch arms cannot diverge while the legacy ladder is retained
+//       behind the flag). The old-ladder deletion is the NEXT-RELEASE follow-up PR
+//       (not Phase 25): that PR removes the legacy /api/perf arm and wires the
+//       surviving migrated arm onto Config.allowDevCommands (the validated
+//       single-source pin); the game.ts per-command env reads stay per-command by
+//       design.
 //   (3) Domain feature-config getters that own their own env (discord.ts, github.ts
 //       OAuth, oauth.ts, native_attestation.ts, email/, auth.ts banlist,
 //       chat_filter_db.ts, woc_balance.ts, perf_report.ts, TRUSTED_PROXY_IPS in
@@ -71,16 +73,18 @@ export type DispatchMode = 'legacy' | 'new';
 export interface Config {
   // The SINGLE all-or-nothing API dispatch flag (canonical env name API_DISPATCH).
   // 'legacy' keeps the existing route handling; 'new' selects the re-architected
-  // pipeline. A later phase flips the default to 'new'. An unset flag defaults to
-  // DEFAULT_DISPATCH; a set-but-invalid flag now THROWS (see parseDispatch).
+  // pipeline. The DEFAULT is 'new' (flipped in Phase 25); API_DISPATCH=legacy is the
+  // one-flag rollback. An unset flag defaults to DEFAULT_DISPATCH; a set-but-invalid
+  // flag THROWS (see parseDispatch).
   readonly dispatch: DispatchMode;
   // Required. Also the tier-2 rate limiter DSN: the pg-backed global limiter
   // (server/ratelimit_db.ts) shares this one pool, so an empty value is fatal.
   readonly databaseUrl: string;
   readonly port: number;
-  // The validated single-source surface of ALLOW_DEV_COMMANDS, held for a
-  // later-phase consumer; the live cheat gates (game.ts, the two /api/perf arms)
-  // deliberately re-read env per command (see conscious exception (2) above).
+  // The validated single-source surface of ALLOW_DEV_COMMANDS, wired onto the
+  // surviving /api/perf migrated arm by the next-release ladder-deletion PR; the
+  // live cheat gates (game.ts, the two /api/perf arms) deliberately re-read env per
+  // command today (see conscious exception (2) above).
   readonly allowDevCommands: boolean;
   readonly turnstileSecret: string;
   readonly maxWsPerIpHard: number;
@@ -105,8 +109,9 @@ const DISPATCH_NEW = 'new' as const;
 // The single source of truth for the default dispatch mode. Exported so the boot
 // wiring (server/main.ts) uses the SAME default for its pre-boot/test-import value
 // as loadConfig uses when API_DISPATCH is unset, rather than re-typing the literal.
-// A later phase flips this to 'new'.
-export const DEFAULT_DISPATCH: DispatchMode = DISPATCH_LEGACY;
+// Phase 25 flipped this to 'new' (the new pipeline is the production default);
+// API_DISPATCH=legacy is the one-flag rollback to the retained legacy ladder.
+export const DEFAULT_DISPATCH: DispatchMode = DISPATCH_NEW;
 
 // The literal env value that turns the dev-command cheats on. Anything else
 // (including unset) leaves them off; production must never set this.

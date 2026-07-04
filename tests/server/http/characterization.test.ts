@@ -55,8 +55,17 @@ async function loadDispatch(): Promise<Dispatch> {
 }
 
 let dispatch: Dispatch;
+let main: typeof import('../../../server/main');
 
 beforeAll(async () => {
+  main = await import('../../../server/main');
+  // These goldens characterize the LEGACY handleApi ladder. Phase 25 flipped the
+  // boot default to 'new', so pin the dispatch mode to 'legacy' EXPLICITLY here:
+  // otherwise status_get and search_get_noauth_401 would capture the migrated
+  // new-pipeline shapes, which are intentionally DIFFERENT (the statusNameListTrim
+  // and realmsSearchAuthzGapClose deviations). Making it explicit keeps this the
+  // legacy characterization it has always been, immune to the default flip.
+  main.setApiDispatchModeForTests('legacy');
   dispatch = await loadDispatch();
 });
 
@@ -422,6 +431,7 @@ describe('main /api characterization: Phase 18b late-arrival backfill (github + 
 
 afterAll(() => {
   vi.unstubAllGlobals();
+  main.resetApiDispatchModeForTests();
 });
 
 // DEFERRED /api routes (db- or network-dependent success paths; capturing them

@@ -169,6 +169,14 @@ For off-box safety, sync the directory to S3 occasionally:
   (anything else gets an opaque 401). Configure the token on **both** the server
   and the Prometheus scrape job in the same change or scraping goes dark.
   `/livez` and `/readyz` stay open for load-balancer checks.
+- **API dispatch (rollback)**: every REST surface (`/api`, `/admin/api`, `/oauth`,
+  `/internal`) runs through the in-house request pipeline by default. To roll back to
+  the old handler ladder, set `API_DISPATCH=legacy` in the server runtime env and
+  restart the process: it is one flag, no code redeploy. Leaving it unset (or `new`)
+  keeps the new pipeline. The boot log warns with an `ALERT` line only when the legacy
+  ladder is serving in production, which after this default flip means the warn fires
+  exactly when someone has rolled back (`API_DISPATCH=legacy`), a deliberate choice
+  worth noticing rather than a routine boot.
 - **Env hygiene: no empty numeric placeholders.** A SET-BUT-EMPTY numeric env
   line (`CHAT_LOG_RETENTION_DAYS=`, `PORT=`, `MAX_WS_PER_IP_HARD=`,
   `PERF_REPORT_RETENTION_DAYS=`) now means the DEFAULT, not `0`. Before the

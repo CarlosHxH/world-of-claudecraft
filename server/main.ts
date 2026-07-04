@@ -1960,9 +1960,10 @@ const apiDispatcher = createApiDispatcher({
 
 // The bound /api entry for the current dispatch mode, recomputed only when the
 // mode changes (boot + tests), never per request. It starts at the config default
-// dispatch (DEFAULT_DISPATCH, 'legacy' today) so importing this module (e.g. in a
+// dispatch (DEFAULT_DISPATCH, 'new' today) so importing this module (e.g. in a
 // test) never depends on the environment; startServer reads the real API_DISPATCH
-// flag via loadConfig once at boot. Flipping the production default to 'new' is Phase 25.
+// flag via loadConfig once at boot. Phase 25 flipped the production default to 'new';
+// API_DISPATCH=legacy is the one-flag rollback to the retained legacy ladder.
 let apiEntry: ApiDispatcher = selectApiEntry(DEFAULT_DISPATCH, apiDispatcher, handleApi);
 
 // The /admin/api surface gets its OWN flag-gated dispatcher over the SAME registry
@@ -2030,11 +2031,12 @@ function setApiDispatchMode(mode: DispatchMode): void {
 
 /**
  * Emit the one-line boot record of the active API dispatch path, plus a stderr
- * ALERT when the un-hardened legacy ladder is serving in production (a later phase
- * flips the production default to 'new', so a 'legacy' prod boot is a deliberate
- * rollback worth flagging loudly). Logger-injected and exported so a test asserts
- * the ALERT fires ONLY for legacy + production. Dev-channel English (no t()); the
- * fields are static, never request-derived (logger_call_hygiene safe).
+ * ALERT when the un-hardened legacy ladder is serving in production. The production
+ * default is now 'new' (Phase 25), so a 'legacy' prod boot means someone set
+ * API_DISPATCH=legacy to roll back, a deliberate choice worth flagging loudly.
+ * Logger-injected and exported so a test asserts the ALERT fires ONLY for legacy +
+ * production. Dev-channel English (no t()); the fields are static, never
+ * request-derived (logger_call_hygiene safe).
  */
 export function logApiDispatchSelection(
   log: Pick<Logger, 'info' | 'warn'>,
@@ -2060,9 +2062,14 @@ export function setApiDispatchModeForTests(mode: DispatchMode): void {
   setApiDispatchMode(mode);
 }
 
-/** Restore the default legacy /api dispatch after a test. */
+/**
+ * Restore the BOOT DEFAULT /api dispatch after a test (DEFAULT_DISPATCH, now 'new'),
+ * matching the module-init state of the four flag-gated entries. A mode-dependent
+ * test sets its mode explicitly (setApiDispatchModeForTests) and this returns to the
+ * imported default, so nothing leaks a stale mode across tests.
+ */
 export function resetApiDispatchModeForTests(): void {
-  setApiDispatchMode('legacy');
+  setApiDispatchMode(DEFAULT_DISPATCH);
 }
 
 // Single top-level source of truth for CORS + the OPTIONS-204 preflight, applied

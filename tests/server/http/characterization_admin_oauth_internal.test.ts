@@ -93,7 +93,15 @@ const DAILY_REWARD_HEADER = 'x-woc-daily-reward-secret';
 const GATE_ENABLED_VALUE = 'phase3-characterization-secret';
 
 let dispatch: Dispatch;
+let main: typeof import('../../../server/main');
 beforeAll(async () => {
+  main = await import('../../../server/main');
+  // These goldens characterize the LEGACY admin/oauth/internal ladders. Phase 25
+  // flipped the boot default to 'new', so pin the dispatch mode to 'legacy'
+  // EXPLICITLY: the captured contracts are the legacy delegate shapes, and pinning
+  // the mode keeps this the legacy characterization it has always been, immune to
+  // the default flip.
+  main.setApiDispatchModeForTests('legacy');
   dispatch = await loadDispatch();
 });
 
@@ -447,10 +455,10 @@ describe('characterization: internal handleDailyRewardInternalApi (Phase 18b bac
   });
 });
 
-// A no-op afterAll keeps the env-restore symmetry obvious: every withEnv call
-// restores its own var in a finally, so nothing leaks between cases or files.
+// Every withEnv call restores its own var in a finally, so nothing leaks between
+// cases; afterAll only restores the dispatch mode this file pinned to 'legacy'.
 afterAll(() => {
-  // Intentionally empty: per-case withEnv blocks own their cleanup.
+  main.resetApiDispatchModeForTests();
 });
 
 // -----------------------------------------------------------------------------

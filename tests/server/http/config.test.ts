@@ -26,7 +26,7 @@ describe('loadConfig', () => {
   it('applies every default given only DATABASE_URL', () => {
     const cfg = loadConfig({ ...MIN_ENV });
     expect(cfg.databaseUrl).toBe('postgres://x');
-    expect(cfg.dispatch).toBe('legacy');
+    expect(cfg.dispatch).toBe('new');
     expect(cfg.port).toBe(8787);
     expect(cfg.allowDevCommands).toBe(false);
     expect(cfg.turnstileSecret).toBe('');
@@ -44,9 +44,11 @@ describe('loadConfig', () => {
     expect(loadConfig({ ...MIN_ENV, API_DISPATCH: 'legacy' }).dispatch).toBe('legacy');
   });
 
-  it('defaults an unset or empty API_DISPATCH to legacy but THROWS on a garbage value', () => {
-    expect(loadConfig({ ...MIN_ENV, API_DISPATCH: '' }).dispatch).toBe('legacy');
-    expect(loadConfig({ ...MIN_ENV }).dispatch).toBe('legacy');
+  it('defaults an unset or empty API_DISPATCH to new but THROWS on a garbage value', () => {
+    // Phase 25 flipped DEFAULT_DISPATCH to 'new' (the new pipeline is the production
+    // default); an unset or empty API_DISPATCH resolves to that default.
+    expect(loadConfig({ ...MIN_ENV, API_DISPATCH: '' }).dispatch).toBe('new');
+    expect(loadConfig({ ...MIN_ENV }).dispatch).toBe('new');
     // The former silent fallback is now a fail-fast throw naming the key + allowed
     // values (case-sensitive: 'NEW' is not 'new').
     expect(() => loadConfig({ ...MIN_ENV, API_DISPATCH: 'bogus' })).toThrow(/API_DISPATCH/);
