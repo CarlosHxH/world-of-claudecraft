@@ -13,6 +13,7 @@ import {
   GATHERING_PROFESSION_IDS,
   GATHERING_PROFESSIONS,
   type GatheringProfessionId,
+  HARVEST_COMPONENT_ITEMS,
 } from '../content/professions';
 import type { PlayerMeta } from '../sim';
 import type { PlayerProfessionSkill } from './types';
@@ -114,16 +115,10 @@ export function gatheringSkillsView(proficiency: GatheringProficiency): PlayerPr
 // the second sees the just-written claim and is denied. No lock is needed because
 // there is no interleaving to guard against.
 
-// Component tag -> the existing item this harvest yields. Only tags with a concrete
-// profession-material item wired up so far are listed here; a mob whose
-// `componentTags` don't map to any of these still becomes single-use claimed, it
-// just yields no item yet (future profession-harvest issues wire up the rest).
-export const HARVEST_COMPONENT_ITEMS: Readonly<Record<string, string>> = {
-  hide: 'boar_hide',
-  fang: 'wolf_fang',
-  silk: 'webwood_silk',
-  venomSac: 'widow_venom_sac',
-};
+// The tag-to-item yield map is game data, so it lives in src/sim/content/professions.ts
+// (this directory holds shapes and logic, no game data; see the local CLAUDE.md).
+// Re-exported here so existing importers keep resolving.
+export { HARVEST_COMPONENT_ITEMS };
 
 export interface HarvestClaim {
   readonly success: boolean;
