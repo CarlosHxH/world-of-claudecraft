@@ -187,6 +187,12 @@ export function harvestCorpse(ctx: SimContext, mobId: number, pid?: number): voi
   const r = ctx.resolve(pid);
   if (!r) return;
   const { meta, e: p } = r;
+  // Dead players (released ghosts included) cannot harvest; the same rejection
+  // the loot/pickup commands above use.
+  if (p.dead) {
+    ctx.error(meta.entityId, "You can't do that while dead.");
+    return;
+  }
   const mob = ctx.entities.get(mobId);
   if (!mob || mob.kind !== 'mob' || !mob.dead) return;
   const componentTags = MOBS[mob.templateId]?.componentTags;
@@ -203,8 +209,16 @@ export function harvestCorpse(ctx: SimContext, mobId: number, pid?: number): voi
     ctx.error(meta.entityId, 'This corpse has already been harvested.');
     return;
   }
-  mob.harvestClaimedBy = claim.claimedBy;
+  // Capacity gate BEFORE consuming the single-use claim: addItem is never
+  // capacity-capped (the command boundary owns the canAddItem pre-check, like
+  // lootCorpse/pickUpObject in this file), and a full-bags refusal must leave
+  // the corpse unclaimed for the next harvester.
   const itemId = harvestItemFor(componentTags);
+  if (itemId && !ctx.canAddItem(itemId, 1, meta.entityId)) {
+    ctx.error(meta.entityId, 'Your bags are full.');
+    return;
+  }
+  mob.harvestClaimedBy = claim.claimedBy;
   if (itemId) ctx.addItem(itemId, 1, meta.entityId);
 }
 

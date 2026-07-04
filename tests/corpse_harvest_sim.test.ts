@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { MOBS } from '../src/sim/data';
+import { bagCapacity } from '../src/sim/bags';
+import { ITEMS, MOBS } from '../src/sim/data';
 import { createMob } from '../src/sim/entity';
 import type { PlayerMeta } from '../src/sim/sim';
 import { Sim } from '../src/sim/sim';
@@ -41,6 +42,21 @@ function setup() {
   internals.entities.set(mob.id, mob);
 
   return { sim, internals, a, b, mob };
+}
+
+// Fill every free slot with distinct 1-per-slot gear so the next add has
+// nowhere to go (same idiom as tests/bags.test.ts fillBags, per-player).
+function fillBags(sim: Sim, internals: SimInternals, pid: number): void {
+  const m = internals.players.get(pid)!;
+  const cap = bagCapacity(m.bags);
+  const gearIds = Object.values(ITEMS)
+    .filter((d) => d.kind === 'weapon' || d.kind === 'armor')
+    .map((d) => d.id);
+  let i = 0;
+  while (m.inventory.length < cap) {
+    sim.addItem(gearIds[i % gearIds.length], 1, pid);
+    i++;
+  }
 }
 
 describe('corpse harvest: single-use, first-come (#1141)', () => {
@@ -121,6 +137,38 @@ describe('corpse harvest: single-use, first-come (#1141)', () => {
     mob.dead = false;
     sim.harvestCorpse(mob.id, a);
     expect(mob.harvestClaimedBy).toBeNull();
+  });
+
+  it('a dead player cannot harvest and does not consume the claim', () => {
+    const { sim, internals, mob, a, b } = setup();
+    const alpha = internals.entities.get(a)!;
+    alpha.dead = true;
+    sim.drainEvents();
+    sim.harvestCorpse(mob.id, a);
+    const ev = sim.drainEvents();
+    expect(ev.some((e) => e.type === 'error' && e.text === "You can't do that while dead.")).toBe(
+      true,
+    );
+    expect(mob.harvestClaimedBy).toBeNull();
+    expect(sim.countItem('boar_hide', a)).toBe(0);
+    // The corpse stays unclaimed: a living player can still win it.
+    sim.harvestCorpse(mob.id, b);
+    expect(mob.harvestClaimedBy).toBe(b);
+  });
+
+  it('a full-bags harvest is refused and does not consume the claim', () => {
+    const { sim, internals, mob, a, b } = setup();
+    fillBags(sim, internals, a);
+    sim.drainEvents();
+    sim.harvestCorpse(mob.id, a);
+    const ev = sim.drainEvents();
+    expect(ev.some((e) => e.type === 'error' && e.text === 'Your bags are full.')).toBe(true);
+    expect(mob.harvestClaimedBy).toBeNull();
+    expect(sim.countItem('boar_hide', a)).toBe(0);
+    // The unconsumed claim is still winnable by a player with bag room.
+    sim.harvestCorpse(mob.id, b);
+    expect(mob.harvestClaimedBy).toBe(b);
+    expect(sim.countItem('boar_hide', b)).toBe(1);
   });
 
   it('clears the claim on respawn, so the next corpse is harvestable again', () => {
