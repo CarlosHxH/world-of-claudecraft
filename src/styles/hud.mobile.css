@@ -190,10 +190,22 @@
       inset 0 0 26px #0008,
       0 0 16px 3px #e3c66a55;
   }
+  /* Hidden by default (settings.mobileCameraJoystick, def false): swipe-look on
+     open gameplay space is the primary camera path (plan decision 2). Hidden
+     means no reserved layout space and mobile_controls.ts's onCameraDown no-ops
+     while disabled, so a hidden joystick never eats a touch either. */
+  body.mobile-touch:not(.mobile-camera-joystick-on) #mobile-camera-joystick {
+    display: none;
+  }
   body.mobile-touch #mobile-camera-joystick {
-    left: auto;
-    right: max(18px, env(safe-area-inset-right));
-    transform-origin: right bottom;
+    /* Stacked above the move joystick (26px bottom + 122px tall = 148px to its
+       top edge, plus a 10px gap) on the LEFT side, not the ring's bottom-right
+       corner, so an opted-in joystick never overlaps the paged action ring
+       cluster (#mobile-action-ring, right: 18px, up to ~204px tall). */
+    left: max(18px, env(safe-area-inset-left));
+    right: auto;
+    bottom: calc(158px + env(safe-area-inset-bottom));
+    transform-origin: left bottom;
   }
   body.mobile-touch #mobile-camera-joystick.recentering {
     animation: mobile-recenter-pulse 0.22s ease-out;
@@ -359,8 +371,19 @@
     position: absolute;
     right: max(18px, env(safe-area-inset-right));
     bottom: calc(20px + env(safe-area-inset-bottom));
-    width: calc(var(--mobile-ring-attack-size) + var(--mobile-ring-action-size) * 2 + var(--mobile-ring-gap) * 4);
-    height: calc(var(--mobile-ring-attack-size) + var(--mobile-ring-action-size) + var(--mobile-ring-gap) * 2);
+    width: calc(
+      var(--mobile-ring-attack-size) +
+      var(--mobile-ring-action-size) *
+      2 +
+      var(--mobile-ring-gap) *
+      4
+    );
+    height: calc(
+      var(--mobile-ring-attack-size) +
+      var(--mobile-ring-action-size) +
+      var(--mobile-ring-gap) *
+      2
+    );
     transform-origin: right bottom;
     transform: scale(var(--btn-scale, 1));
     opacity: var(--touch-opacity, 1);
@@ -409,7 +432,13 @@
   }
   body.mobile-touch .mobile-action-slot[data-mobile-index="2"] {
     right: calc(var(--mobile-ring-attack-size) * 0.06 + var(--mobile-ring-gap));
-    bottom: calc(var(--mobile-ring-attack-size) + var(--mobile-ring-action-size) * 0.35 + var(--mobile-ring-gap) * 2);
+    bottom: calc(
+      var(--mobile-ring-attack-size) +
+      var(--mobile-ring-action-size) *
+      0.35 +
+      var(--mobile-ring-gap) *
+      2
+    );
   }
   body.mobile-touch .mobile-action-slot[data-mobile-index="3"] {
     right: calc(0px - var(--mobile-ring-action-size) * 0.55);
@@ -422,7 +451,12 @@
   /* Page-cycle toggle: small pip above the cluster, always >=44px. */
   body.mobile-touch #mobile-action-page-toggle {
     right: calc(var(--mobile-ring-attack-size) * 0.3);
-    bottom: calc(var(--mobile-ring-attack-size) + var(--mobile-ring-action-size) + var(--mobile-ring-gap) * 3);
+    bottom: calc(
+      var(--mobile-ring-attack-size) +
+      var(--mobile-ring-action-size) +
+      var(--mobile-ring-gap) *
+      3
+    );
     width: 44px;
     height: 44px;
     font-size: 11px;
@@ -1059,8 +1093,14 @@
     right: max(18px, env(safe-area-inset-right));
   }
   body.mobile-touch.mobile-left-handed #mobile-camera-joystick {
-    right: auto;
+    /* Left-handed mirrors the move joystick to the right (above), so the camera
+       joystick stays on the LEFT (its non-left-handed default) rather than
+       mirroring too: the ring cluster is bottom-right regardless of handedness
+       (out of scope for the mirror), so the camera joystick must not follow the
+       move joystick there or it would collide with the ring. */
     left: max(18px, env(safe-area-inset-left));
+    right: auto;
+    bottom: calc(26px + env(safe-area-inset-bottom));
   }
   body.mobile-touch.mobile-left-handed #mobile-more {
     left: auto;
@@ -1981,7 +2021,7 @@
       left: max(20px, env(safe-area-inset-left));
     }
     body.mobile-touch #mobile-camera-joystick {
-      right: max(20px, env(safe-area-inset-right));
+      left: max(20px, env(safe-area-inset-left));
     }
     body.mobile-touch .mobile-joystick::before {
       inset: 23px;

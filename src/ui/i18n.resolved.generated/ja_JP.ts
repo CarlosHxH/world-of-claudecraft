@@ -421,7 +421,9 @@ export const ja_JP: EnTranslations = {
       "itemLevelLine": "アイテムレベル {level}",
       "itemScoreLine": "スコア {score}",
       "showSecondaryActionBar": "セカンダリアクションバーを表示",
-      "showDailyRewardsChest": "デイリー報酬の宝箱を表示"
+      "showDailyRewardsChest": "デイリー報酬の宝箱を表示",
+      "mobileCameraJoystick": "カメラスティック",
+      "mobileLeftHanded": "左利き用レイアウト"
     },
     "controller": {
       "title": "コントローラー",

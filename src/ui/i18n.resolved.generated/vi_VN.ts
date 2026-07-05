@@ -421,7 +421,9 @@ export const vi_VN: EnTranslations = {
       "itemLevelLine": "Cấp Vật Phẩm {level}",
       "itemScoreLine": "Điểm {score}",
       "showSecondaryActionBar": "Hiện Thanh Hành Động Phụ",
-      "showDailyRewardsChest": "Hiện Rương Phần Thưởng Hằng Ngày"
+      "showDailyRewardsChest": "Hiện Rương Phần Thưởng Hằng Ngày",
+      "mobileCameraJoystick": "Camera joystick",
+      "mobileLeftHanded": "Left-handed layout"
     },
     "controller": {
       "title": "Tay Cầm",

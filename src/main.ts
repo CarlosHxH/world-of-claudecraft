@@ -1394,6 +1394,12 @@ async function startGame(
       document.body.classList.toggle('mobile-left-handed', v);
       return;
     }
+    if (key === 'mobileCameraJoystick') {
+      const v = settings.set('mobileCameraJoystick', !!value);
+      document.body.classList.toggle('mobile-camera-joystick-on', v);
+      mobileControls.setCameraJoystickEnabled(v);
+      return;
+    }
     if (key === 'touchInvertLook') {
       input.setTouchInvertLook(settings.set('touchInvertLook', !!value));
       return;

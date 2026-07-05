@@ -421,7 +421,9 @@ export const nl_NL: EnTranslations = {
       "itemLevelLine": "Itemniveau {level}",
       "itemScoreLine": "Score {score}",
       "showSecondaryActionBar": "Secundaire actiebalk tonen",
-      "showDailyRewardsChest": "Kist met dagelijkse beloningen tonen"
+      "showDailyRewardsChest": "Kist met dagelijkse beloningen tonen",
+      "mobileCameraJoystick": "Camera joystick",
+      "mobileLeftHanded": "Left-handed layout"
     },
     "controller": {
       "title": "Controller",

@@ -421,7 +421,9 @@ export const id_ID: EnTranslations = {
       "itemLevelLine": "Level Item {level}",
       "itemScoreLine": "Skor {score}",
       "showSecondaryActionBar": "Tampilkan Bilah Aksi Sekunder",
-      "showDailyRewardsChest": "Tampilkan Peti Hadiah Harian"
+      "showDailyRewardsChest": "Tampilkan Peti Hadiah Harian",
+      "mobileCameraJoystick": "Camera joystick",
+      "mobileLeftHanded": "Left-handed layout"
     },
     "controller": {
       "title": "Kontroler",

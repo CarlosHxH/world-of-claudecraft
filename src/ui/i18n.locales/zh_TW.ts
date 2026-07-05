@@ -349,6 +349,8 @@ export const zh_TW: Partial<Record<TranslationKey, string>> = {
   'hudChrome.options.showItemLevel': '顯示物品等級',
   'hudChrome.options.showSecondaryActionBar': '顯示副動作列',
   'hudChrome.options.showDailyRewardsChest': '顯示每日獎勵寶箱',
+  'hudChrome.options.mobileCameraJoystick': '攝影機搖桿',
+  'hudChrome.options.mobileLeftHanded': '左手配置',
   'hudChrome.options.itemLevelLine': '物品等級 {level}',
   'hudChrome.options.itemScoreLine': '評分 {score}',
   'hudChrome.landing.highContrast': '高對比度',

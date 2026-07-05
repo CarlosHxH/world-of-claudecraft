@@ -421,7 +421,9 @@ export const es_ES: EnTranslations = {
       "itemLevelLine": "Nivel de objeto {level}",
       "itemScoreLine": "Puntuación {score}",
       "showSecondaryActionBar": "Mostrar barra de acción secundaria",
-      "showDailyRewardsChest": "Mostrar cofre de recompensas diarias"
+      "showDailyRewardsChest": "Mostrar cofre de recompensas diarias",
+      "mobileCameraJoystick": "Camera joystick",
+      "mobileLeftHanded": "Left-handed layout"
     },
     "controller": {
       "title": "Mando",

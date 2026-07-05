@@ -418,6 +418,14 @@ export const hudChromeStrings = {
     // by default). The abilities bound to its slots stay castable via their keybinds.
     showSecondaryActionBar: 'Show Secondary Action Bar',
     showDailyRewardsChest: 'Show Daily Rewards Chest',
+    // Touch-only Graphics panel toggles (mobile combat HUD rework, phase 2).
+    // Camera joystick: hidden and off by default, swipe-look on open gameplay
+    // space is the primary camera path; this opts into the dedicated stick.
+    mobileCameraJoystick: 'Camera joystick',
+    // Mirrors the touch layout (movement joystick right, camera joystick left)
+    // for left-thumb-dominant players; the same setting as the Key Bindings
+    // panel's leftHandedTouch row, surfaced again here alongside the joystick.
+    mobileLeftHanded: 'Left-handed layout',
   },
   // Controller / gamepad options panel (Options > Controller). Player-facing
   // chrome, so every label is a key here; the live numbers run through

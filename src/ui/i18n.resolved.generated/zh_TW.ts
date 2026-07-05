@@ -421,7 +421,9 @@ export const zh_TW: EnTranslations = {
       "itemLevelLine": "物品等級 {level}",
       "itemScoreLine": "評分 {score}",
       "showSecondaryActionBar": "顯示副動作列",
-      "showDailyRewardsChest": "顯示每日獎勵寶箱"
+      "showDailyRewardsChest": "顯示每日獎勵寶箱",
+      "mobileCameraJoystick": "攝影機搖桿",
+      "mobileLeftHanded": "左手配置"
     },
     "controller": {
       "title": "手把",

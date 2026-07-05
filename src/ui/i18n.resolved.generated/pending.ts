@@ -16,7 +16,9 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ],
   "es_ES": [
     "hudChrome.gathering.herbalism",
@@ -25,7 +27,9 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ],
   "fr_FR": [
     "hudChrome.gathering.herbalism",
@@ -34,7 +38,9 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ],
   "fr_CA": [
     "hudChrome.gathering.herbalism",
@@ -43,7 +49,9 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ],
   "en_CA": [],
   "it_IT": [
@@ -53,7 +61,9 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ],
   "de_DE": [
     "hudChrome.gathering.herbalism",
@@ -62,7 +72,9 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ],
   "zh_CN": [
     "hudChrome.mobile.actionPageIndicator"
@@ -83,7 +95,9 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ],
   "ru_RU": [
     "hudChrome.mobile.actionPageIndicator"
@@ -95,7 +109,9 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ],
   "pl_PL": [
     "hudChrome.gathering.herbalism",
@@ -104,7 +120,9 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ],
   "id_ID": [
     "hudChrome.gathering.herbalism",
@@ -113,7 +131,9 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ],
   "tr_TR": [
     "hudChrome.gathering.herbalism",
@@ -122,7 +142,9 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ],
   "sv_SE": [
     "hudChrome.gathering.herbalism",
@@ -131,7 +153,9 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ],
   "vi_VN": [
     "hudChrome.gathering.herbalism",
@@ -140,7 +164,9 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ],
   "da_DK": [
     "hudChrome.gathering.herbalism",
@@ -149,6 +175,8 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.gathering.title",
     "hudChrome.mobile.actionPageIndicator",
     "hudChrome.mobile.actionPageToggle",
-    "hudChrome.mobile.actionRing"
+    "hudChrome.mobile.actionRing",
+    "hudChrome.options.mobileCameraJoystick",
+    "hudChrome.options.mobileLeftHanded"
   ]
 };

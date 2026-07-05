@@ -421,7 +421,9 @@ export const sv_SE: EnTranslations = {
       "itemLevelLine": "Föremålsnivå {level}",
       "itemScoreLine": "Poäng {score}",
       "showSecondaryActionBar": "Visa sekundärt handlingsfält",
-      "showDailyRewardsChest": "Visa kistan för dagliga belöningar"
+      "showDailyRewardsChest": "Visa kistan för dagliga belöningar",
+      "mobileCameraJoystick": "Camera joystick",
+      "mobileLeftHanded": "Left-handed layout"
     },
     "controller": {
       "title": "Handkontroll",

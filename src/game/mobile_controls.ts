@@ -1,5 +1,12 @@
 import { t } from '../ui/i18n';
 import type { Input, TouchMoveInput } from './input';
+import type { TouchOwner, TouchRouterTarget } from './touch_router';
+import {
+  getTouchOwner,
+  isCameraDragAllowedAt,
+  isInteractiveHudElement,
+  TouchOwnerLedger,
+} from './touch_router';
 
 // Detects a genuinely touch-primary device (a phone or a hand-held tablet). The
 // primary test is a coarse primary pointer that cannot hover -- deliberately
@@ -18,6 +25,9 @@ export const PHONE_TOUCH_QUERY =
   '(pointer: coarse) and (hover: none), (pointer: coarse) and (max-width: 940px), (pointer: coarse) and (max-height: 760px)';
 const DEADZONE = 0.22;
 const CAMERA_SENSITIVITY = 0.8;
+// TODO: a dedicated deadzone/smoothing setting for swipe-look is deferred (plan
+// decision 7); touchLookSpeed already covers sensitivity for both the camera
+// joystick and swipe-look, so this constant stays a fixed tuning value for now.
 const SWIPE_LOOK_DEADZONE_PX = 6;
 // Pinch: each pixel the two fingers spread/close maps to this many yards of
 // camera distance. Tuned so a comfortable thumb-to-finger pinch sweeps roughly
@@ -224,6 +234,14 @@ export class MobileControls {
   private hapticsOn = loadHapticsEnabled();
   private joyPointer: number | null = null;
   private lookPointer: number | null = null;
+  // Camera joystick is opt-in (settings.mobileCameraJoystick, def false): hidden
+  // by CSS and inert here until the player turns it on. main.ts pushes the
+  // persisted value in at boot via setCameraJoystickEnabled.
+  private cameraJoystickEnabled = false;
+  // Per-pointer ownership so a touch that starts on a button/movement zone/menu
+  // never falls through to camera drag, even if it later drifts over the canvas
+  // (see touch_router.ts's consumer contract).
+  private touchOwners = new TouchOwnerLedger();
   private mq: MediaQueryList | null = null;
   private moveDeadzone = DEADZONE;
   // recenter double-tap bookkeeping for the camera joystick
@@ -267,6 +285,14 @@ export class MobileControls {
   /** Tune how far the move thumbstick must travel before movement registers. */
   setMoveDeadzone(deadzone: number): void {
     this.moveDeadzone = deadzone;
+  }
+
+  /** Enable/disable the fixed camera joystick (settings.mobileCameraJoystick).
+   *  Turning it off while a joystick camera drag is active ends that drag so
+   *  the camera doesn't stay stuck rotating with no visible control. */
+  setCameraJoystickEnabled(on: boolean): void {
+    this.cameraJoystickEnabled = on;
+    if (!on) this.releaseCamera();
   }
 
   /** Re-evaluate touch-interface activation after the player changes the
@@ -322,11 +348,15 @@ export class MobileControls {
     window.addEventListener('blur', () => {
       this.releaseMove();
       this.releaseCamera();
+      this.releaseSwipeLook();
+      this.touchOwners.releaseAll();
     });
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') {
         this.releaseMove();
         this.releaseCamera();
+        this.releaseSwipeLook();
+        this.touchOwners.releaseAll();
       }
     });
 
@@ -428,6 +458,7 @@ export class MobileControls {
       this.releaseMove();
       this.releaseCamera();
       this.releasePinch();
+      this.touchOwners.releaseAll();
     } else {
       document.body.classList.remove('mobile-chat-open');
     }
@@ -561,8 +592,35 @@ export class MobileControls {
     }
   }
 
+  /** Classify a pointerdown target and record it in the ledger; see
+   *  touch_router.ts's consumer contract. Every pointerdown handler that routes
+   *  through the ledger calls this once, so a given pointerId gets exactly one
+   *  owner for the lifetime of that touch. */
+  private classifyTouch(e: PointerEvent): TouchOwner {
+    const target = e.target as unknown as TouchRouterTarget | null;
+    const owner = getTouchOwner(
+      { target },
+      {
+        menuOpen: document.body.classList.contains('mobile-window-open'),
+        // closest() so a touch landing on a DESCENDANT (the visible
+        // #mobile-move-stick inside the joystick base) still classifies as
+        // movement; identity alone would misroute it to 'ignored'.
+        isMovementZone: (t) =>
+          t === (this.moveZone as unknown as TouchRouterTarget | null) ||
+          t === (this.moveJoystick as unknown as TouchRouterTarget | null) ||
+          !!t?.closest('#mobile-move-zone') ||
+          !!t?.closest('#mobile-move-joystick'),
+        isCombatButton: (t) => isInteractiveHudElement(t),
+        isCameraSurface: (t) => t === (this.canvas as unknown as TouchRouterTarget | null),
+      },
+    );
+    this.touchOwners.set(e.pointerId, owner);
+    return owner;
+  }
+
   private onMoveDown(e: PointerEvent): void {
     if (!this.active || this.joyPointer !== null || !this.moveJoystick) return;
+    if (this.classifyTouch(e) !== 'movement') return;
     e.preventDefault();
     this.joyPointer = e.pointerId;
     triggerHaptic(HAPTIC_JOYSTICK, this.hapticsOn);
@@ -602,6 +660,7 @@ export class MobileControls {
   }
 
   private onMoveEnd(e: PointerEvent): void {
+    this.touchOwners.release(e.pointerId);
     if (e.pointerId !== this.joyPointer) return;
     e.preventDefault();
     this.releaseMove();
@@ -629,7 +688,15 @@ export class MobileControls {
   }
 
   private onCameraDown(e: PointerEvent): void {
-    if (!this.active || this.lookPointer !== null) return;
+    if (!this.active || !this.cameraJoystickEnabled || this.lookPointer !== null) return;
+    // Router priority: an open modal/menu claims every touch, so a joystick
+    // press while a window is up must not start a drag (or buzz the haptics).
+    if (document.body.classList.contains('mobile-window-open')) return;
+    // The camera joystick is its own zone (a fixed on-screen control, not the
+    // canvas), so it is not covered by getTouchOwner's movement/combat/camera-
+    // surface classification; record it in the ledger directly as 'camera' so a
+    // pointermove later reads back the same owner as the swipe-look path does.
+    this.touchOwners.set(e.pointerId, 'camera');
     e.preventDefault();
     this.lookPointer = e.pointerId;
     this.cameraJoystick?.classList.add('active');
@@ -655,6 +722,12 @@ export class MobileControls {
       !this.cameraStick
     )
       return;
+    // A window opening mid-drag ends the camera drag immediately: menuOpen means
+    // every touch is now the modal's, so the joystick must stop steering the camera.
+    if (document.body.classList.contains('mobile-window-open')) {
+      this.releaseCamera();
+      return;
+    }
     e.preventDefault();
     if (
       Math.hypot(e.clientX - this.cameraDownX, e.clientY - this.cameraDownY) > RECENTER_TAP_MOVE_PX
@@ -673,6 +746,7 @@ export class MobileControls {
   }
 
   private onCameraEnd(e: PointerEvent): void {
+    this.touchOwners.release(e.pointerId);
     if (e.pointerId !== this.lookPointer) return;
     e.preventDefault();
     const now = this.now();
@@ -754,6 +828,12 @@ export class MobileControls {
       this.pinchPointers.size > 1
     )
       return;
+    // Closes the gap where swipe-look could start over HUD chrome: a swipe that
+    // begins on a button/window must not also nudge the camera.
+    const target = e.target as unknown as TouchRouterTarget | null;
+    const menuOpen = document.body.classList.contains('mobile-window-open');
+    if (!isCameraDragAllowedAt(target, menuOpen)) return;
+    this.touchOwners.set(e.pointerId, 'camera');
     this.swipeLookPointer = e.pointerId;
     this.swipeLookStartX = e.clientX;
     this.swipeLookStartY = e.clientY;
@@ -768,8 +848,18 @@ export class MobileControls {
   }
 
   private onSwipeLookMove(e: PointerEvent): void {
-    if (!this.active || e.pointerId !== this.swipeLookPointer || this.pinchPointers.size > 1)
+    if (
+      !this.active ||
+      e.pointerId !== this.swipeLookPointer ||
+      this.pinchPointers.size > 1 ||
+      this.touchOwners.get(e.pointerId) !== 'camera'
+    )
       return;
+    // A window opening mid-drag ends the swipe-look drag immediately.
+    if (document.body.classList.contains('mobile-window-open')) {
+      this.releaseSwipeLook();
+      return;
+    }
     const totalDx = e.clientX - this.swipeLookStartX;
     const totalDy = e.clientY - this.swipeLookStartY;
     if (!this.swipeLookActive) {
@@ -787,6 +877,7 @@ export class MobileControls {
   }
 
   private onSwipeLookEnd(e: PointerEvent): void {
+    this.touchOwners.release(e.pointerId);
     if (e.pointerId !== this.swipeLookPointer) return;
     if (this.swipeLookActive) e.preventDefault();
     this.releaseSwipeLook();

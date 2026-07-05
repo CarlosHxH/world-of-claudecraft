@@ -421,7 +421,9 @@ export const tr_TR: EnTranslations = {
       "itemLevelLine": "Eşya Seviyesi {level}",
       "itemScoreLine": "Puan {score}",
       "showSecondaryActionBar": "İkincil Eylem Çubuğunu Göster",
-      "showDailyRewardsChest": "Günlük Ödül Sandığını Göster"
+      "showDailyRewardsChest": "Günlük Ödül Sandığını Göster",
+      "mobileCameraJoystick": "Camera joystick",
+      "mobileLeftHanded": "Left-handed layout"
     },
     "controller": {
       "title": "Oyun Kolu",
