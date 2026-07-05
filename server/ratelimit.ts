@@ -14,7 +14,7 @@ import type { RateLimitOutcome, RateLimitStore } from './http/types';
 // host proxies to the game CONTAINER, so connections arrive from the docker
 // bridge gateway (e.g. 172.18.0.1), not loopback. The compose file publishes
 // the port on 127.0.0.1 only, so any connection from a loopback/private
-// address IS our reverse proxy (or LAN dev) — trust its X-Forwarded-For.
+// address IS our reverse proxy (or LAN dev): trust its X-Forwarded-For.
 // Direct internet clients have public addresses and are never trusted, so
 // they can't spoof the header. Set TRUSTED_PROXY_IPS (comma-separated) to
 // pin an explicit proxy list instead of the private-range default.
@@ -128,7 +128,7 @@ export function mergeFusedOutcomes(
 }
 
 // The strictest (lowest) limit any caller passes to rateLimited(). The `attempts`
-// map is SHARED across routes — game login/register use the default 20, admin
+// map is SHARED across routes: game login/register use the default 20, admin
 // login uses 10 (ADMIN_LOGIN_MAX_PER_MINUTE in server/admin.ts). The memory
 // backstop must judge "is this IP currently limited" by the strictest policy, or
 // a flood on a lenient route (limit 20) could evict an IP that is already limited
@@ -159,7 +159,7 @@ export function normalizeIp(ip: string): string {
   return s;
 }
 
-// loopback, RFC1918, link-local, IPv6 ULA — the only sources our reverse
+// loopback, RFC1918, link-local, IPv6 ULA: the only sources our reverse
 // proxy (or a dev setup) can connect from given the loopback-only publish
 function isPrivateOrLoopback(ip: string): boolean {
   if (ip === '::1' || ip.startsWith('127.')) return true;
@@ -222,14 +222,14 @@ export function rateLimited(
 
   // Memory backstop. A blanket clear() would also wipe the counter we just
   // recorded, so every IP would perpetually see a single attempt and rate
-  // limiting would silently stop working under load — which is exactly when a
+  // limiting would silently stop working under load, which is exactly when a
   // flood of distinct IPs inflates this map past the cap. So bound the map
   // without clearing it. Mirrors recordAuthFailure() below.
   if (attempts.size > MAX_TRACKED_IPS) {
     // Never evict an IP that is currently limited, nor the one just recorded. A
     // burst-then-idle IP ages while a flood of newer one-off IPs arrives, so a
     // naive least-recently-active eviction would pick it as "oldest" and reset
-    // its live limit before the window expires — the eviction-path version of
+    // its live limit before the window expires, the eviction-path version of
     // the bypass. Judge "currently limited" by the STRICTEST policy sharing this
     // map (not this call's maxPerMinute): a flood on a lenient route must not
     // evict an IP that a stricter route has already limited. count >= L+1 means
@@ -238,7 +238,7 @@ export function rateLimited(
     const isLimited = (times: number[]) =>
       atOrOverLimit(times, windowStart, STRICTEST_RATE_LIMIT + 1);
 
-    // Stage 1 — evict IPs whose window has fully expired (cheap, harmless).
+    // Stage 1: evict IPs whose window has fully expired (cheap, harmless).
     for (const [key, times] of attempts) {
       if (key === ip) continue;
       if (times.length === 0 || times[times.length - 1] <= windowStart) {
@@ -247,7 +247,7 @@ export function rateLimited(
       if (attempts.size <= MAX_TRACKED_IPS) break;
     }
 
-    // Stage 2 — a pure flood is all in-window, so stage 1 evicts nothing and
+    // Stage 2: a pure flood is all in-window, so stage 1 evicts nothing and
     // the map would grow unbounded (and every call would re-scan it, O(n^2)).
     // Fall back to evicting the least-recently-active IP, skipping the current
     // one and any currently-limited IP. If everything left is current or
@@ -277,7 +277,7 @@ export function trackedIpCount(): number {
   return attempts.size;
 }
 
-/** Reset all tracked IPs. Test-only — keeps the shared map isolated per test. */
+/** Reset all tracked IPs. Test-only: keeps the shared map isolated per test. */
 export function resetRateLimits(): void {
   attempts.clear();
 }
@@ -494,7 +494,7 @@ const wocBalanceIpAttempts = new Map<string, number[]>();
 
 /**
  * Throttle the public /api/woc/balance proxy per IP on its OWN bucket. The proxy
- * is unauthenticated (on-chain balances are public), so it keys on IP only — but
+ * is unauthenticated (on-chain balances are public), so it keys on IP only, but
  * NOT the shared register/login `attempts` map, so a player opening their card/bag
  * (each a fresh RPC read) can't burn their login budget, and a balance flood can't
  * lock them out of logging in (or vice-versa).
@@ -513,8 +513,8 @@ export function resetWocBalanceRateLimits(): void {
 }
 
 // Public, unauthenticated read endpoints (the public character sheet, the /c/
-// profile page) get a generous per-IP bucket on their OWN map — decoupled from
-// login/register — to deter scraping without ever spilling into the auth
+// profile page) get a generous per-IP bucket on their OWN map, decoupled from
+// login/register, to deter scraping without ever spilling into the auth
 // limiter. Higher ceiling than auth since legitimate companion apps and crawlers
 // poll these far more often than anyone logs in.
 export const PUBLIC_READ_MAX_PER_MINUTE = 60;
@@ -635,7 +635,7 @@ function authKey(username: string): string {
 // Single source of truth for "are there at least `limit` timestamps still inside
 // the window". Both limiters' active-check AND their memory-backstop eviction
 // skip-check route through this, so the "is this key currently limited" question
-// can never drift between the two — a future edit to one can't silently re-open
+// can never drift between the two: a future edit to one can't silently re-open
 // the flood-reset bypass this module exists to prevent. (See isThrottled and the
 // rateLimited skip-check, which pass MAX_AUTH_FAILURES and maxPerMinute+1.)
 function atOrOverLimit(times: number[], windowStart: number, limit: number): boolean {
@@ -695,11 +695,11 @@ export function recordAuthFailure(username: string): void {
   if (authFailures.size <= MAX_TRACKED_IPS) return;
 
   // Memory backstop. A blanket clear() would also wipe the live lockout
-  // counters we are accumulating against accounts under attack — which is
+  // counters we are accumulating against accounts under attack, which is
   // exactly when a credential-stuffing flood inflates this map past the cap,
   // silently disabling the per-account throttle. Mirrors rateLimited() above.
   //
-  // Stage 1 — evict accounts whose window has fully expired (cheap, harmless).
+  // Stage 1: evict accounts whose window has fully expired (cheap, harmless).
   for (const [k, times] of authFailures) {
     if (k === key) continue;
     if (times.length === 0 || times[times.length - 1] <= windowStart) {
@@ -708,7 +708,7 @@ export function recordAuthFailure(username: string): void {
     if (authFailures.size <= MAX_TRACKED_IPS) break;
   }
 
-  // Stage 2 — a pure flood is all in-window, so stage 1 evicts nothing and the
+  // Stage 2: a pure flood is all in-window, so stage 1 evicts nothing and the
   // map would grow unbounded (and every subsequent call would re-scan it,
   // O(n^2)). Fall back to evicting the least-recently-active account until
   // back under the cap.
@@ -716,10 +716,10 @@ export function recordAuthFailure(username: string): void {
   // Critically, NEVER evict a currently-throttled account (isThrottled) or the
   // account just recorded. On the live login path (server/main.ts) a throttled
   // account is rejected BEFORE recordAuthFailure runs, so its timestamps go
-  // stale and it would otherwise look "oldest" — letting an attacker reset a
+  // stale and it would otherwise look "oldest", letting an attacker reset a
   // victim's throttle simply by flooding the map with newer one-off failures.
   // Only non-throttled idle entries (the flood's count-of-1 buckets) are
-  // sacrificed — the cost of a memory bound.
+  // sacrificed, the cost of a memory bound.
   const targetSize = backstopTargetSize();
   while (authFailures.size > targetSize) {
     let oldestKey: string | undefined;
@@ -753,7 +753,7 @@ export function authFailureCount(): number {
   return authFailures.size;
 }
 
-/** Reset all tracked failures. Test-only — keeps the shared map isolated per test. */
+/** Reset all tracked failures. Test-only: keeps the shared map isolated per test. */
 export function resetAuthFailures(): void {
   authFailures.clear();
 }
