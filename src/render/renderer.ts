@@ -841,6 +841,15 @@ export class Renderer {
   private selfMotionPredictor: SelfMotionPredictor | null = null;
   private selfMotionActive = false;
   private selfMotionOffset = new THREE.Vector3();
+
+  /** Perf-overlay telemetry: ms of latency the self-motion extrapolation is
+   *  currently hiding, or null while the predictor is inactive. */
+  get selfMotionLeadMs(): number | null {
+    return this.selfMotionActive && this.selfMotionPredictor
+      ? this.selfMotionPredictor.leadMs
+      : null;
+  }
+
   private lastSelfId: number | null = null;
   // Last yaw applied to the local player while the camera was driving its facing
   // (mouselook / mouse-camera). Null when the override is disengaged, so the next

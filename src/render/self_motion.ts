@@ -76,6 +76,13 @@ interface Vec3Like {
 const clamp = (n: number, min: number, max: number): number => Math.max(min, Math.min(max, n));
 
 export class SelfMotionPredictor {
+  /**
+   * Telemetry: how much latency the extrapolation is currently hiding, in ms
+   * (the horizontal display lead over the authoritative anchor, expressed at
+   * the player's current run speed). 0 while idle or inactive.
+   */
+  leadMs = 0;
+
   private readonly deps: PlayerMotionDeps;
   private actor: Entity | null = null;
   private lastSelfId = -1;
@@ -124,6 +131,7 @@ export class SelfMotionPredictor {
     this.acc = 0;
     this.histCount = 0;
     this.histHead = 0;
+    this.leadMs = 0;
   }
 
   private recordHistory(x: number, y: number, z: number): void {
@@ -300,6 +308,9 @@ export class SelfMotionPredictor {
     this.out.y = actor.prevPos.y + (actor.pos.y - actor.prevPos.y) * frac;
     this.out.z = actor.prevPos.z + (actor.pos.z - actor.prevPos.z) * frac;
     this.recordHistory(this.out.x, this.out.y, this.out.z);
+    const runSpeed = RUN_SPEED * moveSpeedMult(actor, 0);
+    this.leadMs =
+      runSpeed > 0 ? (Math.hypot(this.out.x - ax, this.out.z - az) / runSpeed) * 1000 : 0;
     return this.out;
   }
 }
