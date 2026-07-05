@@ -1179,91 +1179,91 @@ export const tr_TR: EnTranslations = {
   },
   "apiError": {
     "validation": {
-      "failed": "Some fields are invalid. Check the form and try again."
+      "failed": "Bazı alanlar geçersiz. Formu kontrol edip tekrar deneyin."
     },
     "json": {
-      "malformed": "That request could not be read. Please try again."
+      "malformed": "Bu istek okunamadı. Lütfen tekrar deneyin."
     },
     "body": {
-      "too_large": "That request is too large. Try again with less data.",
-      "unsupported_media_type": "Unsupported request format."
+      "too_large": "Bu istek çok büyük. Daha az veriyle tekrar deneyin.",
+      "unsupported_media_type": "Desteklenmeyen istek biçimi."
     },
     "db": {
-      "conflict": "That change conflicted with another update. Please try again."
+      "conflict": "Bu değişiklik başka bir güncellemeyle çakıştı. Lütfen tekrar deneyin."
     },
     "rate_limit": {
-      "exceeded": "Too many requests. Try again in {seconds}."
+      "exceeded": "Çok fazla istek. {seconds} içinde tekrar deneyin."
     },
     "internal": {
-      "error": "Something went wrong on our end. Please try again."
+      "error": "Bizim tarafımızda bir şeyler ters gitti. Lütfen tekrar deneyin."
     },
     "auth": {
-      "token_missing": "You need to be signed in to do that.",
-      "token_invalid": "Your session has expired. Please sign in again.",
-      "forbidden": "You do not have permission to do that.",
-      "invalid_credentials": "Invalid username or password.",
-      "required": "Not authenticated.",
-      "web_login_only": "Logins are only allowed from the game client.",
-      "too_many_attempts": "Too many attempts. Wait a minute and try again.",
-      "too_many_failed_attempts": "Too many failed attempts. Wait a few minutes and try again.",
-      "current_password_incorrect": "Your current password is incorrect.",
-      "password_incorrect": "Your password is incorrect.",
-      "verification_failed": "Verification failed. Please try again."
+      "token_missing": "Bunu yapmak için giriş yapmış olmanız gerekir.",
+      "token_invalid": "Oturumunuzun süresi doldu. Lütfen tekrar giriş yapın.",
+      "forbidden": "Bunu yapma izniniz yok.",
+      "invalid_credentials": "Geçersiz kullanıcı adı veya parola.",
+      "required": "Kimlik doğrulanmadı.",
+      "web_login_only": "Girişlere yalnızca oyun istemcisinden izin verilir.",
+      "too_many_attempts": "Çok fazla deneme. Bir dakika bekleyip tekrar deneyin.",
+      "too_many_failed_attempts": "Çok fazla başarısız deneme. Birkaç dakika bekleyip tekrar deneyin.",
+      "current_password_incorrect": "Mevcut parolanız yanlış.",
+      "password_incorrect": "Parolanız yanlış.",
+      "verification_failed": "Doğrulama başarısız oldu. Lütfen tekrar deneyin."
     },
     "account": {
-      "username_invalid": "Username must be 3-24 characters and use letters, digits, or underscore.",
-      "username_not_allowed": "That username is not allowed.",
-      "username_taken": "That username is already taken.",
-      "username_mismatch": "That username does not match your account.",
-      "password_too_short": "Password must be at least 6 characters.",
-      "password_too_long": "New password must be at most 128 characters.",
-      "characters_online": "Log out all of your characters before deactivating.",
-      "deactivated": "This account has been deactivated. Contact an admin to restore it.",
-      "not_found": "Account not found."
+      "username_invalid": "Kullanıcı adı 3-24 karakter olmalı ve harf, rakam veya alt çizgi kullanmalıdır.",
+      "username_not_allowed": "Bu kullanıcı adına izin verilmiyor.",
+      "username_taken": "Bu kullanıcı adı zaten alınmış.",
+      "username_mismatch": "Bu kullanıcı adı hesabınızla eşleşmiyor.",
+      "password_too_short": "Parola en az 6 karakter olmalıdır.",
+      "password_too_long": "Yeni parola en fazla 128 karakter olmalıdır.",
+      "characters_online": "Devre dışı bırakmadan önce tüm karakterlerinizden çıkış yapın.",
+      "deactivated": "Bu hesap devre dışı bırakıldı. Geri yüklemek için bir yöneticiyle iletişime geçin.",
+      "not_found": "Hesap bulunamadı."
     },
     "character": {
-      "name_invalid": "Invalid character name. Use 2-16 letters.",
-      "name_not_allowed": "That character name is not allowed.",
-      "invalid_class": "Invalid class.",
-      "limit_reached": "Character limit reached.",
-      "name_taken": "That name is taken.",
-      "not_found": "Character not found.",
-      "online": "Character is currently online.",
-      "rename_not_permitted": "Renaming this character is not allowed.",
-      "delete_confirm": "Type the character name to confirm deletion.",
-      "already_in_world": "Character is already in world.",
-      "taken_over": "Your character was taken over by another session.",
-      "rename_required": "This character must be renamed before entering the world."
+      "name_invalid": "Geçersiz karakter adı. 2-16 harf kullanın.",
+      "name_not_allowed": "Bu karakter adına izin verilmiyor.",
+      "invalid_class": "Geçersiz sınıf.",
+      "limit_reached": "Karakter sınırına ulaşıldı.",
+      "name_taken": "Bu ad alınmış.",
+      "not_found": "Karakter bulunamadı.",
+      "online": "Karakter şu anda çevrimiçi.",
+      "rename_not_permitted": "Bu karakterin yeniden adlandırılmasına izin verilmiyor.",
+      "delete_confirm": "Silmeyi onaylamak için karakter adını yazın.",
+      "already_in_world": "Karakter zaten dünyada.",
+      "taken_over": "Karakteriniz başka bir oturum tarafından devralındı.",
+      "rename_required": "Bu karakter dünyaya girmeden önce yeniden adlandırılmalıdır."
     },
     "moderation": {
-      "suspended_until": "This account is suspended until {date}.",
-      "suspended": "This account is suspended.",
-      "banned": "This account has been banned.",
-      "force_rename": "A moderator requires one of your characters to be renamed."
+      "suspended_until": "Bu hesap {date} tarihine kadar askıya alındı.",
+      "suspended": "Bu hesap askıya alındı.",
+      "banned": "Bu hesap yasaklandı.",
+      "force_rename": "Bir moderatör, karakterlerinizden birinin yeniden adlandırılmasını gerektiriyor."
     },
     "email": {
-      "invalid": "Enter a valid email address.",
-      "unchanged": "That is already your email address."
+      "invalid": "Geçerli bir e-posta adresi girin.",
+      "unchanged": "Bu zaten sizin e-posta adresiniz."
     },
     "two_factor": {
-      "code_invalid": "That code is not valid, try again.",
-      "setup_required": "Start two-factor setup first.",
-      "already_enabled": "Two-factor is already enabled.",
-      "not_enabled": "Two-factor is not enabled."
+      "code_invalid": "Bu kod geçerli değil, tekrar deneyin.",
+      "setup_required": "Önce iki adımlı doğrulama kurulumunu başlatın.",
+      "already_enabled": "İki adımlı doğrulama zaten etkin.",
+      "not_enabled": "İki adımlı doğrulama etkin değil."
     },
     "origin": {
-      "cross_site": "Request blocked for security reasons."
+      "cross_site": "Güvenlik nedeniyle istek engellendi."
     },
     "discord": {
-      "not_configured": "Discord integration is not available right now.",
-      "expired": "That Discord sign-in expired. Please sign in with Discord again.",
-      "already_linked": "That Discord account is already linked to another account.",
-      "password_required": "Set a password before unlinking your Discord account.",
-      "unknown_swag": "That reward is not available.",
-      "link_required": "Link your Discord account first.",
-      "swag_claimed": "You have already claimed this reward.",
-      "swag_tier": "Reach a higher rank to claim this.",
-      "swag_points": "Not enough points."
+      "not_configured": "Discord entegrasyonu şu anda kullanılamıyor.",
+      "expired": "Bu Discord girişinin süresi doldu. Lütfen tekrar Discord ile giriş yapın.",
+      "already_linked": "Bu Discord hesabı zaten başka bir hesaba bağlı.",
+      "password_required": "Discord hesabınızın bağlantısını kaldırmadan önce bir parola belirleyin.",
+      "unknown_swag": "Bu ödül mevcut değil.",
+      "link_required": "Önce Discord hesabınızı bağlayın.",
+      "swag_claimed": "Bu ödülü zaten aldınız.",
+      "swag_tier": "Bunu almak için daha yüksek bir rütbeye ulaşın.",
+      "swag_points": "Yeterli puan yok."
     }
   },
   "guide": {
@@ -3476,12 +3476,12 @@ export const tr_TR: EnTranslations = {
       "webLoginOnly": "Girişlere yalnızca oyun istemcisinden izin verilir.",
       "accountSuspended": "Bu hesap {date} tarihine kadar askıya alındı.",
       "alreadyInWorld": "Karakter zaten dünyada.",
-      "accountSessionLimit": "Too many characters on this account are already in the world.",
+      "accountSessionLimit": "Bu hesaba ait çok fazla karakter zaten dünyada.",
       "takenOver": "Karakteriniz başka bir oturum tarafından devralındı.",
       "renameBeforeEntering": "Bu karakter dünyaya girmeden önce yeniden adlandırılmalıdır.",
       "renameNotPermitted": "Bu karakterin yeniden adlandırılmasına izin verilmiyor.",
-      "unsupportedMediaType": "Unsupported request format.",
-      "crossSiteOrigin": "Request blocked for security reasons."
+      "unsupportedMediaType": "Desteklenmeyen istek biçimi.",
+      "crossSiteOrigin": "Güvenlik nedeniyle istek engellendi."
     }
   },
   "desktop": {

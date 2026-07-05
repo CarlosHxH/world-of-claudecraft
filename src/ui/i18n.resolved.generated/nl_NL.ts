@@ -1179,91 +1179,91 @@ export const nl_NL: EnTranslations = {
   },
   "apiError": {
     "validation": {
-      "failed": "Some fields are invalid. Check the form and try again."
+      "failed": "Sommige velden zijn ongeldig. Controleer het formulier en probeer het opnieuw."
     },
     "json": {
-      "malformed": "That request could not be read. Please try again."
+      "malformed": "Dat verzoek kon niet worden gelezen. Probeer het opnieuw."
     },
     "body": {
-      "too_large": "That request is too large. Try again with less data.",
-      "unsupported_media_type": "Unsupported request format."
+      "too_large": "Dat verzoek is te groot. Probeer het opnieuw met minder gegevens.",
+      "unsupported_media_type": "Niet-ondersteund verzoekformaat."
     },
     "db": {
-      "conflict": "That change conflicted with another update. Please try again."
+      "conflict": "Die wijziging conflicteerde met een andere update. Probeer het opnieuw."
     },
     "rate_limit": {
-      "exceeded": "Too many requests. Try again in {seconds}."
+      "exceeded": "Te veel verzoeken. Probeer het opnieuw over {seconds}."
     },
     "internal": {
-      "error": "Something went wrong on our end. Please try again."
+      "error": "Er is iets misgegaan aan onze kant. Probeer het opnieuw."
     },
     "auth": {
-      "token_missing": "You need to be signed in to do that.",
-      "token_invalid": "Your session has expired. Please sign in again.",
-      "forbidden": "You do not have permission to do that.",
-      "invalid_credentials": "Invalid username or password.",
-      "required": "Not authenticated.",
-      "web_login_only": "Logins are only allowed from the game client.",
-      "too_many_attempts": "Too many attempts. Wait a minute and try again.",
-      "too_many_failed_attempts": "Too many failed attempts. Wait a few minutes and try again.",
-      "current_password_incorrect": "Your current password is incorrect.",
-      "password_incorrect": "Your password is incorrect.",
-      "verification_failed": "Verification failed. Please try again."
+      "token_missing": "Je moet ingelogd zijn om dat te doen.",
+      "token_invalid": "Je sessie is verlopen. Log opnieuw in.",
+      "forbidden": "Je hebt geen toestemming om dat te doen.",
+      "invalid_credentials": "Ongeldige gebruikersnaam of wachtwoord.",
+      "required": "Niet geauthenticeerd.",
+      "web_login_only": "Inloggen is alleen toegestaan vanuit de spelclient.",
+      "too_many_attempts": "Te veel pogingen. Wacht een minuut en probeer het opnieuw.",
+      "too_many_failed_attempts": "Te veel mislukte pogingen. Wacht een paar minuten en probeer het opnieuw.",
+      "current_password_incorrect": "Je huidige wachtwoord is onjuist.",
+      "password_incorrect": "Je wachtwoord is onjuist.",
+      "verification_failed": "Verificatie mislukt. Probeer het opnieuw."
     },
     "account": {
-      "username_invalid": "Username must be 3-24 characters and use letters, digits, or underscore.",
-      "username_not_allowed": "That username is not allowed.",
-      "username_taken": "That username is already taken.",
-      "username_mismatch": "That username does not match your account.",
-      "password_too_short": "Password must be at least 6 characters.",
-      "password_too_long": "New password must be at most 128 characters.",
-      "characters_online": "Log out all of your characters before deactivating.",
-      "deactivated": "This account has been deactivated. Contact an admin to restore it.",
-      "not_found": "Account not found."
+      "username_invalid": "Gebruikersnaam moet 3-24 tekens lang zijn en letters, cijfers of een liggend streepje bevatten.",
+      "username_not_allowed": "Die gebruikersnaam is niet toegestaan.",
+      "username_taken": "Die gebruikersnaam is al in gebruik.",
+      "username_mismatch": "Die gebruikersnaam komt niet overeen met je account.",
+      "password_too_short": "Wachtwoord moet minstens 6 tekens lang zijn.",
+      "password_too_long": "Nieuw wachtwoord mag maximaal 128 tekens lang zijn.",
+      "characters_online": "Log al je personages uit voordat je het account deactiveert.",
+      "deactivated": "Dit account is gedeactiveerd. Neem contact op met een beheerder om het te herstellen.",
+      "not_found": "Account niet gevonden."
     },
     "character": {
-      "name_invalid": "Invalid character name. Use 2-16 letters.",
-      "name_not_allowed": "That character name is not allowed.",
-      "invalid_class": "Invalid class.",
-      "limit_reached": "Character limit reached.",
-      "name_taken": "That name is taken.",
-      "not_found": "Character not found.",
-      "online": "Character is currently online.",
-      "rename_not_permitted": "Renaming this character is not allowed.",
-      "delete_confirm": "Type the character name to confirm deletion.",
-      "already_in_world": "Character is already in world.",
-      "taken_over": "Your character was taken over by another session.",
-      "rename_required": "This character must be renamed before entering the world."
+      "name_invalid": "Ongeldige personagenaam. Gebruik 2-16 letters.",
+      "name_not_allowed": "Die personagenaam is niet toegestaan.",
+      "invalid_class": "Ongeldige klasse.",
+      "limit_reached": "Maximumaantal personages bereikt.",
+      "name_taken": "Die naam is al in gebruik.",
+      "not_found": "Personage niet gevonden.",
+      "online": "Personage is momenteel online.",
+      "rename_not_permitted": "Dit personage hernoemen is niet toegestaan.",
+      "delete_confirm": "Typ de personagenaam om de verwijdering te bevestigen.",
+      "already_in_world": "Personage is al in de wereld.",
+      "taken_over": "Je personage is overgenomen door een andere sessie.",
+      "rename_required": "Dit personage moet hernoemd worden voordat het de wereld kan betreden."
     },
     "moderation": {
-      "suspended_until": "This account is suspended until {date}.",
-      "suspended": "This account is suspended.",
-      "banned": "This account has been banned.",
-      "force_rename": "A moderator requires one of your characters to be renamed."
+      "suspended_until": "Dit account is geschorst tot {date}.",
+      "suspended": "Dit account is geschorst.",
+      "banned": "Dit account is verbannen.",
+      "force_rename": "Een moderator vereist dat een van je personages wordt hernoemd."
     },
     "email": {
-      "invalid": "Enter a valid email address.",
-      "unchanged": "That is already your email address."
+      "invalid": "Voer een geldig e-mailadres in.",
+      "unchanged": "Dat is al je e-mailadres."
     },
     "two_factor": {
-      "code_invalid": "That code is not valid, try again.",
-      "setup_required": "Start two-factor setup first.",
-      "already_enabled": "Two-factor is already enabled.",
-      "not_enabled": "Two-factor is not enabled."
+      "code_invalid": "Die code is niet geldig, probeer het opnieuw.",
+      "setup_required": "Stel eerst tweefactorauthenticatie in.",
+      "already_enabled": "Tweefactorauthenticatie is al ingeschakeld.",
+      "not_enabled": "Tweefactorauthenticatie is niet ingeschakeld."
     },
     "origin": {
-      "cross_site": "Request blocked for security reasons."
+      "cross_site": "Verzoek geblokkeerd om veiligheidsredenen."
     },
     "discord": {
-      "not_configured": "Discord integration is not available right now.",
-      "expired": "That Discord sign-in expired. Please sign in with Discord again.",
-      "already_linked": "That Discord account is already linked to another account.",
-      "password_required": "Set a password before unlinking your Discord account.",
-      "unknown_swag": "That reward is not available.",
-      "link_required": "Link your Discord account first.",
-      "swag_claimed": "You have already claimed this reward.",
-      "swag_tier": "Reach a higher rank to claim this.",
-      "swag_points": "Not enough points."
+      "not_configured": "Discord-integratie is momenteel niet beschikbaar.",
+      "expired": "Die Discord-aanmelding is verlopen. Meld je opnieuw aan met Discord.",
+      "already_linked": "Dat Discord-account is al gekoppeld aan een ander account.",
+      "password_required": "Stel een wachtwoord in voordat je je Discord-account ontkoppelt.",
+      "unknown_swag": "Die beloning is niet beschikbaar.",
+      "link_required": "Koppel eerst je Discord-account.",
+      "swag_claimed": "Je hebt deze beloning al geclaimd.",
+      "swag_tier": "Bereik een hogere rang om dit te claimen.",
+      "swag_points": "Niet genoeg punten."
     }
   },
   "guide": {
@@ -3476,12 +3476,12 @@ export const nl_NL: EnTranslations = {
       "webLoginOnly": "Inloggen is alleen toegestaan vanuit de spelclient.",
       "accountSuspended": "Dit account is geschorst tot {date}.",
       "alreadyInWorld": "Personage is al in de wereld.",
-      "accountSessionLimit": "Too many characters on this account are already in the world.",
+      "accountSessionLimit": "Te veel personages op dit account zijn al in de wereld.",
       "takenOver": "Je personage is overgenomen door een andere sessie.",
       "renameBeforeEntering": "Dit personage moet hernoemd worden voordat het de wereld kan betreden.",
       "renameNotPermitted": "Dit personage hernoemen is niet toegestaan.",
-      "unsupportedMediaType": "Unsupported request format.",
-      "crossSiteOrigin": "Request blocked for security reasons."
+      "unsupportedMediaType": "Niet-ondersteund verzoekformaat.",
+      "crossSiteOrigin": "Verzoek geblokkeerd om veiligheidsredenen."
     }
   },
   "desktop": {

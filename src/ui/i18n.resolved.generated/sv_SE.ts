@@ -1179,91 +1179,91 @@ export const sv_SE: EnTranslations = {
   },
   "apiError": {
     "validation": {
-      "failed": "Some fields are invalid. Check the form and try again."
+      "failed": "Vissa fält är ogiltiga. Kontrollera formuläret och försök igen."
     },
     "json": {
-      "malformed": "That request could not be read. Please try again."
+      "malformed": "Begäran kunde inte läsas. Försök igen."
     },
     "body": {
-      "too_large": "That request is too large. Try again with less data.",
-      "unsupported_media_type": "Unsupported request format."
+      "too_large": "Begäran är för stor. Försök igen med mindre data.",
+      "unsupported_media_type": "Formatet på begäran stöds inte."
     },
     "db": {
-      "conflict": "That change conflicted with another update. Please try again."
+      "conflict": "Ändringen stod i konflikt med en annan uppdatering. Försök igen."
     },
     "rate_limit": {
-      "exceeded": "Too many requests. Try again in {seconds}."
+      "exceeded": "För många förfrågningar. Försök igen om {seconds}."
     },
     "internal": {
-      "error": "Something went wrong on our end. Please try again."
+      "error": "Något gick fel hos oss. Försök igen."
     },
     "auth": {
-      "token_missing": "You need to be signed in to do that.",
-      "token_invalid": "Your session has expired. Please sign in again.",
-      "forbidden": "You do not have permission to do that.",
-      "invalid_credentials": "Invalid username or password.",
-      "required": "Not authenticated.",
-      "web_login_only": "Logins are only allowed from the game client.",
-      "too_many_attempts": "Too many attempts. Wait a minute and try again.",
-      "too_many_failed_attempts": "Too many failed attempts. Wait a few minutes and try again.",
-      "current_password_incorrect": "Your current password is incorrect.",
-      "password_incorrect": "Your password is incorrect.",
-      "verification_failed": "Verification failed. Please try again."
+      "token_missing": "Du måste vara inloggad för att göra det.",
+      "token_invalid": "Din session har gått ut. Logga in igen.",
+      "forbidden": "Du har inte behörighet att göra det.",
+      "invalid_credentials": "Ogiltigt användarnamn eller lösenord.",
+      "required": "Inte autentiserad.",
+      "web_login_only": "Inloggningar är endast tillåtna från spelklienten.",
+      "too_many_attempts": "För många försök. Vänta en minut och försök igen.",
+      "too_many_failed_attempts": "För många misslyckade försök. Vänta några minuter och försök igen.",
+      "current_password_incorrect": "Ditt nuvarande lösenord är felaktigt.",
+      "password_incorrect": "Ditt lösenord är felaktigt.",
+      "verification_failed": "Verifieringen misslyckades. Försök igen."
     },
     "account": {
-      "username_invalid": "Username must be 3-24 characters and use letters, digits, or underscore.",
-      "username_not_allowed": "That username is not allowed.",
-      "username_taken": "That username is already taken.",
-      "username_mismatch": "That username does not match your account.",
-      "password_too_short": "Password must be at least 6 characters.",
-      "password_too_long": "New password must be at most 128 characters.",
-      "characters_online": "Log out all of your characters before deactivating.",
-      "deactivated": "This account has been deactivated. Contact an admin to restore it.",
-      "not_found": "Account not found."
+      "username_invalid": "Användarnamnet måste vara 3-24 tecken och använda bokstäver, siffror eller understreck.",
+      "username_not_allowed": "Det användarnamnet är inte tillåtet.",
+      "username_taken": "Det användarnamnet är redan upptaget.",
+      "username_mismatch": "Det användarnamnet matchar inte ditt konto.",
+      "password_too_short": "Lösenordet måste vara minst 6 tecken.",
+      "password_too_long": "Det nya lösenordet får vara högst 128 tecken.",
+      "characters_online": "Logga ut alla dina karaktärer innan du inaktiverar kontot.",
+      "deactivated": "Detta konto har inaktiverats. Kontakta en administratör för att återställa det.",
+      "not_found": "Kontot hittades inte."
     },
     "character": {
-      "name_invalid": "Invalid character name. Use 2-16 letters.",
-      "name_not_allowed": "That character name is not allowed.",
-      "invalid_class": "Invalid class.",
-      "limit_reached": "Character limit reached.",
-      "name_taken": "That name is taken.",
-      "not_found": "Character not found.",
-      "online": "Character is currently online.",
-      "rename_not_permitted": "Renaming this character is not allowed.",
-      "delete_confirm": "Type the character name to confirm deletion.",
-      "already_in_world": "Character is already in world.",
-      "taken_over": "Your character was taken over by another session.",
-      "rename_required": "This character must be renamed before entering the world."
+      "name_invalid": "Ogiltigt karaktärsnamn. Använd 2-16 bokstäver.",
+      "name_not_allowed": "Det karaktärsnamnet är inte tillåtet.",
+      "invalid_class": "Ogiltig klass.",
+      "limit_reached": "Karaktärsgränsen är nådd.",
+      "name_taken": "Det namnet är upptaget.",
+      "not_found": "Karaktären hittades inte.",
+      "online": "Karaktären är för närvarande online.",
+      "rename_not_permitted": "Det är inte tillåtet att byta namn på denna karaktär.",
+      "delete_confirm": "Skriv karaktärens namn för att bekräfta raderingen.",
+      "already_in_world": "Karaktären är redan i världen.",
+      "taken_over": "Din karaktär togs över av en annan session.",
+      "rename_required": "Denna karaktär måste byta namn innan den går in i världen."
     },
     "moderation": {
-      "suspended_until": "This account is suspended until {date}.",
-      "suspended": "This account is suspended.",
-      "banned": "This account has been banned.",
-      "force_rename": "A moderator requires one of your characters to be renamed."
+      "suspended_until": "Detta konto är avstängt till {date}.",
+      "suspended": "Detta konto är avstängt.",
+      "banned": "Detta konto har bannlysts.",
+      "force_rename": "En moderator kräver att en av dina karaktärer byter namn."
     },
     "email": {
-      "invalid": "Enter a valid email address.",
-      "unchanged": "That is already your email address."
+      "invalid": "Ange en giltig e-postadress.",
+      "unchanged": "Det är redan din e-postadress."
     },
     "two_factor": {
-      "code_invalid": "That code is not valid, try again.",
-      "setup_required": "Start two-factor setup first.",
-      "already_enabled": "Two-factor is already enabled.",
-      "not_enabled": "Two-factor is not enabled."
+      "code_invalid": "Den koden är inte giltig, försök igen.",
+      "setup_required": "Starta konfigurationen av tvåfaktorsautentisering först.",
+      "already_enabled": "Tvåfaktorsautentisering är redan aktiverad.",
+      "not_enabled": "Tvåfaktorsautentisering är inte aktiverad."
     },
     "origin": {
-      "cross_site": "Request blocked for security reasons."
+      "cross_site": "Begäran blockerades av säkerhetsskäl."
     },
     "discord": {
-      "not_configured": "Discord integration is not available right now.",
-      "expired": "That Discord sign-in expired. Please sign in with Discord again.",
-      "already_linked": "That Discord account is already linked to another account.",
-      "password_required": "Set a password before unlinking your Discord account.",
-      "unknown_swag": "That reward is not available.",
-      "link_required": "Link your Discord account first.",
-      "swag_claimed": "You have already claimed this reward.",
-      "swag_tier": "Reach a higher rank to claim this.",
-      "swag_points": "Not enough points."
+      "not_configured": "Discord-integrationen är inte tillgänglig just nu.",
+      "expired": "Den Discord-inloggningen har gått ut. Logga in med Discord igen.",
+      "already_linked": "Det Discord-kontot är redan kopplat till ett annat konto.",
+      "password_required": "Ange ett lösenord innan du kopplar bort ditt Discord-konto.",
+      "unknown_swag": "Den belöningen är inte tillgänglig.",
+      "link_required": "Koppla ditt Discord-konto först.",
+      "swag_claimed": "Du har redan hämtat den här belöningen.",
+      "swag_tier": "Nå en högre rang för att hämta den här.",
+      "swag_points": "Inte tillräckligt med poäng."
     }
   },
   "guide": {
@@ -3476,12 +3476,12 @@ export const sv_SE: EnTranslations = {
       "webLoginOnly": "Inloggningar är endast tillåtna från spelklienten.",
       "accountSuspended": "Detta konto är avstängt till {date}.",
       "alreadyInWorld": "Karaktären är redan i världen.",
-      "accountSessionLimit": "Too many characters on this account are already in the world.",
+      "accountSessionLimit": "För många karaktärer på detta konto är redan i världen.",
       "takenOver": "Din karaktär togs över av en annan session.",
       "renameBeforeEntering": "Denna karaktär måste byta namn innan den går in i världen.",
       "renameNotPermitted": "Det är inte tillåtet att byta namn på denna karaktär.",
-      "unsupportedMediaType": "Unsupported request format.",
-      "crossSiteOrigin": "Request blocked for security reasons."
+      "unsupportedMediaType": "Formatet på begäran stöds inte.",
+      "crossSiteOrigin": "Begäran blockerades av säkerhetsskäl."
     }
   },
   "desktop": {

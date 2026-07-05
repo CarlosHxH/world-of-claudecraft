@@ -1179,91 +1179,91 @@ export const da_DK: EnTranslations = {
   },
   "apiError": {
     "validation": {
-      "failed": "Some fields are invalid. Check the form and try again."
+      "failed": "Nogle felter er ugyldige. Tjek formularen og prøv igen."
     },
     "json": {
-      "malformed": "That request could not be read. Please try again."
+      "malformed": "Anmodningen kunne ikke læses. Prøv venligst igen."
     },
     "body": {
-      "too_large": "That request is too large. Try again with less data.",
-      "unsupported_media_type": "Unsupported request format."
+      "too_large": "Anmodningen er for stor. Prøv igen med færre data.",
+      "unsupported_media_type": "Anmodningsformatet understøttes ikke."
     },
     "db": {
-      "conflict": "That change conflicted with another update. Please try again."
+      "conflict": "Ændringen kom i konflikt med en anden opdatering. Prøv venligst igen."
     },
     "rate_limit": {
-      "exceeded": "Too many requests. Try again in {seconds}."
+      "exceeded": "For mange anmodninger. Prøv igen om {seconds}."
     },
     "internal": {
-      "error": "Something went wrong on our end. Please try again."
+      "error": "Der gik noget galt hos os. Prøv venligst igen."
     },
     "auth": {
-      "token_missing": "You need to be signed in to do that.",
-      "token_invalid": "Your session has expired. Please sign in again.",
-      "forbidden": "You do not have permission to do that.",
-      "invalid_credentials": "Invalid username or password.",
-      "required": "Not authenticated.",
-      "web_login_only": "Logins are only allowed from the game client.",
-      "too_many_attempts": "Too many attempts. Wait a minute and try again.",
-      "too_many_failed_attempts": "Too many failed attempts. Wait a few minutes and try again.",
-      "current_password_incorrect": "Your current password is incorrect.",
-      "password_incorrect": "Your password is incorrect.",
-      "verification_failed": "Verification failed. Please try again."
+      "token_missing": "Du skal være logget ind for at gøre det.",
+      "token_invalid": "Din session er udløbet. Log venligst ind igen.",
+      "forbidden": "Du har ikke tilladelse til at gøre det.",
+      "invalid_credentials": "Ugyldigt brugernavn eller adgangskode.",
+      "required": "Ikke godkendt.",
+      "web_login_only": "Login er kun tilladt fra spilklienten.",
+      "too_many_attempts": "For mange forsøg. Vent et minut og prøv igen.",
+      "too_many_failed_attempts": "For mange mislykkede forsøg. Vent et par minutter og prøv igen.",
+      "current_password_incorrect": "Din nuværende adgangskode er forkert.",
+      "password_incorrect": "Din adgangskode er forkert.",
+      "verification_failed": "Verificeringen mislykkedes. Prøv venligst igen."
     },
     "account": {
-      "username_invalid": "Username must be 3-24 characters and use letters, digits, or underscore.",
-      "username_not_allowed": "That username is not allowed.",
-      "username_taken": "That username is already taken.",
-      "username_mismatch": "That username does not match your account.",
-      "password_too_short": "Password must be at least 6 characters.",
-      "password_too_long": "New password must be at most 128 characters.",
-      "characters_online": "Log out all of your characters before deactivating.",
-      "deactivated": "This account has been deactivated. Contact an admin to restore it.",
-      "not_found": "Account not found."
+      "username_invalid": "Brugernavnet skal være på 3-24 tegn og bruge bogstaver, cifre eller understregning.",
+      "username_not_allowed": "Det brugernavn er ikke tilladt.",
+      "username_taken": "Det brugernavn er allerede optaget.",
+      "username_mismatch": "Det brugernavn passer ikke til din konto.",
+      "password_too_short": "Adgangskoden skal være på mindst 6 tegn.",
+      "password_too_long": "Den nye adgangskode må højst være på 128 tegn.",
+      "characters_online": "Log ud af alle dine karakterer, før du deaktiverer.",
+      "deactivated": "Denne konto er blevet deaktiveret. Kontakt en administrator for at genoprette den.",
+      "not_found": "Kontoen blev ikke fundet."
     },
     "character": {
-      "name_invalid": "Invalid character name. Use 2-16 letters.",
-      "name_not_allowed": "That character name is not allowed.",
-      "invalid_class": "Invalid class.",
-      "limit_reached": "Character limit reached.",
-      "name_taken": "That name is taken.",
-      "not_found": "Character not found.",
-      "online": "Character is currently online.",
-      "rename_not_permitted": "Renaming this character is not allowed.",
-      "delete_confirm": "Type the character name to confirm deletion.",
-      "already_in_world": "Character is already in world.",
-      "taken_over": "Your character was taken over by another session.",
-      "rename_required": "This character must be renamed before entering the world."
+      "name_invalid": "Ugyldigt karakternavn. Brug 2-16 bogstaver.",
+      "name_not_allowed": "Det karakternavn er ikke tilladt.",
+      "invalid_class": "Ugyldig klasse.",
+      "limit_reached": "Grænsen for antal karakterer er nået.",
+      "name_taken": "Det navn er optaget.",
+      "not_found": "Karakteren blev ikke fundet.",
+      "online": "Karakteren er i øjeblikket online.",
+      "rename_not_permitted": "Det er ikke tilladt at omdøbe denne karakter.",
+      "delete_confirm": "Skriv karakterens navn for at bekræfte sletning.",
+      "already_in_world": "Karakteren er allerede i verdenen.",
+      "taken_over": "Din karakter blev overtaget af en anden session.",
+      "rename_required": "Denne karakter skal omdøbes, før den kan komme ind i verdenen."
     },
     "moderation": {
-      "suspended_until": "This account is suspended until {date}.",
-      "suspended": "This account is suspended.",
-      "banned": "This account has been banned.",
-      "force_rename": "A moderator requires one of your characters to be renamed."
+      "suspended_until": "Denne konto er suspenderet indtil {date}.",
+      "suspended": "Denne konto er suspenderet.",
+      "banned": "Denne konto er blevet udelukket.",
+      "force_rename": "En moderator kræver, at en af dine karakterer omdøbes."
     },
     "email": {
-      "invalid": "Enter a valid email address.",
-      "unchanged": "That is already your email address."
+      "invalid": "Indtast en gyldig e-mailadresse.",
+      "unchanged": "Det er allerede din e-mailadresse."
     },
     "two_factor": {
-      "code_invalid": "That code is not valid, try again.",
-      "setup_required": "Start two-factor setup first.",
-      "already_enabled": "Two-factor is already enabled.",
-      "not_enabled": "Two-factor is not enabled."
+      "code_invalid": "Den kode er ikke gyldig, prøv igen.",
+      "setup_required": "Start opsætning af to-faktor først.",
+      "already_enabled": "To-faktor er allerede aktiveret.",
+      "not_enabled": "To-faktor er ikke aktiveret."
     },
     "origin": {
-      "cross_site": "Request blocked for security reasons."
+      "cross_site": "Anmodningen blev blokeret af sikkerhedsmæssige årsager."
     },
     "discord": {
-      "not_configured": "Discord integration is not available right now.",
-      "expired": "That Discord sign-in expired. Please sign in with Discord again.",
-      "already_linked": "That Discord account is already linked to another account.",
-      "password_required": "Set a password before unlinking your Discord account.",
-      "unknown_swag": "That reward is not available.",
-      "link_required": "Link your Discord account first.",
-      "swag_claimed": "You have already claimed this reward.",
-      "swag_tier": "Reach a higher rank to claim this.",
-      "swag_points": "Not enough points."
+      "not_configured": "Discord-integration er ikke tilgængelig lige nu.",
+      "expired": "Det Discord-login er udløbet. Log venligst ind med Discord igen.",
+      "already_linked": "Den Discord-konto er allerede knyttet til en anden konto.",
+      "password_required": "Angiv en adgangskode, før du fjerner tilknytningen til din Discord-konto.",
+      "unknown_swag": "Den belønning er ikke tilgængelig.",
+      "link_required": "Knyt din Discord-konto først.",
+      "swag_claimed": "Du har allerede indløst denne belønning.",
+      "swag_tier": "Nå en højere rang for at indløse denne.",
+      "swag_points": "Ikke nok point."
     }
   },
   "guide": {
@@ -3476,12 +3476,12 @@ export const da_DK: EnTranslations = {
       "webLoginOnly": "Login er kun tilladt fra spilklienten.",
       "accountSuspended": "Denne konto er suspenderet indtil {date}.",
       "alreadyInWorld": "Karakteren er allerede i verdenen.",
-      "accountSessionLimit": "Too many characters on this account are already in the world.",
+      "accountSessionLimit": "For mange karakterer på denne konto er allerede i verdenen.",
       "takenOver": "Din karakter blev overtaget af en anden session.",
       "renameBeforeEntering": "Denne karakter skal omdøbes, før den kan komme ind i verdenen.",
       "renameNotPermitted": "Det er ikke tilladt at omdøbe denne karakter.",
-      "unsupportedMediaType": "Unsupported request format.",
-      "crossSiteOrigin": "Request blocked for security reasons."
+      "unsupportedMediaType": "Anmodningsformatet understøttes ikke.",
+      "crossSiteOrigin": "Anmodningen blev blokeret af sikkerhedsmæssige årsager."
     }
   },
   "desktop": {

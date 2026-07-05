@@ -1179,91 +1179,91 @@ export const id_ID: EnTranslations = {
   },
   "apiError": {
     "validation": {
-      "failed": "Some fields are invalid. Check the form and try again."
+      "failed": "Beberapa kolom tidak valid. Periksa formulir lalu coba lagi."
     },
     "json": {
-      "malformed": "That request could not be read. Please try again."
+      "malformed": "Permintaan itu tidak dapat dibaca. Silakan coba lagi."
     },
     "body": {
-      "too_large": "That request is too large. Try again with less data.",
-      "unsupported_media_type": "Unsupported request format."
+      "too_large": "Permintaan itu terlalu besar. Coba lagi dengan data yang lebih sedikit.",
+      "unsupported_media_type": "Format permintaan tidak didukung."
     },
     "db": {
-      "conflict": "That change conflicted with another update. Please try again."
+      "conflict": "Perubahan itu berbenturan dengan pembaruan lain. Silakan coba lagi."
     },
     "rate_limit": {
-      "exceeded": "Too many requests. Try again in {seconds}."
+      "exceeded": "Terlalu banyak permintaan. Coba lagi dalam {seconds}."
     },
     "internal": {
-      "error": "Something went wrong on our end. Please try again."
+      "error": "Terjadi kesalahan di pihak kami. Silakan coba lagi."
     },
     "auth": {
-      "token_missing": "You need to be signed in to do that.",
-      "token_invalid": "Your session has expired. Please sign in again.",
-      "forbidden": "You do not have permission to do that.",
-      "invalid_credentials": "Invalid username or password.",
-      "required": "Not authenticated.",
-      "web_login_only": "Logins are only allowed from the game client.",
-      "too_many_attempts": "Too many attempts. Wait a minute and try again.",
-      "too_many_failed_attempts": "Too many failed attempts. Wait a few minutes and try again.",
-      "current_password_incorrect": "Your current password is incorrect.",
-      "password_incorrect": "Your password is incorrect.",
-      "verification_failed": "Verification failed. Please try again."
+      "token_missing": "Anda harus masuk untuk melakukan itu.",
+      "token_invalid": "Sesi Anda telah kedaluwarsa. Silakan masuk lagi.",
+      "forbidden": "Anda tidak memiliki izin untuk melakukan itu.",
+      "invalid_credentials": "Nama pengguna atau kata sandi salah.",
+      "required": "Belum terautentikasi.",
+      "web_login_only": "Masuk hanya diperbolehkan dari klien permainan.",
+      "too_many_attempts": "Terlalu banyak percobaan. Tunggu semenit lalu coba lagi.",
+      "too_many_failed_attempts": "Terlalu banyak percobaan gagal. Tunggu beberapa menit lalu coba lagi.",
+      "current_password_incorrect": "Kata sandi Anda saat ini salah.",
+      "password_incorrect": "Kata sandi Anda salah.",
+      "verification_failed": "Verifikasi gagal. Silakan coba lagi."
     },
     "account": {
-      "username_invalid": "Username must be 3-24 characters and use letters, digits, or underscore.",
-      "username_not_allowed": "That username is not allowed.",
-      "username_taken": "That username is already taken.",
-      "username_mismatch": "That username does not match your account.",
-      "password_too_short": "Password must be at least 6 characters.",
-      "password_too_long": "New password must be at most 128 characters.",
-      "characters_online": "Log out all of your characters before deactivating.",
-      "deactivated": "This account has been deactivated. Contact an admin to restore it.",
-      "not_found": "Account not found."
+      "username_invalid": "Nama pengguna harus 3-24 karakter dan menggunakan huruf, angka, atau garis bawah.",
+      "username_not_allowed": "Nama pengguna itu tidak diperbolehkan.",
+      "username_taken": "Nama pengguna itu sudah dipakai.",
+      "username_mismatch": "Nama pengguna itu tidak cocok dengan akun Anda.",
+      "password_too_short": "Kata sandi harus minimal 6 karakter.",
+      "password_too_long": "Kata sandi baru harus maksimal 128 karakter.",
+      "characters_online": "Keluarkan semua karakter Anda sebelum menonaktifkan akun.",
+      "deactivated": "Akun ini telah dinonaktifkan. Hubungi admin untuk memulihkannya.",
+      "not_found": "Akun tidak ditemukan."
     },
     "character": {
-      "name_invalid": "Invalid character name. Use 2-16 letters.",
-      "name_not_allowed": "That character name is not allowed.",
-      "invalid_class": "Invalid class.",
-      "limit_reached": "Character limit reached.",
-      "name_taken": "That name is taken.",
-      "not_found": "Character not found.",
-      "online": "Character is currently online.",
-      "rename_not_permitted": "Renaming this character is not allowed.",
-      "delete_confirm": "Type the character name to confirm deletion.",
-      "already_in_world": "Character is already in world.",
-      "taken_over": "Your character was taken over by another session.",
-      "rename_required": "This character must be renamed before entering the world."
+      "name_invalid": "Nama karakter tidak valid. Gunakan 2-16 huruf.",
+      "name_not_allowed": "Nama karakter itu tidak diperbolehkan.",
+      "invalid_class": "Kelas tidak valid.",
+      "limit_reached": "Batas karakter telah tercapai.",
+      "name_taken": "Nama itu sudah dipakai.",
+      "not_found": "Karakter tidak ditemukan.",
+      "online": "Karakter sedang daring.",
+      "rename_not_permitted": "Mengganti nama karakter ini tidak diperbolehkan.",
+      "delete_confirm": "Ketik nama karakter untuk mengonfirmasi penghapusan.",
+      "already_in_world": "Karakter sudah berada di dalam dunia.",
+      "taken_over": "Karakter Anda telah diambil alih oleh sesi lain.",
+      "rename_required": "Karakter ini harus diganti namanya sebelum memasuki dunia."
     },
     "moderation": {
-      "suspended_until": "This account is suspended until {date}.",
-      "suspended": "This account is suspended.",
-      "banned": "This account has been banned.",
-      "force_rename": "A moderator requires one of your characters to be renamed."
+      "suspended_until": "Akun ini ditangguhkan hingga {date}.",
+      "suspended": "Akun ini ditangguhkan.",
+      "banned": "Akun ini telah diblokir.",
+      "force_rename": "Seorang moderator mengharuskan salah satu karakter Anda diganti namanya."
     },
     "email": {
-      "invalid": "Enter a valid email address.",
-      "unchanged": "That is already your email address."
+      "invalid": "Masukkan alamat email yang valid.",
+      "unchanged": "Itu sudah menjadi alamat email Anda."
     },
     "two_factor": {
-      "code_invalid": "That code is not valid, try again.",
-      "setup_required": "Start two-factor setup first.",
-      "already_enabled": "Two-factor is already enabled.",
-      "not_enabled": "Two-factor is not enabled."
+      "code_invalid": "Kode itu tidak valid, coba lagi.",
+      "setup_required": "Mulai penyiapan autentikasi dua-faktor terlebih dahulu.",
+      "already_enabled": "Autentikasi dua-faktor sudah diaktifkan.",
+      "not_enabled": "Autentikasi dua-faktor belum diaktifkan."
     },
     "origin": {
-      "cross_site": "Request blocked for security reasons."
+      "cross_site": "Permintaan diblokir karena alasan keamanan."
     },
     "discord": {
-      "not_configured": "Discord integration is not available right now.",
-      "expired": "That Discord sign-in expired. Please sign in with Discord again.",
-      "already_linked": "That Discord account is already linked to another account.",
-      "password_required": "Set a password before unlinking your Discord account.",
-      "unknown_swag": "That reward is not available.",
-      "link_required": "Link your Discord account first.",
-      "swag_claimed": "You have already claimed this reward.",
-      "swag_tier": "Reach a higher rank to claim this.",
-      "swag_points": "Not enough points."
+      "not_configured": "Integrasi Discord tidak tersedia saat ini.",
+      "expired": "Proses masuk Discord itu telah kedaluwarsa. Silakan masuk dengan Discord lagi.",
+      "already_linked": "Akun Discord itu sudah tertaut ke akun lain.",
+      "password_required": "Atur kata sandi sebelum memutus tautan akun Discord Anda.",
+      "unknown_swag": "Hadiah itu tidak tersedia.",
+      "link_required": "Tautkan akun Discord Anda terlebih dahulu.",
+      "swag_claimed": "Anda sudah mengklaim hadiah ini.",
+      "swag_tier": "Capai peringkat yang lebih tinggi untuk mengklaim ini.",
+      "swag_points": "Poin tidak cukup."
     }
   },
   "guide": {
@@ -3476,12 +3476,12 @@ export const id_ID: EnTranslations = {
       "webLoginOnly": "Masuk hanya diperbolehkan dari klien permainan.",
       "accountSuspended": "Akun ini ditangguhkan hingga {date}.",
       "alreadyInWorld": "Karakter sudah berada di dalam dunia.",
-      "accountSessionLimit": "Too many characters on this account are already in the world.",
+      "accountSessionLimit": "Terlalu banyak karakter dari akun ini yang sudah berada di dalam dunia.",
       "takenOver": "Karakter Anda telah diambil alih oleh sesi lain.",
       "renameBeforeEntering": "Karakter ini harus diganti namanya sebelum memasuki dunia.",
       "renameNotPermitted": "Mengganti nama karakter ini tidak diperbolehkan.",
-      "unsupportedMediaType": "Unsupported request format.",
-      "crossSiteOrigin": "Request blocked for security reasons."
+      "unsupportedMediaType": "Format permintaan tidak didukung.",
+      "crossSiteOrigin": "Permintaan diblokir karena alasan keamanan."
     }
   },
   "desktop": {

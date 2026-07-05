@@ -1179,91 +1179,91 @@ export const es_ES: EnTranslations = {
   },
   "apiError": {
     "validation": {
-      "failed": "Some fields are invalid. Check the form and try again."
+      "failed": "Algunos campos no son válidos. Revisa el formulario e inténtalo de nuevo."
     },
     "json": {
-      "malformed": "That request could not be read. Please try again."
+      "malformed": "No se pudo leer la solicitud. Inténtalo de nuevo."
     },
     "body": {
-      "too_large": "That request is too large. Try again with less data.",
-      "unsupported_media_type": "Unsupported request format."
+      "too_large": "La solicitud es demasiado grande. Inténtalo de nuevo con menos datos.",
+      "unsupported_media_type": "Formato de solicitud no compatible."
     },
     "db": {
-      "conflict": "That change conflicted with another update. Please try again."
+      "conflict": "Ese cambio entró en conflicto con otra actualización. Inténtalo de nuevo."
     },
     "rate_limit": {
-      "exceeded": "Too many requests. Try again in {seconds}."
+      "exceeded": "Demasiadas solicitudes. Inténtalo de nuevo en {seconds}."
     },
     "internal": {
-      "error": "Something went wrong on our end. Please try again."
+      "error": "Algo salió mal de nuestro lado. Inténtalo de nuevo."
     },
     "auth": {
-      "token_missing": "You need to be signed in to do that.",
-      "token_invalid": "Your session has expired. Please sign in again.",
-      "forbidden": "You do not have permission to do that.",
-      "invalid_credentials": "Invalid username or password.",
-      "required": "Not authenticated.",
-      "web_login_only": "Logins are only allowed from the game client.",
-      "too_many_attempts": "Too many attempts. Wait a minute and try again.",
-      "too_many_failed_attempts": "Too many failed attempts. Wait a few minutes and try again.",
-      "current_password_incorrect": "Your current password is incorrect.",
-      "password_incorrect": "Your password is incorrect.",
-      "verification_failed": "Verification failed. Please try again."
+      "token_missing": "Necesitas iniciar sesión para hacer eso.",
+      "token_invalid": "Tu sesión ha expirado. Inicia sesión de nuevo.",
+      "forbidden": "No tienes permiso para hacer eso.",
+      "invalid_credentials": "Usuario o contraseña no válidos.",
+      "required": "No autenticado.",
+      "web_login_only": "El inicio de sesión solo se permite desde el cliente del juego.",
+      "too_many_attempts": "Demasiados intentos. Espera un minuto e inténtalo de nuevo.",
+      "too_many_failed_attempts": "Demasiados intentos fallidos. Espera unos minutos e inténtalo de nuevo.",
+      "current_password_incorrect": "Tu contraseña actual es incorrecta.",
+      "password_incorrect": "Tu contraseña es incorrecta.",
+      "verification_failed": "La verificación falló. Inténtalo de nuevo."
     },
     "account": {
-      "username_invalid": "Username must be 3-24 characters and use letters, digits, or underscore.",
-      "username_not_allowed": "That username is not allowed.",
-      "username_taken": "That username is already taken.",
-      "username_mismatch": "That username does not match your account.",
-      "password_too_short": "Password must be at least 6 characters.",
-      "password_too_long": "New password must be at most 128 characters.",
-      "characters_online": "Log out all of your characters before deactivating.",
-      "deactivated": "This account has been deactivated. Contact an admin to restore it.",
-      "not_found": "Account not found."
+      "username_invalid": "El usuario debe tener 3-24 caracteres y usar letras, dígitos o guion bajo.",
+      "username_not_allowed": "Ese nombre de usuario no está permitido.",
+      "username_taken": "Ese nombre de usuario ya está en uso.",
+      "username_mismatch": "Ese nombre de usuario no coincide con tu cuenta.",
+      "password_too_short": "La contraseña debe tener al menos 6 caracteres.",
+      "password_too_long": "La nueva contraseña debe tener como máximo 128 caracteres.",
+      "characters_online": "Cierra la sesión de todos tus personajes antes de desactivar la cuenta.",
+      "deactivated": "Esta cuenta ha sido desactivada. Contacta con un administrador para restaurarla.",
+      "not_found": "Cuenta no encontrada."
     },
     "character": {
-      "name_invalid": "Invalid character name. Use 2-16 letters.",
-      "name_not_allowed": "That character name is not allowed.",
-      "invalid_class": "Invalid class.",
-      "limit_reached": "Character limit reached.",
-      "name_taken": "That name is taken.",
-      "not_found": "Character not found.",
-      "online": "Character is currently online.",
-      "rename_not_permitted": "Renaming this character is not allowed.",
-      "delete_confirm": "Type the character name to confirm deletion.",
-      "already_in_world": "Character is already in world.",
-      "taken_over": "Your character was taken over by another session.",
-      "rename_required": "This character must be renamed before entering the world."
+      "name_invalid": "Nombre de personaje no válido. Usa 2-16 letras.",
+      "name_not_allowed": "Ese nombre de personaje no está permitido.",
+      "invalid_class": "Clase no válida.",
+      "limit_reached": "Límite de personajes alcanzado.",
+      "name_taken": "Ese nombre ya está en uso.",
+      "not_found": "Personaje no encontrado.",
+      "online": "El personaje está conectado.",
+      "rename_not_permitted": "No se permite cambiar el nombre de este personaje.",
+      "delete_confirm": "Escribe el nombre del personaje para confirmar la eliminación.",
+      "already_in_world": "El personaje ya está en el mundo.",
+      "taken_over": "Otra sesión tomó el control de tu personaje.",
+      "rename_required": "Este personaje debe cambiar de nombre antes de entrar al mundo."
     },
     "moderation": {
-      "suspended_until": "This account is suspended until {date}.",
-      "suspended": "This account is suspended.",
-      "banned": "This account has been banned.",
-      "force_rename": "A moderator requires one of your characters to be renamed."
+      "suspended_until": "Esta cuenta está suspendida hasta {date}.",
+      "suspended": "Esta cuenta está suspendida.",
+      "banned": "Esta cuenta ha sido expulsada.",
+      "force_rename": "Un moderador exige que cambies el nombre de uno de tus personajes."
     },
     "email": {
-      "invalid": "Enter a valid email address.",
-      "unchanged": "That is already your email address."
+      "invalid": "Introduce una dirección de correo electrónico válida.",
+      "unchanged": "Esa ya es tu dirección de correo electrónico."
     },
     "two_factor": {
-      "code_invalid": "That code is not valid, try again.",
-      "setup_required": "Start two-factor setup first.",
-      "already_enabled": "Two-factor is already enabled.",
-      "not_enabled": "Two-factor is not enabled."
+      "code_invalid": "Ese código no es válido. Inténtalo de nuevo.",
+      "setup_required": "Primero comienza la configuración de la autenticación en dos pasos.",
+      "already_enabled": "La autenticación en dos pasos ya está activada.",
+      "not_enabled": "La autenticación en dos pasos no está activada."
     },
     "origin": {
-      "cross_site": "Request blocked for security reasons."
+      "cross_site": "Solicitud bloqueada por motivos de seguridad."
     },
     "discord": {
-      "not_configured": "Discord integration is not available right now.",
-      "expired": "That Discord sign-in expired. Please sign in with Discord again.",
-      "already_linked": "That Discord account is already linked to another account.",
-      "password_required": "Set a password before unlinking your Discord account.",
-      "unknown_swag": "That reward is not available.",
-      "link_required": "Link your Discord account first.",
-      "swag_claimed": "You have already claimed this reward.",
-      "swag_tier": "Reach a higher rank to claim this.",
-      "swag_points": "Not enough points."
+      "not_configured": "La integración con Discord no está disponible en este momento.",
+      "expired": "El inicio de sesión de Discord expiró. Inicia sesión con Discord de nuevo.",
+      "already_linked": "Esa cuenta de Discord ya está vinculada a otra cuenta.",
+      "password_required": "Establece una contraseña antes de desvincular tu cuenta de Discord.",
+      "unknown_swag": "Esa recompensa no está disponible.",
+      "link_required": "Primero vincula tu cuenta de Discord.",
+      "swag_claimed": "Ya has reclamado esta recompensa.",
+      "swag_tier": "Alcanza un rango superior para reclamar esto.",
+      "swag_points": "Puntos insuficientes."
     }
   },
   "guide": {
@@ -3476,12 +3476,12 @@ export const es_ES: EnTranslations = {
       "webLoginOnly": "El inicio de sesión solo se permite desde el cliente del juego.",
       "accountSuspended": "Esta cuenta está suspendida hasta {date}.",
       "alreadyInWorld": "El personaje ya está en el mundo.",
-      "accountSessionLimit": "Too many characters on this account are already in the world.",
+      "accountSessionLimit": "Demasiados personajes de esta cuenta ya están en el mundo.",
       "takenOver": "Otra sesión tomó el control de tu personaje.",
       "renameBeforeEntering": "Este personaje debe cambiar de nombre antes de entrar en el mundo.",
       "renameNotPermitted": "No se permite cambiar el nombre de este personaje.",
-      "unsupportedMediaType": "Unsupported request format.",
-      "crossSiteOrigin": "Request blocked for security reasons."
+      "unsupportedMediaType": "Formato de solicitud no compatible.",
+      "crossSiteOrigin": "Solicitud bloqueada por motivos de seguridad."
     }
   },
   "desktop": {

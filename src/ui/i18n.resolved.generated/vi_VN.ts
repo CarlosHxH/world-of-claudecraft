@@ -1179,91 +1179,91 @@ export const vi_VN: EnTranslations = {
   },
   "apiError": {
     "validation": {
-      "failed": "Some fields are invalid. Check the form and try again."
+      "failed": "Một số trường không hợp lệ. Hãy kiểm tra biểu mẫu và thử lại."
     },
     "json": {
-      "malformed": "That request could not be read. Please try again."
+      "malformed": "Không thể đọc được yêu cầu đó. Vui lòng thử lại."
     },
     "body": {
-      "too_large": "That request is too large. Try again with less data.",
-      "unsupported_media_type": "Unsupported request format."
+      "too_large": "Yêu cầu đó quá lớn. Hãy thử lại với ít dữ liệu hơn.",
+      "unsupported_media_type": "Định dạng yêu cầu không được hỗ trợ."
     },
     "db": {
-      "conflict": "That change conflicted with another update. Please try again."
+      "conflict": "Thay đổi đó xung đột với một cập nhật khác. Vui lòng thử lại."
     },
     "rate_limit": {
-      "exceeded": "Too many requests. Try again in {seconds}."
+      "exceeded": "Quá nhiều yêu cầu. Hãy thử lại sau {seconds}."
     },
     "internal": {
-      "error": "Something went wrong on our end. Please try again."
+      "error": "Đã có lỗi xảy ra ở phía chúng tôi. Vui lòng thử lại."
     },
     "auth": {
-      "token_missing": "You need to be signed in to do that.",
-      "token_invalid": "Your session has expired. Please sign in again.",
-      "forbidden": "You do not have permission to do that.",
-      "invalid_credentials": "Invalid username or password.",
-      "required": "Not authenticated.",
-      "web_login_only": "Logins are only allowed from the game client.",
-      "too_many_attempts": "Too many attempts. Wait a minute and try again.",
-      "too_many_failed_attempts": "Too many failed attempts. Wait a few minutes and try again.",
-      "current_password_incorrect": "Your current password is incorrect.",
-      "password_incorrect": "Your password is incorrect.",
-      "verification_failed": "Verification failed. Please try again."
+      "token_missing": "Bạn cần đăng nhập để thực hiện thao tác đó.",
+      "token_invalid": "Phiên của bạn đã hết hạn. Vui lòng đăng nhập lại.",
+      "forbidden": "Bạn không có quyền thực hiện thao tác đó.",
+      "invalid_credentials": "Tên đăng nhập hoặc mật khẩu không đúng.",
+      "required": "Chưa xác thực.",
+      "web_login_only": "Chỉ được phép đăng nhập từ trình khách trò chơi.",
+      "too_many_attempts": "Quá nhiều lần thử. Hãy đợi một phút rồi thử lại.",
+      "too_many_failed_attempts": "Quá nhiều lần thử thất bại. Hãy đợi vài phút rồi thử lại.",
+      "current_password_incorrect": "Mật khẩu hiện tại của bạn không đúng.",
+      "password_incorrect": "Mật khẩu của bạn không đúng.",
+      "verification_failed": "Xác minh thất bại. Vui lòng thử lại."
     },
     "account": {
-      "username_invalid": "Username must be 3-24 characters and use letters, digits, or underscore.",
-      "username_not_allowed": "That username is not allowed.",
-      "username_taken": "That username is already taken.",
-      "username_mismatch": "That username does not match your account.",
-      "password_too_short": "Password must be at least 6 characters.",
-      "password_too_long": "New password must be at most 128 characters.",
-      "characters_online": "Log out all of your characters before deactivating.",
-      "deactivated": "This account has been deactivated. Contact an admin to restore it.",
-      "not_found": "Account not found."
+      "username_invalid": "Tên đăng nhập phải có 3-24 ký tự và chỉ dùng chữ cái, chữ số hoặc dấu gạch dưới.",
+      "username_not_allowed": "Tên đăng nhập đó không được phép.",
+      "username_taken": "Tên đăng nhập đó đã được sử dụng.",
+      "username_mismatch": "Tên đăng nhập đó không khớp với tài khoản của bạn.",
+      "password_too_short": "Mật khẩu phải có ít nhất 6 ký tự.",
+      "password_too_long": "Mật khẩu mới phải có tối đa 128 ký tự.",
+      "characters_online": "Hãy đăng xuất tất cả nhân vật của bạn trước khi vô hiệu hóa tài khoản.",
+      "deactivated": "Tài khoản này đã bị vô hiệu hóa. Hãy liên hệ quản trị viên để khôi phục.",
+      "not_found": "Không tìm thấy tài khoản."
     },
     "character": {
-      "name_invalid": "Invalid character name. Use 2-16 letters.",
-      "name_not_allowed": "That character name is not allowed.",
-      "invalid_class": "Invalid class.",
-      "limit_reached": "Character limit reached.",
-      "name_taken": "That name is taken.",
-      "not_found": "Character not found.",
-      "online": "Character is currently online.",
-      "rename_not_permitted": "Renaming this character is not allowed.",
-      "delete_confirm": "Type the character name to confirm deletion.",
-      "already_in_world": "Character is already in world.",
-      "taken_over": "Your character was taken over by another session.",
-      "rename_required": "This character must be renamed before entering the world."
+      "name_invalid": "Tên nhân vật không hợp lệ. Dùng 2-16 chữ cái.",
+      "name_not_allowed": "Tên nhân vật đó không được phép.",
+      "invalid_class": "Lớp không hợp lệ.",
+      "limit_reached": "Đã đạt giới hạn số nhân vật.",
+      "name_taken": "Tên đó đã được sử dụng.",
+      "not_found": "Không tìm thấy nhân vật.",
+      "online": "Nhân vật hiện đang trực tuyến.",
+      "rename_not_permitted": "Không được phép đổi tên nhân vật này.",
+      "delete_confirm": "Nhập tên nhân vật để xác nhận xóa.",
+      "already_in_world": "Nhân vật đã ở trong thế giới.",
+      "taken_over": "Nhân vật của bạn đã bị một phiên khác chiếm quyền.",
+      "rename_required": "Nhân vật này phải được đổi tên trước khi vào thế giới."
     },
     "moderation": {
-      "suspended_until": "This account is suspended until {date}.",
-      "suspended": "This account is suspended.",
-      "banned": "This account has been banned.",
-      "force_rename": "A moderator requires one of your characters to be renamed."
+      "suspended_until": "Tài khoản này bị đình chỉ đến {date}.",
+      "suspended": "Tài khoản này bị đình chỉ.",
+      "banned": "Tài khoản này đã bị cấm.",
+      "force_rename": "Người kiểm duyệt yêu cầu đổi tên một nhân vật của bạn."
     },
     "email": {
-      "invalid": "Enter a valid email address.",
-      "unchanged": "That is already your email address."
+      "invalid": "Hãy nhập một địa chỉ email hợp lệ.",
+      "unchanged": "Đó đã là địa chỉ email của bạn."
     },
     "two_factor": {
-      "code_invalid": "That code is not valid, try again.",
-      "setup_required": "Start two-factor setup first.",
-      "already_enabled": "Two-factor is already enabled.",
-      "not_enabled": "Two-factor is not enabled."
+      "code_invalid": "Mã đó không hợp lệ, hãy thử lại.",
+      "setup_required": "Hãy bắt đầu thiết lập xác thực hai yếu tố trước.",
+      "already_enabled": "Xác thực hai yếu tố đã được bật.",
+      "not_enabled": "Xác thực hai yếu tố chưa được bật."
     },
     "origin": {
-      "cross_site": "Request blocked for security reasons."
+      "cross_site": "Yêu cầu đã bị chặn vì lý do bảo mật."
     },
     "discord": {
-      "not_configured": "Discord integration is not available right now.",
-      "expired": "That Discord sign-in expired. Please sign in with Discord again.",
-      "already_linked": "That Discord account is already linked to another account.",
-      "password_required": "Set a password before unlinking your Discord account.",
-      "unknown_swag": "That reward is not available.",
-      "link_required": "Link your Discord account first.",
-      "swag_claimed": "You have already claimed this reward.",
-      "swag_tier": "Reach a higher rank to claim this.",
-      "swag_points": "Not enough points."
+      "not_configured": "Tích hợp Discord hiện không khả dụng.",
+      "expired": "Lượt đăng nhập Discord đó đã hết hạn. Vui lòng đăng nhập lại bằng Discord.",
+      "already_linked": "Tài khoản Discord đó đã được liên kết với một tài khoản khác.",
+      "password_required": "Hãy đặt mật khẩu trước khi hủy liên kết tài khoản Discord của bạn.",
+      "unknown_swag": "Phần thưởng đó không khả dụng.",
+      "link_required": "Hãy liên kết tài khoản Discord của bạn trước.",
+      "swag_claimed": "Bạn đã nhận phần thưởng này rồi.",
+      "swag_tier": "Hãy đạt cấp bậc cao hơn để nhận phần thưởng này.",
+      "swag_points": "Không đủ điểm."
     }
   },
   "guide": {
@@ -3476,12 +3476,12 @@ export const vi_VN: EnTranslations = {
       "webLoginOnly": "Chỉ được phép đăng nhập từ trình khách trò chơi.",
       "accountSuspended": "Tài khoản này bị đình chỉ đến {date}.",
       "alreadyInWorld": "Nhân vật đã ở trong thế giới.",
-      "accountSessionLimit": "Too many characters on this account are already in the world.",
+      "accountSessionLimit": "Quá nhiều nhân vật trên tài khoản này đã ở trong thế giới.",
       "takenOver": "Nhân vật của bạn đã bị một phiên khác chiếm quyền.",
       "renameBeforeEntering": "Nhân vật này phải được đổi tên trước khi vào thế giới.",
       "renameNotPermitted": "Không được phép đổi tên nhân vật này.",
-      "unsupportedMediaType": "Unsupported request format.",
-      "crossSiteOrigin": "Request blocked for security reasons."
+      "unsupportedMediaType": "Định dạng yêu cầu không được hỗ trợ.",
+      "crossSiteOrigin": "Yêu cầu đã bị chặn vì lý do bảo mật."
     }
   },
   "desktop": {
