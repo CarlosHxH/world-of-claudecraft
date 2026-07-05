@@ -834,10 +834,19 @@ export const en_CA: EnTranslations = {
         "allStats": "Reduces all attributes by {value}"
       },
       "allStatsPctReduce": "Reduces all attributes by {pct}%",
+      "increasePct": {
+        "ap": "Increases attack power by {pct}%",
+        "armor": "Increases armor by {pct}%",
+        "int": "Increases Intellect by {pct}%",
+        "sta": "Increases Stamina by {pct}%",
+        "allStats": "Increases all attributes by {pct}%"
+      },
       "dodge": "Increases dodge chance by {pct}%",
       "dodgeReduce": "Reduces dodge chance by {pct}%",
       "armorFlat": "Reduces armor by {value}",
       "armorFlatStacks": "Reduces armor by {value} ({stacks} stacks)",
+      "armorPct": "Reduces armor by {pct}%",
+      "armorPctStacks": "Reduces armor by {pct}% ({stacks} stacks)",
       "mortalWound": "Reduces healing received by {pct}%",
       "vulnerability": "Increases damage taken by {pct}%",
       "physVuln": "Increases physical damage taken by {pct}%",
@@ -4597,7 +4606,7 @@ export const en_CA: EnTranslations = {
       },
       "battle_shout": {
         "name": "Iron Bellow",
-        "description": "Increases your attack power by 20 for 2 min."
+        "description": "A shout that increases the attack power of all party members by 10% for 2 min."
       },
       "commanding_shout": {
         "name": "Bolstering Cry",
@@ -4649,7 +4658,7 @@ export const en_CA: EnTranslations = {
       },
       "sunder_armor": {
         "name": "Armor Shear",
-        "description": "Sunders the target's armor, reducing it by {damage} per application. Stacks up to 5 times. Generates a high amount of threat."
+        "description": "Sunders the target's armor, reducing it by 2% per application. Stacks up to 5 times (10% at full stacks). Generates a high amount of threat."
       },
       "taunt": {
         "name": "Goad",
@@ -4665,7 +4674,7 @@ export const en_CA: EnTranslations = {
       },
       "arcane_intellect": {
         "name": "Aether Insight",
-        "description": "Increases Intellect by 2 for 30 min."
+        "description": "Increases the Intellect of all party members by 5% for 30 min."
       },
       "frostbolt": {
         "name": "Rimelance",
@@ -4773,7 +4782,7 @@ export const en_CA: EnTranslations = {
       },
       "expose_armor": {
         "name": "Armor Breach",
-        "description": "Finishing move that exposes the target, reducing its armor. More combo points spent build into a deeper cut."
+        "description": "Finishing move that exposes the target, reducing its armor by 10% for 30 sec."
       },
       "rupture": {
         "name": "Bleed Out",
@@ -4805,7 +4814,7 @@ export const en_CA: EnTranslations = {
       },
       "devotion_aura": {
         "name": "Steadfast Aura",
-        "description": "Increases your armor by 40 for 30 min."
+        "description": "Increases the armor of all party members by 10%."
       },
       "judgement": {
         "name": "Verdict",
@@ -4813,7 +4822,7 @@ export const en_CA: EnTranslations = {
       },
       "blessing_of_might": {
         "name": "Oath of Iron",
-        "description": "Places a Blessing on a friendly target, increasing attack power by 15 for 5 min."
+        "description": "Blesses the party, increasing the attack power of all party members by 10% for 30 min."
       },
       "divine_protection": {
         "name": "Ward of Faith",
@@ -4909,7 +4918,7 @@ export const en_CA: EnTranslations = {
       },
       "power_word_fortitude": {
         "name": "Litany of Resolve",
-        "description": "Increases the target's Stamina by 3 for 30 min."
+        "description": "Increases the Stamina of all party members by 5% for 30 min."
       },
       "shadow_word_pain": {
         "name": "Dirge of Decay",
@@ -5033,7 +5042,7 @@ export const en_CA: EnTranslations = {
       },
       "mark_of_the_wild": {
         "name": "Wildward",
-        "description": "Places the Wildward on a friendly target, increasing armor by 25 for 30 min."
+        "description": "Places the Wildward on the party, increasing all attributes of all party members by 5% for 30 min."
       },
       "moonfire": {
         "name": "Lunar Tempest",
@@ -5105,7 +5114,7 @@ export const en_CA: EnTranslations = {
       },
       "faerie_fire": {
         "name": "Witchlight",
-        "description": "Decreases the target's armor by 35 for 40 sec."
+        "description": "Decreases the target's armor by 10% for 40 sec. Does not stack with Sunder Armor."
       },
       "hibernate": {
         "name": "Slumber",

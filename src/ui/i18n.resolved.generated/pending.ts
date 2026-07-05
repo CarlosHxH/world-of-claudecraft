@@ -9,24 +9,150 @@
 // Reproducibility is checked by tests/i18n_resolved_equivalence.test.ts.
 
 export const pending: Record<string, readonly string[]> = {
-  "es": [],
-  "es_ES": [],
-  "fr_FR": [],
-  "fr_CA": [],
+  "es": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ],
+  "es_ES": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ],
+  "fr_FR": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ],
+  "fr_CA": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ],
   "en_CA": [],
-  "it_IT": [],
-  "de_DE": [],
+  "it_IT": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ],
+  "de_DE": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ],
   "zh_CN": [],
   "zh_TW": [],
   "ko_KR": [],
   "ja_JP": [],
-  "pt_BR": [],
+  "pt_BR": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ],
   "ru_RU": [],
-  "nl_NL": [],
-  "pl_PL": [],
-  "id_ID": [],
-  "tr_TR": [],
-  "sv_SE": [],
-  "vi_VN": [],
-  "da_DK": []
+  "nl_NL": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ],
+  "pl_PL": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ],
+  "id_ID": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ],
+  "tr_TR": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ],
+  "sv_SE": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ],
+  "vi_VN": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ],
+  "da_DK": [
+    "entities.abilities.sunder_armor.description",
+    "hudChrome.auraEffect.armorPct",
+    "hudChrome.auraEffect.armorPctStacks",
+    "hudChrome.auraEffect.increasePct.allStats",
+    "hudChrome.auraEffect.increasePct.ap",
+    "hudChrome.auraEffect.increasePct.armor",
+    "hudChrome.auraEffect.increasePct.int",
+    "hudChrome.auraEffect.increasePct.sta"
+  ]
 };
