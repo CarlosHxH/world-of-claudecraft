@@ -16,7 +16,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 401,
-      "state": "154c6d6c",
+      "state": "c4a9def3",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -46,7 +46,14 @@
             "mainhand": "worn_sword"
           },
           "gatheringProficiency": {},
+          "inventory": [
+            {
+              "count": 5,
+              "itemId": "baked_bread"
+            }
+          ],
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "talents": {
             "choices": {},
             "ranks": {}
@@ -111,7 +118,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 401,
-      "state": "247b0d80",
+      "state": "e2863e71",
       "events": "27c7a42a",
       "rng": {
         "draws": 0,
@@ -141,7 +148,14 @@
             "mainhand": "worn_sword"
           },
           "gatheringProficiency": {},
+          "inventory": [
+            {
+              "count": 5,
+              "itemId": "baked_bread"
+            }
+          ],
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "questLog": [
             [
               "q_boars",
@@ -218,7 +232,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 401,
-      "state": "8d766bdf",
+      "state": "7bc4430c",
       "events": "01e3a6cf",
       "rng": {
         "draws": 0,
@@ -253,10 +267,15 @@
           "inventory": [
             {
               "count": 5,
+              "itemId": "baked_bread"
+            },
+            {
+              "count": 5,
               "itemId": "boar_hide"
             }
           ],
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "questLog": [
             [
               "q_boars",
@@ -333,7 +352,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 401,
-      "state": "1af5d2e8",
+      "state": "6e138db9",
       "events": "f2ada81f",
       "rng": {
         "draws": 0,
@@ -367,11 +386,16 @@
           "gatheringProficiency": {},
           "inventory": [
             {
+              "count": 5,
+              "itemId": "baked_bread"
+            },
+            {
               "count": 4,
               "itemId": "boar_hide"
             }
           ],
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "questLog": [
             [
               "q_boars",
@@ -448,7 +472,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 401,
-      "state": "72ae0198",
+      "state": "fad0e515",
       "events": "c3882f07",
       "rng": {
         "draws": 0,
@@ -483,10 +507,15 @@
           "inventory": [
             {
               "count": 5,
+              "itemId": "baked_bread"
+            },
+            {
+              "count": 5,
               "itemId": "boar_hide"
             }
           ],
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "questLog": [
             [
               "q_boars",
@@ -563,7 +592,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 401,
-      "state": "7c69e293",
+      "state": "bea2065c",
       "events": "1dce54bf",
       "rng": {
         "draws": 0,
@@ -598,8 +627,15 @@
             "mainhand": "worn_sword"
           },
           "gatheringProficiency": {},
+          "inventory": [
+            {
+              "count": 5,
+              "itemId": "baked_bread"
+            }
+          ],
           "lifetimeXp": 350,
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "questsDone": [
             "q_boars"
           ],
@@ -668,7 +704,7 @@
       "tick": 2,
       "time": 0.1,
       "nextId": 401,
-      "state": "be8d6f59",
+      "state": "8b3b298e",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -703,8 +739,15 @@
             "mainhand": "worn_sword"
           },
           "gatheringProficiency": {},
+          "inventory": [
+            {
+              "count": 5,
+              "itemId": "baked_bread"
+            }
+          ],
           "lifetimeXp": 350,
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "questsDone": [
             "q_boars"
           ],

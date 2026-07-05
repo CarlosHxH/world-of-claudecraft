@@ -15,7 +15,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 401,
-      "state": "09563a54",
+      "state": "bcd47ebe",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -46,7 +46,18 @@
             "mainhand": "rusty_hatchet"
           },
           "gatheringProficiency": {},
+          "inventory": [
+            {
+              "count": 5,
+              "itemId": "baked_bread"
+            },
+            {
+              "count": 5,
+              "itemId": "spring_water"
+            }
+          ],
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "talents": {
             "choices": {},
             "ranks": {}
@@ -113,7 +124,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 404,
-      "state": "c28d8770",
+      "state": "c417bf96",
       "events": "d01fe473",
       "rng": {
         "draws": 6,
@@ -124,7 +135,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 404,
-      "state": "77e1cf94",
+      "state": "e4a00b22",
       "events": "741638a5",
       "rng": {
         "draws": 6,
@@ -135,7 +146,7 @@
       "tick": 60,
       "time": 3,
       "nextId": 404,
-      "state": "93482ba6",
+      "state": "740ab634",
       "events": "e02f37be",
       "rng": {
         "draws": 96,
@@ -146,7 +157,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 404,
-      "state": "07b508a2",
+      "state": "183ad6d8",
       "events": "741638a5",
       "rng": {
         "draws": 195,
@@ -157,7 +168,7 @@
       "tick": 100,
       "time": 5,
       "nextId": 404,
-      "state": "c4790638",
+      "state": "baef365e",
       "events": "4468bb01",
       "rng": {
         "draws": 294,
@@ -168,7 +179,7 @@
       "tick": 120,
       "time": 6,
       "nextId": 404,
-      "state": "77a56e80",
+      "state": "6f7c64c6",
       "events": "741638a5",
       "rng": {
         "draws": 398,
@@ -179,7 +190,7 @@
       "tick": 120,
       "time": 6,
       "nextId": 404,
-      "state": "77a56e80",
+      "state": "6f7c64c6",
       "events": "741638a5",
       "rng": {
         "draws": 398,
@@ -210,8 +221,19 @@
             "mainhand": "rusty_hatchet"
           },
           "gatheringProficiency": {},
+          "inventory": [
+            {
+              "count": 5,
+              "itemId": "baked_bread"
+            },
+            {
+              "count": 5,
+              "itemId": "spring_water"
+            }
+          ],
           "lifetimeXp": 44000,
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "talents": {
             "choices": {},
             "ranks": {}

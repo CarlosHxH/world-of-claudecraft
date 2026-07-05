@@ -15,7 +15,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 401,
-      "state": "7f8890ca",
+      "state": "a6da746c",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -46,7 +46,18 @@
             "mainhand": "training_mace"
           },
           "gatheringProficiency": {},
+          "inventory": [
+            {
+              "count": 5,
+              "itemId": "baked_bread"
+            },
+            {
+              "count": 5,
+              "itemId": "spring_water"
+            }
+          ],
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "talents": {
             "choices": {},
             "ranks": {}
@@ -112,7 +123,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 402,
-      "state": "68b6945f",
+      "state": "adca202d",
       "events": "e12ec889",
       "rng": {
         "draws": 4,
@@ -123,7 +134,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 402,
-      "state": "e7bb6a28",
+      "state": "6c84fe48",
       "events": "741638a5",
       "rng": {
         "draws": 4,
@@ -134,7 +145,7 @@
       "tick": 60,
       "time": 3,
       "nextId": 402,
-      "state": "ae734d98",
+      "state": "f7aa3558",
       "events": "9c2aab97",
       "rng": {
         "draws": 80,
@@ -145,7 +156,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 402,
-      "state": "8e151f9d",
+      "state": "8f6135bb",
       "events": "741638a5",
       "rng": {
         "draws": 170,
@@ -156,7 +167,7 @@
       "tick": 100,
       "time": 5,
       "nextId": 402,
-      "state": "4aa224a5",
+      "state": "1eb7b963",
       "events": "0fafa7a2",
       "rng": {
         "draws": 270,
@@ -167,7 +178,7 @@
       "tick": 120,
       "time": 6,
       "nextId": 402,
-      "state": "b28bba62",
+      "state": "3c6f77d2",
       "events": "741638a5",
       "rng": {
         "draws": 387,
@@ -178,7 +189,7 @@
       "tick": 140,
       "time": 7,
       "nextId": 402,
-      "state": "0a7c7f7a",
+      "state": "47b94cea",
       "events": "ae361e7a",
       "rng": {
         "draws": 501,
@@ -189,7 +200,7 @@
       "tick": 160,
       "time": 8,
       "nextId": 402,
-      "state": "c2969e28",
+      "state": "cd1b1a48",
       "events": "741638a5",
       "rng": {
         "draws": 627,
@@ -200,7 +211,7 @@
       "tick": 180,
       "time": 9,
       "nextId": 402,
-      "state": "81da14f2",
+      "state": "12ee8c02",
       "events": "8c880780",
       "rng": {
         "draws": 765,
@@ -211,7 +222,7 @@
       "tick": 200,
       "time": 10,
       "nextId": 402,
-      "state": "699d2381",
+      "state": "818fb297",
       "events": "741638a5",
       "rng": {
         "draws": 931,
@@ -222,7 +233,7 @@
       "tick": 201,
       "time": 10.05,
       "nextId": 402,
-      "state": "41a24b33",
+      "state": "8c62abe9",
       "events": "741638a5",
       "rng": {
         "draws": 932,
@@ -256,8 +267,19 @@
             "mainhand": "training_mace"
           },
           "gatheringProficiency": {},
+          "inventory": [
+            {
+              "count": 5,
+              "itemId": "baked_bread"
+            },
+            {
+              "count": 5,
+              "itemId": "spring_water"
+            }
+          ],
           "lifetimeXp": 167200,
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "talents": {
             "choices": {},
             "ranks": {}

@@ -83,7 +83,6 @@ describe('corpse harvest: single-use, first-come (#1141)', () => {
     const run2 = setup();
     run2.sim.harvestCorpse(run2.mob.id, undefined, run2.b);
     run2.sim.harvestCorpse(run2.mob.id, undefined, run2.a);
-
     // Whichever pid is processed first claims the corpse; the second is always denied.
     expect(run1.mob.harvestClaimedBy).toBe(run1.a);
     expect(run2.mob.harvestClaimedBy).toBe(run2.b);
@@ -123,5 +122,23 @@ describe('corpse harvest: single-use, first-come (#1141)', () => {
     mob.dead = false;
     sim.harvestCorpse(mob.id, undefined, a);
     expect(mob.harvestClaimedBy).toBeNull();
+  });
+
+  it('clears the claim on respawn, so the next corpse is harvestable again', () => {
+    const { sim, internals, mob, a, b } = setup();
+    sim.harvestCorpse(mob.id, undefined, a);
+    expect(mob.harvestClaimedBy).toBe(a);
+
+    (sim as unknown as { ctx: { respawnMob(m: Entity): void } }).ctx.respawnMob(mob);
+    expect(mob.harvestClaimedBy).toBeNull();
+
+    mob.dead = true;
+    mob.aiState = 'dead';
+    mob.corpseTimer = 9999;
+    mob.respawnTimer = 9999;
+    internals.entities.set(mob.id, mob);
+
+    sim.harvestCorpse(mob.id, undefined, b);
+    expect(mob.harvestClaimedBy).toBe(b);
   });
 });
