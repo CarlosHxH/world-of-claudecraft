@@ -349,6 +349,15 @@ export default defineConfig({
     },
   },
   test: {
+    // server/db.ts (and every module importing it) requires DATABASE_URL at module
+    // load. Locally db.ts fills it from .env; a CI checkout has no .env, so default
+    // a dummy here to keep the suite runnable in plain Node. Unit tests never open
+    // a connection (the pg Pool connects only on first query, and db-touching tests
+    // use FakeDb/mocks), and a real DATABASE_URL from the shell still wins.
+    env: {
+      DATABASE_URL:
+        process.env.DATABASE_URL ?? 'postgres://vitest:vitest@127.0.0.1:5433/wocc_vitest_dummy',
+    },
     // Two kinds of exclusion, kept together:
     // - .codex/.venv are local-only worktree/venv pollution a clean CI checkout never has;
     //   excluding them keeps the local gate mirroring CI (otherwise stale .codex worktree
