@@ -88,16 +88,26 @@ const PASS_SHOULDER = 34; // ...rising to full wall by this far from the pass
 // samples, since every riser is at least as steep as the ramp it replaces.
 const TERRACE_STEP = 6;
 const TERRACE_TREAD = 0.6;
+// Fraction of the smooth rise kept as a linear talus apron under the first
+// band. Without it, any rise below TERRACE_TREAD * TERRACE_STEP terraces to
+// exactly 0 and the foot of every wall becomes a dead-flat plain, erasing
+// placed landmarks that lean on that rise (the Mirefen impact site sits
+// against a 3.1yd wall base; tests/impact_site.test.ts pins it).
+const TERRACE_APRON = 0.5;
 
-// Quantizes a non-negative rise into TERRACE_STEP bands: flat for the first
-// TERRACE_TREAD fraction of each band, then a smoothed climb through the
-// rest. terraceStep(0) === 0 exactly, so callers can add this in unconditionally.
-function terraceStep(v: number, step: number, tread: number): number {
+// Quantizes a non-negative rise into `step`-height bands: flat for the first
+// `tread` fraction of each band, then a smoothed climb through the rest. The
+// first band keeps a linear apron floor (`apron` fraction of the smooth rise,
+// capped at `step * apron`) so wall feet stay sloped; the floor can never
+// reach past band 0 because every higher band already sits at >= step.
+// Continuous and monotonic in v; terraceStep(0) === 0 exactly, so callers can
+// add this in unconditionally. Exported for its unit test only.
+export function terraceStep(v: number, step: number, tread: number, apron: number): number {
   if (v <= 0) return 0;
   const band = Math.floor(v / step);
   const frac = v / step - band;
   const riser = frac < tread ? 0 : smoothstep(tread, 1, frac);
-  return (band + riser) * step;
+  return Math.max((band + riser) * step, Math.min(v, step) * apron);
 }
 
 export const MIREFEN_IMPACT_CRATER = {
@@ -407,7 +417,7 @@ export function terrainHeight(x: number, z: number, seed: number): number {
   // (tests/terrain_walls.test.ts checks the max steepness along a crossing,
   // which a stepped riser only increases). terraceStep(0) === 0, so terrain
   // away from any ridge/rim (mountainAdd == 0) is completely unaffected.
-  h += terraceStep(mountainAdd, TERRACE_STEP, TERRACE_TREAD);
+  h += terraceStep(mountainAdd, TERRACE_STEP, TERRACE_TREAD, TERRACE_APRON);
   h += mirefenImpactCraterOffset(x, z);
   h = applyEditLayer(x, z, h);
   return h;
