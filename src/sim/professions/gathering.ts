@@ -10,11 +10,16 @@
 // path, never out of band.
 
 import { GATHER_NODES } from '../content/gather_nodes';
-import { GATHERING_PROFESSION_IDS, type GatheringProfessionId } from '../content/professions';
+import {
+  GATHERING_PROFESSION_IDS,
+  GATHERING_PROFESSIONS,
+  type GatheringProfessionId,
+} from '../content/professions';
 import type { Rng } from '../rng';
 import type { PlayerMeta } from '../sim';
 import type { SimContext } from '../sim_context';
 import { type GatherNodeDef, type GatherNodeType, INTERACT_RANGE, type ItemDef } from '../types';
+import type { PlayerProfessionSkill } from './types';
 
 export type GatheringProficiency = Record<GatheringProfessionId, number>;
 
@@ -71,7 +76,11 @@ const MATERIAL_RARITY_SHARE: Record<Exclude<MaterialRarity, 'common'>, number> =
 // sim's one-draw-per-roll rng convention (see loot_roll.ts). Independent of node/
 // harvest wiring: callable standalone, or from resolveHarvest (see below).
 export function rollMaterialRarity(proficiency: number, rng: Rng): MaterialRarity {
-  const p = Math.max(0, Math.min(MATERIAL_RARITY_MAX_PROFICIENCY, proficiency));
+  // NaN pins to 0 rather than surviving the clamp: every `NaN < w` comparison
+  // below is false, so an unclamped NaN would fall through to legendary.
+  const p = Number.isNaN(proficiency)
+    ? 0
+    : Math.max(0, Math.min(MATERIAL_RARITY_MAX_PROFICIENCY, proficiency));
   const weights: [MaterialRarity, number][] = [
     ['common', MATERIAL_RARITY_MAX_PROFICIENCY - p],
     ['uncommon', p * MATERIAL_RARITY_SHARE.uncommon],
@@ -147,24 +156,43 @@ export function resolveHarvest(
 // harvest attempt against a node they must be standing near. Runs on the
 // deterministic 20 Hz tick path (dispatched from a wire command the same tick
 // it arrives, per the other immediate-interaction commands like `buyItem`),
-// never off-tick. Denies (no side effect) if the node id is unknown, the
-// player is too far away, or that player's own timer for the node has not
-// elapsed; a denial never touches another player's state.
+// never off-tick. Denies (no side effect) if the requesting player is dead
+// (matching the vendor family's dead gate, items.ts buyItem/useItem), the
+// node id is unknown, the player is too far away, their own timer for the
+// node has not elapsed, or their bags are full (matching the pickupObject
+// capacity pre-check, interaction.ts); a denial never touches another
+// player's state and never consumes that player's respawn timer.
 export function harvestNode(ctx: SimContext, nodeId: string, pid?: number): void {
   const r = ctx.resolve(pid);
   if (!r) return;
   const { meta, e: p } = r;
+  if (p.dead) {
+    ctx.error(meta.entityId, "You can't do that while dead.");
+    return;
+  }
   const node = gatherNodeById(nodeId);
   if (!node) {
     ctx.error(meta.entityId, 'That resource node does not exist.');
     return;
   }
   if (distToNode(p.pos, node.pos) > INTERACT_RANGE) {
-    ctx.error(meta.entityId, 'Too far away to harvest that.');
+    ctx.error(meta.entityId, 'Too far away.');
+    return;
+  }
+  if (!isNodeHarvestableBy(meta, node.id, ctx.time)) {
+    ctx.error(meta.entityId, 'This resource node has not respawned for you yet.');
+    return;
+  }
+  const entry = NODE_HARVEST_TABLE[node.type];
+  if (!ctx.canAddItem(entry.itemId, 1, meta.entityId)) {
+    ctx.error(meta.entityId, 'Your bags are full.');
     return;
   }
   const result = resolveHarvest(meta, node, ctx.time, ctx.rng);
   if (!result.granted) {
+    // Unreachable in practice (the readiness check above already gates this),
+    // but kept as a defensive fallback so a future resolveHarvest change
+    // cannot silently grant with no player-visible denial.
     ctx.error(meta.entityId, 'This resource node has not respawned for you yet.');
     return;
   }
@@ -202,13 +230,16 @@ export function normalizeGatheringProficiency(
 // Queues a grant for the next tick's drain; called from the `/dev gather`
 // chat cheat (offline local play or ALLOW_DEV_COMMANDS=1 on the server). No
 // rng draw: the amount is a fixed value passed by the caller, so the result is
-// fully deterministic given the same sequence of calls.
+// fully deterministic given the same sequence of calls. Proficiency is a
+// monotonic additive-only counter (no decrement path), so a non-positive
+// amount is rejected here rather than silently applied as a decrement by
+// drainGatheringGrants.
 export function queueGatheringGrant(
   meta: PlayerMeta,
   professionId: GatheringProfessionId,
   amount: number,
 ): void {
-  if (!Number.isFinite(amount) || amount === 0) return;
+  if (!Number.isFinite(amount) || amount <= 0) return;
   meta.pendingGatherGrants.push({ professionId, amount });
 }
 
@@ -225,6 +256,19 @@ export function drainGatheringGrants(meta: PlayerMeta): void {
     );
   }
   meta.pendingGatherGrants.length = 0;
+}
+
+// Projects the internal per-profession counter onto the settled
+// `PlayerProfessionSkill` shape (src/sim/professions/types.ts, from #1164),
+// in the stable GATHERING_PROFESSION_IDS order. This is what backs the
+// `IWorldProfessions.professionsState` read (sim.ts `professionsStateFor`);
+// crafting/secondary professions still contribute nothing until they land.
+export function gatheringSkillsView(proficiency: GatheringProficiency): PlayerProfessionSkill[] {
+  return GATHERING_PROFESSION_IDS.map((id) => ({
+    professionId: id,
+    skill: proficiency[id],
+    maxSkill: GATHERING_PROFESSIONS[id].maxSkill,
+  }));
 }
 
 // Corpse harvest: a single-use, first-come shared resource, the deliberate opposite
