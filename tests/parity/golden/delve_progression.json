@@ -15,8 +15,8 @@
     {
       "tick": 0,
       "time": 0,
-      "nextId": 393,
-      "state": "65802200",
+      "nextId": 401,
+      "state": "97047752",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -29,18 +29,32 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warrior",
           "companionUpgrades": {},
           "counters": {},
+          "craftSkills": {},
           "delveClears": {},
           "delveDaily": {},
-          "entityId": 392,
+          "entityId": 400,
           "equipment": {
             "chest": "recruit_tunic",
             "mainhand": "worn_sword"
           },
           "gatheringProficiency": {},
+          "inventory": [
+            {
+              "count": 5,
+              "itemId": "baked_bread"
+            }
+          ],
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "talents": {
             "choices": {},
             "ranks": {}
@@ -60,7 +74,7 @@
           "fallStartY": 1.5,
           "fiveSecondRule": 99,
           "hp": 90,
-          "id": 392,
+          "id": 400,
           "kind": "player",
           "level": 1,
           "lootFfaTimer": "Infinity",
@@ -103,9 +117,9 @@
     {
       "tick": 5,
       "time": 0.25,
-      "nextId": 414,
-      "state": "f2f31892",
-      "events": "1c6b947f",
+      "nextId": 422,
+      "state": "2dbd88e8",
+      "events": "3669b315",
       "rng": {
         "draws": 1,
         "digest": "5eb1ea5d"
@@ -114,8 +128,8 @@
     {
       "tick": 7,
       "time": 0.35,
-      "nextId": 414,
-      "state": "6381451c",
+      "nextId": 422,
+      "state": "f5d4e362",
       "events": "741638a5",
       "rng": {
         "draws": 3,
@@ -128,19 +142,33 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warrior",
           "companionUpgrades": {},
           "counters": {},
+          "craftSkills": {},
           "delveClears": {},
           "delveDaily": {},
-          "entityId": 392,
+          "entityId": 400,
           "equipment": {
             "chest": "recruit_tunic",
             "mainhand": "worn_sword"
           },
           "gatheringProficiency": {},
+          "inventory": [
+            {
+              "count": 5,
+              "itemId": "baked_bread"
+            }
+          ],
           "lifetimeXp": 11200,
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "talents": {
             "choices": {},
             "ranks": {}
@@ -159,7 +187,7 @@
           "dodgeChance": 0.063,
           "fiveSecondRule": 99.35,
           "hp": 50000,
-          "id": 392,
+          "id": 400,
           "kind": "player",
           "level": 7,
           "lootFfaTimer": "Infinity",
@@ -201,9 +229,9 @@
     {
       "tick": 7,
       "time": 0.35,
-      "nextId": 414,
-      "state": "391bd394",
-      "events": "6895da0f",
+      "nextId": 422,
+      "state": "6a92808c",
+      "events": "81315207",
       "rng": {
         "draws": 3,
         "digest": "e3485a8b"
@@ -215,26 +243,40 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warrior",
           "companionUpgrades": {
             "companion_tessa": 2
           },
           "copper": 100000,
           "counters": {},
+          "craftSkills": {},
           "delveClears": {},
           "delveDaily": {
             "date": "2099-06-25"
           },
           "delveMarks": 89,
-          "entityId": 392,
+          "entityId": 400,
           "equipment": {
             "chest": "recruit_tunic",
             "legs": "reliquary_legs",
             "mainhand": "worn_sword"
           },
           "gatheringProficiency": {},
+          "inventory": [
+            {
+              "count": 5,
+              "itemId": "baked_bread"
+            }
+          ],
           "lifetimeXp": 11200,
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "talents": {
             "choices": {},
             "ranks": {}
@@ -253,7 +295,7 @@
           "dodgeChance": 0.063,
           "fiveSecondRule": 99.35,
           "hp": 338,
-          "id": 392,
+          "id": 400,
           "kind": "player",
           "level": 7,
           "lootFfaTimer": "Infinity",
@@ -295,8 +337,8 @@
     {
       "tick": 9,
       "time": 0.45,
-      "nextId": 414,
-      "state": "9bcf3766",
+      "nextId": 422,
+      "state": "0bb45d16",
       "events": "741638a5",
       "rng": {
         "draws": 3,
@@ -309,26 +351,40 @@
           "arena2v2Rating": 1500,
           "arenaRating": 1500,
           "autoEquip": true,
+          "bags": [
+            null,
+            null,
+            null,
+            null
+          ],
           "cls": "warrior",
           "companionUpgrades": {
             "companion_tessa": 2
           },
           "copper": 100000,
           "counters": {},
+          "craftSkills": {},
           "delveClears": {},
           "delveDaily": {
             "date": "2099-06-25"
           },
           "delveMarks": 89,
-          "entityId": 392,
+          "entityId": 400,
           "equipment": {
             "chest": "recruit_tunic",
             "legs": "reliquary_legs",
             "mainhand": "worn_sword"
           },
           "gatheringProficiency": {},
+          "inventory": [
+            {
+              "count": 5,
+              "itemId": "baked_bread"
+            }
+          ],
           "lifetimeXp": 11200,
           "mailWelcomed": true,
+          "nodeHarvestReadyAt": {},
           "talents": {
             "choices": {},
             "ranks": {}
@@ -347,7 +403,7 @@
           "dodgeChance": 0.063,
           "fiveSecondRule": 99.45,
           "hp": 338,
-          "id": 392,
+          "id": 400,
           "kind": "player",
           "level": 7,
           "lootFfaTimer": "Infinity",

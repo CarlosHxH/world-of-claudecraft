@@ -6,6 +6,7 @@ import {
   runtimeApiOrigin,
   runtimeWebSocketUrl,
 } from '../runtime';
+import { bagCapacity } from '../sim/bags';
 import { signChallenge } from '../sim/client_challenge';
 import { mechChromaItemId, mechChromaSkinIndex } from '../sim/content/skins';
 import {
@@ -25,6 +26,7 @@ import { LEADERBOARD_PAGE_SIZE } from '../sim/leaderboard_page';
 import type { Ante, PickAction } from '../sim/lockpick';
 import type { MarketQuery } from '../sim/market_query';
 import { normalizeMoveFacing, sanitizeMoveInput } from '../sim/move_input';
+import { emptyCraftSkills } from '../sim/professions/wheel';
 import { computeQuestState, type ResolvedAbility } from '../sim/sim';
 import {
   type Entity,
@@ -38,6 +40,7 @@ import {
   type PlayerClass,
   type QuestProgress,
   type QuestState,
+  type RiteIntensity,
   type SimEvent,
 } from '../sim/types';
 import {
@@ -269,7 +272,7 @@ export class Api {
     turnstileToken = '',
     ref = '',
     nativeAttestation: unknown = undefined,
-  ): Promise<void> {
+  ): Promise<{ accountId?: number }> {
     const data = await this.post('/api/register', {
       username,
       password,
@@ -282,6 +285,7 @@ export class Api {
     this.username = data.username;
     // A fresh registration always has the mandatory email; trust the server flag.
     this.emailMissing = data.emailMissing === true;
+    return { accountId: typeof data.accountId === 'number' ? data.accountId : undefined };
   }
 
   // Returns { twoFactorRequired: true } when the account has 2FA on and no code
@@ -756,6 +760,9 @@ function blankEntity(id: number): Entity {
     attackPower: 0,
     rangedPower: 0,
     spellPower: 0,
+    meleeHaste: 0,
+    rangedHaste: 0,
+    spellHaste: 0,
     critChance: 0.05,
     dodgeChance: 0.05,
     moveSpeed: 7,
@@ -771,6 +778,7 @@ function blankEntity(id: number): Entity {
     castingAbility: null,
     castRemaining: 0,
     castTotal: 0,
+    castTargetId: null,
     castAim: null,
     channeling: false,
     channelTickTimer: 0,
@@ -825,6 +833,7 @@ function blankEntity(id: number): Entity {
     respawnTimer: 0,
     corpseTimer: 0,
     lootFfaTimer: Infinity,
+    harvestClaimedBy: null,
     lootable: false,
     loot: null,
     xpValue: 0,
@@ -833,6 +842,8 @@ function blankEntity(id: number): Entity {
     objectItemId: null,
     dungeonId: null,
     dead: false,
+    ghost: false,
+    corpsePos: null,
     scale: 1,
     color: 0xffffff,
     skinCatalog: 'class',
@@ -858,6 +869,9 @@ export class ClientWorld implements IWorld {
   known: ResolvedAbility[] = [];
   realm = '';
   inventory: InvSlot[] = [];
+  // Equipped bag sockets, mirrored from snapshot self ('bags'); capacity is
+  // derived locally from the shared item data (same math as the sim's bags.ts).
+  bags: (string | null)[] = [null, null, null, null];
   vendorBuyback: InvSlot[] = [];
   equipment: Partial<Record<EquipSlot, string>> = {};
   copper = 0;
@@ -915,6 +929,11 @@ export class ClientWorld implements IWorld {
   lockpickState: LockpickView | null = null;
   delveMarks = 0;
   companionUpgrades: Record<string, number> = {};
+  // Flat per-craft skill tracking (#1126). NOT yet mirrored over the wire: this
+  // issue lands the sim-side state + persistence only, so online play sees the
+  // all-zero default until the wheel/mass-conservation follow-up wires a self-snap
+  // field the way `dmarks`/`dcomp` do for delveMarks/companionUpgrades above.
+  craftSkills: Record<string, number> = emptyCraftSkills();
   // Per-delve clears (key `${delveId}:${tierId}`), mirrored from the self-wire so
   // delveShopOffers can resolve the shop lock badge client-side.
   delveClears: Record<string, number> = {};
@@ -924,6 +943,16 @@ export class ClientWorld implements IWorld {
   // Crafting/secondary professions still contribute nothing until later
   // issues (#1120/#1125/#1126/#1140) land.
   professionsState: PlayerProfessionsView = { skills: [] };
+  // Stub for #1121: per-node respawn state is server-authoritative and not yet
+  // wired onto the snapshot (see src/sim/professions/CLAUDE.md), so the client
+  // cannot know another player's, or even its own, real per-node timer yet.
+  // Always reports harvestable; the server re-validates and denies via a
+  // normal error event on an actual attempt, same as every other authoritative
+  // action (see src/net/CLAUDE.md "Never predict an outcome"). Wiring the real
+  // per-player timer is future work once the snapshot carries it.
+  nodeHarvestableByMe(_nodeId: string): boolean {
+    return true;
+  }
   // --- IWorldParty: raid-target marker mirror, from the self-wire `marks` (markerFor
   // reads it, no send). ---
   markers: Record<number, number> = {}; // entityId -> markerId, mirrored from the self-wire
@@ -1366,11 +1395,19 @@ export class ClientWorld implements IWorld {
       e.facing = w.f;
       e.hp = w.hp;
       e.maxHp = w.mhp;
+      // Resource (the target frame's bar): the wire sends it only for entities
+      // that have one, so a missing rtype keeps the blank defaults (no bar).
+      if (w.rtype !== undefined) {
+        e.resourceType = w.rtype;
+        e.resource = w.res;
+        e.maxResource = w.mres;
+      }
       e.rangedPower = w.rp ?? 0;
       e.overheadEmoteId = isOverheadEmoteId(w.emo) ? w.emo : null;
       e.overheadEmoteUntil = e.overheadEmoteId ? Number.POSITIVE_INFINITY : 0;
       if (typeof w.emoSeq === 'number') e.overheadEmoteSeq = w.emoSeq;
       e.dead = nowDead;
+      e.ghost = !!w.gh; // released spirit: rendered translucent, runs faster
       e.lootable = !!w.loot;
       e.hostile = !!w.h;
       e.castingAbility = w.cast ?? null;
@@ -1489,6 +1526,9 @@ export class ClientWorld implements IWorld {
       e.resourceType = s.rtype;
       // delta fields: the server omits them while unchanged, so only the
       // snapshots that carry them rebuild the local structures
+      // corpse position while a ghost (null once resurrected). Delta-guarded: kept
+      // unchanged when the server omits it; drives the corpse marker + resurrect button.
+      if (s.corpse !== undefined) e.corpsePos = s.corpse ?? null;
       if (s.cds !== undefined) {
         // in-place rebuild (same result as `new Map(Object.entries(...))`): no
         // intermediate entry arrays and no Map churn on the 20 Hz self record
@@ -1506,6 +1546,9 @@ export class ClientWorld implements IWorld {
       e.attackPower = s.ap ?? 0;
       e.rangedPower = s.rp ?? 0;
       e.spellPower = s.sp ?? 0;
+      // Spell haste feeds the hasted-cast-time tooltip; melee/ranged haste need
+      // no wiring (the swing timers already ride the snapshot).
+      e.spellHaste = s.sh ?? 0;
       e.critChance = s.crit ?? 0.05;
       e.dodgeChance = s.dodge ?? 0.05;
       e.weapon = s.weapon ?? e.weapon;
@@ -1535,6 +1578,10 @@ export class ClientWorld implements IWorld {
       }
       if (s.buyback !== undefined) {
         this.vendorBuyback = s.buyback;
+        this.invChanged = true;
+      }
+      if (s.bags !== undefined) {
+        this.bags = s.bags;
         this.invChanged = true;
       }
       if (s.equip !== undefined) this.equipment = s.equip;
@@ -1714,6 +1761,12 @@ export class ClientWorld implements IWorld {
   releaseSpirit(): void {
     this.cmd({ cmd: 'release' });
   }
+  resurrectAtCorpse(): void {
+    this.cmd({ cmd: 'resurrect_corpse' });
+  }
+  resurrectAtSpiritHealer(): void {
+    this.cmd({ cmd: 'resurrect_healer' });
+  }
 
   // --- IWorldTargeting: target selection + tab cycling ---
   targetEntity(id: number | null): void {
@@ -1751,6 +1804,9 @@ export class ClientWorld implements IWorld {
   }
   autoLoot(id: number): void {
     this.cmd({ cmd: 'autoloot', id });
+  }
+  harvestCorpse(id: number): void {
+    this.cmd({ cmd: 'harvestCorpse', id });
   }
   // --- IWorldLoot: need-greed roll submit + HUD reconcile read ---
   submitLootRoll(rollId: number, choice: LootRollChoice): void {
@@ -1790,6 +1846,15 @@ export class ClientWorld implements IWorld {
   unequipItem(slot: EquipSlot): void {
     this.cmd({ cmd: 'unequip_item', slot });
   }
+  get bagCapacity(): number {
+    return bagCapacity(this.bags);
+  }
+  equipBag(itemId: string, socket?: number): void {
+    this.cmd({ cmd: 'equip_bag', item: itemId, socket });
+  }
+  unequipBag(socket: number): void {
+    this.cmd({ cmd: 'unequip_bag', socket });
+  }
   useItem(itemId: string): void {
     this.cmd({ cmd: 'use', item: itemId });
   }
@@ -1798,6 +1863,9 @@ export class ClientWorld implements IWorld {
   }
   buyItem(npcId: number, itemId: string): void {
     this.cmd({ cmd: 'buy', npc: npcId, item: itemId });
+  }
+  harvestNode(nodeId: string): void {
+    this.cmd({ cmd: 'harvest_node', node: nodeId });
   }
   sellItem(itemId: string, count?: number): void {
     this.cmd({ cmd: 'sell', item: itemId, count });
@@ -2147,6 +2215,9 @@ export class ClientWorld implements IWorld {
   }
   collectDelveChestLoot(chestId: number): void {
     this.cmd({ cmd: 'collect_delve_chest_loot', objectId: chestId });
+  }
+  delveRiteChoose(intensity: RiteIntensity): void {
+    this.cmd({ cmd: 'delve_rite_choose', intensity });
   }
   // Mirror the authoritative lockpick lifecycle into lockpickState. The events
   // still flow to the HUD (drainEvents) for transient feedback (juice/sounds).
