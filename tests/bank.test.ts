@@ -1131,3 +1131,50 @@ describe('bank commands require a nearby banker (Phase 2)', () => {
     expect(m.bank.inventory).toEqual([{ itemId: 'wolf_fang', count: 2 }]);
   });
 });
+
+describe('bankInfoFor read boundary (Phase 3)', () => {
+  it('clones at the read boundary: mutating the returned BankInfo never touches sim state', () => {
+    const sim = makeSim();
+    const m = meta(sim);
+    pushInstanced(sim, 'worn_sword', {
+      signer: 'Cyd',
+      charges: { z: 2 },
+      rolled: { stats: { agi: 3 } },
+    });
+    sim.bankDeposit(m.inventory.findIndex((s) => s.instance));
+    expect(m.bank.inventory).toHaveLength(1);
+
+    const info = sim.bankInfoFor(sim.playerId);
+    expect(info).not.toBeNull();
+    const slot = info!.slots[0];
+    // A shallow copy (slice/spread) would alias the live instance payload here.
+    slot.instance!.charges!.z = 999;
+    slot.instance!.rolled!.stats!.agi = 99;
+    slot.instance!.signer = 'Zzz';
+    slot.count = 40;
+    info!.slots.push({ itemId: 'wolf_fang', count: 5 });
+    expect(m.bank.inventory).toEqual([
+      {
+        itemId: 'worn_sword',
+        count: 1,
+        instance: { signer: 'Cyd', charges: { z: 2 }, rolled: { stats: { agi: 3 } } },
+      },
+    ]);
+  });
+
+  it('the IWorld bankInfo getter serves the local player through the same read', () => {
+    const sim = makeSim();
+    sim.addItem('wolf_fang', 3);
+    sim.bankDeposit(meta(sim).inventory.findIndex((s) => s.itemId === 'wolf_fang'));
+    const info = sim.bankInfo;
+    expect(info).not.toBeNull();
+    expect(info!.capacity).toBe(24);
+    expect(info!.purchasedSlots).toBe(0);
+    expect(info!.bonusSlots).toBe(0);
+    expect(info!.nextExpansionCost).toBe(500);
+    expect(info!.slots).toEqual([{ itemId: 'wolf_fang', count: 3 }]);
+
+    moveFarFromBankers(sim);
+    expect(sim.bankInfo).toBeNull();
+  });
+});
