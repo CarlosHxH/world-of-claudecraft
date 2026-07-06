@@ -11,11 +11,40 @@ chosen should get its own spec under `docs/prd/`.
 File references were verified against the tree on the date above; per `docs/CLAUDE.md`,
 trust the intent and re-find exact lines if they have drifted.
 
-Implementation note: Options 1 and 2 below (and the rule amendment) shipped on the
-branch that carries this report; the "current state" this report describes is the
-tree BEFORE that branch. See `src/game/keyboard_turn_facing.ts`,
-`src/game/self_alpha_lead.ts`, `src/sim/player_motion.ts`, and
-`src/render/self_motion.ts`.
+## Implementation note (what actually shipped)
+
+Options 1 and 2 below, the movement-kernel extraction, and the rule amendment
+shipped on the branch that carries this report; the "current state" the survey
+describes is the tree BEFORE that branch. Play-testing (including under
+simulated 140 to 280 ms RTT) drove several deviations from the survey, recorded
+here so the survey is not read as the as-built spec:
+
+- **Keyboard facing became INPUT, not display anticipation.** Option 1's
+  "display-only local facing, blended back to the server value" cannot be
+  reconciled invisibly at release (server tick quantization leaves a
+  few-degree late re-aim, and any correction that feeds the wire resonates at
+  high RTT). The shipped design (`src/game/keyboard_turn_facing.ts`) integrates
+  the turn locally and STREAMS the heading on the client-authoritative facing
+  channel mouselook has always owned, with the turn flags zeroed on the wire
+  (engage-edge excepted for /follow and anti-AFK). Only input-derived headings
+  ever go on the wire.
+- **The position extrapolator's corrector is a delay-aligned servo**, not the
+  simple blend the survey sketched: the authoritative pose is compared against
+  the display's own pose one measured echo ago (history ring), with the gain
+  bounded by the delay so the loop cannot ring, and the leash clamping the pose
+  only. See the header of `src/render/self_motion.ts`.
+- **The extrapolation cap landed at 350 ms**, not the surveyed 150 to 200:
+  below the real RTT the display rides the leash and steering feels gluey.
+- **The rule amendment has three parts**, not two (`src/net/CLAUDE.md`):
+  outcome prediction still banned; display-layer pose extrapolation sanctioned
+  under four constraints (applies to `src/render/self_motion.ts`); the heading
+  reclassified as client-authoritative input, to which the "never sent"
+  constraint deliberately does not apply.
+- Also shipped: the adaptive render lead (`src/game/self_alpha_lead.ts`), the
+  shared kernel (`src/sim/player_motion.ts`, bit-for-bit parity-tested), and
+  hysteresis fixes for pre-existing animation flicker the smoother display made
+  visible (`src/render/locomotion.ts`). Step 4 of the recommendation
+  (re-measure before considering full reconciliation) still stands.
 
 ## Executive Read
 
