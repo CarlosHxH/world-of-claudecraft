@@ -1924,8 +1924,11 @@ export class GameServer {
     // CAN interleave; the NONCE fence covers that, the reconnect's acquire re-stamps
     // the row with a new nonce and this DELETE, carrying the session's own (now
     // stale) nonce, matches nothing, so it never eats the live session's re-acquired
-    // lease. The holder guard keeps a cross-process reclaim untouched; an unreleased
-    // lease self-expires after a crash.
+    // lease. The fence only sees fresh acquires, so planJoin refuses to RESUME a
+    // session whose left flag is already set (the resume arm never re-acquires);
+    // the refused client retries into the fresh-acquire arm once this teardown
+    // finishes. The holder guard keeps a cross-process reclaim untouched; an
+    // unreleased lease self-expires after a crash.
     await releaseCharacterLease(session.characterId, session.leaseNonce).catch((err) =>
       console.error('lease release failed:', err),
     );
