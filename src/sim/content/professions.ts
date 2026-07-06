@@ -15,11 +15,6 @@ import type { ProfessionRecord } from '../professions/types';
 export type GatheringProfessionId = 'mining' | 'logging' | 'herbalism';
 
 export interface GatheringProfessionDef extends ProfessionRecord {
-// ../professions/gathering.ts behind the SimContext seam. Icon glyphs follow
-// the same convention as talent nodes (content, rendered directly).
-export type GatheringProfessionId = 'mining' | 'logging' | 'herbalism';
-
-export interface GatheringProfessionDef {
   id: GatheringProfessionId;
   name: string;
   icon: string;

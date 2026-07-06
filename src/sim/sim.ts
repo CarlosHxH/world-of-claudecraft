@@ -6652,11 +6652,7 @@ export class Sim {
   }
 
   get craftSkills(): Record<string, number> {
-    return this.craftSkillsFor(this.primaryId);  // Read-only gathering-profession proficiency surface for IWorld. Stubbed
-  // directly on IWorld pending issue #1164 (a broader professions facet); see
-  // that issue for the eventual reconciliation.
-  gatheringProficiencyFor(pid: number): Record<string, number> {
-    return { ...(this.players.get(pid)?.gatheringProficiency ?? emptyGatheringProficiency()) };
+    return this.craftSkillsFor(this.primaryId);
   }
 
   /** The active-archetype craft id, or null before the zone-1 acceptance quest has
@@ -6733,8 +6729,6 @@ export class Sim {
   get gatheringProficiency(): Record<string, number> {
     return this.gatheringProficiencyFor(this.primaryId);
   }
-  get gatheringProficiency(): Record<string, number> {
-    return this.gatheringProficiencyFor(this.primaryId);  }
 
   delveShopOffers(delveId: string): DelveShopOffer[] {
     return this.delveShopOffersFor(delveId, this.primaryId);
