@@ -552,6 +552,10 @@ export const BASE_ITEMS: Record<string, ItemDef> = {
   // every NPC `vendorItems` list. `quality` (rarity) is independent of
   // `use.tier` and never affects gating: only the tool's `use.tier` value is
   // read by the gate.
+  // are produced by a profession, never sold by any vendor: no `buyValue` and
+  // deliberately absent from every NPC `vendorItems` list. `quality` (rarity)
+  // is independent of `use.tier` and never affects gating: only the tool's
+  // `use.tier` value is read by the gate.
   thorium_mining_pick: {
     id: 'thorium_mining_pick',
     name: 'Thorium Mining Pick',
