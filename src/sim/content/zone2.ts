@@ -679,6 +679,18 @@ export const ZONE2_NPCS: Record<string, NpcDef> = {
     greeting:
       'Quiet feet and a short blade keep you breathing out here. Speak quick — I am due back in the reeds.',
   },
+  bursar_petra_vell: {
+    id: 'bursar_petra_vell',
+    name: 'Bursar Petra Vell',
+    title: 'The Gilded Strongbox',
+    pos: { x: 12, z: 303 },
+    facing: -Math.PI / 2,
+    color: 0xc9a227,
+    questIds: [],
+    banker: true,
+    greeting:
+      'The Gilded Strongbox keeps clean ledgers and cleaner vaults. What shall we stow for you?',
+  },
 };
 
 // ---------------------------------------------------------------------------

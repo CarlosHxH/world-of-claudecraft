@@ -120,6 +120,9 @@ const NPC_IDS = [
   'armorer_hode',
   'loremaster_caddis',
   'auctioneer_voss', // second World Market auctioneer (Highwatch, zone 3)
+  'bursar_fernando', // Gilded Strongbox banker (Eastbrook, zone 1)
+  'bursar_petra_vell', // Gilded Strongbox banker (Fenbridge, zone 2)
+  'bursar_aldous_crane', // Gilded Strongbox banker (Highwatch, zone 3)
   'brother_aldric_raid', // dynamically-spawned raid turn-in NPC (Crypt of Nythraxis)
   'brother_halven', // Collapsed Reliquary delve board NPC
   'brother_halven_marsh', // Drowned Litany delve board NPC (same character, marsh camp)

@@ -2622,6 +2622,18 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
   'entities.npcs.auctioneer_voss.title': '世界市場の守り手',
   'entities.npcs.auctioneer_voss.greeting':
     '世界市場はここでも利用できます、{className}。王国中の冒険者から買うことも、自分の品を売ることもできます。',
+  'entities.npcs.bursar_fernando.name': '出納官フェルナンド',
+  'entities.npcs.bursar_fernando.title': '金張りの金庫',
+  'entities.npcs.bursar_fernando.greeting':
+    '金張りの金庫へようこそ。あなたの品々は我々の錠の内で安全に保管されます。',
+  'entities.npcs.bursar_petra_vell.name': '出納官ペトラ・ヴェル',
+  'entities.npcs.bursar_petra_vell.title': '金張りの金庫',
+  'entities.npcs.bursar_petra_vell.greeting':
+    '金張りの金庫は帳簿も金庫室も清く保っています。何をお預かりしましょうか？',
+  'entities.npcs.bursar_aldous_crane.name': '出納官アルダス・クレイン',
+  'entities.npcs.bursar_aldous_crane.title': '金張りの金庫',
+  'entities.npcs.bursar_aldous_crane.greeting':
+    'どんな木箱も、金櫃も、装身具も、金張りの金庫にお預けいただければ安全です。',
   'entities.npcs.tidewatcher_ondrel.name': 'オンドレル・ヴェイン',
   'entities.npcs.tidewatcher_ondrel.title': '潮見の番人',
   'entities.npcs.tidewatcher_ondrel.greeting':

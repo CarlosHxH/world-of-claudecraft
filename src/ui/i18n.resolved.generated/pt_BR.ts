@@ -6823,6 +6823,21 @@ export const pt_BR: EnTranslations = {
         "title": "Guardião do Mercado Global",
         "greeting": "O Mercado Global também está aberto aqui, {className}. Compre de todos os aventureiros do reino ou exponha suas próprias mercadorias."
       },
+      "bursar_fernando": {
+        "name": "Bursar Fernando",
+        "title": "The Gilded Strongbox",
+        "greeting": "Welcome to the Gilded Strongbox. Your goods rest safe behind our locks."
+      },
+      "bursar_petra_vell": {
+        "name": "Bursar Petra Vell",
+        "title": "The Gilded Strongbox",
+        "greeting": "The Gilded Strongbox keeps clean ledgers and cleaner vaults. What shall we stow for you?"
+      },
+      "bursar_aldous_crane": {
+        "name": "Bursar Aldous Crane",
+        "title": "The Gilded Strongbox",
+        "greeting": "Every crate, coffer, and trinket is safe with the Gilded Strongbox."
+      },
       "brother_aldric_raid": {
         "name": "Irmão Aldric",
         "title": "Sacerdote do Vale",

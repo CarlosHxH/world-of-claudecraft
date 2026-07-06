@@ -6823,6 +6823,21 @@ export const da_DK: EnTranslations = {
         "title": "Vogter af Verdensmarkedet",
         "greeting": "Verdensmarkedet er også åbent her, {className}. Køb fra alle eventyrere i riget, eller læg dine egne varer frem."
       },
+      "bursar_fernando": {
+        "name": "Bursar Fernando",
+        "title": "The Gilded Strongbox",
+        "greeting": "Welcome to the Gilded Strongbox. Your goods rest safe behind our locks."
+      },
+      "bursar_petra_vell": {
+        "name": "Bursar Petra Vell",
+        "title": "The Gilded Strongbox",
+        "greeting": "The Gilded Strongbox keeps clean ledgers and cleaner vaults. What shall we stow for you?"
+      },
+      "bursar_aldous_crane": {
+        "name": "Bursar Aldous Crane",
+        "title": "The Gilded Strongbox",
+        "greeting": "Every crate, coffer, and trinket is safe with the Gilded Strongbox."
+      },
       "brother_aldric_raid": {
         "name": "Broder Aldric",
         "title": "Dalens Præst",

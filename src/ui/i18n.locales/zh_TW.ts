@@ -2509,6 +2509,17 @@ export const zh_TW: Partial<Record<TranslationKey, string>> = {
   'entities.npcs.auctioneer_voss.title': '世界市場守護者',
   'entities.npcs.auctioneer_voss.greeting':
     '世界市場在此亦可使用，{className}。從王國各地的冒險者手中購買，或出售你自己的貨物。',
+  'entities.npcs.bursar_fernando.name': '司庫費爾南多',
+  'entities.npcs.bursar_fernando.title': '鍍金保險箱',
+  'entities.npcs.bursar_fernando.greeting': '歡迎來到鍍金保險箱。你的財物在我們的鎖後安然無恙。',
+  'entities.npcs.bursar_petra_vell.name': '司庫佩特拉·維爾',
+  'entities.npcs.bursar_petra_vell.title': '鍍金保險箱',
+  'entities.npcs.bursar_petra_vell.greeting':
+    '鍍金保險箱帳目清晰，金庫更是一塵不染。想讓我們為你存放些什麼？',
+  'entities.npcs.bursar_aldous_crane.name': '司庫奧爾多斯·克萊恩',
+  'entities.npcs.bursar_aldous_crane.title': '鍍金保險箱',
+  'entities.npcs.bursar_aldous_crane.greeting':
+    '每一只木箱、每一個錢櫃、每一件飾物，交給鍍金保險箱都萬無一失。',
   'entities.npcs.tidewatcher_ondrel.name': '翁德瑞爾·韋恩',
   'entities.npcs.tidewatcher_ondrel.title': '守潮者',
   'entities.npcs.tidewatcher_ondrel.greeting':

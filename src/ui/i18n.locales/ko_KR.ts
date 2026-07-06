@@ -2615,6 +2615,18 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
   'entities.npcs.auctioneer_voss.title': '세계 시장 관리자',
   'entities.npcs.auctioneer_voss.greeting':
     '세계 시장은 이곳에서도 이용할 수 있습니다, {className}. 왕국의 모험가들에게서 물건을 사거나 자신의 물건을 내놓으십시오.',
+  'entities.npcs.bursar_fernando.name': '출납관 페르난도',
+  'entities.npcs.bursar_fernando.title': '도금 금고',
+  'entities.npcs.bursar_fernando.greeting':
+    '도금 금고에 오신 것을 환영합니다. 당신의 물건은 우리의 자물쇠 뒤에서 안전하게 보관됩니다.',
+  'entities.npcs.bursar_petra_vell.name': '출납관 페트라 벨',
+  'entities.npcs.bursar_petra_vell.title': '도금 금고',
+  'entities.npcs.bursar_petra_vell.greeting':
+    '도금 금고는 장부도 깔끔하고 금고는 더욱 깨끗합니다. 무엇을 보관해 드릴까요?',
+  'entities.npcs.bursar_aldous_crane.name': '출납관 알도스 크레인',
+  'entities.npcs.bursar_aldous_crane.title': '도금 금고',
+  'entities.npcs.bursar_aldous_crane.greeting':
+    '어떤 상자든, 금궤든, 장신구든 도금 금고에 맡기시면 안전합니다.',
   'entities.npcs.tidewatcher_ondrel.name': '온드렐 베인',
   'entities.npcs.tidewatcher_ondrel.title': '조수지기',
   'entities.npcs.tidewatcher_ondrel.greeting':

@@ -6823,6 +6823,21 @@ export const vi_VN: EnTranslations = {
         "title": "Người Giữ World Market",
         "greeting": "World Market cũng mở cửa ở đây, {className}. Hãy mua từ mọi nhà thám hiểm trong vương quốc, hoặc bày bán hàng hóa của riêng ngươi."
       },
+      "bursar_fernando": {
+        "name": "Bursar Fernando",
+        "title": "The Gilded Strongbox",
+        "greeting": "Welcome to the Gilded Strongbox. Your goods rest safe behind our locks."
+      },
+      "bursar_petra_vell": {
+        "name": "Bursar Petra Vell",
+        "title": "The Gilded Strongbox",
+        "greeting": "The Gilded Strongbox keeps clean ledgers and cleaner vaults. What shall we stow for you?"
+      },
+      "bursar_aldous_crane": {
+        "name": "Bursar Aldous Crane",
+        "title": "The Gilded Strongbox",
+        "greeting": "Every crate, coffer, and trinket is safe with the Gilded Strongbox."
+      },
       "brother_aldric_raid": {
         "name": "Tu Huynh Aldric",
         "title": "Tu Sĩ Thung Lũng",

@@ -6823,6 +6823,21 @@ export const ja_JP: EnTranslations = {
         "title": "世界市場の守り手",
         "greeting": "世界市場はここでも利用できます、{className}。王国中の冒険者から買うことも、自分の品を売ることもできます。"
       },
+      "bursar_fernando": {
+        "name": "出納官フェルナンド",
+        "title": "金張りの金庫",
+        "greeting": "金張りの金庫へようこそ。あなたの品々は我々の錠の内で安全に保管されます。"
+      },
+      "bursar_petra_vell": {
+        "name": "出納官ペトラ・ヴェル",
+        "title": "金張りの金庫",
+        "greeting": "金張りの金庫は帳簿も金庫室も清く保っています。何をお預かりしましょうか？"
+      },
+      "bursar_aldous_crane": {
+        "name": "出納官アルダス・クレイン",
+        "title": "金張りの金庫",
+        "greeting": "どんな木箱も、金櫃も、装身具も、金張りの金庫にお預けいただければ安全です。"
+      },
       "brother_aldric_raid": {
         "name": "アルドリック修道士",
         "title": "谷の司祭",

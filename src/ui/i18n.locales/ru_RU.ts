@@ -2653,6 +2653,18 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
   'entities.npcs.auctioneer_voss.title': 'Хранитель мирового рынка',
   'entities.npcs.auctioneer_voss.greeting':
     'Мировой рынок доступен и здесь, {className}. Покупайте у искателей приключений всего королевства или выставляйте свои товары.',
+  'entities.npcs.bursar_fernando.name': 'Казначей Фернандо',
+  'entities.npcs.bursar_fernando.title': 'Золочёный сундук',
+  'entities.npcs.bursar_fernando.greeting':
+    'Добро пожаловать в Золочёный сундук. Ваше добро надёжно хранится за нашими замками.',
+  'entities.npcs.bursar_petra_vell.name': 'Казначей Петра Велль',
+  'entities.npcs.bursar_petra_vell.title': 'Золочёный сундук',
+  'entities.npcs.bursar_petra_vell.greeting':
+    'В Золочёном сундуке чистые счётные книги и ещё более чистые хранилища. Что вам угодно оставить на хранение?',
+  'entities.npcs.bursar_aldous_crane.name': 'Казначей Олдос Крейн',
+  'entities.npcs.bursar_aldous_crane.title': 'Золочёный сундук',
+  'entities.npcs.bursar_aldous_crane.greeting':
+    'Любой ящик, ларец и безделушка в Золочёном сундуке в полной сохранности.',
   'entities.npcs.tidewatcher_ondrel.name': 'Ондрел Вейн',
   'entities.npcs.tidewatcher_ondrel.title': 'Страж приливов',
   'entities.npcs.tidewatcher_ondrel.greeting':
