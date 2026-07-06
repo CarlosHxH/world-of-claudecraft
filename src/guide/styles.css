@@ -2574,15 +2574,16 @@ a.guide-poi:hover {
 }
 
 /* -------------------------------------------------- settings & performance */
-/* Loadout cards: a three-up spec-sheet grid. Each card carries a role-palette
-   accent rail (never color-only: the card title and tagline name the intent);
-   the recommended card is the gold one and wears a corner ribbon. */
+/* Loadout cards: a single-column stack of spec-sheet cards (three side by side
+   left an orphan hole in the article's narrow column). Each card carries a
+   role-palette accent rail (never color-only: the card title and tagline name
+   the intent); the recommended card is the gold one and wears a corner ribbon.
+   The gap stays large enough that the ribbon never crowds the card above. */
 .guide-loadouts {
   display: grid;
-  gap: var(--g-md);
+  gap: var(--g-lg);
   margin-block-start: var(--g-lg);
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  align-items: start;
+  grid-template-columns: 1fr;
 }
 .guide-loadout {
   position: relative;
