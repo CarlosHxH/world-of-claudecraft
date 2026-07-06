@@ -1,6 +1,6 @@
 // W0c: the IWorld structural-parity gate.
 //
-// `IWorld` (src/world_api.ts, 176 members) is the ONE seam render/ui depend
+// `IWorld` (src/world_api.ts, 183 members) is the ONE seam render/ui depend
 // on. `tsc` already proves both the offline `Sim` and the online `ClientWorld` satisfy
 // it structurally, but the interface is erased at build: there is NO runtime member
 // list, so nothing catches a present-but-throws stub or a kind flip (method vs read).
@@ -9,7 +9,7 @@
 // IWORLD_MEMBERS below is the hand-maintained member list, the W0c analog of the
 // append-only CALLBACK_KEYS in tests/sim_context.test.ts. It is APPEND-ONLY WITH THE
 // INTERFACE: whenever a future slice adds (or removes/renames) a member on `IWorld`,
-// it lands the matching edit here in the SAME commit. The count pins (176 / 46 / 130)
+// it lands the matching edit here in the SAME commit. The count pins (183 / 50 / 133)
 // plus the sorted-name `toEqual` snapshots (modeled on the anti-loosening exclude-set
 // pin in tests/parity/harness.test.ts:131-162) are what force that: a dropped or
 // renamed member reddens deliberately, never silently.
@@ -66,8 +66,8 @@ interface IWorldMember {
   readonly kind: IWorldMemberKind;
 }
 
-// The 176 members of `interface IWorld`, in interface order (world_api.ts).
-// Partition: 46 `data` + 130 `method` (read-returning + command-void + async).
+// The 183 members of `interface IWorld`, in interface order (world_api.ts).
+// Partition: 50 `data` + 133 `method` (read-returning + command-void + async).
 // biome-ignore lint/suspicious/noExportsInTest: IWORLD_MEMBERS is the W0c pinned structural-parity contract (the authoritative IWorld member list)
 export const IWORLD_MEMBERS = [
   // --- core world / player roster + economy reads (data) ---
@@ -237,6 +237,13 @@ export const IWORLD_MEMBERS = [
   { name: 'recipeList', kind: 'data' },
   { name: 'lastCraftResult', kind: 'data' },
   { name: 'craftItem', kind: 'method' },
+  { name: 'activeArchetype', kind: 'data' },
+  { name: 'archetypeSwitchCount', kind: 'data' },
+  { name: 'archetypeAmendsProgress', kind: 'data' },
+  { name: 'archetypeAmendsRequired', kind: 'data' },
+  { name: 'acceptArchetypeQuest', kind: 'method' },
+  { name: 'advanceAmendsProgress', kind: 'method' },
+  { name: 'switchArchetype', kind: 'method' },
   { name: 'raidLockouts', kind: 'method' }, // read-returning (5/6)
   { name: 'leaderboard', kind: 'method' }, // async
   { name: 'guildLeaderboard', kind: 'method' }, // async
@@ -300,7 +307,7 @@ function withDomStubs<T>(fn: () => T): T {
 }
 
 // A real ClientWorld whose FIELD INITIALIZERS have run (a raw
-// `Object.create(ClientWorld.prototype)` bareClient would be missing all 46 data
+// `Object.create(ClientWorld.prototype)` bareClient would be missing all 37 data
 // props). Pass a non-empty `base` so the ctor builds a `ws://localhost/ws` URL instead
 // of touching `location`; `.close()` clears the stubbed input timer.
 function makeClientWorld(): ClientWorld {
@@ -356,9 +363,9 @@ beforeAll(() => {
 
 describe('IWORLD_MEMBERS is the pinned IWorld contract (anti-loosening)', () => {
   it('pins total / data / method counts', () => {
-    expect(IWORLD_MEMBERS.length).toBe(176);
-    expect(DATA_MEMBERS.length).toBe(46);
-    expect(METHOD_MEMBERS.length).toBe(130);
+    expect(IWORLD_MEMBERS.length).toBe(183);
+    expect(DATA_MEMBERS.length).toBe(50);
+    expect(METHOD_MEMBERS.length).toBe(133);
   });
 
   it('has no duplicate member names', () => {
@@ -368,16 +375,22 @@ describe('IWORLD_MEMBERS is the pinned IWorld contract (anti-loosening)', () => 
 
   // Sorted-name `toEqual` snapshots: a dropped, renamed, or kind-flipped member reddens
   // these deliberately, forcing a reviewed edit. NOT length-only.
-  it('the full sorted member set is exactly the pinned 176', () => {
+  it('the full sorted member set is exactly the pinned 183', () => {
     expect(IWORLD_MEMBERS.map((m) => m.name).sort()).toEqual([
       'abandonPet',
       'abandonQuest',
+      'acceptArchetypeQuest',
       'acceptLinkedQuest',
       'acceptQuest',
       'accountCosmetics',
+      'activeArchetype',
       'activeLoadout',
       'activeLootRolls',
+      'advanceAmendsProgress',
       'applyTalents',
+      'archetypeAmendsProgress',
+      'archetypeAmendsRequired',
+      'archetypeSwitchCount',
       'arenaAugmentPick',
       'arenaInfo',
       'arenaQueueJoin',
@@ -523,6 +536,7 @@ describe('IWORLD_MEMBERS is the pinned IWorld contract (anti-loosening)', () => 
       'startAutoAttack',
       'stopAutoAttack',
       'submitLootRoll',
+      'switchArchetype',
       'switchLoadout',
       'tabTarget',
       'talentPoints',
@@ -549,10 +563,14 @@ describe('IWORLD_MEMBERS is the pinned IWorld contract (anti-loosening)', () => 
     ]);
   });
 
-  it('the sorted data-kind set is exactly the pinned 46', () => {
+  it('the sorted data-kind set is exactly the pinned 50', () => {
     expect(DATA_MEMBERS.map((m) => m.name).sort()).toEqual([
       'accountCosmetics',
+      'activeArchetype',
       'activeLoadout',
+      'archetypeAmendsProgress',
+      'archetypeAmendsRequired',
+      'archetypeSwitchCount',
       'arenaInfo',
       'bagCapacity',
       'bags',
@@ -600,13 +618,15 @@ describe('IWORLD_MEMBERS is the pinned IWorld contract (anti-loosening)', () => 
     ]);
   });
 
-  it('the sorted method-kind set is exactly the pinned 130', () => {
+  it('the sorted method-kind set is exactly the pinned 133', () => {
     expect(METHOD_MEMBERS.map((m) => m.name).sort()).toEqual([
       'abandonPet',
       'abandonQuest',
+      'acceptArchetypeQuest',
       'acceptLinkedQuest',
       'acceptQuest',
       'activeLootRolls',
+      'advanceAmendsProgress',
       'applyTalents',
       'arenaAugmentPick',
       'arenaQueueJoin',
@@ -717,6 +737,7 @@ describe('IWORLD_MEMBERS is the pinned IWorld contract (anti-loosening)', () => 
       'startAutoAttack',
       'stopAutoAttack',
       'submitLootRoll',
+      'switchArchetype',
       'switchLoadout',
       'tabTarget',
       'talentPoints',
@@ -777,7 +798,7 @@ describe('membership, not equality: world extras do not fail the gate', () => {
 //       a MISSING name (if the array omits a key, Exclude<> is a non-never union and tsc
 //       fails) -- (1)+(2) together make each array EXACTLY its facet key-set;
 //   (3) the 22 arrays are pairwise DISJOINT (a member filed in two facets reddens);
-//   (4) their union, sorted, equals the pinned 176-name IWORLD_MEMBERS set (a member
+//   (4) their union, sorted, equals the pinned 183-name IWORLD_MEMBERS set (a member
 //       dropped from the split reddens).
 // This is the rigorous form, NOT the tautological `keyof IWorld === keyof (A & B & ...)`
 // (IWorld extends them, so that self-equality proves nothing): it asserts against the
@@ -1062,6 +1083,13 @@ const FACET_PROFESSIONS = [
   'recipeList',
   'lastCraftResult',
   'craftItem',
+  'activeArchetype',
+  'archetypeSwitchCount',
+  'archetypeAmendsProgress',
+  'archetypeAmendsRequired',
+  'acceptArchetypeQuest',
+  'advanceAmendsProgress',
+  'switchArchetype',
 ] as const satisfies readonly (keyof IWorldProfessions)[];
 type _ExhaustProfessions = AssertNever<
   Exclude<keyof IWorldProfessions, (typeof FACET_PROFESSIONS)[number]>
@@ -1121,10 +1149,10 @@ describe('W1: aggregate IWorld member set equals the disjoint union of the 22 fa
     expect(overlaps, `members filed in more than one facet:\n${overlaps.join('\n')}`).toEqual([]);
   });
 
-  it('the union of the 22 facets equals the pinned 176-member IWORLD_MEMBERS set', () => {
+  it('the union of the 22 facets equals the pinned 183-member IWORLD_MEMBERS set', () => {
     const union = Object.values(FACET_MEMBER_ARRAYS).flatMap((arr) => [...arr]);
-    expect(union.length, 'union size before dedup (catches a duplicated member)').toBe(176);
-    expect(new Set(union).size, 'union size after dedup (catches a duplicated member)').toBe(176);
+    expect(union.length, 'union size before dedup (catches a duplicated member)').toBe(183);
+    expect(new Set(union).size, 'union size after dedup (catches a duplicated member)').toBe(183);
     const sortedUnion = [...union].sort();
     const pinned = IWORLD_MEMBERS.map((m) => m.name).sort();
     expect(sortedUnion).toEqual(pinned);
