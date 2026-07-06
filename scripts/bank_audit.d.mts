@@ -8,7 +8,6 @@ export interface BankLedgerAuditRow {
   id: number | string;
   realm: string;
   character_id: number;
-  account_id: number;
   op: string;
   item_id: string | null;
   count: number | string | null;

@@ -282,7 +282,7 @@ async function main() {
   const pool = new Pool({ connectionString: databaseUrl, max: 2 });
   try {
     const ledger = await pool.query(
-      `SELECT id, realm, character_id, account_id, op, item_id, count, instance,
+      `SELECT id, realm, character_id, op, item_id, count, instance,
               copper_delta, purchased_slots_after, container, container_id
          FROM bank_ledger
         ORDER BY id`,

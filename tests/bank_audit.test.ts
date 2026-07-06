@@ -14,7 +14,6 @@ function L(o: Partial<BankLedgerAuditRow>): BankLedgerAuditRow {
     id: 0,
     realm: 'Claudemoon',
     character_id: 1,
-    account_id: 1,
     op: 'deposit',
     item_id: null,
     count: null,
