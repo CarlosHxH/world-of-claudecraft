@@ -1,6 +1,6 @@
 # Bank System: Cross-Phase State (read this first every session)
 
-Current phase: Phase 2 + Phase 2 QA complete (2026-07-06, verdict PASS after fixes); run phase-03-iworld-wire.md next. Update this line as phases complete.
+Current phase: Phase 3 complete (2026-07-06, four commits 711d767a2..d402d1917, all reviewers clean); run phase-03-qa.md next in a fresh session. Update this line as phases complete.
 
 ## Locked design decisions (record once, reference forever)
 
@@ -38,9 +38,9 @@ Current phase: Phase 2 + Phase 2 QA complete (2026-07-06, verdict PASS after fix
 
 ## Pinned counts that must be bumped in the SAME commit as the seam change
 
-- `tests/world_api_parity.test.ts`: IWorld members 181 (49 data + 132 method), facets 22, sorted toEqual lists. (Re-baselined 2026-07-06 after the v0.22.0 merge: the release professions facet gained 7 archetype members. NOTE a pre-existing gap, NOT ours to fix: the real extends list has 23 facets but the pin covers 22; IWorldDailyRewards (PR #1307) is unpinned. After the bank facet the pin goes 22 to 23 while the extends list reads 24; do not "reconcile" by adding daily-rewards.)
-- `tests/command_schema.test.ts`: EXPECTED_SEND_COUNT 119, EXPECTED_DISPATCH_COUNT 128, DISPATCH_ONLY 9. (Re-baselined 2026-07-06; Phase 3 targets 122/131/9.)
-- `tests/snapshots.test.ts`: ALL_DELTA_KEYS has 31 entries (the release registered `gprof`; in-file comments now correct) + TERSE_TO_IWORLD + dirtyEveryDeltaField. Phase 3 takes it to 32.
+- `tests/world_api_parity.test.ts`: IWorld members 185 (50 data + 135 method), facets 23, sorted toEqual lists. (Phase 3 landed bankInfo + the three command methods. NOTE a pre-existing gap, NOT ours to fix: IWorldDailyRewards (PR #1307) is unpinned, so the real extends list reads 24 facets while the pin says 23; do not "reconcile" by adding daily-rewards.)
+- `tests/command_schema.test.ts`: EXPECTED_SEND_COUNT 122, EXPECTED_DISPATCH_COUNT 131, DISPATCH_ONLY 9. (Phase 3 landed the three bank commands.)
+- `tests/snapshots.test.ts`: ALL_DELTA_KEYS has 32 entries (`bank` landed in Phase 3) + TERSE_TO_IWORLD (`bank` -> `bankInfo`) + dirtyEveryDeltaField (relocates a banker onto the player). The delta-key counts in src/net/CLAUDE.md and server/CLAUDE.md say 32 and move with this pin.
 - `tests/command_facets.test.ts`: append-only COMMAND_FACETS tags keyed on wire strings. (COMMAND_FACETS is a PARTIAL tag map: professions commands are untagged and IWorldProfessions is absent from the WorldFacet union; tagging bank commands is optional, and if done the union needs `'IWorldBank'` added.)
 - `tests/architecture.test.ts`: UI_PURE_CORES 53 entries (the v0.22.0 merge brought the #1483 mobile-controls revert, removing 2); new `bank_view.ts` must be registered (the `*_view` suffix is what the completeness sweep catches).
 - `tests/localization_fixes.test.ts`: hardcoded simSrc list (append `src/sim/bank.ts`).
@@ -63,6 +63,7 @@ Existing (templates and seams):
 - `src/sim/bags.ts` (capacity math + command-boundary idioms), `src/sim/types.ts` (InvSlot, cloneInvSlot, NpcDef, SimEvent), `src/sim/market.ts` + `src/sim/mail/post_office.ts` (SimContext town-service modules, anchor lists, proximity, persistence, result-code events), `src/sim/interaction.ts` (interact routing), `src/sim/sim_context.ts` (seam), `src/world_api.ts` + `src/world_api/` (facets, COMMAND_NAMES, COMMAND_FACETS), `src/net/online.ts` (ClientWorld, cmd(), applySnapshot), `server/game.ts` (dispatch, selfWireJson maybe(), HEAVY_SELF_CMDS, interest), `server/db.ts` (SCHEMA, saveCharacterAndMarketState, reward-ledger template in `server/discord_db.ts`), `src/ui/bags_view.ts` + `src/ui/bags_window.ts` + `src/ui/bag_filter.ts` + `src/ui/mailbox_view.ts` + `src/ui/mailbox_window.ts` (window recipe), `src/ui/hud.ts` (composition, gossip rows, vendor-open cluster), `src/sim/content/zone1.ts` / `zone2.ts` / `zone3.ts` (hub NPC rosters), `server/player_card.ts` + `server/wallet.ts` + `referralCountForAccount` in `server/db.ts` (referrals), `server/auth_routes.ts` (referral capture at signup).
 
 Created by this feature (record actual paths as phases land):
+- Phase 3 (LANDED 2026-07-06): `src/world_api/bank.ts` (IWorldBank + BankInfo, mail.ts model); registrations in `src/world_api.ts` (extends list, COMMAND_NAMES tail, WorldFacet union, COMMAND_FACETS tags, BankInfo re-export); `bankInfoFor(ctx, pid)` in `src/sim/bank.ts` (type-only world_api import, sanctioned edge) + `Sim.bankInfoFor(pid)` delegate and `get bankInfo()` (mailInfo mechanism, primaryId) in `src/sim/sim.ts`; dispatch cases + HEAVY_SELF_CMDS + `maybe('bank')` in `server/game.ts`; mirror + senders in `src/net/online.ts`; `tests/bank_wire.test.ts`; `bank_round_trip` in `tests/parity/scenarios.ts` + golden; pin bumps in the four suites; `bankInfoFor` read-boundary pins in `tests/bank.test.ts` (60 -> 62).
 - Phase 2 (LANDED 2026-07-06): banker records appended to `src/sim/content/zone1.ts`/`zone2.ts`/`zone3.ts`; `banker?: true` + SimEvent `bank` in `src/sim/types.ts`; `bankerIds` in `src/sim/sim.ts` + `src/sim/sim_context.ts`; `nearBanker` + gates in `src/sim/bank.ts`; intercepts in `src/sim/interaction.ts`; `error.bankTooFar` in `src/ui/sim_i18n.ts`; ids in `src/ui/world_entity_i18n.ts` + five non-Latin overlay fills; Phase 2 blocks in `tests/bank.test.ts`.
 - Phase 1 (LANDED 2026-07-05): `src/sim/bank.ts` exporting `BANK_BASE_SLOTS`/`BANK_EXPANSION_SLOTS`/`BANK_EXPANSION_PRICES`, `BankState`, `bankCapacity`, `moveBetweenContainers(source, sourceIndex, count, dest, destCapacity): MoveResult` (the container-agnostic seam, decision 16a), `bankDeposit`/`bankWithdraw`/`bankBuySlots` (free functions over ctx, thin same-named Sim delegates), `sanitizeBankState` (the ONE load path); `tests/bank.test.ts`; `PlayerMeta.bank` + `CharacterState.bank?` per decision 1.
 
@@ -81,6 +82,18 @@ Created by this feature (record actual paths as phases land):
 - Phase 6: BagMode deposit integration, bank search/filter/sort, buy-slots prompt.
 - Phase 7: mobile/a11y polish.
 - Phase 8: entitlement calculator + portal surface + referral qualification.
+
+## Phase 3 outcomes (recorded 2026-07-06)
+
+- Pre-phase: origin/release/v0.22.0 merged as b660fccb9 (see progress.md "Release merge 2026-07-06"); release-merge-audit CLEAN; pin baselines re-derived from the tree before execution.
+- Landed per the packet with two amendments: (a) the packet's separate feat(server) commit was folded into the feat(net) commit so every pin suite is green at every commit (pins ride the seam commit, the stronger rule); (b) parity trace sampling + golden regen landed as its own test(parity) commit per tests/parity/CLAUDE.md. Four commits: 711d767a2 (facet + wire + dispatch + mirror + pins + the two CLAUDE.md delta-key counts), d21cef8a9 (wire round-trip suite), 8a29fc43f (read-boundary pins), d402d1917 (parity sampling + goldens + scenario).
+- Final names (decision 7 closure): BankInfo { slots, capacity, purchasedSlots, bonusSlots, nextExpansionCost: number | null }; terse `bank` -> `bankInfo`; wire fields `slot` + optional `count`. nextExpansionCost is null at the 96-slot purchased cap.
+- Implementation notes: bankInfo is a GETTER on Sim (mailInfo mechanism: `primaryId === -1 ? null : bankInfoFor(primaryId)`); the server wire path calls the IDENTICAL bankInfoFor, so getter/wire divergence is impossible by construction. bankInfoFor clones slots at the boundary (cloneInvSlot); the read-side clone is PINNED by a test that a planted shallow-copy mutation provably fails. Dispatch validates `typeof msg.slot === 'number'` and passes count only when `typeof msg.count === 'number'`; the sim re-guards integer/range (NaN/Infinity/fraction/negative all refused).
+- Rate limiting (packet carried a Phase 1 note to rate-limit bank_buy_slots): there is NO per-command economy limiter in dispatchMessage to mirror (market_buy has none); the blanket per-frame consumeMsgToken covers all commands, and the escalating exact price table + hard cap of 12 purchases makes spam a non-exploit (security review PASS). Deliberately NOT inventing a bespoke limiter; revisit only if a per-command mechanism ever lands server-wide.
+- Reviewer verdicts (all applied): privacy-security-review PASS 0 findings (2 INFO: the deferred Phase 8 bonusSlots upper clamp is the only theoretical encode amplifier, unreachable from the client surface; spectate sees the target's bank via anchorSession.pid, consistent with the existing inv/mail/market spectate precedent); architecture-reviewer 1 should-fix (read-boundary clone pin, applied + mutation-proven); cross-platform-sync CLEAN (member table MATCH on all four, omission-keeps-mirror proven by reference, RL env untouched: bank is not in the obs space and env uses obs.ts, not selfWireJson); qa-checklist READY 0 blocking 0 should-fix.
+- Golden regen audited twice (orchestrator script + qa-checklist independently): across all 48 regenerated goldens the only changes are state digests + the newly sampled `bank` field; rng draws/digests and events byte-identical; new bank_round_trip golden draws 0 rng (drawDigest 811c9dc5).
+- HEAVY_SELF_EVENTS deliberately unchanged (the bank open event does not mutate bags; Phase 2 note (d) satisfied).
+- Phase 5 consumers inherit: bankInfo null semantics (null = away from banker, both worlds identical), the ~1-tick online latency vs the offline live getter (mail/market precedent), and dead players can still READ bankInfo (display-only; commands are dead-gated) matching mail/market.
 
 ## Phase 2 outcomes (recorded 2026-07-06)
 
@@ -118,10 +131,10 @@ Created by this feature (record actual paths as phases land):
 
 ## New surface added per phase (fill in as phases complete)
 
-- IWorld members: (Phase 3)
+- IWorld members: Phase 3 (LANDED): `bankInfo: BankInfo | null` (data; null away from a banker) + `bankDeposit(slotIndex, count?)`, `bankWithdraw(slotIndex, count?)`, `bankBuySlots()` (methods), facet `IWorldBank` in `src/world_api/bank.ts`; view type `BankInfo = { slots: InvSlot[], capacity, purchasedSlots, bonusSlots, nextExpansionCost: number | null }` (FINAL names per decision 7)
 - SimEvents: Phase 2 (LANDED): `{ type: 'bank' }`, pid always passed by both emit sites
-- Wire fields / delta keys: (Phase 3)
-- Commands: (Phase 3: `bank_deposit`, `bank_withdraw`, `bank_buy_slots`)
+- Wire fields / delta keys: Phase 3 (LANDED): terse self delta key `bank` -> IWorld `bankInfo` (32nd ALL_DELTA_KEYS entry; delta-guarded decode, omit = unchanged, explicit null = away from banker); command wire fields `slot` (number) + optional `count` (number)
+- Commands: Phase 3 (LANDED): `bank_deposit`, `bank_withdraw`, `bank_buy_slots` (append-only COMMAND_NAMES tail, COMMAND_FACETS tagged IWorldBank, all in HEAVY_SELF_CMDS)
 - DB tables/columns: (Phase 4: `bank_ledger`; lease mechanism)
 - i18n keys / matcher rules: Phase 1: `error.bankQuestItem`, `error.bankFull`, `error.bankCannotAfford`, `error.bankMaxSlots`, `log.bankSlotsPurchased` (all EXACT via `baseEnTable`, five non-Latin fills each). Phase 2: `error.bankTooFar` (same recipe) + `entities.npcs.{bursar_fernando,bursar_petra_vell,bursar_aldous_crane}.{name,title,greeting}` (world_entity_i18n + five non-Latin overlay fills). More in Phases 5, 6, 7.
 

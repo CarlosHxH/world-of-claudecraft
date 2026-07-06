@@ -8,7 +8,7 @@
 | Phase 1 QA | complete | 2026-07-06 | 2026-07-06 |
 | Phase 2: banker NPCs | complete | 2026-07-06 | 2026-07-06 |
 | Phase 2 QA | complete | 2026-07-06 | 2026-07-06 |
-| Phase 3: IWorld + wire | not started | | |
+| Phase 3: IWorld + wire | complete | 2026-07-06 | 2026-07-06 |
 | Phase 3 QA | not started | | |
 | Phase 4: lease + ledger | not started | | |
 | Phase 4 QA | not started | | |
@@ -46,11 +46,11 @@
 - [x] Deliverables and acceptance criteria re-verified independently (parity + golden audit, event/proximity/i18n/guide, in-world visual placement); findings fixed; 8-mutation decisiveness pass all killed
 
 ### Phase 3: IWorld + wire
-- [ ] `src/world_api/bank.ts` facet; IWorld extends list; COMMAND_FACETS tags
-- [ ] `bank_deposit` / `bank_withdraw` / `bank_buy_slots` in COMMAND_NAMES; validated dispatch cases; ClientWorld cmd() senders; HEAVY_SELF_CMDS membership
-- [ ] Proximity-gated bank info read riding a maybe() delta key; TERSE_TO_IWORLD; delta-guarded applySnapshot mirror
-- [ ] All pin bumps in the same commits (world_api_parity, command_schema, snapshots, command_facets)
-- [ ] Wire round-trip tests (fakeWs server + bare ClientWorld) + offline/online behavior parity test
+- [x] `src/world_api/bank.ts` facet; IWorld extends list; COMMAND_FACETS tags
+- [x] `bank_deposit` / `bank_withdraw` / `bank_buy_slots` in COMMAND_NAMES; validated dispatch cases; ClientWorld cmd() senders; HEAVY_SELF_CMDS membership
+- [x] Proximity-gated bank info read riding a maybe() delta key; TERSE_TO_IWORLD; delta-guarded applySnapshot mirror
+- [x] All pin bumps in the same commits (world_api_parity 185/50/135 + facets 23, command_schema 122/131, snapshots 32, command_facets)
+- [x] Wire round-trip tests (fakeWs server + bare ClientWorld) + offline/online behavior parity test; plus the Phase 1 parity debt closed (META_EXCLUDE bank removed, goldens regenerated with rng byte-identity, bank_round_trip scenario added)
 
 ### Phase 3 QA
 - [ ] As Phase 1 QA
@@ -125,6 +125,15 @@
 - Easter egg: the Eastbrook banker is Bursar Fernando (bursar_fernando), renamed mid-phase from the planned bursar_hobb at the maintainer's request. All phase docs, i18n keys, and translations re-keyed; repo-wide grep for the old id is clean (the historical provenance notes in the bank-system docs, five mentions across state.md, phase-02-banker-npcs.md, and this file, are deliberate).
 - Deferral: an in-world visual placement check of the three bankers (overlap/geometry) needs a running client; deferred to the Phase 2 QA session.
 - Next: run docs/bank-system/phase-02-qa.md in a fresh session.
+
+### Phase 3 (2026-07-06)
+
+- Executed right after the v0.22.0 release merge (see "Release merge 2026-07-06" above); pin baselines re-derived from the merged tree before any edit (the packet's literals were stale, corrected in cdda401ea).
+- Two parallel implementation agents (facet+server / client+pins+tests) converged with zero reconciliation needed (wire field names, BankInfo shape, and delta key all locked up front). Full record in state.md "Phase 3 outcomes".
+- Reviewers: privacy-security-review PASS (0 findings), cross-platform-sync CLEAN (0 findings), qa-checklist READY (0 blocking, 0 should-fix), architecture-reviewer 1 should-fix (bankInfoFor read-boundary clone unpinned) applied same-session as 8a29fc43f and proven by a planted shallow-copy mutation.
+- Commit cadence amended for per-commit greenness: feat(server) folded into the feat(net) commit (pins ride the seam commit), parity work in its own test(parity) commit. Four commits 711d767a2, d21cef8a9, 8a29fc43f, d402d1917.
+- Deliberate non-change: no bespoke rate limiter for bank_buy_slots (no per-command precedent exists; blanket consumeMsgToken + exact escalating prices + hard cap suffice; recorded in state.md).
+- Next: run docs/bank-system/phase-03-qa.md in a fresh session.
 
 ### Phase 1 QA (2026-07-06)
 - Verdict: PASS after fixes. 1 blocking + 7 should-fix + 5 nice-to-have found; all applied except 3 refuted with evidence. `src/sim/bank.ts` survived QA byte-unchanged; every applied fix was test decisiveness, i18n accuracy, or merge damage. Full record in state.md "Phase 1 QA outcomes".
