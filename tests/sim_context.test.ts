@@ -469,6 +469,14 @@ describe('createSimContext (isolated, fake host)', () => {
     expect(ctx.tickCount).toBe(7);
   });
 
+  it('exposes bankerIds as a live shared view (the marketListings idiom)', () => {
+    const { host } = makeFakeHost();
+    const ctx = createSimContext(host);
+    expect(ctx.bankerIds).toBe(host.bankerIds);
+    host.bankerIds.push(4242); // the Sim ctor pushes ids after the ctx is built
+    expect(ctx.bankerIds).toEqual([4242]);
+  });
+
   it('passes every callback through to the host by identity (no rewrapping)', () => {
     const { host } = makeFakeHost();
     const ctx = createSimContext(host);

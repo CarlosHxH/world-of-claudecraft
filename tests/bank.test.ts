@@ -980,6 +980,31 @@ describe('interacting with a banker opens the bank (Phase 2)', () => {
     sim.interact(pid);
     expect(bankEvents(sim.drainEvents())).toHaveLength(0);
   });
+
+  // The banker intercept must PRECEDE quest talk in both arms: a banker interact
+  // opens the bank and never falls through to talkToNpc. The seam late-binds
+  // talkToNpc (a reassigned sim.talkToNpc is honored, the W4 contract), so a spy
+  // proves the intercept returned before the quest-talk dispatch.
+  it('a banker interact never falls through to quest talk (either arm)', () => {
+    const sim = makeBankWorld();
+    const pid = sim.addPlayer('warrior', 'Vaulter');
+    const banker = moveToBanker(sim, pid, 'bursar_fernando');
+    let talked = 0;
+    (sim as unknown as { talkToNpc: () => void }).talkToNpc = () => {
+      talked += 1;
+    };
+    const p = sim.entities.get(pid)!;
+
+    p.targetId = banker.id;
+    sim.drainEvents();
+    sim.interact(pid);
+    expect(bankEvents(sim.drainEvents())).toHaveLength(1);
+
+    p.targetId = null; // now the proximity-scan arm
+    sim.interact(pid);
+    expect(bankEvents(sim.drainEvents())).toHaveLength(1);
+    expect(talked).toBe(0);
+  });
 });
 
 describe('bank commands require a nearby banker (Phase 2)', () => {
@@ -1076,4 +1101,33 @@ describe('bank commands require a nearby banker (Phase 2)', () => {
       expect(m.bank.inventory).toEqual([{ itemId: 'wolf_fang', count: 3 }]);
     });
   }
+
+  // The reach boundary itself, pinned with LITERAL distances (never derived from
+  // BANKER_RANGE/INTERACT_RANGE, which would be a self-comparison): 7 yards is in
+  // reach inclusive, just past it is refused.
+  it('the reach boundary is 7 yards inclusive: 7.0 succeeds, 7.05 is refused', () => {
+    const sim = makeBankWorld();
+    const pid = sim.addPlayer('warrior', 'Surveyor');
+    const m = sim.meta(pid)!;
+    sim.addItem('wolf_fang', 2, pid);
+    const idx = () => m.inventory.findIndex((s) => s.itemId === 'wolf_fang');
+    const banker = bankerEntity(sim, 'bursar_fernando');
+    const p = sim.entities.get(pid)!;
+    const standAt = (dx: number) => {
+      p.pos = { x: banker.pos.x + dx, y: p.pos.y, z: banker.pos.z };
+      p.prevPos = { ...p.pos };
+      sim.rebucket(p);
+    };
+
+    standAt(7.05); // just past the boundary: refused, nothing moves
+    sim.drainEvents();
+    sim.bankDeposit(idx(), undefined, pid);
+    expect(hasErr(sim.drainEvents(), TOO_FAR)).toBe(true);
+    expect(m.bank.inventory).toEqual([]);
+    expect(sim.countItem('wolf_fang', pid)).toBe(2);
+
+    standAt(7); // exactly on the boundary: allowed (dist2d <= 7, inclusive)
+    sim.bankDeposit(idx(), undefined, pid);
+    expect(m.bank.inventory).toEqual([{ itemId: 'wolf_fang', count: 2 }]);
+  });
 });
