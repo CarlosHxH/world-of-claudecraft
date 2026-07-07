@@ -25,7 +25,13 @@ import { createMob } from '../src/sim/entity';
 import { ACTIONS, encodeObs } from '../src/sim/obs';
 import { Sim } from '../src/sim/sim';
 import { dist2d, type Entity, type SimEvent } from '../src/sim/types';
-import { generateDecorations, groundHeight, WATER_LEVEL } from '../src/sim/world';
+import {
+  DECORATION_MAX_SLOPE,
+  generateDecorations,
+  groundHeight,
+  terrainSteepness,
+  WATER_LEVEL,
+} from '../src/sim/world';
 
 const SEED = 20061;
 
@@ -231,6 +237,15 @@ describe('collision & terrain', () => {
 
     const blocked = resolvePosition(SEED, tree.x, tree.z, 0.5);
     expect(Math.abs(blocked.x - tree.x) + Math.abs(blocked.z - tree.z)).toBeGreaterThan(0.5);
+  });
+
+  it('does not scatter trees or rocks onto cliff faces', () => {
+    // A prop on a wall steeper than the climb limit floats off the face and
+    // (for large rocks / trunks) plants an invisible collider there.
+    const onCliffs = generateDecorations(SEED)
+      .filter((d) => terrainSteepness(d.x, d.z, SEED) > DECORATION_MAX_SLOPE)
+      .map((d) => `${d.kind}@${d.x.toFixed(0)},${d.z.toFixed(0)}`);
+    expect(onCliffs).toEqual([]);
   });
 });
 

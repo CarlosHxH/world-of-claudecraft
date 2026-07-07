@@ -667,6 +667,17 @@ export function zoneBiomeAt(z: number): BiomeId {
   return zones[zones.length - 1].biome;
 }
 
+// Scatter props (trees, boulders) are anchored to terrainHeight at their exact
+// (x, z). On a near-vertical rim/ridge wall a prop juts out of the face and
+// reads as floating, and (via colliders.ts) a large rock or trunk there is also
+// an invisible collider on the cliff. Reject any candidate whose local terrain
+// is steeper than this: it matches PLAYER_MAX_CLIMB_SLOPE (the impassable-wall
+// gate), so only genuine walls are cleared and rolling interior hills keep
+// their props. Grass and ground dressing already refuse cliffs the same way
+// (foliage.ts tooSteep / GRASS_MAX_SLOPE); this brings the big props in line.
+// Pinned as a literal by tests/fixes.test.ts.
+export const DECORATION_MAX_SLOPE = 1.5;
+
 export function generateDecorations(seed: number): Decoration[] {
   const w = world();
   const out: Decoration[] = [];
@@ -732,6 +743,11 @@ export function generateDecorations(seed: number): Decoration[] {
         }
       }
       if (inCamp) continue;
+      // no scatter on cliff faces: a prop anchored to the surface here floats
+      // off the wall (and large ones would be phantom colliders). Checked last,
+      // after the cheaper gates, so the four-sample steepness only runs for
+      // candidates that survive everything else.
+      if (terrainSteepness(x, z, seed) > DECORATION_MAX_SLOPE) continue;
       out.push({
         kind,
         x,
