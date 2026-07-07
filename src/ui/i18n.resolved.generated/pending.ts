@@ -10,51 +10,79 @@
 
 export const pending: Record<string, readonly string[]> = {
   "es": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ],
   "es_ES": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ],
   "fr_FR": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ],
   "fr_CA": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ],
   "en_CA": [],
   "it_IT": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ],
   "de_DE": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ],
-  "zh_CN": [],
-  "zh_TW": [],
-  "ko_KR": [],
-  "ja_JP": [],
+  "zh_CN": [
+    "hudChrome.discord.roleTag.coredevs"
+  ],
+  "zh_TW": [
+    "hudChrome.discord.roleTag.coredevs"
+  ],
+  "ko_KR": [
+    "hudChrome.discord.roleTag.coredevs"
+  ],
+  "ja_JP": [
+    "hudChrome.discord.roleTag.coredevs"
+  ],
   "pt_BR": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ],
-  "ru_RU": [],
+  "ru_RU": [
+    "hudChrome.discord.roleTag.coredevs"
+  ],
+  "cs_CZ": [
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
+  ],
   "nl_NL": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ],
   "pl_PL": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ],
   "id_ID": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ],
   "tr_TR": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ],
   "sv_SE": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ],
   "vi_VN": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ],
   "da_DK": [
-    "hudChrome.crafting.comboRequirementUnmet"
+    "hudChrome.crafting.comboRequirementUnmet",
+    "hudChrome.discord.roleTag.coredevs"
   ]
 };
