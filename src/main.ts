@@ -910,6 +910,10 @@ async function startGame(
 
   // Offline only: expose the dev "2v2 Fiesta vs Bots" practice toggle to the HUD.
   if (offlineSim) hud.setFiestaPracticeHook(() => offlineSim.startFiestaPractice());
+  // The Vale Cup practice-vs-bots button (the window calls world.vcupPracticeStart
+  // through IWorld). Private instanced practice works online AND offline, so the
+  // button is always available.
+  hud.setVcupPracticeAvailable(true);
 
   const chatInput = $('#chat-input') as unknown as HTMLTextAreaElement;
   const clickMoveMarker = $('#click-move-marker') as HTMLDivElement;
@@ -1049,6 +1053,8 @@ async function startGame(
       // slot 0 (key 1) is Attack for every class, auto-attack without needing
       // right-click; keys and clicks share the Hud's remappable slot layout
       onAbility: (slot) => hud.castSlot(slot),
+      onAbilityDown: (slot) => hud.pressSlot(slot),
+      onAbilityUp: (slot) => hud.releaseSlot(slot),
       onInputIntent: (kind) => perf.markInputIntent(kind),
       onUiKey: (key) => {
         if (key !== 'escape') hud.cancelGroundAim();
@@ -1088,6 +1094,9 @@ async function startGame(
             break;
           case 'arena':
             hud.toggleArena();
+            break;
+          case 'valecup':
+            hud.toggleValeCup();
             break;
           case 'leaderboard':
             hud.toggleLeaderboard();
@@ -1141,6 +1150,7 @@ async function startGame(
     onDonate: () => window.open(DONATE_URL, '_blank', 'noopener,noreferrer'),
     onEmotes: () => hud.toggleEmoteWheel(),
     onArena: () => hud.toggleArena(),
+    onValeCup: () => hud.toggleValeCup(),
     onQuestLog: () => hud.toggleQuestLog(),
     onCharacter: () => hud.toggleChar(),
     onBags: () => hud.toggleBags(),
@@ -1232,6 +1242,9 @@ async function startGame(
         break;
       case 'arena':
         hud.toggleArena();
+        break;
+      case 'valecup':
+        hud.toggleValeCup();
         break;
       case 'leaderboard':
         hud.toggleLeaderboard();
@@ -2709,6 +2722,7 @@ async function startOffline(
     playerClass,
     playerName: name,
     devCommands: import.meta.env.DEV,
+    valeCupShowcase: true, // idle Sowfield auto-runs a bot exhibition to watch/bet on
     world,
   });
   sim.setPlayerSkin(sim.playerId, skin);
