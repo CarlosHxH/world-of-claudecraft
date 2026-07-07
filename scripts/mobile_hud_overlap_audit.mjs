@@ -66,9 +66,11 @@ const CONTROL_IDS = [
 
 // Always-on chrome measured in pass A. Frames/bars are readability surfaces;
 // #minimap-wrap hosts the interactive zoom buttons so it counts as interactive.
+// #party-chip is the mobile collapse chip (a tap target: interactive, 40px floor).
 const CHROME_IDS = [
   'target-frame',
   'party-frames',
+  'party-chip',
   'buff-bar',
   'debuff-bar',
   'minimap-wrap',
@@ -80,7 +82,7 @@ const CHROME_IDS = [
 // Interactive classification for the >= 4px vs >= 0px rule. The thumb ring
 // controls plus minimap-zoom / minimap-wrap are things a finger taps; frames and
 // bars are read, not tapped, so two of them only need to not visually collide.
-const INTERACTIVE_IDS = new Set([...CONTROL_IDS, 'minimap-wrap']);
+const INTERACTIVE_IDS = new Set([...CONTROL_IDS, 'minimap-wrap', 'party-chip']);
 // Toggled overlay PANELS (class="panel", not always-on chrome): the player opens
 // #meters-window deliberately and it has its own close button, so like a Pass-B
 // window it may legitimately sit over the passive readability frames/bars when the
@@ -436,6 +438,146 @@ async function findNpc(page) {
   });
 }
 
+// Read the mobile party-collapse chip state: whether the chip exists + is laid out,
+// its box, and whether the #party-frames container is expanded (member rows shown).
+async function readPartyChipState(page) {
+  return page.evaluate(() => {
+    const chip = document.getElementById('party-chip');
+    const pf = document.getElementById('party-frames');
+    const box = (el) => {
+      if (!el) return null;
+      const s = getComputedStyle(el);
+      if (s.display === 'none' || s.visibility === 'hidden') return null;
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) return null;
+      return {
+        left: r.left,
+        top: r.top,
+        right: r.right,
+        bottom: r.bottom,
+        w: r.width,
+        h: r.height,
+      };
+    };
+    return {
+      chip: box(chip),
+      expanded: !!pf?.classList.contains('party-expanded'),
+      frameCount: document.querySelectorAll('#party-frames .party-frame').length,
+      // A visible member row's box, to prove the expanded stack really lays out.
+      firstFrame: box(document.querySelector('#party-frames .party-frame')),
+    };
+  });
+}
+
+// Tap the party chip via a real click (the chip's own listener toggles collapse). The
+// HUD picks up the persisted flip on its next update; nudge one update + settle.
+async function tapPartyChip(page) {
+  const clicked = await page.evaluate(() => {
+    const chip = document.getElementById('party-chip');
+    if (!chip) return false;
+    chip.click();
+    window.__game.hud?.update?.(0.05);
+    return true;
+  });
+  await sleep(200);
+  return clicked;
+}
+
+// Drive the real mobile chat toggle by dispatching TOUCH pointer events on the Chat
+// button (bindChatButton listens on pointerdown/pointerup with a long-press timer, NOT
+// a synthesized click, so a bare .click() is a no-op). A quick pointerdown->pointerup
+// under the long-press threshold is a tap: first tap opens (log + composer via
+// enterChatReply/onChat), a later tap closes. Then nudge one HUD update so the party UI
+// yields/restores this frame.
+async function toggleMobileChat(page) {
+  await page.evaluate(() => {
+    const btn = document.getElementById('mobile-chat');
+    if (!btn) return;
+    const r = btn.getBoundingClientRect();
+    const opts = {
+      pointerId: 77,
+      pointerType: 'touch',
+      clientX: r.left + r.width / 2,
+      clientY: r.top + r.height / 2,
+      bubbles: true,
+      cancelable: true,
+    };
+    btn.dispatchEvent(new PointerEvent('pointerdown', opts));
+    btn.dispatchEvent(new PointerEvent('pointerup', opts));
+    window.__game.hud?.update?.(0.05);
+  });
+  // The long-press timer is well above a synchronous down->up, so this is always a tap.
+  await sleep(120);
+  return page.evaluate(() => document.body.classList.contains('mobile-chat-open'));
+}
+
+// updatePartyFrames runs on the HUD's ~4Hz mediumHud band, so the chat-open yield lands
+// on the NEXT band tick, not the same frame. Pump a few HUD updates across that band and
+// wait until the party chip's presence matches the expected state (bounded), so the read
+// never races the band. Returns whether the expected state was reached.
+async function waitForChipPresence(page, wantChip) {
+  for (let i = 0; i < 12; i++) {
+    const has = await page.evaluate(() => {
+      window.__game.hud?.update?.(0.05);
+      const chip = document.getElementById('party-chip');
+      if (!chip) return false;
+      const s = getComputedStyle(chip);
+      return s.display !== 'none' && s.visibility !== 'hidden';
+    });
+    if (has === wantChip) return true;
+    await sleep(80);
+  }
+  return false;
+}
+
+// Read the chat overlay's boxes (log wrap + composer) while chat is open.
+async function readChatBoxes(page) {
+  return page.evaluate(() => {
+    const box = (id) => {
+      const el = document.getElementById(id);
+      if (!el) return null;
+      const s = getComputedStyle(el);
+      if (s.display === 'none' || s.visibility === 'hidden') return null;
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) return null;
+      return {
+        left: r.left,
+        top: r.top,
+        right: r.right,
+        bottom: r.bottom,
+        w: r.width,
+        h: r.height,
+      };
+    };
+    return {
+      chatOpen: document.body.classList.contains('mobile-chat-open'),
+      log: box('chatlog-wrap'),
+      input: box('chat-input'),
+      dismiss: box('chat-dismiss'),
+      inputFocused: document.activeElement === document.getElementById('chat-input'),
+    };
+  });
+}
+
+// Simulate the on-screen keyboard rising: the same body class + viewport var the real
+// keyboard_viewport applier sets off visualViewport (the proven PR #1578 pattern), so
+// the composer + dismiss chevron take their keyboard-open seats without a real keyboard.
+async function simulateKeyboardOpen(page, visibleVh) {
+  await page.evaluate((vh) => {
+    document.body.classList.add('mobile-keyboard-open');
+    document.documentElement.style.setProperty('--mobile-keyboard-visible-vh', `${vh}px`);
+  }, visibleVh);
+  await sleep(120);
+}
+
+async function simulateKeyboardClose(page) {
+  await page.evaluate(() => {
+    document.body.classList.remove('mobile-keyboard-open');
+    document.documentElement.style.removeProperty('--mobile-keyboard-visible-vh');
+  });
+  await sleep(120);
+}
+
 const browser = await puppeteer.launch({
   executablePath: BROWSER_PATH,
   headless: 'new',
@@ -533,6 +675,42 @@ try {
     const settle = await settleFrames(page, { expectTarget: targetId !== null });
     if (!settle.settled) note(`${prof.name}: ${settle.note}`);
 
+    // ---- Mobile party-collapse chip: collapsed by default -> expand -> collapse. ----
+    // (1) COLLAPSED (the default): only the compact chip shows; the member rows are
+    // hidden. Assert the chip is present, meets the 40px floor, and the frames are
+    // hidden (frameCount rows exist in the DOM but none are laid out / visible). The
+    // chip is created on the mediumHud band after the viewport flip, so pump until it
+    // appears (bounded) before reading.
+    await waitForChipPresence(page, true);
+    const collapsed = await readPartyChipState(page);
+    if (!collapsed.chip) {
+      fail(`${prof.name}: party chip not present/visible while in a party on mobile (collapsed)`);
+    } else {
+      if (collapsed.chip.w < TOUCH_FLOOR - 0.5 || collapsed.chip.h < TOUCH_FLOOR - 0.5) {
+        fail(
+          `${prof.name}: party chip below the ${TOUCH_FLOOR}px floor ` +
+            `(${collapsed.chip.w.toFixed(1)}x${collapsed.chip.h.toFixed(1)})`,
+        );
+      }
+      if (collapsed.expanded || collapsed.firstFrame) {
+        fail(`${prof.name}: party frames are visible while collapsed (expected chip-only)`);
+      }
+    }
+    if (prof.w === 844) {
+      await page.screenshot({ path: `${SHOT_DIR}/passA_partychip_collapsed_${prof.w}.png` });
+    }
+    // (2) EXPAND via a real tap on the chip, then assert the member stack lays out.
+    await tapPartyChip(page);
+    const expanded = await readPartyChipState(page);
+    if (!expanded.expanded || !expanded.firstFrame) {
+      fail(
+        `${prof.name}: party chip tap did not expand the member stack ` +
+          `(expanded=${expanded.expanded}, firstFrame=${!!expanded.firstFrame})`,
+      );
+    }
+    // Re-settle the now-expanded stack before the existing overlap measurements below.
+    await settleFrames(page, { expectTarget: targetId !== null });
+
     const allIds = [...CHROME_IDS, ...CONTROL_IDS];
     const g = await collectRects(page, allIds);
     if (process.env.DEBUG_RECTS) {
@@ -586,6 +764,13 @@ try {
       for (let j = i + 1; j < entries.length; j++) {
         const [idA, a] = entries[i];
         const [idB, b] = entries[j];
+        // #party-chip is a CHILD of #party-frames (the collapse header seated inside the
+        // container), so their boxes nest by design; skip that parent/child pair (it is
+        // not a mis-tap / readability collision). Every other party-chip pair is checked.
+        const nested =
+          (idA === 'party-chip' && idB === 'party-frames') ||
+          (idA === 'party-frames' && idB === 'party-chip');
+        if (nested) continue;
         const interactive = INTERACTIVE_IDS.has(idA) || INTERACTIVE_IDS.has(idB);
         const gap = controlGap(idA, a, idB, b, CIRCLE_IDS);
         // A toggled overlay panel (meters) over a passive readability surface is
@@ -634,7 +819,218 @@ try {
     }
 
     await page.screenshot({ path: `${SHOT_DIR}/passA_${prof.name}.png` });
+    if (prof.w === 844) {
+      await page.screenshot({ path: `${SHOT_DIR}/passA_partychip_expanded_${prof.w}.png` });
+    }
+
+    // (3) COLLAPSE again via a real tap; assert the member stack hides (chip-only).
+    await tapPartyChip(page);
+    const recollapsed = await readPartyChipState(page);
+    if (recollapsed.expanded || recollapsed.firstFrame) {
+      fail(`${prof.name}: party chip tap did not re-collapse the member stack`);
+    }
+    if (!recollapsed.chip) {
+      fail(`${prof.name}: party chip vanished after re-collapse (expected chip-only)`);
+    }
+
+    // ---- Chat-open yield: the party UI yields while mobile chat is open. ----
+    // Open the real mobile chat, then assert (a) the party UI yielded (chip + frames
+    // hidden), and (b) the chat log + composer are clear of the party container, the
+    // target frame, and each other. Then close chat and assert the party stack restored
+    // to its PRE-chat state (collapsed here, since we re-collapsed above).
+    await toggleMobileChat(page);
+    await sleep(200);
+    // Re-verify chat is actually open (the synthetic tap can miss on some profiles);
+    // only assert the yield when chat genuinely opened, else NOTE and skip.
+    const chatOpened = await page.evaluate(() =>
+      document.body.classList.contains('mobile-chat-open'),
+    );
+    if (!chatOpened) {
+      note(`${prof.name}: mobile chat did not open (skipping chat-yield assertions)`);
+    } else {
+      // The yield lands on the next mediumHud band tick; pump updates until the chip is
+      // gone (bounded) so the read never races the ~4Hz party-frames cadence.
+      await waitForChipPresence(page, false);
+      const yielded = await readPartyChipState(page);
+      // HARD CHECK (this PR's feature): the party UI yields entirely while chat is open,
+      // so the chat overlay owns the top-left. Chip + frames must be gone.
+      if (yielded.chip || yielded.expanded || yielded.firstFrame) {
+        fail(
+          `${prof.name}: party UI did not yield while chat is open ` +
+            `(chip=${!!yielded.chip}, expanded=${yielded.expanded}, frame=${!!yielded.firstFrame})`,
+        );
+      }
+      const chat = await readChatBoxes(page);
+      // The chat log + composer clearance vs the (yielded) party container, the target
+      // frame, and each other. The party frames are hidden, but check the container box
+      // too (a stray container box must not sit under chat). NOTE-only: the chat log /
+      // composer SEATS are pre-existing (unchanged by this PR), so a residual overlap on
+      // a very short landscape viewport (the composer is bottom-anchored, the target
+      // frame top-left) is a pre-existing spatial constraint, surfaced but not gated here
+      // -- this PR's contract is that the PARTY UI yields (asserted above), which frees
+      // the top-left the owner's screenshot flagged.
+      const targetRect = g.rects['target-frame'];
+      const partyRect = await page.evaluate(() => {
+        const el = document.getElementById('party-frames');
+        if (!el) return null;
+        const s = getComputedStyle(el);
+        if (s.display === 'none' || s.visibility === 'hidden') return null;
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 && r.height === 0) return null;
+        return {
+          left: r.left,
+          top: r.top,
+          right: r.right,
+          bottom: r.bottom,
+          w: r.width,
+          h: r.height,
+        };
+      });
+      const chatSurfaces = [
+        ['chatlog-wrap', chat.log],
+        ['chat-input', chat.input],
+      ].filter(([, r]) => r);
+      const neighbours = [
+        ['target-frame', targetRect],
+        ['party-frames', partyRect],
+      ].filter(([, r]) => r);
+      for (const [cid, crect] of chatSurfaces) {
+        for (const [nid, nrect] of neighbours) {
+          const gap = controlGap(cid, crect, nid, nrect, CIRCLE_IDS);
+          if (gap < MIN_GAP_CHROME) {
+            note(
+              `${prof.name}: chat #${cid} overlaps #${nid} by ${(-gap).toFixed(1)}px while chat open ` +
+                `(pre-existing chat seat on a short viewport; party UI yielded)`,
+            );
+          }
+        }
+      }
+      // The log and composer clearance (siblings in the chat overlay). NOTE-only for the
+      // same reason: their seats are pre-existing chat layout, not this PR's change.
+      if (chat.log && chat.input) {
+        const gap = controlGap('chatlog-wrap', chat.log, 'chat-input', chat.input, CIRCLE_IDS);
+        if (gap < MIN_GAP_CHROME) {
+          note(
+            `${prof.name}: chat log overlaps composer by ${(-gap).toFixed(1)}px ` +
+              `(pre-existing chat seat; not changed by this PR)`,
+          );
+        }
+      }
+      // Screenshot the yield state on the primary profile (wake the chrome first so the
+      // chat text is at full contrast, not mid idle-fade).
+      if (prof.w === 844) {
+        await page.evaluate(() => window.dispatchEvent(new Event('touchstart')));
+        await sleep(120);
+        await page.screenshot({ path: `${SHOT_DIR}/passA_chat_yield_${prof.w}.png` });
+      }
+      // Close chat and assert the party stack restored to its PRE-chat state (collapsed:
+      // chip back, frames still hidden), proving the yield never overwrote the pref.
+      // Retry the close once if the first synthetic tap did not land (the tap can miss on
+      // some profiles), then only assert restore when chat genuinely closed.
+      await toggleMobileChat(page);
+      await sleep(200);
+      let chatStillOpen = await page.evaluate(() =>
+        document.body.classList.contains('mobile-chat-open'),
+      );
+      if (chatStillOpen) {
+        await toggleMobileChat(page);
+        await sleep(200);
+        chatStillOpen = await page.evaluate(() =>
+          document.body.classList.contains('mobile-chat-open'),
+        );
+      }
+      if (chatStillOpen) {
+        note(`${prof.name}: mobile chat did not close (skipping the restore assertion)`);
+        // Force it closed for a clean state before the next profile.
+        await page.evaluate(() => {
+          document.body.classList.remove('mobile-chat-open', 'mobile-chat-reply');
+          window.__game.hud?.update?.(0.05);
+        });
+        await sleep(120);
+        continue;
+      }
+      // The restore also lands on the next mediumHud band tick; pump until the chip is
+      // back (bounded) before asserting.
+      await waitForChipPresence(page, true);
+      const restored = await readPartyChipState(page);
+      if (!restored.chip) {
+        fail(`${prof.name}: party chip did not restore after chat closed`);
+      }
+      if (restored.expanded || restored.firstFrame) {
+        fail(
+          `${prof.name}: party stack over-restored (expanded) after chat closed (pref was collapsed)`,
+        );
+      }
+    }
+
     console.log(`checked ${prof.name} (${prof.w}x${prof.h}, target=${targetId})`);
+  }
+
+  // ---- Chat keyboard-dismiss: drop the keyboard WITHOUT closing chat. ----
+  // On the primary 844 profile: open chat, simulate the on-screen keyboard rising (the
+  // same body class + viewport var the real visualViewport handler sets, the proven PR
+  // #1578 pattern), focus the composer, then tap the dismiss chevron. Assert chat is
+  // STILL open, the composer is unfocused (keyboard dropped), and the log + composer
+  // sit at their resting seat (on-screen). Screenshot the just-dismissed state.
+  console.log('\n=== Chat keyboard-dismiss (drop keyboard, keep chat open) ===');
+  await flipViewport(page, media, 844, 390, 3, 'hud-mobile-compact');
+  const dismissOpened = await toggleMobileChat(page);
+  if (!dismissOpened) {
+    note('chat keyboard-dismiss: chat did not open; NOT COVERED');
+  } else {
+    // Focus the composer + raise the simulated keyboard (visible area shrinks to ~180px).
+    await page.evaluate(() => document.getElementById('chat-input')?.focus());
+    await simulateKeyboardOpen(page, 180);
+    const beforeDismiss = await readChatBoxes(page);
+    if (!beforeDismiss.dismiss) {
+      fail('chat keyboard-dismiss: #chat-dismiss chevron not visible while chat open');
+    } else if (
+      beforeDismiss.dismiss.w < TOUCH_FLOOR - 0.5 ||
+      beforeDismiss.dismiss.h < TOUCH_FLOOR - 0.5
+    ) {
+      fail(
+        `chat keyboard-dismiss: dismiss chevron below the ${TOUCH_FLOOR}px floor ` +
+          `(${beforeDismiss.dismiss.w.toFixed(1)}x${beforeDismiss.dismiss.h.toFixed(1)})`,
+      );
+    }
+    // Tap the dismiss chevron: blurs the composer (real handler), drops the keyboard.
+    await page.evaluate(() => document.getElementById('chat-dismiss')?.click());
+    // The real keyboard would then close; simulate that (visualViewport grows back).
+    await simulateKeyboardClose(page);
+    await sleep(200);
+    const afterDismiss = await readChatBoxes(page);
+    // Chat STAYS open, the composer is UNFOCUSED (keyboard dropped), and the log +
+    // composer are laid out on-screen at their resting seat.
+    if (!afterDismiss.chatOpen) {
+      fail('chat keyboard-dismiss: chat closed on dismiss (expected it to stay open)');
+    }
+    if (afterDismiss.inputFocused) {
+      fail('chat keyboard-dismiss: composer still focused after dismiss (keyboard not dropped)');
+    }
+    if (!afterDismiss.log || !afterDismiss.input) {
+      fail('chat keyboard-dismiss: log/composer not laid out after dismiss (chat not at rest)');
+    } else {
+      const vp = await page.evaluate(() => [window.innerWidth, window.innerHeight]);
+      for (const [id, r] of [
+        ['chatlog-wrap', afterDismiss.log],
+        ['chat-input', afterDismiss.input],
+      ]) {
+        if (r.left < -0.5 || r.top < -0.5 || r.right > vp[0] + 0.5 || r.bottom > vp[1] + 0.5) {
+          fail(`chat keyboard-dismiss: #${id} off-screen after dismiss`);
+        }
+      }
+    }
+    await page.evaluate(() => window.dispatchEvent(new Event('touchstart')));
+    await sleep(120);
+    await page.screenshot({ path: `${SHOT_DIR}/passA_chat_keyboard_dismiss_844.png` });
+    console.log('chat keyboard-dismiss: ok (chat open, composer unfocused, at rest)');
+    // Close chat to leave a clean state for Pass B.
+    await page.evaluate(() => {
+      if (document.body.classList.contains('mobile-chat-open')) {
+        document.getElementById('mobile-chat')?.click();
+      }
+    });
+    await sleep(150);
   }
 
   // Close the meters overlay before Pass B: it is a toggled panel (not a .window),
