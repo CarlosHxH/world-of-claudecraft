@@ -357,6 +357,8 @@ import { ValeCupBetting } from './vale_cup_betting';
 import { buildVcupBettingView } from './vale_cup_betting_view';
 import { ValeCupBriefing } from './vale_cup_briefing';
 import { buildVcupBriefingView } from './vale_cup_briefing_view';
+import { ValeCupCharge } from './vale_cup_charge';
+import { buildVcupChargeView } from './vale_cup_charge_view';
 import { ValeCupHud } from './vale_cup_hud';
 import { buildVcupHudView } from './vale_cup_hud_view';
 import { ValeCupIndicator } from './vale_cup_indicator';
@@ -849,11 +851,11 @@ export class Hud {
   private groundAimClamped = false;
   // Vale Cup hold-to-charge shoot: the bar slot being held and when the hold
   // started; the power meter fills to chargeFrac() while held and the shot fires
-  // at that fraction on release.
+  // at that fraction on release. The meter itself is the ValeCupCharge painter
+  // (declared with the other Vale Cup painters, after writerFacet) driven off
+  // the pure vale_cup_charge_view core; only the input timing state lives here.
   private shootChargeSlot: number | null = null;
   private shootChargeStartMs = 0;
-  private shootChargeEl: HTMLElement | null = null;
-  private shootChargeFillEl: HTMLElement | null = null;
   private dragAction: { action: Exclude<HotbarAction, null>; sourceIndex: number | null } | null =
     null;
   // Set while dragging an equipped piece out of the paperdoll onto the bags window.
@@ -3442,6 +3444,13 @@ export class Hud {
     writers: this.writerFacet,
     onBet: (side, copper) => this.sim.vcupBet(side, copper),
   });
+  // The shoot power meter (hold-to-charge): the charge input state lives on the
+  // Hud (shootChargeSlot / shootChargeStartMs); this painter only draws it.
+  private readonly vcupCharge = new ValeCupCharge({
+    layer: () => document.getElementById('ui'),
+    rootId: 'vcup-charge',
+    writers: this.writerFacet,
+  });
   // Latch for the kickoff auto-close of the queue window (arena pattern).
   private vcupMatchSeen = false;
   // Character window painter (char_view.ts paperdoll core + char_window.ts painter).
@@ -4181,6 +4190,7 @@ export class Hud {
     this.vcupIndicator.relocalize();
     this.vcupMatchHud.relocalize();
     this.vcupBriefing.relocalize();
+    this.vcupCharge.relocalize();
     const dialog = $('#quest-dialog');
     if (dialog.style.display !== 'block' || this.openGossipNpcId === null) return;
     const npc = this.sim.entities.get(this.openGossipNpcId);
@@ -4660,55 +4670,24 @@ export class Hud {
     const id = this.abilityIdForSlot(slot);
     const range = this.shootRangeForSlot(slot);
     this.shootChargeSlot = null;
-    this.hideShootCharge();
+    this.updateShootCharge(); // hide the meter this frame
     if (id === 'sport_shoot') {
       this.castSportMove(id, Math.max(1, frac * range));
       this.flashActionSlot(slot);
     }
   }
 
-  // Per-frame: fill the power meter while charging; auto-release if I leave the
-  // match or die mid-charge so the meter never sticks.
+  // Per-frame: paint the power meter off the pure view core; the core's `cancel`
+  // auto-releases if I leave the match or die mid-charge so the meter never sticks.
   private updateShootCharge(): void {
-    if (this.shootChargeSlot === null) return;
-    if (!this.sim.cupInfo?.match || this.sim.player.dead) {
-      this.shootChargeSlot = null;
-      this.hideShootCharge();
-      return;
-    }
-    const el = this.ensureShootChargeEl();
-    if (!el || !this.shootChargeFillEl) return;
-    const frac = this.shootChargeFrac();
-    this.writerFacet.setDisplay(el, 'block');
-    this.writerFacet.setWidth(this.shootChargeFillEl, `${(frac * 100).toFixed(1)}%`);
-    // Tint from safe (green) through ideal (amber) to over-power (red) so the
-    // player can feel the sweet spot and the "too much" zone.
-    this.writerFacet.toggleClass(this.shootChargeFillEl, 'over', frac > 0.85);
-    this.writerFacet.toggleClass(this.shootChargeFillEl, 'ideal', frac > 0.6 && frac <= 0.85);
-  }
-
-  private hideShootCharge(): void {
-    if (this.shootChargeEl) this.writerFacet.setDisplay(this.shootChargeEl, 'none');
-  }
-
-  private ensureShootChargeEl(): HTMLElement | null {
-    if (this.shootChargeEl) return this.shootChargeEl;
-    const layer = document.getElementById('ui');
-    if (!layer) return null;
-    const el = document.createElement('div');
-    el.id = 'vcup-charge';
-    el.style.display = 'none';
-    el.setAttribute('aria-hidden', 'true');
-    const fill = document.createElement('span');
-    fill.className = 'vcup-charge-fill';
-    const label = document.createElement('span');
-    label.className = 'vcup-charge-label';
-    label.textContent = t('hudChrome.vcup.shootPower');
-    el.append(label, fill);
-    layer.appendChild(el);
-    this.shootChargeEl = el;
-    this.shootChargeFillEl = fill;
-    return el;
+    const view = buildVcupChargeView(
+      this.shootChargeSlot !== null,
+      !!this.sim.cupInfo?.match,
+      this.sim.player.dead,
+      this.shootChargeFrac(),
+    );
+    if (view.cancel) this.shootChargeSlot = null;
+    this.vcupCharge.update(view);
   }
 
   private groundReticleEnabled(): boolean {
@@ -7978,6 +7957,11 @@ export class Hud {
       // this gate. Online the server routes per-session, so every event here
       // is already ours. pid-LESS events (world theatre like the anchored vcup
       // kickoff/goal/save/golden/end) pass through to walk-up bystanders.
+      // This gate is deliberately kind-independent: `pid` on a SimEvent MEANS
+      // personal / owner-only (src/sim/types.ts SimEvent contract), and the
+      // server's router enforces the same rule online (ev.pid === anchorPid in
+      // server/game.ts), so an event a bystander should see must be pid-less
+      // by construction on every host.
       if (ev.pid !== undefined && ev.pid !== sim.playerId) continue;
       // Vale Cup walk-up theatre (kickoff/goal/save/golden/end/countdown) is
       // anchored at its own match's pitch. Only play it when that pitch is NEAR

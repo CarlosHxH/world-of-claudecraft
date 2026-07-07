@@ -11,43 +11,35 @@
 // fog colour so the pitch is lit to match its sky.
 
 import * as THREE from 'three';
+import { loadTexture } from './assets/loader';
 
 // A variant = how we orient + colour-grade the one galaxy panorama, plus the
-// fog/hemisphere palette the renderer applies so the pitch reads lit under it.
+// fog colour the renderer applies so the pitch reads lit under it.
 interface SkyVariant {
   rotation: number; // radians: which stretch of the galaxy faces the pitch
   tint: number; // multiplies the panorama -> an alien colour cast
   fog: number; // scene fog colour on the pitch
-  hemiSky: number; // hemisphere light sky colour (mood)
-  hemiGround: number; // hemisphere light ground bounce
 }
 
 const VARIANTS: SkyVariant[] = [
   // The galaxy as photographed (crisp, cool white), core to the fore.
-  { rotation: 0.0, tint: 0xe8ecff, fog: 0x0a0c1a, hemiSky: 0xc4d4ff, hemiGround: 0x2a3048 },
+  { rotation: 0.0, tint: 0xe8ecff, fog: 0x0a0c1a },
   // Teal aurora nebula.
-  { rotation: 1.25, tint: 0x9fe6d6, fog: 0x08181c, hemiSky: 0x9fffe6, hemiGround: 0x123038 },
+  { rotation: 1.25, tint: 0x9fe6d6, fog: 0x08181c },
   // Violet deep-space.
-  { rotation: 2.5, tint: 0xd6a6ff, fog: 0x140a22, hemiSky: 0xe0b8ff, hemiGround: 0x281c40 },
+  { rotation: 2.5, tint: 0xd6a6ff, fog: 0x140a22 },
   // Ember / amber galactic dawn.
-  { rotation: 3.75, tint: 0xffd2a0, fog: 0x1a1206, hemiSky: 0xffdca8, hemiGround: 0x2c2214 },
+  { rotation: 3.75, tint: 0xffd2a0, fog: 0x1a1206 },
   // Electric cyan rift.
-  { rotation: 5.0, tint: 0x9fd6ff, fog: 0x08141e, hemiSky: 0x9fe0ff, hemiGround: 0x122838 },
+  { rotation: 5.0, tint: 0x9fd6ff, fog: 0x08141e },
 ];
-
-// The renderer uses this to tint fog + hemisphere light per variant.
-export interface PracticeSkyMood {
-  fog: number;
-  hemiSky: number;
-  hemiGround: number;
-}
 
 const SKY_RADIUS = 520; // just inside the overworld dome (560); camera-centred
 
 export class ValeCupPracticeSky {
   readonly mesh: THREE.Mesh;
   private readonly material: THREE.MeshBasicMaterial;
-  private texture: THREE.Texture | null = null;
+  private requested = false;
   private current = -1;
 
   constructor() {
@@ -68,17 +60,21 @@ export class ValeCupPracticeSky {
   }
 
   /** Orient + colour-grade to variant `i` (wrapped), loading the panorama on
-   *  first use. Returns the fog/light palette so the renderer tints the pitch. */
-  setVariant(i: number): PracticeSkyMood {
+   *  first use. Called per frame while practicing; allocates nothing. */
+  setVariant(i: number): void {
     const idx = ((i % VARIANTS.length) + VARIANTS.length) % VARIANTS.length;
-    if (!this.texture) {
-      // Lazy load (only once a player actually practices); the sphere shows the
-      // deep-space colour until the panorama decodes, then pops in.
-      this.texture = new THREE.TextureLoader().load('/env/space_galaxy.jpg', (t) => {
-        t.colorSpace = THREE.SRGBColorSpace;
-        this.material.map = t;
-        this.material.needsUpdate = true;
-      });
+    if (!this.requested) {
+      // Lazy load (only once a player actually practices) through the shared
+      // manifest-aware loader (content-hashed URL + the texture load queue);
+      // the sphere shows the deep-space colour until the panorama decodes,
+      // then pops in.
+      this.requested = true;
+      loadTexture('/env/space_galaxy.jpg', { srgb: true })
+        .then((t) => {
+          this.material.map = t;
+          this.material.needsUpdate = true;
+        })
+        .catch(() => undefined);
     }
     if (idx !== this.current) {
       const v = VARIANTS[idx];
@@ -86,11 +82,10 @@ export class ValeCupPracticeSky {
       this.material.color.setHex(v.tint);
       this.current = idx;
     }
-    return this.moodFor(idx);
   }
 
-  moodFor(i: number): PracticeSkyMood {
-    const v = VARIANTS[((i % VARIANTS.length) + VARIANTS.length) % VARIANTS.length];
-    return { fog: v.fog, hemiSky: v.hemiSky, hemiGround: v.hemiGround };
+  /** Fog colour for variant `i` (wrapped), so the renderer tints the pitch. */
+  fogFor(i: number): number {
+    return VARIANTS[((i % VARIANTS.length) + VARIANTS.length) % VARIANTS.length].fog;
   }
 }

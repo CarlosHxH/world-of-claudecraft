@@ -149,6 +149,15 @@ export function buildValeCupTeamRings(): ValeCupTeamRingsView {
   let flashTtl = 0;
   const flashY = { base: 0 };
 
+  // Spectator ring tints: nationColors() allocates a tuple, so resolve the two
+  // banner colors only when the matchup changes, never per frame.
+  let tintNationA = '';
+  let tintNationB = '';
+  let tintAway = false;
+  let tintValid = false;
+  let tintA = 0;
+  let tintB = 0;
+
   const place = (
     ring: PooledRing,
     x: number,
@@ -246,8 +255,22 @@ export function buildValeCupTeamRings(): ValeCupTeamRingsView {
       // A neutral spectator (no side) tints each team with its banner color so the
       // rings match the flags; a participant passes null and keeps ally/enemy/self.
       const spectator = match.team === null;
-      const colorA = spectator ? nationColors(match.nationA, false)[0] : null;
-      const colorB = spectator ? nationColors(match.nationB, match.awayPalette)[0] : null;
+      if (
+        spectator &&
+        (!tintValid ||
+          match.nationA !== tintNationA ||
+          match.nationB !== tintNationB ||
+          match.awayPalette !== tintAway)
+      ) {
+        tintNationA = match.nationA;
+        tintNationB = match.nationB;
+        tintAway = match.awayPalette;
+        tintValid = true;
+        tintA = nationColors(match.nationA, false)[0];
+        tintB = nationColors(match.nationB, match.awayPalette)[0];
+      }
+      const colorA = spectator ? tintA : null;
+      const colorB = spectator ? tintB : null;
       let idx = emitTeam(match.teamA, match.team !== 'B', colorA, 0, time, lowGfx, sample, views);
       idx = emitTeam(match.teamB, match.team === 'B', colorB, idx, time, lowGfx, sample, views);
       for (; idx < MAX_RINGS; idx++) rings[idx].mesh.visible = false;

@@ -68,6 +68,14 @@ export class ValeCupBetting {
   private toggleEl: HTMLButtonElement | null = null;
   private sideAControls: HTMLElement | null = null;
   private sideBControls: HTMLElement | null = null;
+  private stakeBtnsA: HTMLButtonElement[] = [];
+  private stakeBtnsB: HTMLButtonElement[] = [];
+  // Current lock state per side (null until first applied after a rebuild), so
+  // the per-tick `disabled` writes are elided to actual transitions and the
+  // once-wired click handlers can refuse a keyboard activation that slips
+  // through (`.locked` only stops the pointer).
+  private lockedA: boolean | null = null;
+  private lockedB: boolean | null = null;
 
   constructor(private readonly deps: ValeCupBettingDeps) {}
 
@@ -133,11 +141,21 @@ export class ValeCupBetting {
       );
     }
     // Lock the losing-side controls once a side is backed, and every control once
-    // the window closes.
+    // the window closes. `.locked` is the visual + pointer gate; `disabled` on
+    // the stake buttons is the real control gate (keyboard focus + Enter/Space
+    // included), matching the window painter's disabled attributes.
     const lockA = !view.open || view.mySide === 'B';
     const lockB = !view.open || view.mySide === 'A';
     if (this.sideAControls) w.toggleClass(this.sideAControls, 'locked', lockA);
     if (this.sideBControls) w.toggleClass(this.sideBControls, 'locked', lockB);
+    if (lockA !== this.lockedA) {
+      this.lockedA = lockA;
+      for (const btn of this.stakeBtnsA) btn.disabled = lockA;
+    }
+    if (lockB !== this.lockedB) {
+      this.lockedB = lockB;
+      for (const btn of this.stakeBtnsB) btn.disabled = lockB;
+    }
   }
 
   /** Language switch: clear the structural sig so the next update rebuilds. */
@@ -161,6 +179,13 @@ export class ValeCupBetting {
     this.toggleEl = root.querySelector('.vcupbet-toggle');
     this.sideAControls = root.querySelector('.vcupbet-stakes-a');
     this.sideBControls = root.querySelector('.vcupbet-stakes-b');
+    const stakes = (host: HTMLElement | null): HTMLButtonElement[] =>
+      host ? Array.from(host.querySelectorAll<HTMLButtonElement>('button[data-stake]')) : [];
+    this.stakeBtnsA = stakes(this.sideAControls);
+    this.stakeBtnsB = stakes(this.sideBControls);
+    // Fresh buttons: force the next update to re-apply the lock state to them.
+    this.lockedA = null;
+    this.lockedB = null;
   }
 
   private wire(): void {
@@ -168,17 +193,18 @@ export class ValeCupBetting {
       this.expanded = !this.expanded;
       this.applyExpanded();
     });
-    const wireStakes = (host: HTMLElement | null, side: 'A' | 'B'): void => {
-      if (!host) return;
-      for (const btn of Array.from(
-        host.querySelectorAll<HTMLButtonElement>('button[data-stake]'),
-      )) {
+    const wireStakes = (btns: HTMLButtonElement[], side: 'A' | 'B'): void => {
+      for (const btn of btns) {
         const copper = Number(btn.dataset.stake);
-        btn.addEventListener('click', () => this.deps.onBet(side, copper));
+        btn.addEventListener('click', () => {
+          // Belt and braces with `disabled`: never place a bet on a locked side.
+          if (side === 'A' ? this.lockedA : this.lockedB) return;
+          this.deps.onBet(side, copper);
+        });
       }
     };
-    wireStakes(this.sideAControls, 'A');
-    wireStakes(this.sideBControls, 'B');
+    wireStakes(this.stakeBtnsA, 'A');
+    wireStakes(this.stakeBtnsB, 'B');
   }
 
   private applyExpanded(): void {

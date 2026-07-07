@@ -3856,8 +3856,7 @@ export class Renderer {
         // The private practice pitch under its futuristic sky: tint the fog to
         // the sky variant and push it well back so the pitch reads clear and lit
         // (NOT the delve murk this instance band would otherwise get).
-        const mood = this.valeCupSky.moodFor(this.practiceSkyVariant());
-        fog.color.setHex(mood.fog);
+        fog.color.setHex(this.valeCupSky.fogFor(this.practiceSkyVariant()));
         fog.near = 60;
         fog.far = 420;
       } else if (desired === 'underwater') {

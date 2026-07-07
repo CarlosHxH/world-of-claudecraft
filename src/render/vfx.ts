@@ -200,6 +200,11 @@ export class Vfx {
   private head = 0;
   private projectiles: Projectile[] = [];
   private tmpColor = new THREE.Color();
+  // fireworkBurst palette scratch, reused across shells (spawn() copies
+  // components, never retaining the reference): a goal volley allocates
+  // no Color objects.
+  private fwCols: THREE.Color[] = [];
+  private fwFlash = new THREE.Color();
   private quality = 1;
 
   constructor(
@@ -587,9 +592,12 @@ export class Vfx {
   // goal to read as a volley; colors alternate through the scoring nation's
   // flag palette. A slow confetti sprinkle rides along under lighter gravity.
   fireworkBurst(at: THREE.Vector3, colors: readonly number[], count = 46, power = 1): void {
-    const cols = (colors.length > 0 ? colors : [0xffd14d]).map((c) =>
-      new THREE.Color(c).multiplyScalar(hdr(1.8)),
-    );
+    const colCount = Math.max(1, colors.length);
+    while (this.fwCols.length < colCount) this.fwCols.push(new THREE.Color());
+    for (let i = 0; i < colCount; i++) {
+      this.fwCols[i].setHex(colors.length > 0 ? colors[i] : 0xffd14d).multiplyScalar(hdr(1.8));
+    }
+    const cols = this.fwCols;
     // the report flash
     this.spawn(
       at.x,
@@ -598,7 +606,7 @@ export class Vfx {
       0,
       0.3,
       0,
-      new THREE.Color(0xfff6e0).multiplyScalar(hdr(2.2)),
+      this.fwFlash.setHex(0xfff6e0).multiplyScalar(hdr(2.2)),
       1.5 * power,
       0.2,
       0,
@@ -618,7 +626,7 @@ export class Vfx {
         Math.cos(a) * s * sp,
         u * sp * 0.85 + 1.2,
         Math.sin(a) * s * sp,
-        cols[i % cols.length],
+        cols[i % colCount],
         0.4 + Math.random() * 0.2,
         0.95 + Math.random() * 0.5,
         4.5,
@@ -637,7 +645,7 @@ export class Vfx {
         Math.sin(a) * sp,
         Math.random() * 1.5,
         Math.cos(a) * sp,
-        cols[(i + 1) % cols.length],
+        cols[(i + 1) % colCount],
         0.22,
         1.4 + Math.random() * 0.6,
         1.6,

@@ -3924,6 +3924,22 @@
     color: var(--color-text-muted);
     line-height: 1.3;
   }
+  /* Touch: the compact bracket / nation / role pickers meet the 40px tap-target
+     floor (the global coarse floor only bumps input/textarea/select font). */
+  @media (pointer: coarse) {
+    .vcup-bracket,
+    .vcup-nation,
+    .vcup-role {
+      min-height: 40px;
+      box-sizing: border-box;
+    }
+    .vcup-nation {
+      justify-content: center;
+    }
+    .vcup-role {
+      align-items: center;
+    }
+  }
   .vcup-guild-toggle {
     display: flex;
     align-items: center;
@@ -4402,6 +4418,14 @@
   }
   .vcupbet-stake:focus-visible {
     outline: 2px solid var(--color-border-focus);
+  }
+  /* Touch: stake buttons + the expand toggle meet the 40px tap-target floor. */
+  @media (pointer: coarse) {
+    .vcupbet-stake,
+    .vcupbet-toggle {
+      min-height: 40px;
+      box-sizing: border-box;
+    }
   }
   .vcupbet-mine {
     margin-top: 8px;

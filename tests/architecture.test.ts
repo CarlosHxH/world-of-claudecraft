@@ -157,6 +157,7 @@ const UI_PURE_CORES = [
   'src/ui/vale_cup_hud_view.ts',
   'src/ui/vale_cup_briefing_view.ts',
   'src/ui/vale_cup_betting_view.ts',
+  'src/ui/vale_cup_charge_view.ts',
   'src/ui/leaderboard_view.ts',
   'src/ui/guild_leaderboard_view.ts',
   'src/ui/dev_leaderboard_view.ts',

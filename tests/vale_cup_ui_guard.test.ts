@@ -25,6 +25,7 @@ const indicatorSrc = strip(read('src/ui/vale_cup_indicator.ts'));
 const hudStripSrc = strip(read('src/ui/vale_cup_hud.ts'));
 const briefingSrc = strip(read('src/ui/vale_cup_briefing.ts'));
 const bettingSrc = strip(read('src/ui/vale_cup_betting.ts'));
+const chargeSrc = strip(read('src/ui/vale_cup_charge.ts'));
 const flagSrc = strip(read('src/ui/vale_cup_flag.ts'));
 const hud = read('src/ui/hud.ts');
 
@@ -34,6 +35,7 @@ const ALL_PAINTERS: [name: string, code: string][] = [
   ['vale_cup_hud.ts', hudStripSrc],
   ['vale_cup_briefing.ts', briefingSrc],
   ['vale_cup_betting.ts', bettingSrc],
+  ['vale_cup_charge.ts', chargeSrc],
   ['vale_cup_flag.ts', flagSrc],
 ];
 
@@ -135,6 +137,20 @@ describe('vale_cup per-frame painters: write-elision routing', () => {
     expect(hudStripSrc).toContain("setAttribute('role', 'status')");
     expect(hudStripSrc).toContain("setAttribute('aria-live', 'off')");
   });
+
+  it('routes the shoot power meter per-tick writes through the writer facet', () => {
+    // No sig here (nothing structural moves per tick): the fill width and the
+    // two tint classes ride elided writers; the only raw DOM writes are the
+    // one-time mount and the relocalize() remount, and the meter stays
+    // aria-hidden (it visualizes a HELD key, no focusable control).
+    expect(chargeSrc).toContain('writers');
+    expect(chargeSrc).toContain('.setWidth(');
+    expect(chargeSrc).toContain('.toggleClass(');
+    expect(chargeSrc).toContain('.setDisplay(');
+    expect(chargeSrc).not.toMatch(/\.textContent\s*=/);
+    expect(chargeSrc).not.toMatch(/\.style\.(?!display)[a-zA-Z]+\s*=/);
+    expect(chargeSrc).toContain("setAttribute('aria-hidden', 'true')");
+  });
 });
 
 describe('vale_cup_briefing: WCAG overlay + write-elision', () => {
@@ -194,6 +210,25 @@ describe('vale_cup_briefing: WCAG overlay + write-elision', () => {
   });
 });
 
+describe('vale_cup_betting: locked stakes are disabled controls, not just pointer-blocked', () => {
+  // `.locked` only sets pointer-events: none, which a Tab + Enter walks straight
+  // past. The stake buttons must also carry the real `disabled` attribute (the
+  // window painter precedent) and the once-wired handler must refuse a locked side.
+  it('writes the disabled property on lock transitions for both sides', () => {
+    expect(bettingSrc).toContain('btn.disabled = lockA');
+    expect(bettingSrc).toContain('btn.disabled = lockB');
+  });
+
+  it('re-applies the lock to freshly rebuilt stake buttons', () => {
+    expect(bettingSrc).toContain('this.lockedA = null');
+    expect(bettingSrc).toContain('this.lockedB = null');
+  });
+
+  it('early-returns a click on a locked side (keyboard defense in depth)', () => {
+    expect(bettingSrc).toContain("side === 'A' ? this.lockedA : this.lockedB");
+  });
+});
+
 describe('vale_cup hud.ts call sites', () => {
   it("redraws the open window + both painters from hud.update()'s mediumHud band", () => {
     expect(hud).toContain(
@@ -216,11 +251,22 @@ describe('vale_cup hud.ts call sites', () => {
     );
   });
 
-  it('re-localizes all three Vale Cup surfaces on a language switch', () => {
+  it('re-localizes every Vale Cup surface on a language switch', () => {
     expect(hud).toContain('this.valeCupWindow.relocalize();');
     expect(hud).toContain('this.vcupIndicator.relocalize();');
     expect(hud).toContain('this.vcupMatchHud.relocalize();');
     expect(hud).toContain('this.vcupBriefing.relocalize();');
+    expect(hud).toContain('this.vcupBetting.relocalize();');
+    expect(hud).toContain('this.vcupCharge.relocalize();');
+  });
+
+  it('drives the shoot power meter from the pure view core, cancel clears the hold', () => {
+    // The charge input state (slot + start clock) stays on the Hud; the DOM is
+    // the ValeCupCharge painter fed by buildVcupChargeView, and the core's
+    // cancel decision is what drops a charge held past death or match end.
+    expect(hud).toContain('buildVcupChargeView(');
+    expect(hud).toContain('this.vcupCharge.update(view);');
+    expect(hud).toContain('if (view.cancel) this.shootChargeSlot = null;');
   });
 
   it('filters pid-scoped personal events of OTHER players (offline practice bots)', () => {
@@ -228,6 +274,13 @@ describe('vale_cup hud.ts call sites', () => {
     // personal events must not surface on the local HUD. pid-less anchored
     // vcup theatre events pass through to walk-up bystanders.
     expect(hud).toContain('if (ev.pid !== undefined && ev.pid !== sim.playerId) continue;');
+    // Cross-host parity: online the server delivers a pid-tagged event only to
+    // its owner, which is what makes the offline gate correct for EVERY
+    // pid-tagged event kind (types.ts: pid marks a personal, owner-only
+    // event), not just the vcup ones. If either side's rule changes, change
+    // both or the hosts drift.
+    const serverSrc = read('server/game.ts');
+    expect(serverSrc).toContain('if (ev.pid === anchorPid) {');
   });
 
   it('arms every vcup SimEvent kind in handleEvents', () => {
