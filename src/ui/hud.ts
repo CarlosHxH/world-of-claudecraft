@@ -3459,6 +3459,11 @@ export class Hud {
     captureFocus: () => this.focusManager.activeFocusable(),
     restoreFocus: (target) => this.focusManager.restore(target),
     onClosed: () => this.onBankClosed(),
+    // A bank op (withdraw / deposit-all / buy-slots) moved inventory or coin: repaint
+    // the bags companion (and vendor/char if open) through the same coordinator the
+    // online inventory-delta path calls. Offline this is the ONLY repaint; online the
+    // snapshot echo repaints again authoritatively.
+    onInventoryChanged: () => this.onInventoryChanged(),
   });
   // Event calendar window painter (calendar_view.ts month-grid core +
   // calendar_window.ts painter). System events expand from data rules; guild

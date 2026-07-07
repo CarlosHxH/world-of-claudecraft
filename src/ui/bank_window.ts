@@ -157,6 +157,14 @@ export interface BankWindowDeps extends PainterHostPresentation {
   restoreFocus(target: HTMLElement | null): void;
   /** Hud teardown after close() (drop the body docking class, resync bags). */
   onClosed(): void;
+  /** Nudge the Hud that a bank op just moved inventory or coin (withdraw, partial
+   *  withdraw, deposit-all, buy-slots). Bank ops emit no client repaint event and the
+   *  bags companion has no per-frame refresh, so the initiating window repaints it
+   *  (the bags-side deposit idiom, see bags_window.ts). Offline the sim has already
+   *  applied the op synchronously and this paint is the ONLY one; online it paints the
+   *  still-stale mirror harmlessly and the snapshot echo repaints again
+   *  authoritatively (main.ts consumeInventoryChanged). */
+  onInventoryChanged(): void;
 }
 
 export class BankWindow {
@@ -593,6 +601,9 @@ export class BankWindow {
         this.depositAllPending = false;
         if (this.opened) this.render();
       }, DEPOSIT_STATUS_MS);
+      // Material stacks just left the bags; repaint the companion (see the dep doc).
+      // Inside the sends guard: a no-op click (nothing fit) moved nothing.
+      this.deps.onInventoryChanged();
     }
     this.setDepositStatus(plan);
     this.render();
@@ -641,6 +652,8 @@ export class BankWindow {
     if (action.kind === 'withdraw') {
       this.deps.world().bankWithdraw(action.slotIndex);
       audio.click();
+      // The item just moved into the bags; repaint the companion (see the dep doc).
+      this.deps.onInventoryChanged();
     } else if (action.kind === 'withdrawPartial') {
       this.showWithdrawQuantityPrompt(action.slotIndex, action.max);
     }
@@ -768,6 +781,8 @@ export class BankWindow {
     confirm.addEventListener('click', () => {
       this.deps.world().bankBuySlots();
       audio.coin();
+      // Coin just left the purse and the bags money row shows it (see the dep doc).
+      this.deps.onInventoryChanged();
       dismiss();
       // render() rebuilds the window, detaching the opener button, so land focus on
       // the always-present close button rather than letting it fall to <body>.
@@ -824,6 +839,8 @@ export class BankWindow {
       );
       this.deps.world().bankWithdraw(slotIndex, count);
       audio.click();
+      // The split just moved into the bags; repaint the companion (see the dep doc).
+      this.deps.onInventoryChanged();
       dismiss();
       // The grid rebuilds on the withdraw event, detaching the opener slot, so land on
       // the always-present close button rather than dropping focus to <body>.

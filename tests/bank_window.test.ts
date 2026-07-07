@@ -388,6 +388,60 @@ describe('bank_window: search / sort / deposit-all', () => {
   });
 });
 
+describe('bank_window: the bags companion repaints when a bank op moves items or coin', () => {
+  // Bank ops emit no client repaint event and the bags grid has no per-frame refresh
+  // (bags_window.ts pins the same constraint on its deposit side), so every
+  // bank-window-initiated op that changes inventory or money must nudge the hud
+  // coordinator: offline the sim applied the op synchronously and nothing else
+  // repaints the bags (the reported bug: a withdraw left the bags stale until
+  // close/reopen); online the nudge paints the still-stale mirror harmlessly and the
+  // snapshot echo repaints again authoritatively (main.ts consumeInventoryChanged).
+  it('whole-stack withdraw nudges onInventoryChanged', () => {
+    // The {0,400} window keeps the pin decisive (the nearest FOREIGN nudge sits
+    // thousands of chars away) while tolerating a few inserted comment lines.
+    expect(painter).toMatch(
+      /bankWithdraw\(action\.slotIndex\);[\s\S]{0,400}?this\.deps\.onInventoryChanged\(\);/,
+    );
+  });
+
+  it('the quantity-prompt partial withdraw nudges onInventoryChanged', () => {
+    expect(painter).toMatch(
+      /bankWithdraw\(slotIndex, count\);[\s\S]{0,400}?this\.deps\.onInventoryChanged\(\);/,
+    );
+  });
+
+  it('deposit-all nudges onInventoryChanged only when stacks were actually sent', () => {
+    const startIdx = painter.indexOf('private onDepositAll(): void {');
+    const endIdx = painter.indexOf('private setDepositStatus');
+    // Guard BOTH slice anchors: a renamed START collapses the slice (caught by the
+    // length check); a renamed END (-1) would silently widen the body to EOF, where
+    // the unbounded inside-guard regex could false-pass on a FOREIGN nudge in a
+    // sibling method, so pin the end anchor's existence and ordering too.
+    expect(startIdx).toBeGreaterThan(-1);
+    expect(endIdx).toBeGreaterThan(startIdx);
+    const body = painter.slice(startIdx, endIdx);
+    expect(body).toContain('private onDepositAll');
+    // ...and prove the slice did not swallow a sibling op site.
+    expect(body).not.toContain('bankWithdraw(');
+    // The nudge sits INSIDE the sends-guard block: a no-op click (nothing fit, the
+    // bank-full arm) moved nothing and must not repaint the bags.
+    expect(body).toMatch(
+      /if \(plan\.sends\.length > 0\) \{[\s\S]*?this\.deps\.onInventoryChanged\(\);[\s\S]*?\n    \}/,
+    );
+  });
+
+  it('buy-slots nudges onInventoryChanged (the bags money row shows the spent coin)', () => {
+    expect(painter).toMatch(/bankBuySlots\(\);[\s\S]{0,400}?this\.deps\.onInventoryChanged\(\);/);
+  });
+
+  it('hud wires the nudge to its onInventoryChanged coordinator', () => {
+    // The same coordinator the online inventory-delta path calls
+    // (net.consumeInventoryChanged in main.ts), so both hosts repaint the bags,
+    // vendor, and character window through one seam.
+    expect(hud).toContain('onInventoryChanged: () => this.onInventoryChanged(),');
+  });
+});
+
 describe('bank_window: touch peek suppression', () => {
   it('consults the shared peek guard FIRST in the cell click, before onSlotClick', () => {
     // A long-press peek shows the tooltip and marks the guard; the release click must
