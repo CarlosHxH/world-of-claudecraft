@@ -26,7 +26,7 @@ const force = process.argv.includes('--force');
 try {
   process.loadEnvFile();
 } catch {
-  /* no .env: rely on the ambient env */
+  /* no .env, rely on the ambient env */
 }
 const KEY = process.env.ELEVENLABS_API_KEY;
 if (!KEY) {
