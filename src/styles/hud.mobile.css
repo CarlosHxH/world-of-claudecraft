@@ -1197,6 +1197,28 @@
   body.mobile-touch #castbar .label {
     display: none;
   }
+  /* The swing timer had no mobile seat at all (unlike #castbar above): it fell
+     back to the desktop `bottom: 234px` fixed value, which on a short mobile
+     landscape viewport lands mid-screen and covers enemy nameplates and their
+     HP bars during melee combat. Give it the same bottom-center seat as the
+     cast bar, stacked just above it so a melee swing and a cast/channel never
+     overlap each other either. */
+  body.mobile-touch #swingbar {
+    position: fixed;
+    left: 50%;
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    width: min(170px, 40vw);
+    min-width: 112px;
+    height: 5px;
+    transform: translateX(-50%);
+    z-index: 19;
+    border-width: 1px;
+    border-radius: 2px;
+    opacity: 0.9;
+  }
+  body.mobile-touch #swingbar .label {
+    display: none;
+  }
   body.mobile-touch #actionbar-row {
     display: block;
   }
@@ -1865,7 +1887,12 @@
     right: auto;
     transform: none;
     width: min(360px, calc(100vw - 20px));
-    max-height: calc(var(--app-vh) / var(--ui-scale, 1) - 20px);
+    /* Like #bags below, reserve the bottom-centre player-frame band (its HP/
+       resource bars) instead of letting the window grow to the full viewport
+       height: without this floor the window's bottom edge landed on top of
+       the player's own HP bar, hiding the exact info a player checks most. */
+    bottom: calc(72px + env(safe-area-inset-bottom));
+    max-height: none;
     box-sizing: border-box;
     overflow-y: auto;
   }
@@ -2094,11 +2121,18 @@
     position: fixed;
     left: 50%;
     right: auto;
-    top: 50%;
+    /* Anchored from the top instead of vertically centered: centering plus a
+       flat -24px height budget left only ~18px of clearance above the
+       bottom-centre player-frame on a short landscape phone, so the window's
+       own bottom edge (and its resize grip) landed on top of the player's
+       HP bar. Pin to the top like the other sheet windows and reserve the
+       same bottom band #bags/#char-window do. */
+    top: 10px;
+    bottom: calc(72px + env(safe-area-inset-bottom));
     width: min(600px, calc(100vw - 20px));
     max-width: calc(100vw - 20px);
-    max-height: calc(var(--app-vh) / var(--ui-scale, 1) - 24px);
-    transform: translate(-50%, -50%);
+    max-height: none;
+    transform: translateX(-50%);
     z-index: 95 !important;
   }
   body.mobile-touch #spellbook [data-close] {
@@ -2704,6 +2738,14 @@
       width: min(160px, 40vw);
       min-width: 40px;
       height: 5px;
+    }
+    body.mobile-touch #swingbar {
+      /* Same landscape notch as #castbar above, stacked one bar-height higher
+         so the two never overlap when both are active. */
+      bottom: calc(70px + env(safe-area-inset-bottom));
+      width: min(160px, 40vw);
+      min-width: 40px;
+      height: 4px;
     }
     body.mobile-touch #petbar {
       top: max(6px, env(safe-area-inset-top));
