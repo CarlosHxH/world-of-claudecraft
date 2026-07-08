@@ -320,6 +320,43 @@ describe('terrain wall standoff', () => {
       SLOPE + 1e-6,
     );
   });
+
+  it('does not sawtooth when holding forward into the western wall', () => {
+    const sim = makeSim();
+    teleportTo(sim, -90, -154);
+    sim.player.facing = Math.PI;
+    const meta = sim.players.get(sim.playerId);
+    if (!meta) throw new Error('missing player meta');
+    meta.moveInput.forward = true;
+
+    sim.tick(); // allow the body-width standoff to clear the initial wall overlap
+    let totalJitter = 0;
+    let largestStep = 0;
+    for (let i = 0; i < 60; i++) {
+      const beforeZ = sim.player.pos.z;
+      sim.tick();
+      const dz = Math.abs(sim.player.pos.z - beforeZ);
+      totalJitter += dz;
+      largestStep = Math.max(largestStep, dz);
+    }
+
+    expect(largestStep).toBeLessThan(0.02);
+    expect(totalJitter).toBeLessThan(0.05);
+  });
+
+  it('still preserves tangential wall slide when pushing into the western wall at an angle', () => {
+    const sim = makeSim();
+    teleportTo(sim, -90, -154);
+    sim.player.facing = Math.PI - 0.2;
+    const meta = sim.players.get(sim.playerId);
+    if (!meta) throw new Error('missing player meta');
+    meta.moveInput.forward = true;
+
+    for (let i = 0; i < 20; i++) sim.tick();
+
+    expect(sim.player.pos.x).toBeGreaterThan(-88.5);
+    expect(Math.abs(sim.player.pos.z + 153.65)).toBeLessThan(0.25);
+  });
 });
 
 describe('swimming', () => {

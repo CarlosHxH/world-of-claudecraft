@@ -115,6 +115,8 @@ export interface PlayerMotionDeps {
 }
 
 export function stepPlayerMotion(deps: PlayerMotionDeps, p: Entity, inp: MoveInput): void {
+  const stepStartX = p.pos.x;
+  const stepStartZ = p.pos.z;
   // Convention: facing f points along (sin f, cos f); the camera sits behind
   // the player, so screen-right is the world vector (-cos f, sin f).
   // Turning right therefore DECREASES facing.
@@ -320,10 +322,41 @@ export function stepPlayerMotion(deps: PlayerMotionDeps, p: Entity, inp: MoveInp
     const s = terrainWallStandoff(p.pos.x, p.pos.z, deps.seed, BODY_RADIUS, MAX_CLIMB_SLOPE);
     if (s.x !== p.pos.x || s.z !== p.pos.z) {
       const resolved = deps.resolveMove(p.pos.x, p.pos.z, s.x, s.z, BODY_RADIUS, p, false);
-      if (terrainSteepnessAt(resolved.x, resolved.z, deps.seed) <= MAX_CLIMB_SLOPE) {
-        p.pos.x = resolved.x;
-        p.pos.z = resolved.z;
-        p.pos.y = groundHeight(resolved.x, resolved.z, deps.seed);
+      let standX = resolved.x;
+      let standZ = resolved.z;
+      if (movingOnGround && wishSpeed > 0) {
+        const startStand = terrainWallStandoff(
+          stepStartX,
+          stepStartZ,
+          deps.seed,
+          BODY_RADIUS,
+          MAX_CLIMB_SLOPE,
+        );
+        const alreadyClear =
+          Math.hypot(startStand.x - stepStartX, startStand.z - stepStartZ) < 1e-4;
+        const netX = standX - stepStartX;
+        const netZ = standZ - stepStartZ;
+        const progress = netX * wishX + netZ * wishZ;
+        if (alreadyClear && progress < -1e-6) {
+          const slideX = standX - wishX * progress;
+          const slideZ = standZ - wishZ * progress;
+          const slide = deps.resolveMove(
+            stepStartX,
+            stepStartZ,
+            slideX,
+            slideZ,
+            BODY_RADIUS,
+            p,
+            false,
+          );
+          standX = slide.x;
+          standZ = slide.z;
+        }
+      }
+      if (terrainSteepnessAt(standX, standZ, deps.seed) <= MAX_CLIMB_SLOPE) {
+        p.pos.x = standX;
+        p.pos.z = standZ;
+        p.pos.y = groundHeight(standX, standZ, deps.seed);
       }
     }
   }
