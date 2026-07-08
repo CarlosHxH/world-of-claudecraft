@@ -852,7 +852,10 @@ export const ZONE3_MOBS: Record<string, MobTemplate> = {
     stomp: {
       radius: 11,
       every: 24,
-      duration: 3,
+      // A short pin, not a shutdown: at 11.6 vs a base run of 7 the boss closes
+      // about 7yd in 1.5s, enough to be on top of anyone caught mid-flight
+      // without benching the raid for whole GCDs.
+      duration: 1.5,
       min: 18,
       max: 28,
       name: 'Seismic Stomp',
@@ -897,10 +900,10 @@ export const ZONE3_MOBS: Record<string, MobTemplate> = {
     },
     // Loud: a mountain-sized voice. Every yell (engage/summon/enrage + these battle
     // cries) carries 350yd, far past the 100yd default, and he bellows one of these
-    // lines every 30s in combat so the whole of Thornpeak knows he is awake without
-    // the barks drowning out the raid's chat.
+    // lines once a minute in combat: the whole of Thornpeak still knows he is awake,
+    // but the barks never drown out the raid's chat.
     battleYells: {
-      every: 30,
+      every: 60,
       range: 350,
       lines: [
         'THUNDER ANSWERS! The peak has teeth again!',
