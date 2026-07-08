@@ -3122,6 +3122,17 @@
       grid-auto-rows: 34px;
       gap: 5px;
     }
+    /* The base rule's min(46vw, 330px) square map, vertically centered at 46%,
+       is tall enough on a short landscape phone (the map-canvas keeps a 1:1
+       aspect ratio via width:100%/height:auto) to dip its bottom edge into the
+       fixed Jump/Interact/combat-cluster row, which reserves no layout space
+       of its own. Shrink it to fit the room actually free above that row
+       instead of a fraction of the whole (short) viewport height. */
+    body.mobile-touch #map-window {
+      top: max(10px, env(safe-area-inset-top));
+      transform: translateX(-50%);
+      width: min(46vw, 300px, calc(var(--app-vh) - 140px));
+    }
     body.mobile-touch.mobile-left-handed #mobile-extra-controls {
       left: 50%;
       right: auto;
