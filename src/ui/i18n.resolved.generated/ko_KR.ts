@@ -6990,7 +6990,7 @@ export const ko_KR: EnTranslations = {
     },
     "mobs": {
       "yumi_cat": {
-        "name": "Yumi"
+        "name": "유미"
       },
       "forest_wolf": {
         "name": "숲늑대"

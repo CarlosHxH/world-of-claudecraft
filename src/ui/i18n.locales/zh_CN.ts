@@ -6117,4 +6117,5 @@ export const zh_CN: Partial<Record<TranslationKey, string>> = {
   'hudChrome.bank.bonusReferralExplainer':
     '邀请好友：当好友升到 10 级，你们各获得 2 个格子，最多 5 位好友。',
   'hudChrome.bank.bonusSectionAria': '奖励银行格子及获取方式',
+  'entities.mobs.yumi_cat.name': '由美',
 };
