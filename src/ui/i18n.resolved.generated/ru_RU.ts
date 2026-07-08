@@ -6990,7 +6990,7 @@ export const ru_RU: EnTranslations = {
     },
     "mobs": {
       "yumi_cat": {
-        "name": "Yumi"
+        "name": "Юми"
       },
       "forest_wolf": {
         "name": "Лесной волк"

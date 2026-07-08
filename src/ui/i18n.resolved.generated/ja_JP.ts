@@ -6990,7 +6990,7 @@ export const ja_JP: EnTranslations = {
     },
     "mobs": {
       "yumi_cat": {
-        "name": "Yumi"
+        "name": "ユミ"
       },
       "forest_wolf": {
         "name": "森の狼"
