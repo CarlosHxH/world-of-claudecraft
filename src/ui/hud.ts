@@ -88,6 +88,7 @@ import type {
 import {
   type AbilityEffect,
   CONSUME_DURATION,
+  FAERIE_FIRE_ARMOR_PCT,
   canPrestige,
   dist2d,
   type Entity,
@@ -99,6 +100,7 @@ import {
   MILESTONES,
   type RiteIntensity,
   type SimEvent,
+  SUNDER_ARMOR_PCT_PER_STACK,
   virtualLevel,
   xpUntilNextPrestige,
 } from '../sim/types';
@@ -14051,7 +14053,11 @@ function abilityEffectText(res: ResolvedAbility, scaling?: AbilityScaling): stri
       case 'weaponStrike':
         return formatAbilityNumber(primary.bonus);
       case 'sunder':
-        return formatAbilityNumber(primary.armor);
+        return formatAbilityNumber(
+          SUNDER_ARMOR_PCT_PER_STACK * (primary.full ? primary.maxStacks : 1) * 100,
+        );
+      case 'faerieFire':
+        return formatAbilityNumber(FAERIE_FIRE_ARMOR_PCT * 100);
       case 'lifeTap':
         return formatAbilityNumber(primary.hp);
       case 'finisherDamage':

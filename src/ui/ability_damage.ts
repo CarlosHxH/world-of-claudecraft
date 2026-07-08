@@ -121,6 +121,7 @@ export function abilityPrimaryEffect(res: ResolvedAbility): AbilityEffect | unde
       eff.type === 'finisherDamage' ||
       eff.type === 'drainTick' ||
       eff.type === 'sunder' ||
+      eff.type === 'faerieFire' ||
       eff.type === 'lifeTap',
   );
 }
