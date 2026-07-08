@@ -2199,7 +2199,7 @@ export const ZONE3_ITEMS: Record<string, ItemDef> = {
     weapon: { min: 18, max: 29, speed: 2.3 },
     stats: { str: 6, sta: 2 },
     sellValue: 900,
-    requiredClass: ['warrior', 'paladin', 'shaman'],
+    requiredClass: ['warrior', 'rogue', 'hunter', 'shaman', 'paladin'],
   },
   emberwood_staff: {
     id: 'emberwood_staff',
@@ -2210,7 +2210,7 @@ export const ZONE3_ITEMS: Record<string, ItemDef> = {
     weapon: { min: 20, max: 33, speed: 3.0 },
     stats: { int: 6, spi: 2 },
     sellValue: 900,
-    requiredClass: ['mage', 'priest', 'warlock', 'druid'],
+    requiredClass: ['mage', 'priest', 'warlock', 'shaman', 'paladin', 'druid'],
   },
   cultist_flayer: {
     id: 'cultist_flayer',
@@ -2254,7 +2254,7 @@ export const ZONE3_ITEMS: Record<string, ItemDef> = {
     weapon: { min: 19, max: 31, speed: 3.0 },
     stats: { int: 7, spi: 3 },
     sellValue: 950,
-    requiredClass: ['mage', 'priest', 'warlock', 'druid'],
+    requiredClass: ['mage', 'priest', 'warlock', 'shaman', 'paladin', 'druid'],
   },
   marrowlord_boneboots: {
     id: 'marrowlord_boneboots',
@@ -2306,7 +2306,7 @@ export const ZONE3_ITEMS: Record<string, ItemDef> = {
     weapon: { min: 26, max: 41, speed: 2.5 },
     stats: { str: 8, sta: 3 },
     sellValue: 2400,
-    requiredClass: ['warrior', 'paladin', 'shaman'],
+    requiredClass: ['warrior', 'rogue', 'hunter', 'shaman', 'paladin'],
   },
   // --- quest & dungeon blues (rare) ---
   // Brutok Skullsmasher chase weapons (mutually exclusive: brutok_chase)
@@ -2319,7 +2319,7 @@ export const ZONE3_ITEMS: Record<string, ItemDef> = {
     weapon: { min: 24, max: 37, speed: 2.7 },
     stats: { str: 8, sta: 3 },
     sellValue: 2000,
-    requiredClass: ['warrior', 'paladin', 'shaman'],
+    requiredClass: ['warrior', 'rogue', 'hunter', 'shaman', 'paladin'],
   },
   crag_warden_cudgel: {
     id: 'crag_warden_cudgel',
@@ -2330,7 +2330,7 @@ export const ZONE3_ITEMS: Record<string, ItemDef> = {
     weapon: { min: 23, max: 36, speed: 3.0 },
     stats: { int: 8, spi: 4 },
     sellValue: 2000,
-    requiredClass: ['mage', 'priest', 'warlock', 'druid'],
+    requiredClass: ['mage', 'priest', 'warlock', 'shaman', 'paladin', 'druid'],
   },
   skullsplitter_dirk: {
     id: 'skullsplitter_dirk',
@@ -2352,7 +2352,7 @@ export const ZONE3_ITEMS: Record<string, ItemDef> = {
     weapon: { min: 22, max: 35, speed: 2.6 },
     stats: { str: 7, sta: 4 },
     sellValue: 2000,
-    requiredClass: ['warrior', 'paladin', 'shaman'],
+    requiredClass: ['warrior', 'rogue', 'hunter', 'shaman', 'paladin'],
   },
   ogre_bonecharm_staff: {
     id: 'ogre_bonecharm_staff',
@@ -2363,7 +2363,7 @@ export const ZONE3_ITEMS: Record<string, ItemDef> = {
     weapon: { min: 24, max: 38, speed: 3.0 },
     stats: { int: 9, spi: 4 },
     sellValue: 2000,
-    requiredClass: ['mage', 'priest', 'warlock', 'druid'],
+    requiredClass: ['mage', 'priest', 'warlock', 'shaman', 'paladin', 'druid'],
   },
   gutripper_shiv: {
     id: 'gutripper_shiv',
@@ -2416,7 +2416,7 @@ export const ZONE3_ITEMS: Record<string, ItemDef> = {
     weapon: { min: 27, max: 43, speed: 3.0 },
     stats: { int: 9, spi: 4 },
     sellValue: 2500,
-    requiredClass: ['mage', 'priest', 'warlock', 'druid'],
+    requiredClass: ['mage', 'priest', 'warlock', 'shaman', 'paladin', 'druid'],
   },
   shadowmeld_tunic: {
     id: 'shadowmeld_tunic',
@@ -2613,7 +2613,7 @@ export const ZONE3_ITEMS: Record<string, ItemDef> = {
     weapon: { min: 30, max: 48, speed: 2.6 },
     stats: { str: 11, sta: 7 },
     sellValue: 8000,
-    requiredClass: ['warrior', 'paladin', 'shaman'],
+    requiredClass: ['warrior', 'rogue', 'hunter', 'shaman', 'paladin'],
   },
   staff_of_the_gravewyrm: {
     id: 'staff_of_the_gravewyrm',
@@ -2624,7 +2624,7 @@ export const ZONE3_ITEMS: Record<string, ItemDef> = {
     weapon: { min: 32, max: 52, speed: 3.0 },
     stats: { int: 12, spi: 6 },
     sellValue: 8000,
-    requiredClass: ['mage', 'priest', 'warlock', 'druid'],
+    requiredClass: ['mage', 'priest', 'warlock', 'shaman', 'paladin', 'druid'],
   },
   fang_of_korzul: {
     id: 'fang_of_korzul',
@@ -2792,7 +2792,7 @@ export const ZONE3_ITEMS: Record<string, ItemDef> = {
     // mainhand budget.
     stats: { spi: 17, sta: 13, int: 14 },
     sellValue: 25000,
-    requiredClass: ['druid'],
+    requiredClass: ['mage', 'priest', 'warlock', 'shaman', 'paladin', 'druid'],
     // Life and decay: a damaging spell may fester a nature DoT (Deathbloom); a heal
     // may bloom a nature heal-over-time on its target (Lifebloom).
     weaponProcs: [
@@ -2833,7 +2833,7 @@ export const ZONE3_ITEMS: Record<string, ItemDef> = {
     // crit) while it stays usable by its warrior/paladin owners.
     stats: { str: 15, agi: 15, sta: 14 },
     sellValue: 25000,
-    requiredClass: ['warrior', 'paladin'],
+    requiredClass: ['warrior', 'rogue', 'hunter', 'shaman', 'paladin'],
     // Thunderfury-style on-hit: a nature arc that blasts the target and chains to
     // nearby foes, and slows the primary target's attack speed.
     weaponProcs: [
