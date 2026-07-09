@@ -3776,6 +3776,11 @@ export class Hud {
       this.chatClock = clock;
       localStorage.setItem('chatClock', clock);
     },
+    // Authoritative online play (drives the Overview status readout + gates the
+    // online-only quick actions), and the shared confirm dialog for Reset all.
+    isOnline: () => this.sim.socialInfo !== null,
+    confirmDialog: (title, body, okText, cancelText, onOk) =>
+      this.confirmDialog(title, body, okText, cancelText, onOk),
   });
   // Leaderboard window painter (leaderboard_view.ts async-free core + leaderboard_
   // window.ts painter). It owns the page index + focus opener and the one

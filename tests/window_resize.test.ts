@@ -93,7 +93,7 @@ describe('resizedWindowSize', () => {
 describe('isResizableWindow', () => {
   const el = (id: string) => ({ id }) as HTMLElement;
 
-  it('excludes fixed-size boards, popups, and modal prompts', () => {
+  it('excludes fixed-size boards, popups, modal prompts, and the Esc options menu', () => {
     for (const id of [
       'map-window',
       'loot-window',
@@ -101,6 +101,8 @@ describe('isResizableWindow', () => {
       'mobile-extra-controls',
       'lockpick-panel',
       'emote-editor',
+      // The Warden's Codex is a full-attention XL modal (esc-menu-redesign spec 2).
+      'options-menu',
     ]) {
       expect(isResizableWindow(el(id))).toBe(false);
     }
