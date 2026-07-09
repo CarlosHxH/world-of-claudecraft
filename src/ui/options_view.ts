@@ -16,6 +16,17 @@
 // painter resolves. Registered in tests/architecture.test.ts UI_PURE_CORES.
 
 import type { TranslationKey } from './i18n.catalog';
+import {
+  CATEGORIES,
+  CATEGORY_SECTIONS,
+  type CategoryId,
+  categorySettingKeys,
+  type EnvGating,
+  type OptionRow,
+  RAIL_GROUPS,
+  type RailGroupId,
+  SEARCH_SYNONYMS,
+} from './options_ia';
 
 // ---------------------------------------------------------------------------
 // Control primitive descriptors (cluster 1)
@@ -424,4 +435,237 @@ export function buildBugReportInfo(
     characterName: player.name,
     pos: { x: player.pos.x, y: player.pos.y, z: player.pos.z },
   };
+}
+
+// ===========================================================================
+// The Warden's Codex desktop chrome (P2): rail + category detail view-models.
+// ---------------------------------------------------------------------------
+// These consume the landed options_ia tree (the IA of record) to produce the
+// two structural models the painter renders: the vertical rail (groups +
+// category tabs, with the per-category changed-from-defaults count) and a
+// category's detail pane (env-filtered sections + rows). Both are DOM/i18n-free
+// so a Vitest can pin their shape; the painter resolves label keys via t() and
+// binds live values through buildControlFromRow (which reuses the existing
+// private control builders above, so a row's dispatch stays byte-identical).
+// ===========================================================================
+
+/** Device/shell flags gating which categories + rows a host reveals (mirrors
+ *  the runtime useTouchInterface()/isNativeAppShell() the painter resolves). */
+export interface RailEnv {
+  touch: boolean;
+  nativeShell: boolean;
+}
+
+/** One rail category tab. The conflict slot is reserved for P4 (always false
+ *  in P2); the changed count is wired now from the category-to-keys map. */
+export interface RailTabModel {
+  id: CategoryId;
+  iconSlug: string;
+  nameKey: TranslationKey;
+  subheadKey: TranslationKey;
+  changedCount: number;
+  hasConflict: boolean;
+}
+
+export interface RailGroupModel {
+  id: RailGroupId;
+  labelKey: TranslationKey;
+  tabs: RailTabModel[];
+}
+
+/** The full rail: the Overview landing tab (above the groups) + the three
+ *  rail groups, each holding its env-visible category tabs. */
+export interface RailModel {
+  overview: RailTabModel;
+  groups: RailGroupModel[];
+}
+
+/** True when a category is revealed under the given host environment. The
+ *  touch-only Touch category hides on desktop; the desktop-only Keybinds
+ *  category hides on touch (nativeShellHidden is a ROW gate, not a category). */
+function categoryVisible(env: EnvGating | undefined, e: RailEnv): boolean {
+  if (!env) return true;
+  if (env.touchOnly && !e.touch) return false;
+  if (env.desktopOnly && e.touch) return false;
+  return true;
+}
+
+/** The effective row gating: the row's own markers merged over its category's,
+ *  resolved against the live host environment (see options_ia.rowEnv). */
+function rowVisible(row: OptionRow, catEnv: EnvGating | undefined, e: RailEnv): boolean {
+  const env: EnvGating = { ...(catEnv ?? {}), ...(row.env ?? {}) };
+  if (env.touchOnly && !e.touch) return false;
+  if (env.desktopOnly && e.touch) return false;
+  if (env.nativeShellHidden && e.nativeShell) return false;
+  return true;
+}
+
+/** The rail model: Overview first, then Display/Input/System groups with their
+ *  env-visible categories. `changedCount(id)` supplies the per-category
+ *  changed-from-defaults count (the painter computes it against the live
+ *  settings + the SETTING_RANGES/BOOL_SETTINGS defaults). */
+export function renderRailModel(e: RailEnv, changedCount: (id: CategoryId) => number): RailModel {
+  const tabOf = (c: (typeof CATEGORIES)[number]): RailTabModel => ({
+    id: c.id,
+    iconSlug: c.iconSlug,
+    nameKey: c.nameKey,
+    subheadKey: c.subheadKey,
+    changedCount: changedCount(c.id),
+    hasConflict: false,
+  });
+  const overview = CATEGORIES.find((c) => c.id === 'overview');
+  const groups: RailGroupModel[] = RAIL_GROUPS.map((g) => ({
+    id: g.id,
+    labelKey: g.labelKey,
+    tabs: CATEGORIES.filter((c) => c.group === g.id && categoryVisible(c.env, e)).map(tabOf),
+  }));
+  return { overview: tabOf(overview as (typeof CATEGORIES)[number]), groups };
+}
+
+/** Section heads (spec section 4): a t() key per structural section id. Kept
+ *  here (not in options_ia) so the P1 IA-of-record stays untouched; the comment
+ *  in options_ia predicted "section HEAD keys are P2 chrome". Section ids are
+ *  unique across the tree, so a flat map is unambiguous. */
+export const SECTION_HEAD_KEYS: Record<string, TranslationKey> = {
+  quality: 'hudChrome.options.sec.quality',
+  view: 'hudChrome.options.sec.view',
+  general: 'hudChrome.options.sec.general',
+  scaleText: 'hudChrome.options.sec.scaleText',
+  panels: 'hudChrome.options.sec.panels',
+  unitFrames: 'hudChrome.options.sec.unitFrames',
+  actionBars: 'hudChrome.options.sec.actionBars',
+  chat: 'hudChrome.options.sec.chat',
+  combatTooltips: 'hudChrome.options.sec.combatTooltips',
+  hudExtras: 'hudChrome.options.sec.hudExtras',
+  motionContrast: 'hudChrome.options.sec.motionContrast',
+  content: 'hudChrome.options.sec.content',
+  camera: 'hudChrome.options.sec.camera',
+  movement: 'hudChrome.options.sec.movement',
+  combat: 'hudChrome.options.sec.combat',
+  feedback: 'hudChrome.options.sec.feedback',
+  inputMode: 'hudChrome.options.sec.inputMode',
+  feel: 'hudChrome.options.sec.feel',
+  sticks: 'hudChrome.options.sec.sticks',
+  look: 'hudChrome.options.sec.look',
+  buttons: 'hudChrome.options.sec.buttons',
+  volume: 'hudChrome.options.sec.volume',
+  toggles: 'hudChrome.options.sec.toggles',
+  performance: 'hudChrome.options.sec.performance',
+  support: 'hudChrome.options.sec.support',
+  about: 'hudChrome.options.sec.about',
+};
+
+/** The head key for a section id (falls back to the id when unmapped, which a
+ *  test forbids for the shipped ids). */
+export function sectionHeadKey(sectionId: string): TranslationKey {
+  return SECTION_HEAD_KEYS[sectionId] ?? (sectionId as TranslationKey);
+}
+
+export interface CategoryDetailSection {
+  id: string;
+  headKey: TranslationKey;
+  rows: OptionRow[];
+}
+
+export interface CategoryDetailModel {
+  id: CategoryId;
+  nameKey: TranslationKey;
+  subheadKey: TranslationKey;
+  sections: CategoryDetailSection[];
+}
+
+/** The detail-pane model for a category: its header/subhead keys plus its
+ *  env-visible sections (an empty section is dropped). Overview carries no
+ *  settings-key sections (its quick actions + pins are painted bespoke). */
+export function renderCategory(id: CategoryId, e: RailEnv): CategoryDetailModel {
+  const def = CATEGORIES.find((c) => c.id === id);
+  const sections: CategoryDetailSection[] = CATEGORY_SECTIONS[id]
+    .map((s) => ({
+      id: s.id,
+      headKey: sectionHeadKey(s.id),
+      rows: s.rows.filter((r) => rowVisible(r, def?.env, e)),
+    }))
+    // Drop an empty section, and one left with only note rows after gating (e.g.
+    // the Controls "Input Mode" section under the native shell, where the sole
+    // control is hidden and only its explanatory note would remain).
+    .filter((s) => s.rows.some((r) => r.control !== 'note'));
+  return {
+    id,
+    nameKey: def?.nameKey ?? ('' as TranslationKey),
+    subheadKey: def?.subheadKey ?? ('' as TranslationKey),
+    sections,
+  };
+}
+
+/** Bind a static OptionRow to a live OptionsControl by reusing the existing
+ *  private control builders (so the rendered descriptor, and therefore the
+ *  dispatch, is byte-identical to the old per-panel path). Returns null for the
+ *  bespoke language / theme-preset rows, which the painter renders itself. The
+ *  slider step mirrors the old builders: 1 for the degrees FOV slider, 0.05
+ *  everywhere else. */
+export function buildControlFromRow(
+  s: OptionsSettingsSource,
+  row: OptionRow,
+): OptionsControl | null {
+  switch (row.control) {
+    case 'slider': {
+      const step = row.fmt === 'degrees' ? 1 : 0.05;
+      const base = slider(s, row.key as string, row.labelKey as TranslationKey, row.fmt, step);
+      return row.commitOnChange ? { ...base, commitOnChange: true } : base;
+    }
+    case 'toggle':
+      return toggle(s, row.key as string, row.labelKey as TranslationKey);
+    case 'boolToggle':
+      return boolToggle(s, row.key as string, row.labelKey as TranslationKey);
+    case 'choice':
+      return choice(
+        s,
+        row.key as string,
+        row.labelKey as TranslationKey,
+        row.choices ?? [],
+        row.rerender ?? false,
+      );
+    case 'note':
+      return note(row.textKey as TranslationKey);
+    case 'musicToggle':
+      return { control: 'musicToggle', labelKey: row.labelKey as TranslationKey };
+    default:
+      // 'language' | 'themePreset': bespoke rows the painter renders directly.
+      return null;
+  }
+}
+
+/** The per-category changed-from-defaults count: how many of a category's
+ *  homed settings keys currently differ from their default. `changed(key)` is
+ *  supplied by the painter (which reads the live value vs the range/bool def). */
+export function categoryChangedCount(id: CategoryId, changed: (key: string) => boolean): number {
+  return categorySettingKeys(id).filter(changed).length;
+}
+
+/** The total changed-from-defaults count across every homed key (Overview has
+ *  none of its own; its pins are mirrors of other categories' keys). */
+export function totalChangedCount(changed: (key: string) => boolean): number {
+  let n = 0;
+  for (const c of CATEGORIES) n += categorySettingKeys(c.id).filter(changed).length;
+  return n;
+}
+
+/** The keys a scoped "Reset [category]" restores: exactly that category's homed
+ *  settings keys (the painter resets each to its default and re-applies it). */
+export function categoryResetKeys(id: CategoryId): string[] {
+  return categorySettingKeys(id);
+}
+
+/** Section-scope search: does a row match the query? The label TEXT is resolved
+ *  by the painter (t() is a runtime dependency); a query also matches through
+ *  the explicit synonym overlay (e.g. "fps" -> showFps). An empty query matches
+ *  everything (the full category shows). */
+export function rowMatchesQuery(labelText: string, settingKey: string, rawQuery: string): boolean {
+  const q = rawQuery.trim().toLowerCase();
+  if (!q) return true;
+  if (labelText.toLowerCase().includes(q)) return true;
+  for (const [term, target] of Object.entries(SEARCH_SYNONYMS)) {
+    if (target === settingKey && term.toLowerCase().includes(q)) return true;
+  }
+  return false;
 }

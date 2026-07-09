@@ -1,18 +1,35 @@
 import { describe, expect, it } from 'vitest';
 import { SETTING_RANGES } from '../src/game/settings';
 import {
+  allRows,
+  CATEGORIES,
+  CATEGORY_SECTIONS,
+  categoryOf,
+  categorySettingKeys,
+  OVERVIEW_PINS,
+  settingRow,
+} from '../src/ui/options_ia';
+import {
   boolToggleNextValue,
   buildAudioControls,
   buildBugReportInfo,
+  buildControlFromRow,
   buildControllerControls,
   buildGraphicsControls,
   buildInterfaceControls,
   buildOptionsMenu,
+  categoryChangedCount,
+  categoryResetKeys,
   type OptionsControl,
   type OptionsSettingsSource,
+  renderCategory,
+  renderRailModel,
+  rowMatchesQuery,
+  SECTION_HEAD_KEYS,
   sliderDispatchValue,
   toggleIsOn,
   toggleNextValue,
+  totalChangedCount,
 } from '../src/ui/options_view';
 
 // A fake settings projection over plain records, with the real numeric ranges so
@@ -406,5 +423,173 @@ describe('options_view: determinism', () => {
     expect(buildOptionsMenu({ bugReportAvailable: true })).toEqual(
       buildOptionsMenu({ bugReportAvailable: true }),
     );
+  });
+});
+
+// ===========================================================================
+// The Warden's Codex desktop chrome (P2): rail + category detail view-models.
+// ===========================================================================
+
+describe('options_view: rail model (P2)', () => {
+  const desktop = { touch: false, nativeShell: false };
+
+  it('puts Overview first and groups the nine categories under Display/Input/System', () => {
+    const rail = renderRailModel(desktop, () => 0);
+    expect(rail.overview.id).toBe('overview');
+    // conflict dot slot reserved for P4: always false in P2
+    expect(rail.overview.hasConflict).toBe(false);
+    expect(rail.groups.map((g) => g.id)).toEqual(['display', 'input', 'system']);
+    const idsIn = (g: string) =>
+      rail.groups.find((x) => x.id === g)?.tabs.map((t) => t.id) ?? [];
+    expect(idsIn('display')).toEqual(['graphics', 'interface', 'accessibility']);
+    // On desktop the touch-only Touch category is hidden (gating verified below).
+    expect(idsIn('input')).toEqual(['controls', 'keybinds', 'controller']);
+    expect(idsIn('system')).toEqual(['audio', 'system']);
+  });
+
+  it('hides the touch-only Touch category on desktop and the desktop-only Keybinds on touch', () => {
+    const onDesktop = renderRailModel(desktop, () => 0)
+      .groups.flatMap((g) => g.tabs)
+      .map((t) => t.id);
+    expect(onDesktop).toContain('keybinds');
+    expect(onDesktop).not.toContain('touch');
+    const onTouch = renderRailModel({ touch: true, nativeShell: false }, () => 0)
+      .groups.flatMap((g) => g.tabs)
+      .map((t) => t.id);
+    expect(onTouch).toContain('touch');
+    expect(onTouch).not.toContain('keybinds');
+    // Controller stays on touch (Bluetooth pads are real).
+    expect(onTouch).toContain('controller');
+  });
+
+  it('wires the per-category changed count from the supplied callback', () => {
+    const rail = renderRailModel(desktop, (id) => (id === 'audio' ? 3 : 0));
+    const audio = rail.groups.flatMap((g) => g.tabs).find((t) => t.id === 'audio');
+    expect(audio?.changedCount).toBe(3);
+    const graphics = rail.groups.flatMap((g) => g.tabs).find((t) => t.id === 'graphics');
+    expect(graphics?.changedCount).toBe(0);
+  });
+});
+
+describe('options_view: category detail model (P2)', () => {
+  const desktop = { touch: false, nativeShell: false };
+
+  it('builds a dense category (Interface) as sections + rows with head keys', () => {
+    const model = renderCategory('interface', desktop);
+    expect(model.id).toBe('interface');
+    const secIds = model.sections.map((s) => s.id);
+    expect(secIds).toContain('general');
+    expect(secIds).toContain('unitFrames');
+    for (const s of model.sections) {
+      expect(s.headKey, `${s.id} head`).toBe(SECTION_HEAD_KEYS[s.id]);
+      expect(s.rows.length, `${s.id} rows`).toBeGreaterThan(0);
+    }
+    // The General section carries the two bespoke non-settings rows in order.
+    const general = model.sections.find((s) => s.id === 'general');
+    expect(general?.rows.map((r) => r.control)).toEqual(['language', 'themePreset']);
+  });
+
+  it('drops the desktop-only Controls rows (and their now-empty section) on touch', () => {
+    const onDesktop = renderCategory('controls', desktop)
+      .sections.flatMap((s) => s.rows)
+      .map((r) => r.key);
+    expect(onDesktop).toContain('mouseCamera');
+    const touchModel = renderCategory('controls', { touch: true, nativeShell: false });
+    const onTouch = touchModel.sections.flatMap((s) => s.rows).map((r) => r.key);
+    expect(onTouch).not.toContain('mouseCamera');
+    // The camera section is all desktop-only rows: it disappears entirely on touch.
+    expect(touchModel.sections.map((s) => s.id)).not.toContain('camera');
+    // Combat rows have no desktop gate and stay reachable on touch.
+    expect(onTouch).toContain('attackMove');
+  });
+
+  it('hides interfaceMode under the native app shell (its lone-note section drops)', () => {
+    const shell = renderCategory('controls', { touch: false, nativeShell: true });
+    const keys = shell.sections.flatMap((s) => s.rows).map((r) => r.key);
+    expect(keys).not.toContain('interfaceMode');
+    // The inputMode section held only interfaceMode + its note, so it drops whole.
+    expect(shell.sections.map((s) => s.id)).not.toContain('inputMode');
+  });
+});
+
+describe('options_view: buildControlFromRow parity (P2)', () => {
+  const rowFor = (key: string) =>
+    Object.values(CATEGORY_SECTIONS)
+      .flat()
+      .flatMap((s) => s.rows)
+      .find((r) => r.key === key);
+
+  it('binds a slider with the old step (degrees=1, else 0.05) and preserves commitOnChange', () => {
+    const fov = buildControlFromRow(makeSource({ cameraFov: 75 }), rowFor('cameraFov')!);
+    expect(fov).toMatchObject({ control: 'slider', key: 'cameraFov', step: 1, fmt: 'degrees', value: 75 });
+    const ui = buildControlFromRow(makeSource({ uiScale: 1.1 }), rowFor('uiScale')!);
+    expect(ui).toMatchObject({ control: 'slider', key: 'uiScale', step: 0.05, commitOnChange: true });
+    // a plain percent slider is live (no commitOnChange flag)
+    const music = buildControlFromRow(makeSource({ musicVolume: 0.5 }), rowFor('musicVolume')!);
+    expect(music).not.toHaveProperty('commitOnChange');
+  });
+
+  it('binds a choice with its option set, current value, and rerender flag', () => {
+    const preset = buildControlFromRow(makeSource({ graphicsPreset: 5 }), rowFor('graphicsPreset')!);
+    expect(preset).toMatchObject({ control: 'choice', key: 'graphicsPreset', current: 5, rerender: true });
+    if (preset?.control === 'choice') expect(preset.options.map((o) => o.value)).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  it('returns null for the bespoke language + theme-preset rows', () => {
+    const lang = allRows().find((r) => r.control === 'language');
+    const theme = allRows().find((r) => r.control === 'themePreset');
+    expect(buildControlFromRow(makeSource(), lang!)).toBeNull();
+    expect(buildControlFromRow(makeSource(), theme!)).toBeNull();
+  });
+
+  it('each settings-backed Overview pin builds a control that writes its HOME settings key', () => {
+    const s = makeSource();
+    for (const pin of OVERVIEW_PINS) {
+      if (!pin.key) continue;
+      const control = buildControlFromRow(s, settingRow(pin.key)!);
+      expect(control && 'key' in control && control.key, `${pin.key} pin`).toBe(pin.key);
+      expect(categoryOf(pin.key), `${pin.key} home`).toBe(pin.homeCategory);
+    }
+  });
+});
+
+describe('options_view: section-scope search (P2)', () => {
+  it('matches by case-insensitive label substring; an empty query matches every row', () => {
+    expect(rowMatchesQuery('UI Scale', 'uiScale', '')).toBe(true);
+    expect(rowMatchesQuery('UI Scale', 'uiScale', 'scale')).toBe(true);
+    expect(rowMatchesQuery('UI Scale', 'uiScale', 'SCALE')).toBe(true);
+    expect(rowMatchesQuery('UI Scale', 'uiScale', 'volume')).toBe(false);
+  });
+
+  it('matches through the explicit synonym overlay, scoped to the synonym target', () => {
+    expect(rowMatchesQuery('Show FPS', 'showFps', 'fps')).toBe(true);
+    expect(rowMatchesQuery('Show FPS', 'showFps', 'framerate')).toBe(true);
+    expect(rowMatchesQuery('Reduce Motion', 'reduceMotion', 'motion')).toBe(true);
+    // "fps" is a synonym for showFps only: it must not match an unrelated row.
+    expect(rowMatchesQuery('Reduce Motion', 'reduceMotion', 'fps')).toBe(false);
+  });
+});
+
+describe('options_view: scoped reset + changed counts (P2)', () => {
+  it('a scoped category reset targets exactly that category homed key set', () => {
+    expect(categoryResetKeys('audio')).toEqual(categorySettingKeys('audio'));
+    expect(categoryResetKeys('audio')).toEqual([
+      'sfxVolume',
+      'musicVolume',
+      'voiceVolume',
+      'voiceEnabled',
+      'footstepSfx',
+    ]);
+    // Overview owns no settings keys of its own (its pins are mirrors).
+    expect(categoryResetKeys('overview')).toEqual([]);
+  });
+
+  it('counts changed keys per category and in total from the changed predicate', () => {
+    const changed = (k: string) => k === 'musicVolume' || k === 'sfxVolume';
+    expect(categoryChangedCount('audio', changed)).toBe(2);
+    expect(categoryChangedCount('graphics', changed)).toBe(0);
+    expect(totalChangedCount(() => false)).toBe(0);
+    const homed = CATEGORIES.reduce((n, c) => n + categorySettingKeys(c.id).length, 0);
+    expect(totalChangedCount(() => true)).toBe(homed);
   });
 });
