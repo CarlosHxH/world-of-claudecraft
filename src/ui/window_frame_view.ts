@@ -9,20 +9,25 @@
 // grammar class names the DOM builder paints (see the AAA component grammar in
 // src/styles/components.css, spec section 8).
 //
-// DOM-free and i18n-free so tests/window_frame_view.test.ts can drive it
-// directly: the model carries i18n KEY strings (titleKey, labelKey), never
-// resolved text. The DOM/i18n side lives in window_frame.ts.
+// DOM-free so tests/window_frame_view.test.ts can drive it directly: the model
+// carries i18n KEYS (titleKey, labelKey), never resolved text. The one i18n
+// touch is the TYPE-ONLY TranslationKey import below (erased at build, no
+// runtime i18n dependency; the options_view.ts precedent): it makes a typo'd
+// key a compile error at every descriptor site instead of a runtime t() throw
+// in the consumer. The DOM/i18n side lives in window_frame.ts.
 //
 // Instance-parameterized: every id is derived from the descriptor id, so the
 // same builder frames the vendor window, the social panel, and the other 22
 // windows with no hardcoded element id.
+
+import type { TranslationKey } from './i18n.catalog';
 
 /** One tab descriptor: a stable id fragment plus the i18n key for its label. */
 export interface WindowFrameTab {
   /** Stable per-window id fragment (e.g. 'buy'); the derived ids embed it. */
   id: string;
   /** i18n key for the tab's visible label, resolved by the consumer via t(). */
-  labelKey: string;
+  labelKey: TranslationKey;
 }
 
 /** Fields shared by every window frame, closable or not. */
@@ -30,7 +35,7 @@ interface WindowFrameBase {
   /** Root element id; every structural id below is derived from it. */
   id: string;
   /** i18n key for the titlebar title, resolved by the consumer via t(). */
-  titleKey: string;
+  titleKey: TranslationKey;
   /** Optional tab rail; an omitted or empty list yields no tablist. */
   tabs?: readonly WindowFrameTab[];
   /** Sticky footer action row (transactional windows). Defaults to false. */
@@ -44,15 +49,18 @@ interface WindowFrameBase {
 // e.g. itemUi.vendor.close); a non-closable window needs none. The union makes
 // the type system enforce that at every call site.
 export type WindowFrameDescriptor = WindowFrameBase &
-  ({ closable?: true; closeLabelKey: string } | { closable: false; closeLabelKey?: string });
+  (
+    | { closable?: true; closeLabelKey: TranslationKey }
+    | { closable: false; closeLabelKey?: TranslationKey }
+  );
 
 export interface WindowFrameTabModel {
   /** The descriptor tab id fragment. */
   key: string;
-  labelKey: string;
+  labelKey: TranslationKey;
   /** Derived id of the tab button (`role="tab"`). */
   tabId: string;
-  /** Derived id of the tab panel this tab controls (`role="tabpanel"`). */
+  /** Derived id of the tab panel this tab controls (the body when active). */
   panelId: string;
   /** aria-selected state for this tab. */
   selected: boolean;
@@ -76,7 +84,7 @@ export interface WindowFrameCloseModel {
   id: string;
   className: string;
   /** i18n key for the close control's aria-label. */
-  labelKey: string;
+  labelKey: TranslationKey;
 }
 
 export interface WindowFrameFooterModel {
@@ -94,12 +102,16 @@ export interface WindowFrameModel {
   /** Derived id of the title element (the aria-labelledby target). */
   titleId: string;
   labelledBy: string;
-  titleKey: string;
+  titleKey: TranslationKey;
   titlebarClassName: string;
   titleClassName: string;
-  /** Derived id of the scrollable body region. */
+  /** The body region's id: `<id>-body` for a tab-less window; with tabs it is
+   *  the ACTIVE tab's panelId, so every tab's aria-controls names a node that
+   *  really exists whenever its tab is selected. */
   bodyId: string;
   bodyClassName: string;
+  /** 'tabpanel' when the window has tabs (the body IS the panel), else null. */
+  bodyRole: 'tabpanel' | null;
   /** Null for a non-closable window. */
   close: WindowFrameCloseModel | null;
   /** Null when the window has no tabs. */
@@ -130,17 +142,20 @@ export function buildWindowFrameModel(
 
   const tabDescs = descriptor.tabs ?? [];
   let tablist: WindowFrameTablistModel | null = null;
+  let activePanelId: string | null = null;
   if (tabDescs.length > 0) {
     const activeKey = tabDescs.some((tab) => tab.id === activeTabId)
       ? (activeTabId as string)
       : tabDescs[0].id;
     const tabs = tabDescs.map((tab): WindowFrameTabModel => {
       const selected = tab.id === activeKey;
+      const panelId = `${rootId}-panel-${tab.id}`;
+      if (selected) activePanelId = panelId;
       return {
         key: tab.id,
         labelKey: tab.labelKey,
         tabId: `${rootId}-tab-${tab.id}`,
-        panelId: `${rootId}-panel-${tab.id}`,
+        panelId,
         selected,
         tabIndex: selected ? 0 : -1,
       };
@@ -162,8 +177,9 @@ export function buildWindowFrameModel(
     titleKey: descriptor.titleKey,
     titlebarClassName: 'window-titlebar',
     titleClassName: 'window-title',
-    bodyId: `${rootId}-body`,
+    bodyId: activePanelId ?? `${rootId}-body`,
     bodyClassName: 'window-body',
+    bodyRole: activePanelId ? 'tabpanel' : null,
     close,
     tablist,
     footer,

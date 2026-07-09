@@ -415,7 +415,11 @@ CSS, and minor painter work (section 12 maps it).
 ## 8. Component grammar
 
 Shared CSS classes live in `components.css` (and `hud.mobile.css` for touch
-variants). All states below are mandatory for every instance.
+variants). All states below are mandatory for every instance. Collision policy:
+a grammar name that collides with a legacy class in the later `shell` layer
+takes an `is-*` modifier or `ui-*` prefixed form instead (layer order outranks
+selector specificity, so scoping alone cannot win those), hence
+`.btn.is-primary`, `.btn.is-danger`, and `.ui-badge` below.
 
 - **Panels:** `.panel-l0` `.panel-l1` `.panel-l2` per depth tokens. Only these
   three; no bespoke panel backgrounds.
@@ -423,8 +427,8 @@ variants). All states below are mandatory for every instance.
   right-aligned control cluster.
 - **Tabs:** `.tab-rail` + `.tab` (36px, gold active underline, roving
   tabindex, `aria-selected`). Overflow scrolls horizontally on touch, never wraps.
-- **Buttons:** `.btn` (36px), `.btn-primary` (gold fill, dark text),
-  `.btn-ghost` (border only), `.btn-danger` (error-tint border). States:
+- **Buttons:** `.btn` (36px), `.btn.is-primary` (gold fill, dark text),
+  `.btn-ghost` (border only), `.btn.is-danger` (error-tint border). States:
   hover (border brighten, no scale), active (inset shade), disabled (40 percent
   opacity + `aria-disabled`), loading (inline spinner replaces label,
   width preserved to avoid shift).
@@ -444,7 +448,7 @@ variants). All states below are mandatory for every instance.
   long lists use keyed row pooling (section 13).
 - **Scrollbars:** existing scrollbar tokens; visible-on-hover desktop,
   overlay-style touch.
-- **Badges:** `.badge` 16px count pill; priority variants from notification
+- **Badges:** `.ui-badge` 16px count pill; priority variants from notification
   tokens.
 - **Item cells:** `.item-cell` 44px (40px grid-dense): icon, rarity border from
   `--color-quality-*`, count bottom-right, cooldown sweep overlay slot,

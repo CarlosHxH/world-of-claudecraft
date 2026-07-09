@@ -7653,11 +7653,19 @@
 
      Collision policy: the frame chrome + depth panels below are NEW class names
      (no existing selector), so they are global. The CONTENT grammar further
-     down (buttons, bars, badges, and the rest) reuses names that already exist
-     globally (.btn / .btn-primary / .btn-danger / .bar / .bar-fill / .badge),
-     so to stay strictly additive (no existing element restyled) it is SCOPED
-     under .window-frame: it only applies inside a redesigned window, which none
-     exist yet. */
+     down is SCOPED under .window-frame so nothing outside a redesigned window
+     restyles (strictly additive; no element carries the class yet). Two
+     collision cases, resolved by how CSS cascades (LAYER ORDER outranks
+     specificity; the barrel order is tokens, base, layout, components, hud,
+     shell, hud-mobile):
+     - Same-layer colliders (.btn here in components.css; .bar / .bar-fill in
+       hud.css, which also targets @layer components): scoping is enough, the
+       .window-frame descendant selector wins on specificity within the layer.
+     - Later-layer colliders (.btn-primary / .btn-danger / .badge live in
+       shell.css, @layer shell, which OUTRANKS components regardless of
+       specificity): those names are not reused at all; the grammar uses the
+       modifier forms .btn.is-primary / .btn.is-danger and the prefixed
+       .ui-badge (the .ui-icon naming precedent) instead. */
 
   /* Three panel depths sharing one visual language (spec 9.2). */
   .panel-l0 {
@@ -7898,23 +7906,23 @@
     pointer-events: none;
     min-width: var(--control-h);
   }
-  .window-frame .btn-primary {
+  .window-frame .btn.is-primary {
     background: var(--color-primary);
     border-color: var(--color-primary);
     color: var(--color-bg-dark);
     font-family: var(--font-display);
   }
-  .window-frame .btn-primary:hover:not(:disabled) {
+  .window-frame .btn.is-primary:hover:not(:disabled) {
     border-color: var(--color-text-light);
   }
   .window-frame .btn-ghost {
     background: transparent;
   }
-  .window-frame .btn-danger {
+  .window-frame .btn.is-danger {
     border-color: var(--color-border-invalid);
     color: var(--color-text-error);
   }
-  .window-frame .btn-danger:hover:not(:disabled) {
+  .window-frame .btn.is-danger:hover:not(:disabled) {
     border-color: var(--color-text-error);
   }
 
@@ -7941,7 +7949,7 @@
     opacity: 0.4;
     cursor: default;
   }
-  .window-frame .icon-btn .badge {
+  .window-frame .icon-btn .ui-badge {
     position: absolute;
     top: calc(-1 * var(--spacing-xs));
     right: calc(-1 * var(--spacing-xs));
@@ -8178,8 +8186,10 @@
     background: var(--color-energy);
   }
 
-  /* Badge: a 16px count pill with priority variants from the notification tokens. */
-  .window-frame .badge {
+  /* Badge: a 16px count pill with priority variants from the notification
+     tokens. Named .ui-badge (the .ui-icon precedent), not .badge: the legacy
+     .badge lives in shell.css (@layer shell), which outranks this layer. */
+  .window-frame .ui-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -8193,13 +8203,13 @@
     font-size: var(--text-xs);
     line-height: 1;
   }
-  .window-frame .badge.badge-success {
+  .window-frame .ui-badge.badge-success {
     border-color: var(--color-notify-success);
   }
-  .window-frame .badge.badge-warning {
+  .window-frame .ui-badge.badge-warning {
     border-color: var(--color-notify-warning);
   }
-  .window-frame .badge.badge-critical {
+  .window-frame .ui-badge.badge-critical {
     border-color: var(--color-notify-critical);
   }
 
@@ -8241,9 +8251,7 @@
   /* One shared, steady (never transitioned) focus ring for every new interactive
      class, drawn from the focus-ring tokens (spec 9.8). */
   .window-frame .btn:focus-visible,
-  .window-frame .btn-primary:focus-visible,
   .window-frame .btn-ghost:focus-visible,
-  .window-frame .btn-danger:focus-visible,
   .window-frame .icon-btn:focus-visible,
   .window-frame .chip:focus-visible,
   .window-frame .card:focus-visible,

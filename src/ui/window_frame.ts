@@ -12,7 +12,7 @@
 // t() key carried on the model. Callbacks arrive through the injected deps.
 
 import { esc } from './esc';
-import { type TranslationKey, t } from './i18n';
+import { t } from './i18n';
 import { svgIcon } from './ui_icons';
 import { buildWindowFrameModel, type WindowFrameDescriptor } from './window_frame_view';
 
@@ -57,11 +57,11 @@ export function renderWindowFrame(
   if (model.ariaModal) el.setAttribute('aria-modal', 'true');
 
   const closeHtml = model.close
-    ? `<button type="button" class="${model.close.className}" data-window-close aria-label="${esc(t(model.close.labelKey as TranslationKey))}">${svgIcon('close')}</button>`
+    ? `<button type="button" class="${model.close.className}" data-window-close aria-label="${esc(t(model.close.labelKey))}">${svgIcon('close')}</button>`
     : '';
   const titlebar =
     `<div class="${model.titlebarClassName}">` +
-    `<span class="${model.titleClassName}" id="${esc(model.titleId)}">${esc(t(model.titleKey as TranslationKey))}</span>` +
+    `<span class="${model.titleClassName}" id="${esc(model.titleId)}">${esc(t(model.titleKey))}</span>` +
     `${closeHtml}</div>`;
 
   let tabRail = '';
@@ -72,7 +72,7 @@ export function renderWindowFrame(
           `<button type="button" class="tab" role="tab" id="${esc(tab.tabId)}" ` +
           `data-window-tab="${esc(tab.key)}" aria-controls="${esc(tab.panelId)}" ` +
           `aria-selected="${tab.selected}" tabindex="${tab.tabIndex}">` +
-          `${esc(t(tab.labelKey as TranslationKey))}</button>`,
+          `${esc(t(tab.labelKey))}</button>`,
       )
       .join('');
     tabRail =
@@ -80,7 +80,11 @@ export function renderWindowFrame(
       `aria-labelledby="${esc(model.tablist.labelledBy)}" id="${esc(model.tablist.id)}">${tabs}</div>`;
   }
 
-  const body = `<div class="${model.bodyClassName}" id="${esc(model.bodyId)}"></div>`;
+  // With tabs, the body IS the tabpanel: it carries role="tabpanel" and the
+  // ACTIVE tab's panel id (the model derives it), so every selected tab's
+  // aria-controls points at a real node.
+  const bodyRole = model.bodyRole ? ` role="${model.bodyRole}"` : '';
+  const body = `<div class="${model.bodyClassName}"${bodyRole} id="${esc(model.bodyId)}"></div>`;
   const footer = model.footer
     ? `<div class="${model.footer.className}" id="${esc(model.footer.id)}"></div>`
     : '';
@@ -88,14 +92,27 @@ export function renderWindowFrame(
   el.innerHTML = `${titlebar}${tabRail}${body}${footer}`;
 
   el.querySelector('[data-window-close]')?.addEventListener('click', () => deps.onClose?.());
+  const bodyEl = el.querySelector<HTMLElement>('.window-body') as HTMLElement;
   const tabButtons = Array.from(el.querySelectorAll<HTMLButtonElement>('[data-window-tab]'));
   for (const btn of tabButtons) {
-    btn.addEventListener('click', () => deps.onTabChange?.(btn.dataset.windowTab ?? ''));
+    btn.addEventListener('click', () => {
+      // Re-point the aria state before notifying the consumer, so the selected
+      // tab's aria-controls always names the live body node even if the
+      // consumer only repaints the body contents.
+      for (const other of tabButtons) {
+        const selected = other === btn;
+        other.setAttribute('aria-selected', String(selected));
+        other.tabIndex = selected ? 0 : -1;
+      }
+      const panelId = btn.getAttribute('aria-controls');
+      if (panelId) bodyEl.id = panelId;
+      deps.onTabChange?.(btn.dataset.windowTab ?? '');
+    });
   }
 
   return {
     root: el,
-    body: el.querySelector<HTMLElement>('.window-body') as HTMLElement,
+    body: bodyEl,
     footer: el.querySelector<HTMLElement>('.window-footer'),
     tabButtons,
   };
