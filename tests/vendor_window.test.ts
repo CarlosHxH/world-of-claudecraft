@@ -11,6 +11,7 @@ import { describe, expect, it, vi } from 'vitest';
 import type { ItemDef } from '../src/sim/types';
 import type { VendorView } from '../src/ui/vendor_view';
 import { renderVendorWindow, type VendorWindowDeps } from '../src/ui/vendor_window';
+import { isWindowDragHandle } from '../src/ui/window_drag_handle';
 
 // Force a controllable item name so the esc() path is testable without depending
 // on the tEntity resolver internals.
@@ -70,7 +71,9 @@ describe('renderVendorWindow: frame adoption', () => {
     expect(frame?.querySelector('.window-body')).not.toBeNull();
     expect(frame?.querySelector('.window-footer')).not.toBeNull();
     expect(frame?.querySelector('[data-window-close]')).not.toBeNull();
-    expect(el.style.display).toBe('block');
+    // Shown as a flex column (the Market precedent) so the shared grammar can
+    // bound the inner frame and scroll the body internally.
+    expect(el.style.display).toBe('flex');
   });
 
   it('sets the title to the merchant name (the frame builder cannot interpolate it)', () => {
@@ -86,6 +89,37 @@ describe('renderVendorWindow: frame adoption', () => {
     renderVendorWindow(el, 'V', { goods: [], buyback: [] }, fakeDeps());
     expect(el.querySelector('.window-body')).toBe(firstBody);
     expect(el.querySelectorAll('.window-titlebar').length).toBe(1);
+  });
+});
+
+describe('renderVendorWindow: move / resize / fit parity with the World Market', () => {
+  it('makes the frame titlebar a drag handle the Hud recognizes, but never the close button', () => {
+    const el = vendorEl();
+    renderVendorWindow(el, 'Gorznak', { goods: [], buyback: [] }, fakeDeps());
+    const titlebar = el.querySelector<HTMLElement>('.window-titlebar');
+    const title = el.querySelector<HTMLElement>('.window-title');
+    const closeBtn = el.querySelector<HTMLElement>('[data-window-close]');
+    expect(titlebar).not.toBeNull();
+    // Pressing the titlebar (or the title text within it) starts a window drag,
+    // exactly as pressing the Market's .panel-title does.
+    expect(isWindowDragHandle(titlebar as HTMLElement, el)).toBe(true);
+    expect(isWindowDragHandle(title as HTMLElement, el)).toBe(true);
+    // The close control is an excluded interactive target: it must never drag.
+    expect(isWindowDragHandle(closeBtn as HTMLElement, el)).toBe(false);
+  });
+
+  it('frames a bounded flex column: pinned titlebar then a scrollable body then a pinned footer', () => {
+    const el = vendorEl();
+    renderVendorWindow(el, 'V', { goods: [], buyback: [] }, fakeDeps());
+    const frame = el.querySelector<HTMLElement>(':scope > .window-frame');
+    expect(frame).not.toBeNull();
+    // The structural classes the shared grammar keys on: .window-body is the one
+    // scroll region between the flex:none titlebar and footer. Their DOM order is
+    // the flex-column order the CSS (titlebar auto, body flex:1 min-height:0
+    // overflow-y:auto, footer auto) relies on.
+    const order = Array.from(frame?.children ?? []).map((c) => (c as HTMLElement).className);
+    expect(order).toEqual(['window-titlebar', 'window-body', 'window-footer']);
+    expect(frame?.querySelectorAll('.window-body').length).toBe(1);
   });
 });
 

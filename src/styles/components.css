@@ -7811,6 +7811,24 @@
     border-radius: var(--radius-md);
     color: var(--color-text-light);
   }
+  /* Move / resize / viewport-fit parity with the World Market for every
+     grammar-built window: the host .window (shown by its consumer with
+     display:flex, the Market precedent) becomes a clipping flex column, and the
+     frame fills it as the height-bounded flex column. Its .window-body (flex:1,
+     min-height:0, overflow-y:auto) then scrolls internally between the pinned
+     titlebar and footer, so the window fits the viewport (the shared .window
+     max-height in layout.css) with no double scrollbar and never overflows. The
+     rules are inert until the host is a flex column (display:none/block hidden or
+     legacy windows fall through unchanged), so they only bind a frame-hosting
+     window that opts in. */
+  .window:has(> .window-frame) {
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .window > .window-frame {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
   /* Corner ornaments: pure decoration (spec 6.1), zero layout impact
      (position: absolute, pointer-events: none), rendered only at fx medium and
      up (the low tier drops them via the gate below). */

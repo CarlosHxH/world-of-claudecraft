@@ -393,6 +393,7 @@ import {
   wocBalanceVerified,
 } from './wallet_balance';
 import { type WeaponProcEffectDesc, weaponProcLines } from './weapon_proc_view';
+import { isWindowDragHandle } from './window_drag_handle';
 import { makeWindowFocus } from './window_focus';
 import { installWindowResize, markResizableWindow } from './window_resize';
 import { formatXp, xpBarView } from './xp_bar';
@@ -1866,7 +1867,7 @@ export class Hud {
       const el = target?.closest?.('.window.panel') as HTMLElement | null;
       if (!el) return;
       this.bringWindowToFront(el);
-      if (ev.button !== 0 || !target || !this.isWindowDragHandle(target, el)) return;
+      if (ev.button !== 0 || !target || !isWindowDragHandle(target, el)) return;
       ev.preventDefault();
       this.hideTooltip();
       const rect = el.getBoundingClientRect();
@@ -1965,15 +1966,11 @@ export class Hud {
       el.id === 'confirm-dialog'
     )
       return;
-    if (
-      document.body.classList.contains('vendor-open') &&
-      (el.id === 'vendor-window' || el.id === 'bags')
-    )
-      return;
-    // The bank docks its bags companion the same way the vendor does (a fixed
-    // side-by-side cluster driven by body.bank-open, mobile-paired 50/50); baking a
-    // cascade-offset inline position onto either half would defeat that layout (the
-    // inline inset beats the docking CSS), so skip the cascade for the bank cluster.
+    // The bank docks its bags companion side by side (a fixed cluster driven by
+    // body.bank-open, mobile-paired 50/50); baking a cascade-offset inline position
+    // onto either half would defeat that layout (the inline inset beats the docking
+    // CSS), so skip the cascade for the bank cluster. The vendor no longer docks: it
+    // floats like the World Market, so vendor + bags take the normal cascade below.
     if (
       document.body.classList.contains('bank-open') &&
       (el.id === 'bank-window' || el.id === 'bags')
@@ -2004,18 +2001,6 @@ export class Hud {
   private windowZValue(el: HTMLElement): number {
     const z = Number.parseInt(el.style.zIndex || getComputedStyle(el).zIndex || '', 10);
     return Number.isFinite(z) ? z : 0;
-  }
-
-  private isWindowDragHandle(target: HTMLElement, win: HTMLElement): boolean {
-    if (
-      target.closest(
-        'button, input, textarea, select, a, .x-btn, .ui-dd, [draggable="true"], #map-canvas, #map-zoom',
-      )
-    )
-      return false;
-    const title = target.closest('.panel-title');
-    if (title && win.contains(title)) return true;
-    return win.id === 'map-window' && target === win;
   }
 
   private setWindowPixelPosition(

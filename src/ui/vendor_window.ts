@@ -229,6 +229,10 @@ export function renderVendorWindow(
     footer.appendChild(sellJunkButton(deps));
   }
 
-  el.style.display = 'block';
+  // Show as a flex column (the World Market precedent): the shared grammar
+  // (.window:has(> .window-frame) in components.css) then bounds the inner frame
+  // so the body scrolls internally while the titlebar/footer stay pinned, instead
+  // of the outer window overflowing.
+  el.style.display = 'flex';
   el.scrollTop = scrollTop;
 }
