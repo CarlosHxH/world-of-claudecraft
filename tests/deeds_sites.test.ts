@@ -1,0 +1,908 @@
+// The bespoke Book of Deeds site helpers (the exported on*ForDeeds functions in
+// src/sim/deeds.ts) grant the 42 manual-trigger deeds directly from the gameplay
+// modules. This suite drives each site through a real Sim's ctx (the deeds.test.ts
+// idiom) with decisive positive AND negative cases: every grant is asserted through
+// the player's earned set, every negative targets one exact gate condition.
+import { describe, expect, it } from 'vitest';
+import { DUNGEONS, instanceOrigin, MOBS } from '../src/sim/data';
+import {
+  type CupMatchForDeeds,
+  onArenaMatchEndForDeeds,
+  onBellContactForDeeds,
+  onBloatDetonatedForDeeds,
+  onBossAddsSummonedForDeeds,
+  onBossSplashHitForDeeds,
+  onChatRollForDeeds,
+  onCheerForDeeds,
+  onCompanionReviveForDeeds,
+  onCupGoalForDeeds,
+  onCupMatchEndForDeeds,
+  onCupSaveForDeeds,
+  onCupStandingForDeeds,
+  onCupTouchForDeeds,
+  onDamageDealtForDeeds,
+  onDeathlessRageResolvedForDeeds,
+  onDelveClearForDeeds,
+  onFiestaTakedownForDeeds,
+  onLockpickSuccessForDeeds,
+  onMobKillCreditForDeeds,
+  onNpcTalkedForDeeds,
+  onPlayerDeathForDeeds,
+  onRiteFinaleForDeeds,
+  onWorldBossKilledForDeeds,
+} from '../src/sim/deeds';
+import { createMob } from '../src/sim/entity';
+import { type ArenaMatch, type InstanceSlot, type PlayerMeta, Sim } from '../src/sim/sim';
+import { applyResurrectionSickness } from '../src/sim/spirit';
+import type { DungeonDifficulty, Entity, Vec3 } from '../src/sim/types';
+
+function makeSim(seed = 42): Sim {
+  return new Sim({ seed, playerClass: 'warrior', autoEquip: false });
+}
+
+// Add a fresh player and return its persisted meta.
+function addMeta(sim: Sim, name: string): PlayerMeta {
+  const pid = sim.addPlayer('warrior', name);
+  return sim.players.get(pid)!;
+}
+
+function entityOf(sim: Sim, meta: PlayerMeta): Entity {
+  return sim.entities.get(meta.entityId)!;
+}
+
+// Spawn a real mob entity from its content template. Level is irrelevant to the
+// encounter-task branches (they never read it) but matters for the giantslayer gate.
+function spawnMob(sim: Sim, templateId: string, pos: Vec3, level = 5): Entity {
+  const e = createMob(sim.ctx.nextId++, MOBS[templateId], level, pos);
+  sim.addEntity(e);
+  return e;
+}
+
+// Build a boss encounter inside a claimed instance slot and seat the recipients in
+// the instance band, so playersInInstance (the encounter-task recipient set) and
+// instanceForMob both resolve to exactly these players.
+function encounterInstance(
+  sim: Sim,
+  templateId: string,
+  dungeonId: string,
+  difficulty: DungeonDifficulty,
+  names: string[],
+): { boss: Entity; inst: InstanceSlot; recipients: PlayerMeta[] } {
+  const origin = instanceOrigin(DUNGEONS[dungeonId].index, 0);
+  const boss = spawnMob(sim, templateId, { x: origin.x, y: 0, z: origin.z }, 30);
+  const inst: InstanceSlot = {
+    dungeonId,
+    difficulty,
+    slot: 0,
+    partyKey: 'party:deeds-test',
+    mobIds: [boss.id],
+    objectIds: [],
+    exitId: null,
+    emptyFor: 0,
+  };
+  sim.ctx.instances.push(inst);
+  const recipients = names.map((name) => {
+    const meta = addMeta(sim, name);
+    entityOf(sim, meta).pos = { x: origin.x, y: 0, z: origin.z };
+    return meta;
+  });
+  return { boss, inst, recipients };
+}
+
+// A structural Cup match for the deed sites (vale_cup.ts owns the real VcMatch).
+function cupMatch(opts: {
+  id: number;
+  bracket?: number;
+  rated?: boolean;
+  golden?: boolean;
+  scoreA?: number;
+  scoreB?: number;
+  teamA?: number[];
+  teamB?: number[];
+  roles?: Record<number, string>;
+  benched?: Set<number>;
+  practice?: unknown | null;
+}): CupMatchForDeeds {
+  return {
+    id: opts.id,
+    bracket: opts.bracket ?? 1,
+    rated: opts.rated ?? true,
+    golden: opts.golden ?? false,
+    scoreA: opts.scoreA ?? 0,
+    scoreB: opts.scoreB ?? 0,
+    teamA: opts.teamA ?? [],
+    teamB: opts.teamB ?? [],
+    roles: opts.roles ?? {},
+    benched: opts.benched ?? new Set(),
+    practice: opts.practice ?? null,
+  };
+}
+
+function fiestaMatch(sim: Sim, teamA: number[], teamB: number[]): ArenaMatch {
+  return {
+    id: 1,
+    format: 'fiesta',
+    teamA,
+    teamB,
+    slot: 0,
+    state: 'over',
+    timer: 0,
+    returns: new Map(),
+    ratingA: 1500,
+    ratingB: 1500,
+    defeated: new Set(),
+    fiesta: sim.ctx.createFiestaState(),
+  };
+}
+
+describe('encounter mechanical arms (onMobKillCreditForDeeds)', () => {
+  it('dgn_morthen_flawless: a clean heroic kill grants; a death taint or normal tier blocks', () => {
+    const clean = makeSim();
+    const c = encounterInstance(clean, 'morthen', 'hollow_crypt', 'heroic', ['Tank', 'Healer']);
+    onMobKillCreditForDeeds(clean.ctx, c.boss, null, c.recipients[0], c.recipients);
+    for (const m of c.recipients) expect(m.deedsEarned.has('dgn_morthen_flawless')).toBe(true);
+
+    // A player death inside the engaged boss's heroic instance taints the window.
+    const taint = makeSim();
+    const t = encounterInstance(taint, 'morthen', 'hollow_crypt', 'heroic', ['Tank']);
+    t.boss.threat.set(t.recipients[0].entityId, 100); // engaged: window open
+    onPlayerDeathForDeeds(taint.ctx, entityOf(taint, t.recipients[0]));
+    onMobKillCreditForDeeds(taint.ctx, t.boss, null, t.recipients[0], t.recipients);
+    expect(t.recipients[0].deedsEarned.has('dgn_morthen_flawless')).toBe(false);
+
+    // Same clean pull on Normal difficulty never satisfies the heroic-only gate.
+    const normal = makeSim();
+    const n = encounterInstance(normal, 'morthen', 'hollow_crypt', 'normal', ['Tank']);
+    onMobKillCreditForDeeds(normal.ctx, n.boss, null, n.recipients[0], n.recipients);
+    expect(n.recipients[0].deedsEarned.has('dgn_morthen_flawless')).toBe(false);
+  });
+
+  it('dgn_ysolei_flawless: a clean heroic kill grants; a death taint blocks', () => {
+    const clean = makeSim();
+    const c = encounterInstance(clean, 'ysolei', 'drowned_temple', 'heroic', ['Tank']);
+    onMobKillCreditForDeeds(clean.ctx, c.boss, null, c.recipients[0], c.recipients);
+    expect(c.recipients[0].deedsEarned.has('dgn_ysolei_flawless')).toBe(true);
+
+    const taint = makeSim();
+    const t = encounterInstance(taint, 'ysolei', 'drowned_temple', 'heroic', ['Tank']);
+    t.boss.threat.set(t.recipients[0].entityId, 100);
+    onPlayerDeathForDeeds(taint.ctx, entityOf(taint, t.recipients[0]));
+    onMobKillCreditForDeeds(taint.ctx, t.boss, null, t.recipients[0], t.recipients);
+    expect(t.recipients[0].deedsEarned.has('dgn_ysolei_flawless')).toBe(false);
+  });
+
+  it('dgn_korzul_flawless: a clean heroic kill grants; a death taint blocks', () => {
+    const clean = makeSim();
+    const c = encounterInstance(clean, 'korzul_the_gravewyrm', 'gravewyrm_sanctum', 'heroic', [
+      'Tank',
+    ]);
+    onMobKillCreditForDeeds(clean.ctx, c.boss, null, c.recipients[0], c.recipients);
+    expect(c.recipients[0].deedsEarned.has('dgn_korzul_flawless')).toBe(true);
+
+    const taint = makeSim();
+    const t = encounterInstance(taint, 'korzul_the_gravewyrm', 'gravewyrm_sanctum', 'heroic', [
+      'Tank',
+    ]);
+    t.boss.threat.set(t.recipients[0].entityId, 100);
+    onPlayerDeathForDeeds(taint.ctx, entityOf(taint, t.recipients[0]));
+    onMobKillCreditForDeeds(taint.ctx, t.boss, null, t.recipients[0], t.recipients);
+    expect(t.recipients[0].deedsEarned.has('dgn_korzul_flawless')).toBe(false);
+  });
+
+  it('dgn_nythraxis_deathless: a clean heroic kill grants; a death taint blocks', () => {
+    const clean = makeSim();
+    const c = encounterInstance(
+      clean,
+      'nythraxis_scourge_of_thornpeak',
+      'nythraxis_boss_arena',
+      'heroic',
+      ['Tank'],
+    );
+    onMobKillCreditForDeeds(clean.ctx, c.boss, null, c.recipients[0], c.recipients);
+    expect(c.recipients[0].deedsEarned.has('dgn_nythraxis_deathless')).toBe(true);
+
+    const taint = makeSim();
+    const t = encounterInstance(
+      taint,
+      'nythraxis_scourge_of_thornpeak',
+      'nythraxis_boss_arena',
+      'heroic',
+      ['Tank'],
+    );
+    t.boss.threat.set(t.recipients[0].entityId, 100);
+    onPlayerDeathForDeeds(taint.ctx, entityOf(taint, t.recipients[0]));
+    onMobKillCreditForDeeds(taint.ctx, t.boss, null, t.recipients[0], t.recipients);
+    expect(t.recipients[0].deedsEarned.has('dgn_nythraxis_deathless')).toBe(false);
+  });
+
+  it('dgn_morthen_trio: at most three participants grants; a fourth blocks', () => {
+    const ok = makeSim();
+    const boss = spawnMob(ok, 'morthen', { x: 5, y: 0, z: -5 });
+    const three = ['A', 'B', 'C'].map((n) => addMeta(ok, n));
+    for (const m of three) onDamageDealtForDeeds(ok.ctx, entityOf(ok, m), boss, 10, false, 'hit');
+    onMobKillCreditForDeeds(ok.ctx, boss, null, three[0], three);
+    for (const m of three) expect(m.deedsEarned.has('dgn_morthen_trio')).toBe(true);
+
+    const over = makeSim();
+    const boss2 = spawnMob(over, 'morthen', { x: 5, y: 0, z: -5 });
+    const four = ['A', 'B', 'C', 'D'].map((n) => addMeta(over, n));
+    for (const m of four)
+      onDamageDealtForDeeds(over.ctx, entityOf(over, m), boss2, 10, false, 'hit');
+    onMobKillCreditForDeeds(over.ctx, boss2, null, four[0], four);
+    for (const m of four) expect(m.deedsEarned.has('dgn_morthen_trio')).toBe(false);
+  });
+
+  it('dgn_vael_thralls: every summoned add dead grants; a live add blocks', () => {
+    const clean = makeSim();
+    const boss = spawnMob(clean, 'vael_the_mistcaller', { x: 5, y: 0, z: -5 });
+    const deadAdd = spawnMob(clean, 'webwood_spider', { x: 6, y: 0, z: -6 });
+    deadAdd.dead = true;
+    onBossAddsSummonedForDeeds(clean.ctx, boss, [deadAdd.id]);
+    const slayer = addMeta(clean, 'Slayer');
+    onMobKillCreditForDeeds(clean.ctx, boss, null, slayer, [slayer]);
+    expect(slayer.deedsEarned.has('dgn_vael_thralls')).toBe(true);
+
+    const live = makeSim();
+    const boss2 = spawnMob(live, 'vael_the_mistcaller', { x: 5, y: 0, z: -5 });
+    const liveAdd = spawnMob(live, 'webwood_spider', { x: 6, y: 0, z: -6 }); // still alive
+    onBossAddsSummonedForDeeds(live.ctx, boss2, [liveAdd.id]);
+    const slayer2 = addMeta(live, 'Slayer');
+    onMobKillCreditForDeeds(live.ctx, boss2, null, slayer2, [slayer2]);
+    expect(slayer2.deedsEarned.has('dgn_vael_thralls')).toBe(false);
+  });
+
+  it('dgn_ysolei_moonspawn: every summoned add dead grants; a live add blocks', () => {
+    const clean = makeSim();
+    const boss = spawnMob(clean, 'ysolei', { x: 5, y: 0, z: -5 });
+    const deadAdd = spawnMob(clean, 'webwood_spider', { x: 6, y: 0, z: -6 });
+    deadAdd.dead = true;
+    onBossAddsSummonedForDeeds(clean.ctx, boss, [deadAdd.id]);
+    const slayer = addMeta(clean, 'Slayer');
+    onMobKillCreditForDeeds(clean.ctx, boss, null, slayer, [slayer]);
+    expect(slayer.deedsEarned.has('dgn_ysolei_moonspawn')).toBe(true);
+
+    const live = makeSim();
+    const boss2 = spawnMob(live, 'ysolei', { x: 5, y: 0, z: -5 });
+    const liveAdd = spawnMob(live, 'webwood_spider', { x: 6, y: 0, z: -6 });
+    onBossAddsSummonedForDeeds(live.ctx, boss2, [liveAdd.id]);
+    const slayer2 = addMeta(live, 'Slayer');
+    onMobKillCreditForDeeds(live.ctx, boss2, null, slayer2, [slayer2]);
+    expect(slayer2.deedsEarned.has('dgn_ysolei_moonspawn')).toBe(false);
+  });
+
+  it('dgn_velkhar_bonewalkers: every summoned add dead grants; a live add blocks', () => {
+    const clean = makeSim();
+    const boss = spawnMob(clean, 'grand_necromancer_velkhar', { x: 5, y: 0, z: -5 });
+    const deadAdd = spawnMob(clean, 'webwood_spider', { x: 6, y: 0, z: -6 });
+    deadAdd.dead = true;
+    onBossAddsSummonedForDeeds(clean.ctx, boss, [deadAdd.id]);
+    const slayer = addMeta(clean, 'Slayer');
+    onMobKillCreditForDeeds(clean.ctx, boss, null, slayer, [slayer]);
+    expect(slayer.deedsEarned.has('dgn_velkhar_bonewalkers')).toBe(true);
+
+    const live = makeSim();
+    const boss2 = spawnMob(live, 'grand_necromancer_velkhar', { x: 5, y: 0, z: -5 });
+    const liveAdd = spawnMob(live, 'webwood_spider', { x: 6, y: 0, z: -6 });
+    onBossAddsSummonedForDeeds(live.ctx, boss2, [liveAdd.id]);
+    const slayer2 = addMeta(live, 'Slayer');
+    onMobKillCreditForDeeds(live.ctx, boss2, null, slayer2, [slayer2]);
+    expect(slayer2.deedsEarned.has('dgn_velkhar_bonewalkers')).toBe(false);
+  });
+
+  it('dgn_olen_arc: a clean positioning attempt grants; a splash taint blocks', () => {
+    const clean = makeSim();
+    const boss = spawnMob(clean, 'knight_commander_olen', { x: 5, y: 0, z: -5 });
+    const dancer = addMeta(clean, 'Dancer');
+    onMobKillCreditForDeeds(clean.ctx, boss, null, dancer, [dancer]);
+    expect(dancer.deedsEarned.has('dgn_olen_arc')).toBe(true);
+
+    const taint = makeSim();
+    const boss2 = spawnMob(taint, 'knight_commander_olen', { x: 5, y: 0, z: -5 });
+    onBossSplashHitForDeeds(taint.ctx, boss2); // Reaping Arc caught a non-target
+    const dancer2 = addMeta(taint, 'Dancer');
+    onMobKillCreditForDeeds(taint.ctx, boss2, null, dancer2, [dancer2]);
+    expect(dancer2.deedsEarned.has('dgn_olen_arc')).toBe(false);
+  });
+
+  it('dgn_nythraxis_gravebreaker: a clean arc grants; a splash taint blocks', () => {
+    const clean = makeSim();
+    const boss = spawnMob(clean, 'nythraxis_scourge_of_thornpeak', { x: 5, y: 0, z: -5 });
+    const dancer = addMeta(clean, 'Dancer');
+    onMobKillCreditForDeeds(clean.ctx, boss, null, dancer, [dancer]);
+    expect(dancer.deedsEarned.has('dgn_nythraxis_gravebreaker')).toBe(true);
+
+    const taint = makeSim();
+    const boss2 = spawnMob(taint, 'nythraxis_scourge_of_thornpeak', { x: 5, y: 0, z: -5 });
+    onBossSplashHitForDeeds(taint.ctx, boss2);
+    const dancer2 = addMeta(taint, 'Dancer');
+    onMobKillCreditForDeeds(taint.ctx, boss2, null, dancer2, [dancer2]);
+    expect(dancer2.deedsEarned.has('dgn_nythraxis_gravebreaker')).toBe(false);
+  });
+
+  it('dlv_nhalia_bells: no bell contact grants; a bell taint blocks', () => {
+    const clean = makeSim();
+    const boss = spawnMob(clean, 'sister_nhalia_drowned_canticle', { x: 5, y: 0, z: -5 });
+    const nimble = addMeta(clean, 'Nimble');
+    onMobKillCreditForDeeds(clean.ctx, boss, null, nimble, [nimble]);
+    expect(nimble.deedsEarned.has('dlv_nhalia_bells')).toBe(true);
+
+    const taint = makeSim();
+    const boss2 = spawnMob(taint, 'sister_nhalia_drowned_canticle', { x: 5, y: 0, z: -5 });
+    onBellContactForDeeds(taint.ctx, boss2);
+    const nimble2 = addMeta(taint, 'Nimble');
+    onMobKillCreditForDeeds(taint.ctx, boss2, null, nimble2, [nimble2]);
+    expect(nimble2.deedsEarned.has('dlv_nhalia_bells')).toBe(false);
+  });
+
+  it('dgn_nythraxis_wardens: an interrupted Deathless Rage grants; a resolved cast blocks', () => {
+    const clean = makeSim();
+    const boss = spawnMob(clean, 'nythraxis_scourge_of_thornpeak', { x: 5, y: 0, z: -5 });
+    const warden = addMeta(clean, 'Warden');
+    onMobKillCreditForDeeds(clean.ctx, boss, null, warden, [warden]);
+    expect(warden.deedsEarned.has('dgn_nythraxis_wardens')).toBe(true);
+
+    const resolved = makeSim();
+    const boss2 = spawnMob(resolved, 'nythraxis_scourge_of_thornpeak', { x: 5, y: 0, z: -5 });
+    onDeathlessRageResolvedForDeeds(resolved.ctx, boss2); // the cast went off
+    const warden2 = addMeta(resolved, 'Warden');
+    onMobKillCreditForDeeds(resolved.ctx, boss2, null, warden2, [warden2]);
+    expect(warden2.deedsEarned.has('dgn_nythraxis_wardens')).toBe(false);
+  });
+
+  it('dgn_sanctum_speed: a kill inside the speed window grants; a slow kill blocks', () => {
+    const fast = makeSim();
+    fast.time = 100;
+    const f = encounterInstance(fast, 'korzul_the_gravewyrm', 'gravewyrm_sanctum', 'normal', [
+      'Racer',
+    ]);
+    f.inst.claimedAt = 0; // 100 - 0 = 100s, inside the 900s window
+    onMobKillCreditForDeeds(fast.ctx, f.boss, null, f.recipients[0], f.recipients);
+    expect(f.recipients[0].deedsEarned.has('dgn_sanctum_speed')).toBe(true);
+
+    const slow = makeSim();
+    slow.time = 1000;
+    const s = encounterInstance(slow, 'korzul_the_gravewyrm', 'gravewyrm_sanctum', 'normal', [
+      'Racer',
+    ]);
+    s.inst.claimedAt = 0; // 1000s, past the window
+    onMobKillCreditForDeeds(slow.ctx, s.boss, null, s.recipients[0], s.recipients);
+    expect(s.recipients[0].deedsEarned.has('dgn_sanctum_speed')).toBe(false);
+  });
+
+  it('world boss: every contributor earns cmb_thunzharr; only the unbroken survivor earns the record', () => {
+    const sim = makeSim();
+    const boss = spawnMob(sim, 'thunzharr_waking_peak', { x: 5, y: 0, z: -5 }, 30);
+    const diver = addMeta(sim, 'Diver');
+    const survivor = addMeta(sim, 'Survivor');
+    boss.bossDamagers.add(diver.entityId);
+    boss.bossDamagers.add(survivor.entityId);
+    // The diver falls mid-fight while on the boss's damager roster.
+    onPlayerDeathForDeeds(sim.ctx, entityOf(sim, diver));
+    onWorldBossKilledForDeeds(sim.ctx, boss, [diver, survivor]);
+    expect(diver.deedsEarned.has('cmb_thunzharr')).toBe(true);
+    expect(survivor.deedsEarned.has('cmb_thunzharr')).toBe(true);
+    expect(diver.deedsEarned.has('cmb_thunzharr_unbroken')).toBe(false);
+    expect(survivor.deedsEarned.has('cmb_thunzharr_unbroken')).toBe(true);
+  });
+});
+
+describe('Vale Cup sites', () => {
+  it('chr_vale_cup_debut: a queued bout and a non-bot toucher grants; practice and bots block', () => {
+    const sim = makeSim();
+    const striker = addMeta(sim, 'Striker');
+    // Practice bout: never counts.
+    onCupTouchForDeeds(
+      sim.ctx,
+      cupMatch({ id: 1, teamA: [striker.entityId], practice: {} }),
+      striker.entityId,
+    );
+    expect(striker.deedsEarned.has('chr_vale_cup_debut')).toBe(false);
+    // Queued bout, but the toucher is a backfill bot: skipped.
+    const bot = addMeta(sim, 'Bot');
+    sim.ctx.vcup.botPids.push(bot.entityId);
+    onCupTouchForDeeds(sim.ctx, cupMatch({ id: 2, teamA: [bot.entityId] }), bot.entityId);
+    expect(bot.deedsEarned.has('chr_vale_cup_debut')).toBe(false);
+    // Queued bout, human toucher: debut. (The queued gate reads practice, not rated,
+    // so even an unrated bot-backfilled bout counts for a human's debut.)
+    onCupTouchForDeeds(
+      sim.ctx,
+      cupMatch({ id: 3, rated: false, teamA: [striker.entityId] }),
+      striker.entityId,
+    );
+    expect(striker.deedsEarned.has('chr_vale_cup_debut')).toBe(true);
+  });
+
+  it('pvp_vcup_first_match: needs a personal touch, a seat, and a queued bout', () => {
+    const sim = makeSim();
+    const seated = addMeta(sim, 'Starter');
+    const untouched = addMeta(sim, 'Idle');
+    const benched = addMeta(sim, 'Sub');
+    const queued = cupMatch({
+      id: 1,
+      teamA: [seated.entityId, untouched.entityId, benched.entityId],
+      benched: new Set([benched.entityId]),
+    });
+    onCupTouchForDeeds(sim.ctx, queued, seated.entityId);
+    onCupTouchForDeeds(sim.ctx, queued, benched.entityId); // benched can still touch, stays ineligible
+    // untouched never touches the ball.
+    onCupMatchEndForDeeds(sim.ctx, queued);
+    expect(seated.deedsEarned.has('pvp_vcup_first_match')).toBe(true);
+    expect(untouched.deedsEarned.has('pvp_vcup_first_match')).toBe(false);
+    expect(benched.deedsEarned.has('pvp_vcup_first_match')).toBe(false);
+
+    // A practice bout never counts even for a seated toucher.
+    const prac = makeSim();
+    const toucher = addMeta(prac, 'Practicer');
+    const practice = cupMatch({ id: 2, teamA: [toucher.entityId], practice: {} });
+    onCupTouchForDeeds(prac.ctx, practice, toucher.entityId);
+    onCupMatchEndForDeeds(prac.ctx, practice);
+    expect(toucher.deedsEarned.has('pvp_vcup_first_match')).toBe(false);
+  });
+
+  it('onCupGoalForDeeds: gates goals on rating and a real scorer, and stacks golden', () => {
+    // Unrated bout: no goal credit.
+    const unrated = makeSim();
+    const u = addMeta(unrated, 'Scorer');
+    onCupGoalForDeeds(
+      unrated.ctx,
+      cupMatch({ id: 1, rated: false, teamA: [u.entityId] }),
+      'A',
+      u.entityId,
+    );
+    expect(u.deedsEarned.has('pvp_vcup_first_goal')).toBe(false);
+
+    // Own goal (null scorer): credits nobody.
+    const own = makeSim();
+    const o = addMeta(own, 'Scorer');
+    onCupGoalForDeeds(own.ctx, cupMatch({ id: 1, rated: true, teamA: [o.entityId] }), 'A', null);
+    expect(o.deedsEarned.has('pvp_vcup_first_goal')).toBe(false);
+
+    // Rated golden goal: first goal AND golden goal.
+    const golden = makeSim();
+    const g = addMeta(golden, 'Scorer');
+    onCupGoalForDeeds(
+      golden.ctx,
+      cupMatch({ id: 1, rated: true, golden: true, teamA: [g.entityId] }),
+      'A',
+      g.entityId,
+    );
+    expect(g.deedsEarned.has('pvp_vcup_first_goal')).toBe(true);
+    expect(g.deedsEarned.has('pvp_vcup_golden_goal')).toBe(true);
+
+    // A non-golden rated goal never earns the golden deed.
+    const plain = makeSim();
+    const p = addMeta(plain, 'Scorer');
+    onCupGoalForDeeds(
+      plain.ctx,
+      cupMatch({ id: 1, rated: true, golden: false, teamA: [p.entityId] }),
+      'A',
+      p.entityId,
+    );
+    expect(p.deedsEarned.has('pvp_vcup_first_goal')).toBe(true);
+    expect(p.deedsEarned.has('pvp_vcup_golden_goal')).toBe(false);
+  });
+
+  it('pvp_vcup_hat_trick: three goals in a bracket-3+ bout; bracket 2 and two goals fall short', () => {
+    // Bracket 2: three goals never make a hat trick.
+    const low = makeSim();
+    const l = addMeta(low, 'Hatless');
+    const lowMatch = cupMatch({ id: 1, rated: true, bracket: 2, teamA: [l.entityId] });
+    for (let i = 0; i < 3; i++) onCupGoalForDeeds(low.ctx, lowMatch, 'A', l.entityId);
+    expect(l.deedsEarned.has('pvp_vcup_hat_trick')).toBe(false);
+
+    // Bracket 3: two goals short, the third completes it.
+    const hi = makeSim();
+    const h = addMeta(hi, 'Hatful');
+    const hiMatch = cupMatch({ id: 1, rated: true, bracket: 3, teamA: [h.entityId] });
+    onCupGoalForDeeds(hi.ctx, hiMatch, 'A', h.entityId);
+    onCupGoalForDeeds(hi.ctx, hiMatch, 'A', h.entityId);
+    expect(h.deedsEarned.has('pvp_vcup_hat_trick')).toBe(false);
+    onCupGoalForDeeds(hi.ctx, hiMatch, 'A', h.entityId);
+    expect(h.deedsEarned.has('pvp_vcup_hat_trick')).toBe(true);
+  });
+
+  it('pvp_vcup_first_save: fires only in a rated bout', () => {
+    const sim = makeSim();
+    const keeper = addMeta(sim, 'Keeper');
+    onCupSaveForDeeds(
+      sim.ctx,
+      cupMatch({ id: 1, rated: false, teamA: [keeper.entityId] }),
+      keeper.entityId,
+    );
+    expect(keeper.deedsEarned.has('pvp_vcup_first_save')).toBe(false);
+    onCupSaveForDeeds(
+      sim.ctx,
+      cupMatch({ id: 1, rated: true, teamA: [keeper.entityId] }),
+      keeper.entityId,
+    );
+    expect(keeper.deedsEarned.has('pvp_vcup_first_save')).toBe(true);
+  });
+
+  it('pvp_vcup_clean_sheet: a winning, seated keeper who conceded nothing; each field flips it off', () => {
+    const sheet = (meta: PlayerMeta, over: Partial<CupMatchForDeeds>): CupMatchForDeeds =>
+      cupMatch({
+        id: 1,
+        teamA: [meta.entityId],
+        roles: { [meta.entityId]: 'keeper' },
+        scoreA: 3,
+        scoreB: 0,
+        ...over,
+      });
+
+    // Loser: winner !== team.
+    const loseSim = makeSim();
+    const lose = addMeta(loseSim, 'Keeper');
+    onCupStandingForDeeds(loseSim.ctx, sheet(lose, {}), lose.entityId, 'A', 'B');
+    expect(lose.deedsEarned.has('pvp_vcup_clean_sheet')).toBe(false);
+
+    // Not a keeper.
+    const roleSim = makeSim();
+    const outfield = addMeta(roleSim, 'Striker');
+    onCupStandingForDeeds(
+      roleSim.ctx,
+      sheet(outfield, { roles: { [outfield.entityId]: 'striker' } }),
+      outfield.entityId,
+      'A',
+      'A',
+    );
+    expect(outfield.deedsEarned.has('pvp_vcup_clean_sheet')).toBe(false);
+
+    // Benched keeper.
+    const benchSim = makeSim();
+    const bench = addMeta(benchSim, 'Keeper');
+    onCupStandingForDeeds(
+      benchSim.ctx,
+      sheet(bench, { benched: new Set([bench.entityId]) }),
+      bench.entityId,
+      'A',
+      'A',
+    );
+    expect(bench.deedsEarned.has('pvp_vcup_clean_sheet')).toBe(false);
+
+    // Conceded a goal: opposing score != 0.
+    const concedeSim = makeSim();
+    const concede = addMeta(concedeSim, 'Keeper');
+    onCupStandingForDeeds(
+      concedeSim.ctx,
+      sheet(concede, { scoreB: 1 }),
+      concede.entityId,
+      'A',
+      'A',
+    );
+    expect(concede.deedsEarned.has('pvp_vcup_clean_sheet')).toBe(false);
+
+    // All four satisfied: clean sheet.
+    const winSim = makeSim();
+    const win = addMeta(winSim, 'Keeper');
+    onCupStandingForDeeds(winSim.ctx, sheet(win, {}), win.entityId, 'A', 'A');
+    expect(win.deedsEarned.has('pvp_vcup_clean_sheet')).toBe(true);
+  });
+});
+
+describe('Fiesta sites', () => {
+  it('onArenaMatchEndForDeeds: awards the fiesta bout, win, and full-build tiers', () => {
+    const sim = makeSim();
+    const winner = addMeta(sim, 'Champ');
+    const loser = addMeta(sim, 'Runner');
+    winner.fiestaAugments = ['a', 'b', 'c']; // one pick per wave, three waves
+    onArenaMatchEndForDeeds(sim.ctx, fiestaMatch(sim, [winner.entityId], [loser.entityId]), 'A');
+    expect(winner.deedsEarned.has('pvp_fiesta_first_bout')).toBe(true);
+    expect(loser.deedsEarned.has('pvp_fiesta_first_bout')).toBe(true);
+    expect(winner.deedsEarned.has('pvp_fiesta_first_win')).toBe(true);
+    expect(loser.deedsEarned.has('pvp_fiesta_first_win')).toBe(false);
+    expect(winner.deedsEarned.has('pvp_fiesta_full_build')).toBe(true);
+
+    // A winner one pick short earns the win but not the full build.
+    const short = makeSim();
+    const w2 = addMeta(short, 'Champ');
+    const l2 = addMeta(short, 'Runner');
+    w2.fiestaAugments = ['a', 'b'];
+    onArenaMatchEndForDeeds(short.ctx, fiestaMatch(short, [w2.entityId], [l2.entityId]), 'A');
+    expect(w2.deedsEarned.has('pvp_fiesta_first_win')).toBe(true);
+    expect(w2.deedsEarned.has('pvp_fiesta_full_build')).toBe(false);
+  });
+
+  it('a bot-seated bout blocks all fiesta end-of-bout credit', () => {
+    const sim = makeSim();
+    const human = addMeta(sim, 'Human');
+    const bot = addMeta(sim, 'Bot');
+    sim.ctx.fiestaBotPids.push(bot.entityId);
+    onArenaMatchEndForDeeds(sim.ctx, fiestaMatch(sim, [human.entityId], [bot.entityId]), 'A');
+    expect(human.deedsEarned.has('pvp_fiesta_first_bout')).toBe(false);
+    expect(human.deedsEarned.has('pvp_fiesta_first_win')).toBe(false);
+  });
+
+  it('pvp_fiesta_double: needs a rapid takedown', () => {
+    const sim = makeSim();
+    const killer = addMeta(sim, 'Ender');
+    const victim = addMeta(sim, 'Fed');
+    const match = fiestaMatch(sim, [killer.entityId], [victim.entityId]);
+    onFiestaTakedownForDeeds(sim.ctx, match, killer.entityId, {
+      rapid: false,
+      victimStreak: 0,
+      killerKills: 0,
+    });
+    expect(killer.deedsEarned.has('pvp_fiesta_double')).toBe(false);
+    onFiestaTakedownForDeeds(sim.ctx, match, killer.entityId, {
+      rapid: true,
+      victimStreak: 0,
+      killerKills: 0,
+    });
+    expect(killer.deedsEarned.has('pvp_fiesta_double')).toBe(true);
+  });
+
+  it('pvp_fiesta_shutdown: needs a victim streak of at least three', () => {
+    const sim = makeSim();
+    const killer = addMeta(sim, 'Ender');
+    const victim = addMeta(sim, 'Fed');
+    const match = fiestaMatch(sim, [killer.entityId], [victim.entityId]);
+    onFiestaTakedownForDeeds(sim.ctx, match, killer.entityId, {
+      rapid: false,
+      victimStreak: 2,
+      killerKills: 0,
+    });
+    expect(killer.deedsEarned.has('pvp_fiesta_shutdown')).toBe(false);
+    onFiestaTakedownForDeeds(sim.ctx, match, killer.entityId, {
+      rapid: false,
+      victimStreak: 3,
+      killerKills: 0,
+    });
+    expect(killer.deedsEarned.has('pvp_fiesta_shutdown')).toBe(true);
+  });
+
+  it('pvp_fiesta_five_kills: needs at least five kills in the bout', () => {
+    const sim = makeSim();
+    const killer = addMeta(sim, 'Ender');
+    const victim = addMeta(sim, 'Fed');
+    const match = fiestaMatch(sim, [killer.entityId], [victim.entityId]);
+    onFiestaTakedownForDeeds(sim.ctx, match, killer.entityId, {
+      rapid: false,
+      victimStreak: 0,
+      killerKills: 4,
+    });
+    expect(killer.deedsEarned.has('pvp_fiesta_five_kills')).toBe(false);
+    onFiestaTakedownForDeeds(sim.ctx, match, killer.entityId, {
+      rapid: false,
+      victimStreak: 0,
+      killerKills: 5,
+    });
+    expect(killer.deedsEarned.has('pvp_fiesta_five_kills')).toBe(true);
+  });
+
+  it('a bot-seated bout blocks all fiesta takedown credit', () => {
+    const sim = makeSim();
+    const killer = addMeta(sim, 'Ender');
+    const bot = addMeta(sim, 'Bot');
+    sim.ctx.fiestaBotPids.push(bot.entityId);
+    const match = fiestaMatch(sim, [killer.entityId], [bot.entityId]);
+    onFiestaTakedownForDeeds(sim.ctx, match, killer.entityId, {
+      rapid: true,
+      victimStreak: 3,
+      killerKills: 5,
+    });
+    expect(killer.deedsEarned.has('pvp_fiesta_double')).toBe(false);
+    expect(killer.deedsEarned.has('pvp_fiesta_shutdown')).toBe(false);
+    expect(killer.deedsEarned.has('pvp_fiesta_five_kills')).toBe(false);
+  });
+});
+
+describe('hidden, delve, and chronicle simple sites', () => {
+  it('hid_keepers_toll_twice: needs the resurrection-sickness aura at death', () => {
+    const sim = makeSim();
+    const clean = addMeta(sim, 'Fresh');
+    onPlayerDeathForDeeds(sim.ctx, entityOf(sim, clean));
+    expect(clean.deedsEarned.has('hid_keepers_toll_twice')).toBe(false);
+
+    const sick = addMeta(sim, 'Sick');
+    applyResurrectionSickness(sim.ctx, entityOf(sim, sick), 600);
+    onPlayerDeathForDeeds(sim.ctx, entityOf(sim, sick));
+    expect(sick.deedsEarned.has('hid_keepers_toll_twice')).toBe(true);
+  });
+
+  it('hid_roll_hundred: fires only on a 1..100 roll landing exactly 100', () => {
+    const sim = makeSim();
+    const roller = addMeta(sim, 'Roller');
+    onChatRollForDeeds(sim.ctx, roller.entityId, 2, 100, 100); // lo != 1
+    onChatRollForDeeds(sim.ctx, roller.entityId, 1, 99, 100); // hi != 100
+    onChatRollForDeeds(sim.ctx, roller.entityId, 1, 100, 99); // result != 100
+    expect(roller.deedsEarned.has('hid_roll_hundred')).toBe(false);
+    onChatRollForDeeds(sim.ctx, roller.entityId, 1, 100, 100);
+    expect(roller.deedsEarned.has('hid_roll_hundred')).toBe(true);
+  });
+
+  it('hid_yumi_cheer: needs a living Yumi inside the cheer range', () => {
+    const sim = makeSim();
+    const fan = addMeta(sim, 'Fan');
+    const e = entityOf(sim, fan);
+    e.pos = { x: 0, y: 0, z: 0 };
+    spawnMob(sim, 'yumi_cat', { x: 10, y: 0, z: 0 }, 20); // ten yards away
+    onCheerForDeeds(sim.ctx, fan, e, 'yumi_cat', 5); // range 5 < 10
+    expect(fan.deedsEarned.has('hid_yumi_cheer')).toBe(false);
+    onCheerForDeeds(sim.ctx, fan, e, 'yumi_cat', 15); // range 15 >= 10
+    expect(fan.deedsEarned.has('hid_yumi_cheer')).toBe(true);
+  });
+
+  it('onLockpickSuccessForDeeds: the premium ante and the coffer flag gate independently', () => {
+    const both = makeSim();
+    const p = addMeta(both, 'Picker');
+    onLockpickSuccessForDeeds(both.ctx, p.entityId, 0, false); // no premium, no coffer
+    expect(p.deedsEarned.has('dlv_tumbler_premium')).toBe(false);
+    expect(p.deedsEarned.has('hid_bountiful_coffer')).toBe(false);
+    onLockpickSuccessForDeeds(both.ctx, p.entityId, 1, true);
+    expect(p.deedsEarned.has('dlv_tumbler_premium')).toBe(true);
+    expect(p.deedsEarned.has('hid_bountiful_coffer')).toBe(true);
+
+    // A premium ante on a non-coffer lock earns only the ante deed.
+    const anteOnly = makeSim();
+    const q = addMeta(anteOnly, 'Picker');
+    onLockpickSuccessForDeeds(anteOnly.ctx, q.entityId, 1, false);
+    expect(q.deedsEarned.has('dlv_tumbler_premium')).toBe(true);
+    expect(q.deedsEarned.has('hid_bountiful_coffer')).toBe(false);
+  });
+
+  it('dlv_rite_flawless: requires a mistake-free rite finale', () => {
+    const sim = makeSim();
+    const cantor = addMeta(sim, 'Cantor');
+    onRiteFinaleForDeeds(sim.ctx, cantor.entityId, 1); // one mistake
+    expect(cantor.deedsEarned.has('dlv_rite_flawless')).toBe(false);
+    onRiteFinaleForDeeds(sim.ctx, cantor.entityId, 0);
+    expect(cantor.deedsEarned.has('dlv_rite_flawless')).toBe(true);
+  });
+
+  it('dlv_solo_heroic: needs a heroic tier AND a solo party watermark', () => {
+    const sim = makeSim();
+    const grouped = addMeta(sim, 'Grouped');
+    onDelveClearForDeeds(sim.ctx, grouped, { tierId: 'heroic', deedMaxParty: 2 }); // grouped
+    expect(grouped.deedsEarned.has('dlv_solo_heroic')).toBe(false);
+
+    const normal = addMeta(sim, 'Normal');
+    onDelveClearForDeeds(sim.ctx, normal, { tierId: 'normal', deedMaxParty: 1 }); // not heroic
+    expect(normal.deedsEarned.has('dlv_solo_heroic')).toBe(false);
+
+    const solo = addMeta(sim, 'Solo');
+    onDelveClearForDeeds(sim.ctx, solo, { tierId: 'heroic', deedMaxParty: 1 });
+    expect(solo.deedsEarned.has('dlv_solo_heroic')).toBe(true);
+  });
+
+  it('hid_companion_save: grants the save to a real owner, and is a no-op for an unknown pid', () => {
+    const sim = makeSim();
+    const saved = addMeta(sim, 'Saved');
+    onCompanionReviveForDeeds(sim.ctx, 999999); // unknown pid: no meta, no throw, no grant
+    onCompanionReviveForDeeds(sim.ctx, saved.entityId);
+    expect(saved.deedsEarned.has('hid_companion_save')).toBe(true);
+  });
+
+  it('chr_marsh_hush_the_mending: needs a warded cultist inside the mending radius', () => {
+    // A cultist beyond the 14 yd Grave Mending radius does not count.
+    const far = makeSim();
+    const killerFar = addMeta(far, 'Reaper');
+    const menderFar = spawnMob(far, 'gravecaller_mender', { x: 0, y: 0, z: 0 }, 3);
+    spawnMob(far, 'gravecaller_cultist', { x: 20, y: 0, z: 0 }, 3);
+    onMobKillCreditForDeeds(far.ctx, menderFar, entityOf(far, killerFar), killerFar, [killerFar]);
+    expect(killerFar.deedsEarned.has('chr_marsh_hush_the_mending')).toBe(false);
+
+    // A cultist inside the radius grants.
+    const near = makeSim();
+    const killerNear = addMeta(near, 'Reaper');
+    const menderNear = spawnMob(near, 'gravecaller_mender', { x: 0, y: 0, z: 0 }, 3);
+    spawnMob(near, 'gravecaller_cultist', { x: 6, y: 0, z: 0 }, 3);
+    onMobKillCreditForDeeds(near.ctx, menderNear, entityOf(near, killerNear), killerNear, [
+      killerNear,
+    ]);
+    expect(killerNear.deedsEarned.has('chr_marsh_hush_the_mending')).toBe(true);
+  });
+
+  it('hid_saul_footnote: nine consecutive Saul talks grant; another NPC mid-streak resets', () => {
+    const streak = makeSim();
+    const scholar = addMeta(streak, 'Scholar');
+    for (let i = 0; i < 9; i++) onNpcTalkedForDeeds(streak.ctx, scholar, 'chronicler_saul');
+    expect(scholar.deedsEarned.has('hid_saul_footnote')).toBe(true);
+
+    // Eight Saul talks, a different NPC, then eight more Saul talks: never nine in a row.
+    const reset = makeSim();
+    const q = addMeta(reset, 'Scholar');
+    for (let i = 0; i < 8; i++) onNpcTalkedForDeeds(reset.ctx, q, 'chronicler_saul');
+    onNpcTalkedForDeeds(reset.ctx, q, 'the_merchant'); // resets the consecutive counter
+    for (let i = 0; i < 8; i++) onNpcTalkedForDeeds(reset.ctx, q, 'chronicler_saul');
+    expect(q.deedsEarned.has('hid_saul_footnote')).toBe(false);
+  });
+
+  it('chr_marsh_unburst: onBloatDetonatedForDeeds counts only blast-clean kills', () => {
+    const sim = makeSim();
+    const popper = addMeta(sim, 'Popper');
+    // A blast that damaged the credited player is not a clean kill.
+    const corpse = spawnMob(sim, 'bog_bloat', { x: 0, y: 0, z: 0 });
+    onMobKillCreditForDeeds(sim.ctx, corpse, null, popper, [popper]); // arms the pending credit
+    onBloatDetonatedForDeeds(sim.ctx, corpse, [popper.entityId]);
+    expect(popper.deedStats.counters.bloatCleanKills).toBe(0);
+    // A blast that harmed nobody is a clean kill.
+    const corpse2 = spawnMob(sim, 'bog_bloat', { x: 0, y: 0, z: 0 });
+    onMobKillCreditForDeeds(sim.ctx, corpse2, null, popper, [popper]);
+    onBloatDetonatedForDeeds(sim.ctx, corpse2, []);
+    expect(popper.deedStats.counters.bloatCleanKills).toBe(1);
+  });
+
+  it('chr_marsh_unburst: unlocks at eight clean bog_bloat kills, not seven', () => {
+    const sim = makeSim();
+    const marsh = addMeta(sim, 'Marsh');
+    const cleanKill = (): void => {
+      const corpse = spawnMob(sim, 'bog_bloat', { x: 0, y: 0, z: 0 });
+      onMobKillCreditForDeeds(sim.ctx, corpse, null, marsh, [marsh]);
+      onBloatDetonatedForDeeds(sim.ctx, corpse, []);
+    };
+    for (let i = 0; i < 7; i++) cleanKill();
+    sim.tick();
+    expect(marsh.deedsEarned.has('chr_marsh_unburst')).toBe(false);
+    cleanKill();
+    sim.tick();
+    expect(marsh.deedStats.counters.bloatCleanKills).toBe(8);
+    expect(marsh.deedsEarned.has('chr_marsh_unburst')).toBe(true);
+  });
+});
+
+describe('kill-credit negatives (onMobKillCreditForDeeds)', () => {
+  it('cmb_giantslayer: needs a five-level gap and excludes dummies and world bosses', () => {
+    // A kill only four levels up does not grant (boundary).
+    const near = makeSim();
+    const killer = addMeta(near, 'Ant');
+    const kEnt = entityOf(near, killer);
+    kEnt.level = 10;
+    const mob4 = spawnMob(near, 'wild_boar', { x: 1, y: 0, z: 1 }, 14); // +4
+    onMobKillCreditForDeeds(near.ctx, mob4, kEnt, killer, [killer]);
+    expect(killer.deedsEarned.has('cmb_giantslayer')).toBe(false);
+    // Five levels up grants.
+    const mob5 = spawnMob(near, 'wild_boar', { x: 1, y: 0, z: 1 }, 15); // +5
+    onMobKillCreditForDeeds(near.ctx, mob5, kEnt, killer, [killer]);
+    expect(killer.deedsEarned.has('cmb_giantslayer')).toBe(true);
+
+    // A training dummy far above the killer is excluded.
+    const dummySim = makeSim();
+    const dKiller = addMeta(dummySim, 'Ant');
+    entityOf(dummySim, dKiller).level = 10;
+    const dummy = spawnMob(dummySim, 'training_dummy', { x: 1, y: 0, z: 1 }, 30);
+    onMobKillCreditForDeeds(dummySim.ctx, dummy, entityOf(dummySim, dKiller), dKiller, [dKiller]);
+    expect(dKiller.deedsEarned.has('cmb_giantslayer')).toBe(false);
+
+    // The world boss is excluded.
+    const wbSim = makeSim();
+    const wKiller = addMeta(wbSim, 'Ant');
+    entityOf(wbSim, wKiller).level = 10;
+    const wb = spawnMob(wbSim, 'thunzharr_waking_peak', { x: 1, y: 0, z: 1 }, 30);
+    onMobKillCreditForDeeds(wbSim.ctx, wb, entityOf(wbSim, wKiller), wKiller, [wKiller]);
+    expect(wKiller.deedsEarned.has('cmb_giantslayer')).toBe(false);
+  });
+
+  it('chr_vale_packbreaker: three forest_wolf kills inside the ten-second window', () => {
+    const wolfKill = (sim: Sim, meta: PlayerMeta): void => {
+      const wolf = spawnMob(sim, 'forest_wolf', { x: 1, y: 0, z: 1 });
+      onMobKillCreditForDeeds(sim.ctx, wolf, null, meta, [meta]);
+    };
+
+    // Only two kills in the window: short of the pack.
+    const two = makeSim();
+    two.time = 5;
+    const p2 = addMeta(two, 'Ranger');
+    wolfKill(two, p2);
+    wolfKill(two, p2);
+    expect(p2.deedsEarned.has('chr_vale_packbreaker')).toBe(false);
+
+    // Three kills, but the first is more than ten seconds stale and gets pruned.
+    const gap = makeSim();
+    gap.time = 5;
+    const pg = addMeta(gap, 'Ranger');
+    wolfKill(gap, pg);
+    gap.time = 20; // fifteen seconds later, past the ten-second window
+    wolfKill(gap, pg);
+    wolfKill(gap, pg);
+    expect(pg.deedsEarned.has('chr_vale_packbreaker')).toBe(false);
+
+    // Three kills inside the window: the pack breaks.
+    const ok = makeSim();
+    ok.time = 5;
+    const po = addMeta(ok, 'Ranger');
+    wolfKill(ok, po);
+    wolfKill(ok, po);
+    wolfKill(ok, po);
+    expect(po.deedsEarned.has('chr_vale_packbreaker')).toBe(true);
+  });
+});

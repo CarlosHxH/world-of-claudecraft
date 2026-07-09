@@ -730,6 +730,30 @@ describe('meter triggers (negative then positive per resolver)', () => {
     sim.tick();
     expect(meta.deedsEarned.has('col_discovery_25')).toBe(true);
   });
+
+  it('arenaRankedWins counts the 1v1 win arm; arenaRankedMatches counts each of its four arms', () => {
+    // The either-bracket win meter above is exercised only through arena2v2Wins;
+    // pin the 1v1-only arm (arenaWins alone, arena2v2Wins staying 0) so a resolver
+    // that dropped the 1v1 term would turn this red.
+    const winArm = makeSim();
+    const wm = primary(winArm).meta;
+    wm.arenaWins = 1;
+    winArm.ctx.markDeedsDirty(wm.entityId);
+    winArm.tick();
+    expect(wm.deedsEarned.has('pvp_arena_first_win')).toBe(true);
+
+    // arenaRankedMatches sums wins AND losses in BOTH brackets: each arm alone
+    // pushes the meter to 1 and grants the first-match deed (fresh sim per arm so
+    // the sticky grant never masks a dropped term).
+    for (const arm of ['arenaWins', 'arenaLosses', 'arena2v2Wins', 'arena2v2Losses'] as const) {
+      const sim = makeSim();
+      const meta = primary(sim).meta;
+      meta[arm] = 1;
+      sim.ctx.markDeedsDirty(meta.entityId);
+      sim.tick();
+      expect(meta.deedsEarned.has('pvp_arena_first_match'), arm).toBe(true);
+    }
+  });
 });
 
 describe('flag triggers (one negative and one positive per predicate)', () => {
