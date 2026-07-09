@@ -4149,6 +4149,7 @@ export const cs_CZ: EnTranslations = {
       "mobileSocial": "Sociální",
       "mobileArena": "Aréna",
       "mobileMenu": "Menu",
+      "mobileSettings": "Nastavení",
       "mobileUse": "Použít",
       "mobileMeters": "Měřiče",
       "mobileMap": "Mapa",

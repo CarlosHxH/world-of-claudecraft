@@ -4149,6 +4149,7 @@ export const id_ID: EnTranslations = {
       "mobileSocial": "Sosial",
       "mobileArena": "Arena",
       "mobileMenu": "Menu",
+      "mobileSettings": "Pengaturan",
       "mobileUse": "Pakai",
       "mobileMeters": "Meter",
       "mobileMap": "Peta",
