@@ -1,5 +1,12 @@
-import { pool } from './db';
+import { ELIGIBLE_ACCOUNT_SQL, pool } from './db';
 import { REALM } from './realm';
+
+// Every ranked read below embeds ELIGIBLE_ACCOUNT_SQL: banned and suspended
+// accounts are delisted from the daily board (and stop inflating other
+// players' ranks) the same way as every other public board. All five ranked
+// reads share the predicate so the page, the total, and the self rank always
+// agree on one population. These reads run per request (no board cache), so
+// the SQL exclusion alone delists immediately; there is nothing to bust.
 
 export interface DailyRewardTaskRow {
   taskId: string;
@@ -316,8 +323,10 @@ export class PgDailyRewardDb implements DailyRewardDb {
       `WITH ranked AS (
          SELECT account_id,
                 row_number() OVER (ORDER BY points DESC, updated_at ASC, account_id ASC) AS rank
-           FROM daily_reward_scores
+           FROM daily_reward_scores s
           WHERE day = $1 AND realm = $2 AND points > 0
+            AND EXISTS (SELECT 1 FROM accounts a
+                         WHERE a.id = s.account_id AND ${ELIGIBLE_ACCOUNT_SQL})
        )
        SELECT rank FROM ranked WHERE account_id = $3`,
       [day, REALM, accountId],
@@ -336,6 +345,7 @@ export class PgDailyRewardDb implements DailyRewardDb {
          FROM daily_reward_scores s
          JOIN accounts a ON a.id = s.account_id
         WHERE s.day = $1 AND s.realm = $2 AND s.points > 0
+          AND ${ELIGIBLE_ACCOUNT_SQL}
         ORDER BY s.points DESC, s.updated_at ASC, s.account_id ASC
         LIMIT $3`,
       [day, REALM, Math.max(1, Math.min(100, limit))],
@@ -354,6 +364,7 @@ export class PgDailyRewardDb implements DailyRewardDb {
            FROM daily_reward_scores s
            JOIN accounts a ON a.id = s.account_id
           WHERE s.day = $1 AND s.realm = $2 AND s.points > 0
+            AND ${ELIGIBLE_ACCOUNT_SQL}
        )
        SELECT account_id, username, points, rank FROM ranked WHERE account_id = $3`,
       [day, REALM, accountId],
@@ -364,8 +375,10 @@ export class PgDailyRewardDb implements DailyRewardDb {
   async leaderboardTotal(day: string): Promise<number> {
     const res = await pool.query(
       `SELECT COUNT(*) AS total
-         FROM daily_reward_scores
-        WHERE day = $1 AND realm = $2 AND points > 0`,
+         FROM daily_reward_scores s
+        WHERE day = $1 AND realm = $2 AND points > 0
+          AND EXISTS (SELECT 1 FROM accounts a
+                       WHERE a.id = s.account_id AND ${ELIGIBLE_ACCOUNT_SQL})`,
       [day, REALM],
     );
     return Number(res.rows[0]?.total ?? 0);
@@ -388,6 +401,7 @@ export class PgDailyRewardDb implements DailyRewardDb {
          FROM daily_reward_scores s
          JOIN accounts a ON a.id = s.account_id
         WHERE s.day = $1 AND s.realm = $2 AND s.points > 0
+          AND ${ELIGIBLE_ACCOUNT_SQL}
         ORDER BY s.points DESC, s.updated_at ASC, s.account_id ASC
         OFFSET $3
         LIMIT $4`,
