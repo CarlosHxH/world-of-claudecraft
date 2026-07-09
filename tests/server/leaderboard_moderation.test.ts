@@ -99,7 +99,13 @@ describe('every ranked board query embeds the fragment', () => {
   });
 
   it('deeds (the Renown roll-up row read)', async () => {
-    await expectExcludes(() => deedsBoardRows(), 'a.id = cd.account_id');
+    const sql = await capturedSql(() => deedsBoardRows());
+    expect(sql).toHaveLength(1);
+    expect(sql[0]).toContain(ELIGIBLE_LITERAL);
+    expect(sql[0]).toContain('a.id = cd.account_id');
+    // The roll-up reads only rows whose character still exists (belt over the
+    // ON DELETE CASCADE braces).
+    expect(sql[0]).toContain('JOIN characters c ON c.id = cd.character_id');
   });
 
   it('daily rewards: all five ranked reads agree on one population', async () => {
@@ -146,16 +152,33 @@ function clientStub(overrides?: { failOn?: RegExp; unsuspendRowCount?: number })
 const FUTURE = new Date(Date.now() + 60 * 60 * 1000).toISOString();
 
 describe('the moderation bust hook', () => {
-  it('fires once per successful action, for every action kind', async () => {
+  it('fires exactly once per successful action, for every action kind', async () => {
     const hook = vi.fn();
     setOnAccountModerated(hook);
     vi.spyOn(pool, 'connect').mockImplementation(() => Promise.resolve(clientStub()) as never);
     const base = { accountId: 7, adminAccountId: 1, reason: 'test' };
+    // Asserted after EACH action, so a kind that never fires and a kind that
+    // double-fires both redden (a running 4-total could mask one with the other).
     await moderateAccount({ ...base, action: 'ban' });
+    expect(hook).toHaveBeenCalledTimes(1);
     await moderateAccount({ ...base, action: 'unban' });
+    expect(hook).toHaveBeenCalledTimes(2);
     await moderateAccount({ ...base, action: 'suspend', expiresAt: FUTURE });
+    expect(hook).toHaveBeenCalledTimes(3);
     await moderateAccount({ ...base, action: 'unsuspend' });
     expect(hook).toHaveBeenCalledTimes(4);
+  });
+
+  it('does not fire when unsuspend finds no standing suspension', async () => {
+    const hook = vi.fn();
+    setOnAccountModerated(hook);
+    vi.spyOn(pool, 'connect').mockImplementation(
+      () => Promise.resolve(clientStub({ unsuspendRowCount: 0 })) as never,
+    );
+    await expect(
+      moderateAccount({ accountId: 7, adminAccountId: 1, action: 'unsuspend', reason: 'test' }),
+    ).rejects.toThrow(/not suspended/);
+    expect(hook).not.toHaveBeenCalled();
   });
 
   it('does not fire when the transaction fails', async () => {

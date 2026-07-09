@@ -676,6 +676,10 @@ describe('leaderboard handler (through the injected cache-fronted runtime)', () 
       query: { board: 'deeds' },
       headers: { authorization: 'Bearer not-a-real-token' },
     });
+    // A non-64-hex header fails the format check (auth.token_missing) without
+    // any db read, proving a present token is never served as anonymous. The
+    // unknown-but-well-formed arm (auth.token_invalid, a db lookup) is owned
+    // by the shared requireAccount middleware suite.
     await expect(handlerFor('/api/leaderboard')(ctx)).rejects.toMatchObject({
       status: 401,
       code: 'auth.token_missing',

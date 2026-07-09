@@ -493,12 +493,15 @@ async function deedsSelfRank(accountId: number): Promise<DeedsLeaderboardSelf | 
   return cache ? deedsBoardSelf(cache.ranked, accountId) : null;
 }
 
-// Moderation delisting is immediate, never TTL-bound: null EVERY cached board
-// scope after a successful moderateAccount of any action kind, so a ban
-// delists and an unban relists on the next read. Arena is served uncached by
-// design, and the daily-rewards board reads run per request (the SQL
-// exclusion in daily_rewards_db.ts is the whole mechanism), so neither has a
-// cache to bust here.
+// Moderation delisting in THIS process is immediate, never TTL-bound: null
+// EVERY cached board scope after a successful moderateAccount of any action
+// kind, so a ban delists and an unban relists on the next read here. In the
+// process-per-realm fleet, PEER realm processes keep their own caches and
+// converge within one LEADERBOARD_TTL_MS (the boards' pre-existing staleness
+// ceiling); the SQL exclusion makes their next refresh correct. Arena is
+// served uncached by design, and the daily-rewards board reads run per
+// request (the SQL exclusion in daily_rewards_db.ts is the whole mechanism),
+// so both are already exact fleet-wide with no cache to bust here.
 function bustBoardCaches(): void {
   leaderboardCache.realm = null;
   leaderboardCache.global = null;

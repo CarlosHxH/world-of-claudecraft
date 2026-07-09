@@ -497,9 +497,10 @@ async function leaderboardHandler(ctx: Ctx): Promise<void> {
   // shared route would newly 401 present-but-invalid tokens on the existing
   // boards, breaking their parity. Here an anonymous caller gets the board
   // with no self row; a present token is validated per module convention
-  // (invalid -> 401 auth.token_invalid, locked -> 403) and a ranked caller
-  // gets their self row. The legacy main.ts arm serves the same body with the
-  // lenient legacy bearer shape (the authz-gap-close divergence class).
+  // (malformed -> 401 auth.token_missing, unknown -> 401 auth.token_invalid,
+  // locked -> 403) and a ranked caller gets their self row. The legacy
+  // main.ts arm serves the same body with the lenient legacy bearer shape
+  // (the authz-gap-close divergence class).
   if (firstQueryValue(ctx.query.board) === LEADERBOARD_DEEDS_BOARD) {
     await optionalReadAccount(ctx, async () => {
       const entries = await rt.getDeedsLeaderboard();
