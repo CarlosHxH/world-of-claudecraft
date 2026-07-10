@@ -92,11 +92,14 @@ describe('mobile target-size: in-game touch controls are >=40x40 in landscape', 
     expectAtLeastFloor(toggle, 'compact #mobile-action-page-toggle');
   });
 
-  it('the left utility cluster (Autorun/Jump), the expanded menu grid, and the collapse handle', () => {
-    const cluster = el('div', { id: 'mobile-utility-cluster' });
-    const autorun = el('button', { id: 'mobile-autorun', class: 'mobile-btn' });
+  it('the ring Jump seat, the expanded menu grid, and the collapse handle', () => {
+    // The old left utility cluster (#mobile-utility-cluster with its Autorun
+    // button) was retired upstream by the joystick autorun lock (#1724): autorun
+    // is now a lock affordance on the move pad, not a tappable satellite. Jump
+    // stays a real button, seated on the action ring's bottom row.
+    const ring = el('div', { id: 'mobile-action-ring' });
     const jump = el('button', { id: 'mobile-jump', class: 'mobile-btn' });
-    cluster.append(autorun, jump);
+    ring.append(jump);
     const combat = el('div', { id: 'mobile-combat-controls' });
     // The collapse handle is the always-visible 40px chip; it must hold the floor
     // even collapsed (its default). The five menu buttons live INSIDE the
@@ -113,10 +116,9 @@ describe('mobile target-size: in-game touch controls are >=40x40 in landscape', 
     const more = el('button', { id: 'mobile-more', class: 'mobile-btn' });
     buttons.append(chat, social, quest, menu, more);
     combat.append(handle, buttons);
-    document.body.append(cluster, combat);
+    document.body.append(ring, combat);
     document.body.classList.add('mobile-menu-open');
-    expectAtLeastFloor(autorun, '#mobile-autorun');
-    expectAtLeastFloor(jump, '#mobile-jump');
+    expectAtLeastFloor(jump, '#mobile-action-ring #mobile-jump');
     expectAtLeastFloor(chat, '#mobile-combat-buttons #mobile-chat');
     expectAtLeastFloor(menu, '#mobile-combat-buttons #mobile-menu');
     expectAtLeastFloor(more, '#mobile-combat-buttons #mobile-more');
