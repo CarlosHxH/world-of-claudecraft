@@ -1398,6 +1398,12 @@
   .lb-row-guild {
     grid-template-columns: 44px 1fr 64px 44px 96px;
   }
+  /* Players (lifetime-XP) board: the base grid plus the trailing Book of
+     Deeds title column (the Renown tab's .lb-deed-title treatment; the muted
+     cell ellipsizes, so a long title never widens the row). */
+  .lb-row-players {
+    grid-template-columns: 44px 1fr 44px 48px 96px 90px;
+  }
   .lb-row.lb-daily {
     grid-template-columns: 44px 1fr 96px;
   }
@@ -4117,6 +4123,17 @@
     font-size: 10px;
     margin-left: 4px;
     display: inline-block;
+    text-decoration: none;
+  }
+  /* Book of Deeds title beside a friend/roster name (the .lb-deed-title muted
+     treatment): inline INSIDE the ellipsized .soc-name cell, so a long combo
+     trims the title tail and never pushes the rank chip, meta column, or
+     action buttons at the 348px window width. */
+  .soc-name .soc-title {
+    color: var(--color-text-muted);
+    font-weight: 400;
+    font-size: 11px;
+    margin-left: 4px;
     text-decoration: none;
   }
   .soc-sub {

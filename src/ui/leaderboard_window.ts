@@ -475,11 +475,12 @@ export class LeaderboardWindow {
 
   private headerHtml(): string {
     return (
-      `<div class="lb-row lb-head"><span class="lb-rank">${esc(t('game.leaderboard.rank'))}</span>` +
+      `<div class="lb-row lb-row-players lb-head"><span class="lb-rank">${esc(t('game.leaderboard.rank'))}</span>` +
       `<span class="lb-name">${esc(t('game.leaderboard.name'))}</span>` +
       `<span class="lb-lvl">${esc(t('game.leaderboard.level'))}</span>` +
       `<span class="lb-vlvl">${esc(t('game.leaderboard.vlevel'))}</span>` +
-      `<span class="lb-xp">${esc(t('game.leaderboard.lifetimeXp'))}</span></div>`
+      `<span class="lb-xp">${esc(t('game.leaderboard.lifetimeXp'))}</span>` +
+      `<span class="lb-deed-title">${esc(t('hudChrome.deeds.lbTitleCol'))}</span></div>`
     );
   }
 
@@ -608,11 +609,15 @@ export class LeaderboardWindow {
         : '';
     const title = r.knownClass ? ` title="${esc(classDisplayName(r.cls))}"` : '';
     const you = r.me ? ` <span class="lb-you">(${esc(t('game.leaderboard.you'))})</span>` : '';
+    // The Renown-tab title-cell treatment: a deed id in the view-model,
+    // localized here; '' (untitled/stale) renders an empty cell.
+    const deedTitle = r.title ? deedTitleText(r.title) : '';
     return (
-      `<div class="lb-row${r.me ? ' lb-mine' : ''}"><span class="lb-rank">${r.rank}</span>` +
+      `<div class="lb-row lb-row-players${r.me ? ' lb-mine' : ''}"><span class="lb-rank">${r.rank}</span>` +
       `<span class="lb-name"${title}>${star}${esc(r.name)}${you}</span>` +
       `<span class="lb-lvl">${r.level}</span><span class="lb-vlvl">${r.virtualLevel}</span>` +
-      `<span class="lb-xp">${formatXp(r.lifetimeXp)}</span></div>`
+      `<span class="lb-xp">${formatXp(r.lifetimeXp)}</span>` +
+      `<span class="lb-deed-title">${esc(deedTitle)}</span></div>`
     );
   }
 
@@ -622,10 +627,11 @@ export class LeaderboardWindow {
   private stickyHtml(standing: LeaderboardStanding | null): string {
     if (!standing) return '';
     return (
-      `<div class="lb-sticky"><div class="lb-row lb-mine"><span class="lb-rank">&mdash;</span>` +
+      `<div class="lb-sticky"><div class="lb-row lb-row-players lb-mine"><span class="lb-rank">&mdash;</span>` +
       `<span class="lb-name">${esc(standing.name)} <span class="lb-you">(${esc(t('game.leaderboard.you'))})</span></span>` +
       `<span class="lb-lvl">${standing.level}</span><span class="lb-vlvl">${standing.virtualLevel}</span>` +
-      `<span class="lb-xp">${formatXp(standing.lifetimeXp)}</span></div></div>`
+      `<span class="lb-xp">${formatXp(standing.lifetimeXp)}</span>` +
+      `<span class="lb-deed-title"></span></div></div>`
     );
   }
 

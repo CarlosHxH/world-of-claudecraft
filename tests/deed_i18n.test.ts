@@ -10,6 +10,8 @@ import {
   deedName,
   deedTitleText,
   deedTranslationManifest,
+  titledDisplayName,
+  titledNameDecoration,
 } from '../src/ui/deed_i18n';
 
 describe('deed_i18n English resolution', () => {
@@ -72,5 +74,45 @@ describe('deedBroadcastLine (the guild-chat news line)', () => {
     expect(arm.slice(0, 600)).toContain(
       "this.log(deedBroadcastLine(ev.characterName, ev.deedId), '#40d264');",
     );
+  });
+});
+
+describe('titledDisplayName + titledNameDecoration (the name-plus-title pattern)', () => {
+  it('decorates a titled name through the hudChrome.deeds.titledName pattern', () => {
+    expect(titledDisplayName('Hilda', 'prog_veteran')).toBe('Hilda [Veteran]');
+    expect(titledDisplayName('Hilda', 'hid_saul_footnote')).toBe('Hilda [the Footnote]');
+  });
+
+  it('returns the bare name for null, undefined, stale, and non-title ids', () => {
+    expect(titledDisplayName('Hilda', null)).toBe('Hilda');
+    expect(titledDisplayName('Hilda', undefined)).toBe('Hilda');
+    expect(titledDisplayName('Hilda', 'removed_deed')).toBe('Hilda');
+    expect(titledDisplayName('Hilda', 'prog_first_steps')).toBe('Hilda'); // no reward
+    expect(titledDisplayName('Hilda', 'prog_prestige_10')).toBe('Hilda'); // border reward
+  });
+
+  it('splits the pattern into pre/post decoration around the name', () => {
+    // The English pattern places the whole decoration after the name.
+    expect(titledNameDecoration('prog_veteran')).toEqual({ pre: '', post: ' [Veteran]' });
+  });
+
+  it('collapses to empty decoration for untitled, stale, and non-title ids', () => {
+    const empty = { pre: '', post: '' };
+    expect(titledNameDecoration(null)).toEqual(empty);
+    expect(titledNameDecoration(undefined)).toEqual(empty);
+    expect(titledNameDecoration('removed_deed')).toEqual(empty);
+    expect(titledNameDecoration('prog_prestige_10')).toEqual(empty);
+  });
+
+  it('the chat sender span composes through titledDisplayName over the CLOSURED raw name', () => {
+    // chatLogFrom decorates only the DISPLAYED text; the context-menu handlers
+    // must keep closing over the raw `name` so whisper/social lookups work,
+    // and the "To {name}" whisper echo must never receive the sender's title.
+    const hudSrc = readFileSync(new URL('../src/ui/hud.ts', import.meta.url), 'utf8');
+    const fn = hudSrc.slice(hudSrc.indexOf('private chatLogFrom('));
+    expect(fn.slice(0, 1600)).toContain('sender.textContent = titledDisplayName(name, fromTitle);');
+    expect(fn.slice(0, 1600)).toContain('this.openChatPlayerContextMenu(name, ev.clientX');
+    const toWhisperArm = hudSrc.slice(hudSrc.indexOf('CHAT_TEMPLATE_KEYS.toWhisper') - 200);
+    expect(toWhisperArm.slice(0, 400)).not.toContain('ev.fromTitle');
   });
 });

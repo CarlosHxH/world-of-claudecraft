@@ -1827,5 +1827,10 @@ export const hudChromeStrings = {
     // The options-window account row (accounts.deed_broadcasts): whether a
     // marquee unlock is shared with guildmates and followers.
     broadcastsLabel: 'Share deed unlocks with guild and friends',
+    // The name-plus-title display pattern every titled surface composes
+    // through (chat sender, target frame): the bracket decoration and its
+    // placement around the name live HERE so a locale owns both. Non-wordy
+    // after placeholder strip, so no forced non-Latin fills.
+    titledName: '{name} [{title}]',
   },
 };

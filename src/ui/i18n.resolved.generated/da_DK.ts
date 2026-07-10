@@ -1531,7 +1531,8 @@ export const da_DK: EnTranslations = {
       "lbTitleCol": "Title",
       "lbSelf": "Your standing: rank {rank}, top {percent} percent",
       "lbEmpty": "No ranked chroniclers yet.",
-      "broadcastsLabel": "Share deed unlocks with guild and friends"
+      "broadcastsLabel": "Share deed unlocks with guild and friends",
+      "titledName": "{name} [{title}]"
     }
   },
   "apiError": {

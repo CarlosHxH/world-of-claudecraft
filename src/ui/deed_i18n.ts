@@ -63,6 +63,41 @@ export function deedBroadcastLine(characterName: string, deedId: string): string
   return t('hudChrome.deeds.broadcastLine', { name: characterName, deed: deedName(deedId) });
 }
 
+/** A player name decorated with their selected title through the
+ *  hudChrome.deeds.titledName pattern (the locale owns bracket text AND
+ *  placement). The bare name comes back for a null/absent/stale id or a
+ *  non-title reward, so every consumer degrades to today's rendering. */
+export function titledDisplayName(name: string, titleId: string | null | undefined): string {
+  const title = titleId ? deedTitleText(titleId) : '';
+  if (!title) return name;
+  return t('hudChrome.deeds.titledName', { name, title });
+}
+
+/** The titledName pattern split around the name for surfaces that render the
+ *  name and its title decoration in SEPARATE nodes (the target frame's
+ *  differently-styled spans): `pre` is everything the locale places before
+ *  the name, `post` everything after. Both '' when untitled/stale. A locale
+ *  pattern that omits {name} entirely degrades to the whole rendered
+ *  decoration after the name. */
+export interface TitledNameDecoration {
+  pre: string;
+  post: string;
+}
+
+const UNTITLED_DECORATION: TitledNameDecoration = { pre: '', post: '' };
+
+export function titledNameDecoration(titleId: string | null | undefined): TitledNameDecoration {
+  const title = titleId ? deedTitleText(titleId) : '';
+  if (!title) return UNTITLED_DECORATION;
+  // A sentinel no locale pattern or title text can contain, so the split
+  // around the interpolated name is exact even when the title has spaces.
+  const NAME_TOKEN = '\u0000';
+  const rendered = t('hudChrome.deeds.titledName', { name: NAME_TOKEN, title });
+  const at = rendered.indexOf(NAME_TOKEN);
+  if (at < 0) return { pre: '', post: ` ${rendered}` };
+  return { pre: rendered.slice(0, at), post: rendered.slice(at + NAME_TOKEN.length) };
+}
+
 export interface DeedTranslationManifestEntry {
   id: string;
   field: DeedTranslationField;

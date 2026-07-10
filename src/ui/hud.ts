@@ -193,7 +193,14 @@ import { renderCorpseHarvestPicker } from './corpse_harvest_window';
 import { buildCraftingView } from './crafting_view';
 import { renderCraftingWindow } from './crafting_window';
 import { DailyRewardsWindow } from './daily_rewards_window';
-import { deedBroadcastLine, deedName, deedTitleText } from './deed_i18n';
+import {
+  deedBroadcastLine,
+  deedName,
+  deedTitleText,
+  type TitledNameDecoration,
+  titledDisplayName,
+  titledNameDecoration,
+} from './deed_i18n';
 import { DeedTrackerPainter } from './deed_tracker_painter';
 import {
   buildDeedTrackerViewInto,
@@ -779,6 +786,16 @@ const SFX_CAST_SCHOOLS = new Set(['fire', 'frost', 'arcane', 'shadow', 'holy', '
 // soundscape doesn't get fatiguing in a long fight. One knob for the whole layer.
 const COMBAT_GAIN = 0.7;
 
+/** Append an inline span child (className '' for a plain text slot) and return
+ *  it; used to split a pre-existing single-text element into separately
+ *  writable children (the target name line's title decoration). */
+function appendChildSpan(parent: HTMLElement, className: string): HTMLElement {
+  const span = document.createElement('span');
+  if (className) span.className = className;
+  parent.appendChild(span);
+  return span;
+}
+
 /** Creature-voice family for a mob templateId (boar split from beast), or null. */
 function mobVoiceFamily(templateId: string): string | null {
   if (templateId === 'wild_boar' || templateId === 'elder_bristleback') return 'boar';
@@ -1010,6 +1027,15 @@ export class Hud {
   private targetFrameEl = $('#target-frame');
   private targetEliteTagEl = $('#tf-elite-tag');
   private targetNameEl = $('#tf-name');
+  // The target name line splits into three inline children (pre-decoration,
+  // name text, post-decoration) so the painter can write the Book of Deeds
+  // title in its own muted-gold spans without setText clobbering them, while
+  // the OUTER #tf-name keeps the nowrap ellipsis, the hostile/friendly color
+  // write, and the frame's single-line height. Built here (not in the HTML)
+  // so both game entries pick it up.
+  private targetTitlePreEl = appendChildSpan(this.targetNameEl, 'uf-title');
+  private targetNameTextEl = appendChildSpan(this.targetNameEl, '');
+  private targetTitlePostEl = appendChildSpan(this.targetNameEl, 'uf-title');
   private targetLevelEl = $('#tf-level');
   private targetDiscordEl = $('#tf-discord');
   // Diff key for the target-frame Discord line, so its per-frame update only rebuilds
@@ -1306,6 +1332,12 @@ export class Hud {
   private lastTargetDebuffsPaintAt = 0;
   private lastTargetFramePaintAt = 0;
   private lastTargetFrameId: number | null = null;
+  // Title resolve elision for the target frame (the lastIcon pattern): the
+  // pattern-key composition re-runs only when the (language, title id)
+  // signature changes; every steady frame reuses the cached decoration and
+  // the elided setText writes nothing.
+  private lastTargetTitleSig: string | null = null;
+  private targetTitleDecoration: TitledNameDecoration = { pre: '', post: '' };
   private charPreview: CharacterPreview | null = null;
   private charPreviewCanvas: HTMLCanvasElement | null = null;
   // Cosmetic skin-select event overlay (opened by the skinEvent cue). The shared
@@ -3335,7 +3367,12 @@ export class Hud {
     this.writerFacet,
     {
       frame: this.targetFrameEl,
-      name: this.targetNameEl,
+      // The name writes into the TEXT-ONLY middle child; the title decoration
+      // writes into the muted-gold siblings (setText would clobber children of
+      // the outer #tf-name, which keeps the color/class writes below).
+      name: this.targetNameTextEl,
+      titlePre: this.targetTitlePreEl,
+      titlePost: this.targetTitlePostEl,
       level: this.targetLevelEl,
       hpFill: this.targetHpEl,
       hpText: this.targetHpTextEl,
@@ -6662,6 +6699,13 @@ export class Hud {
       ) {
         this.lastTargetFramePaintAt = now;
         this.lastTargetFrameId = target.id;
+        // entity.title is the Book of Deeds deed id on the identity wire
+        // (players only; always null/absent for mobs and NPCs).
+        const titleSig = `${getLanguage()}|${target.title ?? ''}`;
+        if (titleSig !== this.lastTargetTitleSig) {
+          this.lastTargetTitleSig = titleSig;
+          this.targetTitleDecoration = titledNameDecoration(target.title ?? null);
+        }
         this.targetFramePainter.paint(
           unitFrameView({
             present: true,
@@ -6684,6 +6728,8 @@ export class Hud {
                 : `${Math.round(target.resource)} / ${target.maxResource}`,
             levelText: isBoss ? BOSS_SKULL_GLYPH : String(target.level),
             name: entityDisplayName(target),
+            titlePre: this.targetTitleDecoration.pre,
+            titlePost: this.targetTitleDecoration.post,
             // id-keyed gate, byte-faithful to the old lastPortraitTarget !== target.id;
             // the painter resets it on hide so an id reused by a new mob still redraws.
             portraitKey: String(target.id),
@@ -8861,6 +8907,7 @@ export class Hud {
                 CHAT_TEMPLATE_KEYS.party,
                 'party',
                 ev.fromPid,
+                ev.fromTitle,
               );
               break;
             case 'yell':
@@ -8871,9 +8918,12 @@ export class Hud {
                 CHAT_TEMPLATE_KEYS.yell,
                 'yell',
                 ev.fromPid,
+                ev.fromTitle,
               );
               break;
             case 'whisper':
+              // The "To {name}" echo DISPLAYS the recipient, so the sender's
+              // fromTitle must never decorate it (untitled beats mislabeled).
               if (ev.to)
                 this.chatLogFrom(
                   ev.to,
@@ -8891,6 +8941,7 @@ export class Hud {
                   CHAT_TEMPLATE_KEYS.whisper,
                   'whisper',
                   ev.fromPid,
+                  ev.fromTitle,
                 );
                 audio.whisper();
               }
@@ -8903,6 +8954,7 @@ export class Hud {
                 CHAT_TEMPLATE_KEYS.general,
                 'general',
                 ev.fromPid,
+                ev.fromTitle,
               );
               break;
             case 'world':
@@ -8913,6 +8965,7 @@ export class Hud {
                 CHAT_TEMPLATE_KEYS.world,
                 'world',
                 ev.fromPid,
+                ev.fromTitle,
               );
               break;
             case 'lfg':
@@ -8923,6 +8976,7 @@ export class Hud {
                 CHAT_TEMPLATE_KEYS.lfg,
                 'lfg',
                 ev.fromPid,
+                ev.fromTitle,
               );
               break;
             case 'guild':
@@ -8933,6 +8987,7 @@ export class Hud {
                 CHAT_TEMPLATE_KEYS.guild,
                 'guild',
                 ev.fromPid,
+                ev.fromTitle,
               );
               break;
             case 'officer':
@@ -8943,6 +8998,7 @@ export class Hud {
                 CHAT_TEMPLATE_KEYS.officer,
                 'officer',
                 ev.fromPid,
+                ev.fromTitle,
               );
               break;
             case 'emote':
@@ -8953,6 +9009,7 @@ export class Hud {
                 CHAT_TEMPLATE_KEYS.emote,
                 'emote',
                 ev.fromPid,
+                ev.fromTitle,
               );
               break;
             case 'roll':
@@ -8963,6 +9020,7 @@ export class Hud {
                 CHAT_TEMPLATE_KEYS.roll,
                 'roll',
                 ev.fromPid,
+                ev.fromTitle,
               );
               break;
             default:
@@ -8973,6 +9031,7 @@ export class Hud {
                 CHAT_TEMPLATE_KEYS.say,
                 'say',
                 ev.fromPid,
+                ev.fromTitle,
               );
               break;
           }
@@ -9623,6 +9682,7 @@ export class Hud {
     templateKey: TranslationKey,
     chan: string,
     fromPid?: number,
+    fromTitle?: string,
   ): void {
     const wasNearBottom =
       this.chatLogEl.scrollHeight - this.chatLogEl.scrollTop - this.chatLogEl.clientHeight < 24;
@@ -9633,7 +9693,10 @@ export class Hud {
     this.prependTimestamp(div);
     const sender = document.createElement('span');
     sender.className = 'chat-player-name';
-    sender.textContent = name;
+    // The DISPLAYED sender may carry the speaker's Book of Deeds title (a
+    // deed id on the event, localized here); the context-menu handlers below
+    // close over the RAW `name`, so whisper/social lookups stay unaffected.
+    sender.textContent = titledDisplayName(name, fromTitle);
     sender.title = t('hud.chat.rightClickName', { name });
     sender.setAttribute('role', 'button');
     sender.setAttribute('aria-label', t('hud.chat.rightClickName', { name }));
@@ -12750,6 +12813,10 @@ export class Hud {
       };
     });
 
+    // The selected Book of Deeds title, resolved to display text here (the
+    // compositor never sees deed ids); untitled/stale resolves '' and the
+    // field is omitted so the card stays byte-identical to the pre-title one.
+    const cardTitleText = sim.activeTitle ? deedTitleText(sim.activeTitle) : '';
     return {
       name: p.name,
       className: classDisplayName(cls),
@@ -12760,6 +12827,7 @@ export class Hud {
       primaryStats,
       combatStats,
       gear,
+      ...(cardTitleText ? { titleText: cardTitleText } : {}),
       topPercent,
       balance: showWallet ? verifiedWocBalance() : null,
       devTier: showDevBadges ? (p.devTier ?? null) : null,

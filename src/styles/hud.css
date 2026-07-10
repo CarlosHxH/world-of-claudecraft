@@ -748,6 +748,15 @@
     text-overflow: ellipsis;
     text-shadow: 1px 1px 2px #000;
   }
+  /* Book of Deeds title decoration inside the name line: muted gold, INLINE in
+     the same nowrap ellipsized line (the frame keeps its single-line height;
+     a long name-plus-title combo ellipsizes, the classic-frame behavior). The
+     class declaration wins over the hostile/friendly color the target name
+     inherits from its parent's inline style. */
+  .uf-name .uf-title {
+    color: var(--gold-dim);
+    font-weight: normal;
+  }
   .bar {
     position: relative;
     height: 15px;

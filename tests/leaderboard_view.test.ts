@@ -35,6 +35,7 @@ function entry(over: Partial<LeaderboardEntry> = {}): LeaderboardEntry {
     lifetimeXp: 5_000_000,
     prestigeRank: 0,
     ...over,
+    title: over.title ?? null,
   };
 }
 
@@ -139,6 +140,21 @@ describe('buildLeaderboardView: row derivation', () => {
     expect(v.rows[0].level).toBe(60);
     expect(v.rows[0].virtualLevel).toBe(12);
     expect(v.rows[0].lifetimeXp).toBe(5_000_000);
+  });
+
+  it('passes the Book of Deeds title through as a DEED ID, null when untitled', () => {
+    const v = ranked(
+      buildLeaderboardView({
+        kind: 'page',
+        page: page('sim', [
+          entry({ name: 'Titled', title: 'prog_veteran' }),
+          entry({ rank: 2, name: 'Plain' }),
+        ]),
+        viewer: VIEWER,
+      }),
+    );
+    expect(v.rows[0].title).toBe('prog_veteran');
+    expect(v.rows[1].title).toBeNull();
   });
 });
 

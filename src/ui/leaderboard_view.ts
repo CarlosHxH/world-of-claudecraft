@@ -40,6 +40,9 @@ export interface LeaderboardRow {
   virtualLevel: number;
   lifetimeXp: number;
   prestigeRank: number;
+  /** The selected Book of Deeds title as a DEED ID (null untitled); the
+   *  painter localizes through deed_i18n.ts (the Renown-tab cell treatment). */
+  title: string | null;
   me: boolean;
 }
 
@@ -108,6 +111,7 @@ export function buildLeaderboardView(input: LeaderboardInput): LeaderboardView {
     virtualLevel: e.virtualLevel,
     lifetimeXp: e.lifetimeXp,
     prestigeRank: e.prestigeRank,
+    title: e.title ?? null,
     me: e.name === viewer.name,
   }));
   const onPage = rows.some((r) => r.me);
