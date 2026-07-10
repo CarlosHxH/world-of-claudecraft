@@ -1991,6 +1991,13 @@ export class Hud {
 
   private isWindowVisible(el: HTMLElement): boolean {
     if (el.id === 'social-window') return el.classList.contains('open');
+    // The mobile More tray keeps display:flex while closed (opacity and
+    // visibility carry its open/close transition), so its computed display
+    // never reflects openness; the body class driving that CSS is the one
+    // source of truth. Without this arm the closed tray reads as the topmost
+    // open window and closeAll() kills it with an inline display:none.
+    if (el.id === 'mobile-extra-controls')
+      return document.body.classList.contains('mobile-more-open');
     if (el.hidden || el.hasAttribute('hidden')) return false;
     return getComputedStyle(el).display !== 'none';
   }
@@ -2307,6 +2314,14 @@ export class Hud {
         break;
       case 'emote-editor':
         this.closeEmoteEditor();
+        break;
+      case 'mobile-extra-controls':
+        // Close through the same class mechanism as the tray's own X button:
+        // an inline display:none would outlive every later body-class toggle
+        // and leave the tray unopenable until reload.
+        document.body.classList.remove('mobile-more-open');
+        document.getElementById('mobile-controls')?.classList.remove('expanded');
+        document.getElementById('mobile-more')?.classList.remove('active');
         break;
       default:
         el.style.display = 'none';

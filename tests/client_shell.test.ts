@@ -1509,6 +1509,33 @@ describe('client HTML shell', () => {
     expect(hudTs).toContain(".filter((win) => win.id !== 'mobile-extra-controls')");
   });
 
+  it('keeps the More tray out of the managed-window close path', () => {
+    // The closed tray stays display:flex (opacity/visibility carry the
+    // transition), so the managed-window visibility probe must key on the
+    // body class: otherwise closeAll() treats the closed tray as the topmost
+    // window and stamps an inline display:none that the class toggles can
+    // never clear, leaving the tray unopenable until reload.
+    const isWindowVisible = hudTs.slice(
+      hudTs.indexOf('private isWindowVisible('),
+      hudTs.indexOf('private syncWindowOpenState('),
+    );
+    expect(isWindowVisible).toContain("if (el.id === 'mobile-extra-controls')");
+    expect(isWindowVisible).toContain(
+      "return document.body.classList.contains('mobile-more-open');",
+    );
+    // Closing through the window manager must ride the same class mechanism
+    // as the tray's own X button, never the default inline display:none arm.
+    const closeManaged = hudTs.slice(
+      hudTs.indexOf('private closeManagedWindow('),
+      hudTs.indexOf('private initChatTabs('),
+    );
+    expect(closeManaged).toContain("case 'mobile-extra-controls':");
+    expect(closeManaged).toContain("document.body.classList.remove('mobile-more-open');");
+    expect(closeManaged).toContain(
+      "document.getElementById('mobile-more')?.classList.remove('active');",
+    );
+  });
+
   it('replaces the dual mode cards with one Play CTA and a realm selector', () => {
     expect(html).toContain('id="btn-play"');
     expect(html).toContain('id="server-select"');
