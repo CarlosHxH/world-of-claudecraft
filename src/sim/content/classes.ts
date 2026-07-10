@@ -650,10 +650,12 @@ export const ABILITIES: Record<string, AbilityDef> = {
     // Owner decision 2026-07-09: baseline early rage SPENDER (learned at level 2),
     // costing 20 rage per use. The classic dodge-proc gate stays gone (too RNG);
     // the requiresDodgeProc machinery itself remains for hunter mongoose_bite.
-    // Fury drops it at commit (owner 2026-07-10): its empower rider feeds Maiming
-    // Strike, which is Arms-granted, so for Fury the button is a dead rider next
-    // to Bloodletting/Twinstrike.
+    // Fury hands it off at 10 (owner 2026-07-10): it stays the spec's only real
+    // rage spender through 5-9 (Bloodletting/Twinstrike cost 0), then retires
+    // the moment Red Harvest (its learnLevel, 10) takes the rage-dump role,
+    // since its empower rider feeds the Arms-granted Maiming Strike.
     excludeSpecs: ['fury'],
+    excludeSpecsAtLevel: 10,
     effects: [
       { type: 'weaponStrike', bonus: 5, cannotBeDodged: true },
       // Empowers the next Maiming Strike (+20% per stack, up to 2), consumed in
@@ -4920,8 +4922,16 @@ export function abilitiesKnownAt(
     // Spec EXCLUSION: an otherwise-ungated ability drops out for a committed spec
     // in its `excludeSpecs` list (Reaver Strike hides for Protection, which uses
     // Revenge instead). A no-spec player and non-listed specs keep it; grants
-    // bypass entirely (already spec-scoped).
-    if (!granted && def.excludeSpecs && mods?.spec && def.excludeSpecs.includes(mods.spec))
+    // bypass entirely (already spec-scoped). With excludeSpecsAtLevel set the
+    // drop waits for that player level (a kit hand-off, e.g. Redhand serves
+    // Fury until Red Harvest arrives at 10).
+    if (
+      !granted &&
+      def.excludeSpecs &&
+      mods?.spec &&
+      def.excludeSpecs.includes(mods.spec) &&
+      level >= (def.excludeSpecsAtLevel ?? 0)
+    )
       continue;
 
     let rank = 1,

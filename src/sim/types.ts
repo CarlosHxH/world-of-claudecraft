@@ -1722,6 +1722,11 @@ export interface AbilityDef {
   // replacement (heroic_strike excludeSpecs ['prot'], since prot uses revenge).
   // A no-spec player and any non-listed spec keep it. Grants are never filtered.
   excludeSpecs?: readonly string[];
+  // When set alongside excludeSpecs, the exclusion only kicks in at this player
+  // level: below it the listed specs still know the ability. Models a kit
+  // hand-off (Redhand serves committed Fury as its rage spender until Red
+  // Harvest arrives, then retires). Without it exclusion applies at any level.
+  excludeSpecsAtLevel?: number;
   targetType?: 'enemy' | 'friendly'; // friendly = self or allied player (defaults to enemy)
   // Ground-targeted ability: instead of an entity target, the cast is aimed at a
   // world point (the client proposes it, the server clamps it to `range`). Its area

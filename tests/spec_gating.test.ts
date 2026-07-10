@@ -71,10 +71,16 @@ describe('spec-gated warrior base kit (content table)', () => {
     expect(ABILITIES.revenge?.excludeSpecs).toBeUndefined();
   });
 
-  it('Redhand is excluded from Fury (owner 2026-07-10): its rider feeds the Arms-granted Maiming Strike', () => {
+  it('Redhand hands off for Fury at 10 (owner 2026-07-10): kept while it is the only spender, retired when Red Harvest lands', () => {
     expect(ABILITIES.overpower?.specs).toBeUndefined();
     expect(ABILITIES.overpower?.excludeSpecs).toEqual(['fury']);
-    expect(knownIds('fury').has('overpower')).toBe(false);
+    // The hand-off is pinned to Red Harvest's arrival: Bloodletting/Twinstrike
+    // cost 0, so through 5-9 Redhand is committed Fury's only real rage spender.
+    expect(ABILITIES.overpower?.excludeSpecsAtLevel).toBe(ABILITIES.red_harvest.learnLevel);
+    expect(knownIds('fury', 5).has('overpower')).toBe(true);
+    expect(knownIds('fury', 9).has('overpower')).toBe(true);
+    expect(knownIds('fury', 10).has('overpower')).toBe(false);
+    expect(knownIds('fury').has('overpower')).toBe(false); // and stays gone at 20
     // no-spec keeps it as the early rage spender; Arms and Prot keep it committed.
     expect(knownIds(null).has('overpower')).toBe(true);
     expect(knownIds('arms').has('overpower')).toBe(true);
