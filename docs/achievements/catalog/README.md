@@ -266,3 +266,130 @@ resolutions above and never rewrites them.
     retroFallbackGrants no longer reads craftSkills.enchanting as proof of a
     first craft (it would have permanently misgranted prog_first_craft to a
     disenchant-only character on join).
+
+## Assembly resolutions, second catalog recheck (2026-07-10)
+
+Second re-review, covering everything that entered the branch after the
+2026-07-09 refresh baseline (db71dad6d), so the catalog freezes against the
+final tree before the wiki audit and the translation fill. This section
+APPENDS to the resolutions above and never rewrites them. Tree audited:
+feature/achievements at 5f7da7ae6.
+
+22. Audited range and totals: five release merges landed on this branch
+    since db71dad6d (ab0d9745c, c6c3fa634, 318b11b0f, 77cde32b4, ab04c265b),
+    together bringing the release-side span 5c4628dc2 (what db71dad6d had
+    merged) to 69150d670: PRs #1695 (mail parcel
+    quantity), #1705 (heroic loot flair, soulbound, shared-personal marks),
+    #1707 (world-boss quiet mechanics), #1710 (paladin heal-cost retune),
+    #1711 (buff no-stack), #1712 (enchanting profession), #1718 (low-tier
+    FCT fix), #1724 (mobile autorun), #1735 (in-game jail), #1738 (codex
+    agent tooling), #1739 (/playtime readout), #1746 (wire-aura allocation),
+    #1748 (native Discord auth), #1749 (Onrush min-range indicator), #1753
+    (native Apple sign-in), plus the direct commits 667227aa0 (password
+    reset + SES mail) and a0fb22fb4 (stale movement intent). The recheck
+    session's own pre-work merge was a no-op: the release tip at session
+    start, 69150d670, was already an ancestor of HEAD. One release merge
+    landed upstream mid-session, AFTER the audited tip: cf57f4b0a (PR #1689,
+    mobile HUD). It is NOT in the audited tree (the post-tip release tail
+    carries zero src/sim or server files as of this writing) and falls to
+    the next session's pre-work merge and recheck. Verdict:
+    ZERO deeds added, removed, or edited. The live set stays 192 deeds
+    (progression 30, combat 10, dungeon 27, delve 13, chronicle 24,
+    collection 24, pvp 27, social 16, exploration 9, feat 3, hidden 9),
+    2,365 Renown, 19 titles, 3 borders, 72 Steam entries (scripted recount,
+    matching resolution 14 exactly). The six deeds resolution 14 transcribed
+    were re-verified against the post-merge tree: every pinned quest id,
+    counter, and fish mark still has a live producer, and every pre-existing
+    DEED_ORDER position is byte-identical.
+
+23. Considered and rejected this recheck, each with its reason:
+    - The in-game jail (#1735): rule 6. The only way in is a moderator
+      punishment (every jail command sits behind the moderation.act
+      permission), so any jail deed is accessible only by being punished and
+      would reward getting jailed. Serving the sentence is attendance; the
+      jail brawl has no match object, no scoring, and no win state (kills
+      credit nothing, deaths revive at full HP with no res sickness); and
+      prisoners are locked out of every matchmade and instanced surface
+      while serving (arena, Vale Cup, dungeons, delves, duels).
+    - The /playtime lifetime readout (#1739): rule 6. totalPlayedSeconds
+      accrues as raw connected time with no input gate (an AFK character
+      parked in the world earns it at full rate; the existing
+      lastActiveTick anti-AFK signal is never consulted), and presence is
+      not an outcome.
+    - Heroic-only epics and heroic variants (#1705): drop-luck gated, rule 2
+      forbids. Soulbound is a delivery and trading restriction that writes
+      no counter. The shared-personal Heroic Mark slot is a delivery-shape
+      change for an outcome the catalog already awards (dgn_ heroic clears
+      plus dgn_mark_circuit over heroicDaily.marked, both verified intact);
+      a marks deed would either double-award one outcome or count a currency
+      threshold, an attempt surface.
+    - Account plumbing (native Discord auth #1748, native Apple sign-in
+      #1753, password reset + SES 667227aa0): zero sim or world_api
+      footprint (diff-tree verified per commit), no persisted gameplay
+      state; the only conceivable framing is a login or account-link deed,
+      barred by rule 6 and by the standing decision that even Steam linking
+      is not deed-worthy.
+    - QoL, balance, and tooling (#1746 wire-aura allocation, #1724 mobile
+      autorun, #1749 Onrush min-range indicator, #1718 low-tier FCT fix,
+      #1711 buff no-stack, #1707 world-boss quiet mechanics, #1710 paladin
+      heal-cost retune, a0fb22fb4 stale movement intent, #1695 mail parcel
+      quantity, #1738 codex tooling): the
+      heroic-equalization precedent; retunes and fixes of existing content
+      with no new countable outcome. Spot-verified where it mattered: the
+      four deed accounting hooks in combat/damage.ts are untouched by
+      #1711 and #1707, and the one mail deed (soc_by_ravens_wing) counts
+      sends, not attachment quantities, so parcel stacking cannot change
+      its semantics.
+    - The three arcane enchanting materials (arcane_dust, arcane_essence,
+      arcane_shard in items.ts, from #1712): their only acquisition path is
+      disenchanting, which has no player-facing wiring (resolution 21), so
+      they are unearnable today and leave the col_discovery_250 attainable
+      pool untouched (threshold 250, pool unchanged at the 263 baseline).
+    - The recheck worklist's queued-cast ability and warlock pet resummon:
+      NOT IN RANGE. Neither exists anywhere in db71dad6d..HEAD (commit
+      subject sweeps over both the branch and the release side came back
+      empty); recorded so the next recheck does not chase them.
+
+24. Jail-brawl combat-ledger interaction, ACCEPTED with reasoning (surfaced
+    by the adversarial coverage pass, not the per-system review): jailed
+    prisoners are mutually hostile, brawl damage flows through the single
+    onDamageDealtForDeeds hook, so it advances the frozen lifetime counters
+    behind cmb_heavy_hitter (damageDealt 500,000) and cmb_critical_eye
+    (crits 500) against a revive-at-full-HP cellmate. Accepted because the
+    combat ledger counts consensual PvP damage from duels, arena, and
+    Fiesta by design (lifetime aggregates over all real combat), duels are
+    freely repeatable with no punishment gate (so jail farming is strictly
+    dominated by a path that needs no misbehavior), the venue cannot be
+    entered voluntarily (moderation.act), and the training-dummy exclusion
+    covers a different class: a freely available, non-retaliating practice
+    target. The deaths stat feeds only cmb_first_fall (count 1), and the
+    jail revive never applies res sickness, so hid_keepers_toll_twice
+    cannot be jail-farmed. MAINTAINER FLAG: if the combat ledger ever
+    excludes zero-stakes PvP sources, jailed-vs-jailed damage joins that
+    exclusion in the same change.
+
+25. Deferral rechecks, all re-verified against this tree:
+    - prog_ringwright STAYS deferred: recipes.ts still carries 15 recipes
+      (engineering 6, alchemy 2, armorcrafting 2, weaponcrafting 2,
+      cooking 1, leatherworking 1, tailoring 1), jewelcrafting and
+      inscription zero. The ENCHANTS table is reagent data consumed by
+      applyEnchant, not recipeList entries, so it is not a recipe source
+      for the craftSkills trigger.
+    - soc_first_salvage and soc_salvage_50 STAY untranscribed (resolution
+      17): Sim.salvageItem still has zero callers across world_api, ui,
+      game, net, and server, and salvagesPerformed stays
+      authored-in-catalog, absent-in-code, the compliant state (the
+      counter ships with the transcription).
+    - The nine account-level ids STAY deferred: server/deeds_records.ts is
+      still observer-only (its sole write mirrors sim-decided unlocks into
+      character_deeds; no grant lane exists).
+    - Enchanting deeds STAY deferred (resolution 21 re-verified at this
+      HEAD): no IWorld member, no UI or game caller, no wire or server
+      command for disenchant or apply-enchant, and both evaluator fixes
+      hold (the skill-gain sites mark deeds-dirty; retroFallbackGrants
+      excludes enchanting). Forward note for the wiring day: the
+      count-form craftSkill triggers (prog_craft_specialist,
+      prog_around_the_ring) become satisfiable via enchanting skill too;
+      that only eases them (a requirement can never grow), so no action is
+      needed now or then.
+    - Steam map headroom: 72 of 100 entries, unchanged.
