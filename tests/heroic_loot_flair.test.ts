@@ -10,24 +10,67 @@ import { enterDungeon } from '../src/sim/instances/dungeons';
 import { weaponDpsBudget } from '../src/sim/item_budget';
 import { expectedStatBudget, itemLevel, primaryStatSum } from '../src/sim/item_level';
 import { Sim } from '../src/sim/sim';
-import type { Entity } from '../src/sim/types';
+import type { Entity, ItemDef } from '../src/sim/types';
 import { itemDisplayName } from '../src/ui/entity_i18n';
 
 type AnySim = Sim & Record<string, any>;
 type AnyEntity = Entity & Record<string, any>;
 
 const variants = () => Object.values(ITEMS).filter((i) => i.heroicOf);
+const weaponPower = (item: ItemDef) => {
+  const weapon = item.weapon;
+  return weapon ? (weapon.min + weapon.max) / 2 / weapon.speed : null;
+};
 
 describe('heroic loot flair: variant generation', () => {
-  it('generates a Heroic variant for base epic/rare drops, budget-exact at ilvl 28/25', () => {
+  it('generates a Heroic variant for base epic/rare drops at or above the ilvl 28/25 budget', () => {
     const all = variants();
     expect(all.length).toBeGreaterThan(0);
     for (const v of all) {
       expect(v.quality === 'epic' || v.quality === 'rare').toBe(true);
       expect(itemLevel(v)).toBe(v.quality === 'epic' ? 28 : 25);
-      // stats rescaled exactly to the heroic budget for that ilvl/slot/quality
-      expect(primaryStatSum(v)).toBe(expectedStatBudget(v));
+      // A base item already above the generated budget must retain that extra power.
+      expect(primaryStatSum(v)).toBeGreaterThanOrEqual(expectedStatBudget(v) ?? 0);
     }
+  });
+
+  it('never lowers realized primary-stat or weapon power below its base item', () => {
+    const primaryStatDowngrades: string[] = [];
+    const weaponDowngrades: string[] = [];
+    for (const variant of variants()) {
+      if (!variant.heroicOf) continue;
+      const base = ITEMS[variant.heroicOf];
+      const baseStats = primaryStatSum(base);
+      const variantStats = primaryStatSum(variant);
+      if (variantStats < baseStats) {
+        primaryStatDowngrades.push(`${variant.id}: ${baseStats} -> ${variantStats}`);
+      }
+      const baseWeaponPower = weaponPower(base);
+      const variantWeaponPower = weaponPower(variant);
+      if (
+        baseWeaponPower !== null &&
+        variantWeaponPower !== null &&
+        variantWeaponPower < baseWeaponPower
+      ) {
+        weaponDowngrades.push(
+          `${variant.id}: ${baseWeaponPower.toFixed(3)} -> ${variantWeaponPower.toFixed(3)}`,
+        );
+      }
+    }
+
+    expect({ primaryStatDowngrades, weaponDowngrades }).toEqual({
+      primaryStatDowngrades: [],
+      weaponDowngrades: [],
+    });
+  });
+
+  it("preserves Moonwrack Robe's 15 primary-stat points in its Heroic variant", () => {
+    const base = ITEMS.moonshroud_robe;
+    const variant = ITEMS[heroicVariantId(base.id)];
+    expect({ base: primaryStatSum(base), heroic: primaryStatSum(variant) }).toEqual({
+      base: 15,
+      heroic: 15,
+    });
   });
 
   it('shares the base item name (the heroic distinction is a tooltip tag, not a name prefix)', () => {

@@ -126,6 +126,36 @@ describe('bagItemAction priority order', () => {
   });
 });
 
+describe('soulbound transfer affordances', () => {
+  it('blocks trade, mail, market, and vendor clicks instead of staging a Heroic Mark transfer', () => {
+    expect([
+      bagItemAction(ITEMS.mark, { ...NO_MODE, tradeOpen: true }),
+      bagItemAction(ITEMS.mark, { ...NO_MODE, mailAttach: true }),
+      bagItemAction(ITEMS.mark, { ...NO_MODE, marketSell: true }),
+      bagItemAction(ITEMS.mark, { ...NO_MODE, vendorOpen: true }),
+    ]).toEqual([
+      'transferBlockedSoulbound',
+      'transferBlockedSoulbound',
+      'transferBlockedSoulbound',
+      'transferBlockedSoulbound',
+    ]);
+  });
+
+  it('labels every blocked transfer as soulbound instead of advertising the action', () => {
+    expect([
+      bagTooltipHintKey(ITEMS.mark, { ...NO_MODE, tradeOpen: true }),
+      bagTooltipHintKey(ITEMS.mark, { ...NO_MODE, mailAttach: true }),
+      bagTooltipHintKey(ITEMS.mark, { ...NO_MODE, marketSell: true }),
+      bagTooltipHintKey(ITEMS.mark, { ...NO_MODE, vendorOpen: true }),
+    ]).toEqual([
+      'hudChrome.itemSoulbound',
+      'hudChrome.itemSoulbound',
+      'hudChrome.itemSoulbound',
+      'hudChrome.itemSoulbound',
+    ]);
+  });
+});
+
 describe('bag mode chain order pin (insertion guard)', () => {
   // Pins the RELATIVE order between simultaneously-on modes, not just each mode
   // alone (the priority-order test above flips one flag at a time, so a ladder
