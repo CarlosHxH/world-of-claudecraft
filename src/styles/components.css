@@ -4344,6 +4344,50 @@
     background: var(--panel-l1-bg);
   }
 
+  /* vale-cup: the event hub. The root stays the dialog (markDialogRoot on open),
+     so the frame is chrome only; the vcup-* body sections keep their rules in the
+     Vale Cup section below. */
+  #valecup-window:has(> .window-frame) {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  #valecup-window > .window-frame .window-titlebar {
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    background: var(--panel-l1-bg);
+  }
+
+  /* arena: the Ashen Coliseum scoreboard (the documented DOM-rendered exception,
+     team-color tokens kept). The root stays the dialog (markDialogRoot on open),
+     so the frame is chrome only; the arena-* body sections keep their rules in the
+     Ashen Coliseum section above. */
+  #arena-window:has(> .window-frame) {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  #arena-window > .window-frame .window-titlebar {
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    background: var(--panel-l1-bg);
+  }
+  /* The bracket tag rides next to the display-font title inside the titlebar. */
+  #arena-window > .window-frame .window-title .arena-bracket-tag {
+    margin-left: var(--spacing-sm);
+    vertical-align: middle;
+  }
+
   /* ---------- The Vale Cup (boarball at the Sowfield) ---------- */
   /* Flag colors are set per element as --vcup-field / --vcup-accent custom
      properties DERIVED from the VC_NATIONS sim data record (vale_cup_flag.ts),
