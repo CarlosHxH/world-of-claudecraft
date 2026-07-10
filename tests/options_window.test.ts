@@ -571,6 +571,19 @@ describe('options_window: forced-colors selection cue (P2 review item 5)', () =>
     const block = forced.slice(0, forced.indexOf('\n  }\n}'));
     expect(block).toMatch(/\.opt-seg-btn\.is-selected \{\s*outline: 2px solid Highlight;/);
   });
+
+  it('gives the role=switch a non-colour on/off cue under forced-colors (WCAG 1.4.1)', () => {
+    const forced = components.slice(components.indexOf('@media (forced-colors: active)'));
+    const block = forced.slice(0, forced.indexOf('\n  }\n}'));
+    // The thumb gets a solid system-colour fill so it is visible in BOTH states
+    // (its left=off / right=on position is then the non-colour cue), and the
+    // checked track a Highlight border to reinforce the on state.
+    expect(block).toMatch(/\.opt-switch::before \{\s*background: CanvasText;/);
+    expect(block).toMatch(/\.opt-switch\[aria-checked="true"\] \{\s*border-color: Highlight;/);
+    expect(block).toMatch(
+      /\.opt-switch\[aria-checked="true"\]::before \{\s*background: Highlight;/,
+    );
+  });
 });
 
 describe('options_window: performance overlay delegation preserved under System', () => {

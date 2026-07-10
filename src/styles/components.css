@@ -9478,6 +9478,23 @@
       outline: 2px solid Highlight;
       outline-offset: -2px;
     }
+    /* The switch conveys on/off only via the track fill (--color-primary) and the
+       borderless ::before thumb background, both of which the forced palette strips
+       to Canvas: the thumb goes Canvas-on-Canvas (invisible, so its left/right
+       position cannot be read) and the checked/unchecked tracks look identical.
+       Give the thumb a solid system-colour fill so it stays visible (its left=off /
+       right=on travel is then the non-colour cue) and the checked track a Highlight
+       border to reinforce it. aria-checked already exposes the state to AT. Mirrors
+       the .opt-seg-btn.is-selected treatment above. */
+    .opt-switch::before {
+      background: CanvasText;
+    }
+    .opt-switch[aria-checked="true"] {
+      border-color: Highlight;
+    }
+    .opt-switch[aria-checked="true"]::before {
+      background: Highlight;
+    }
     /* The conflict dot conveys state by color, which the forced palette drops; keep
        it visible via a system-colour fill (it pairs with the banner text + the tab's
        aria-label, so AT already has the non-colour cue). */
