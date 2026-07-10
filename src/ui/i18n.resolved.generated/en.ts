@@ -5137,11 +5137,11 @@ export const en: EnTranslations = {
       },
       "commanding_shout": {
         "name": "Bolstering Cry",
-        "description": "Increases your Stamina by 6 for 1 hour."
+        "description": "Increases your Stamina by {buff} for 1 hour."
       },
       "demoralizing_shout": {
         "name": "Direhowl",
-        "description": "Lets out a fearsome shout, reducing the damage dealt by all nearby enemies by 20% for 20 sec."
+        "description": "Lets out a fearsome shout, reducing the damage dealt by all nearby enemies by {buff}% for 20 sec."
       },
       "charge": {
         "name": "Onrush",
@@ -5161,11 +5161,11 @@ export const en: EnTranslations = {
       },
       "bloodrage": {
         "name": "Blood Toll",
-        "description": "Generates {rage} rage at the cost of health."
+        "description": "Generates 10 rage at the cost of health."
       },
       "overpower": {
         "name": "Redhand",
-        "description": "Instant attack (2 charges) for weapon damage plus {damage} that generates {rage} rage and empowers your next Maiming Strike by 20% (stacks twice). Cannot be dodged."
+        "description": "Instant attack (2 charges) for weapon damage plus {damage} that empowers your next Maiming Strike by 20% (stacks twice). Cannot be dodged."
       },
       "execute": {
         "name": "Early Grave",

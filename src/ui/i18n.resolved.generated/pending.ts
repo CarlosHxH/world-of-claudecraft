@@ -173,7 +173,8 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.talentRows.comingSoon",
     "hudChrome.talentRows.defaultLoadout",
     "hudChrome.talentRows.tab",
-    "hudChrome.unitFrame.targetOfTargetLabel"
+    "hudChrome.unitFrame.targetOfTargetLabel",
+    "itemUi.slots.twoHand"
   ],
   "es_ES": [
     "entities.abilities.arcane_power.description",
@@ -339,7 +340,8 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.talentRows.comingSoon",
     "hudChrome.talentRows.defaultLoadout",
     "hudChrome.talentRows.tab",
-    "hudChrome.unitFrame.targetOfTargetLabel"
+    "hudChrome.unitFrame.targetOfTargetLabel",
+    "itemUi.slots.twoHand"
   ],
   "fr_FR": [
     "entities.abilities.arcane_power.description",

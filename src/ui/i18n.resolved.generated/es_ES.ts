@@ -4845,7 +4845,7 @@ export const es_ES: EnTranslations = {
     },
     "slots": {
       "mainhand": "Mano principal",
-      "twoHand": "Dos manos",
+      "twoHand": "Two-Hand",
       "helmet": "Cabeza",
       "neck": "Cuello",
       "shoulder": "Hombros",
@@ -5133,15 +5133,15 @@ export const es_ES: EnTranslations = {
       },
       "battle_shout": {
         "name": "Bramido de Hierro",
-        "description": "Un grito que aumenta el poder de ataque de todos los miembros del grupo un {buff}% durante 30 min."
+        "description": "Aumenta tu poder de ataque en {buff} durante 2 min."
       },
       "commanding_shout": {
         "name": "Grito Alentador",
-        "description": "Aumenta tu Aguante en 6 durante 1 hora."
+        "description": "Aumenta tu Aguante en {buff} durante 2 min."
       },
       "demoralizing_shout": {
         "name": "Aullido Pavoroso",
-        "description": "Lanza un grito aterrador que reduce el daño infligido por todos los enemigos cercanos un 20% durante 20 s."
+        "description": "Lanza un grito aterrador que reduce el poder de ataque de todos los enemigos cercanos en {buff} durante 30 s."
       },
       "charge": {
         "name": "Arremetida",
@@ -5161,11 +5161,11 @@ export const es_ES: EnTranslations = {
       },
       "bloodrage": {
         "name": "Tributo de Sangre",
-        "description": "Genera {rage} de ira a costa de salud."
+        "description": "Genera 10 de ira a costa de salud."
       },
       "overpower": {
         "name": "Mano Roja",
-        "description": "Ataque instantáneo (2 cargas) que inflige daño de arma más {damage}, genera {rage} de ira y potencia tu siguiente Golpe Mutilador un 20% (se acumula dos veces). No se puede esquivar."
+        "description": "Ataque instantáneo que inflige daño de arma más {damage}. Solo se puede usar después de que el objetivo esquive. No puede esquivarse."
       },
       "execute": {
         "name": "Tumba Temprana",
@@ -5693,7 +5693,7 @@ export const es_ES: EnTranslations = {
       },
       "bloodthirst": {
         "name": "Sangría",
-        "description": "Atacas al instante en un frenesí sangriento por {damage}, te curas un 3% de tu salud máxima y generas 12 de ira. Tiene un 30% de probabilidad de Enfurecerte. (habilidad distintiva de Furia)"
+        "description": "Atacas al instante en un frenesí sangriento por un 60% de daño de arma más {damage}. (habilidad distintiva de Furia)"
       },
       "raging_gale": {
         "name": "Twinstrike",

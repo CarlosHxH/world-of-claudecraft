@@ -2566,7 +2566,6 @@ export const es: Partial<Record<TranslationKey, string>> = {
   'itemUi.money.silver': 'plata',
   'itemUi.money.copper': 'cobre',
   'itemUi.slots.mainhand': 'Mano principal',
-  'itemUi.slots.twoHand': 'Dos manos',
   'itemUi.slots.chest': 'Pecho',
   'itemUi.slots.legs': 'Piernas',
   'itemUi.slots.feet': 'Pies',
@@ -2763,12 +2762,12 @@ export const es: Partial<Record<TranslationKey, string>> = {
     'Un ataque poderoso que aumenta el daño cuerpo a cuerpo en {damage}. Se activa en tu siguiente golpe.',
   'entities.abilities.battle_shout.name': 'Bramido de Hierro',
   'entities.abilities.battle_shout.description':
-    'Un grito que aumenta el poder de ataque de todos los miembros del grupo un {buff}% durante 30 min.',
+    'Aumenta tu poder de ataque en {buff} durante 2 min.',
   'entities.abilities.commanding_shout.name': 'Grito Alentador',
-  'entities.abilities.commanding_shout.description': 'Aumenta tu Aguante en 6 durante 1 hora.',
+  'entities.abilities.commanding_shout.description': 'Aumenta tu Aguante en {buff} durante 2 min.',
   'entities.abilities.demoralizing_shout.name': 'Aullido Pavoroso',
   'entities.abilities.demoralizing_shout.description':
-    'Lanza un grito aterrador que reduce el daño infligido por todos los enemigos cercanos un 20% durante 20 s.',
+    'Lanza un grito aterrador que reduce el poder de ataque de todos los enemigos cercanos en {buff} durante 30 s.',
   'entities.abilities.charge.name': 'Arremetida',
   'entities.abilities.charge.description':
     'Carga contra un enemigo, genera 9 de ira y lo aturde durante 1 s. Alcance de 8-25 m.',
@@ -2782,10 +2781,10 @@ export const es: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.hamstring.description':
     'Mutila al enemigo por {damage} de daño y reduce su velocidad de movimiento un 50% durante 15 s.',
   'entities.abilities.bloodrage.name': 'Tributo de Sangre',
-  'entities.abilities.bloodrage.description': 'Genera {rage} de ira a costa de salud.',
+  'entities.abilities.bloodrage.description': 'Genera 10 de ira a costa de salud.',
   'entities.abilities.overpower.name': 'Mano Roja',
   'entities.abilities.overpower.description':
-    'Ataque instantáneo (2 cargas) que inflige daño de arma más {damage}, genera {rage} de ira y potencia tu siguiente Golpe Mutilador un 20% (se acumula dos veces). No se puede esquivar.',
+    'Ataque instantáneo que inflige daño de arma más {damage}. Solo se puede usar después de que el objetivo esquive. No puede esquivarse.',
   'entities.abilities.execute.name': 'Tumba Temprana',
   'entities.abilities.execute.description':
     'Intenta rematar a un enemigo herido e inflige {damage} de daño. Solo usable contra enemigos con menos del 20% de salud.',
@@ -3165,7 +3164,7 @@ export const es: Partial<Record<TranslationKey, string>> = {
     'Ataque brutal que inflige daño de arma más {damage}. (habilidad distintiva de Armas)',
   'entities.abilities.bloodthirst.name': 'Sangría',
   'entities.abilities.bloodthirst.description':
-    'Atacas al instante en un frenesí sangriento por {damage}, te curas un 3% de tu salud máxima y generas 12 de ira. Tiene un 30% de probabilidad de Enfurecerte. (habilidad distintiva de Furia)',
+    'Atacas al instante en un frenesí sangriento por un 60% de daño de arma más {damage}. (habilidad distintiva de Furia)',
   'entities.abilities.shield_slam.name': 'Quiebra de Escudo',
   'entities.abilities.shield_slam.description':
     'Golpeas al objetivo con tu escudo por un 50% de daño de arma más {damage} y generas una amenaza enorme. (habilidad distintiva de Protección)',

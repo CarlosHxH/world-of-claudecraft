@@ -642,11 +642,11 @@ const classAbilityNamesEn = {
         'Iron Bellow',
         'A shout that increases the attack power of all party members by {buff}% for 30 min.',
       ],
-      ['commanding_shout', 'Bolstering Cry', 'Increases your Stamina by 6 for 1 hour.'],
+      ['commanding_shout', 'Bolstering Cry', 'Increases your Stamina by {buff} for 1 hour.'],
       [
         'demoralizing_shout',
         'Direhowl',
-        'Lets out a fearsome shout, reducing the damage dealt by all nearby enemies by 20% for 20 sec.',
+        'Lets out a fearsome shout, reducing the damage dealt by all nearby enemies by {buff}% for 20 sec.',
       ],
       [
         'charge',
@@ -668,11 +668,11 @@ const classAbilityNamesEn = {
         'Hobbling Cut',
         'Maims the enemy for {damage} damage, slowing its movement by 50% for 15 sec.',
       ],
-      ['bloodrage', 'Blood Toll', 'Generates {rage} rage at the cost of health.'],
+      ['bloodrage', 'Blood Toll', 'Generates 10 rage at the cost of health.'],
       [
         'overpower',
         'Redhand',
-        'Instant attack (2 charges) for weapon damage plus {damage} that generates {rage} rage and empowers your next Maiming Strike by 20% (stacks twice). Cannot be dodged.',
+        'Instant attack (2 charges) for weapon damage plus {damage} that empowers your next Maiming Strike by 20% (stacks twice). Cannot be dodged.',
       ],
       [
         'execute',
