@@ -273,6 +273,10 @@ await evr(() => {
 });
 await sleep(500);
 console.log('offline world entered');
+// Re-assert the desktop tier: the entry flow drops the metrics override
+// back to the bare window content size once per run (observed reliably),
+// and every capture until the first tier flip would inherit it.
+await flipViewport(1600, 900, 1, false);
 
 // ---------------------------------------------------------------------------
 // Real earns: the Bursar visit deed, then the nine-talk Saul streak (the
