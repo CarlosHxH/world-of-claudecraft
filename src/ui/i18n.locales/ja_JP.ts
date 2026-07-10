@@ -1585,6 +1585,7 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
   'itemUi.money.silver': '銀貨',
   'itemUi.money.copper': '銅貨',
   'itemUi.slots.mainhand': 'メインハンド',
+  'itemUi.slots.twoHand': '両手',
   'itemUi.slots.chest': '胸',
   'itemUi.slots.legs': '脚',
   'itemUi.slots.feet': '足',

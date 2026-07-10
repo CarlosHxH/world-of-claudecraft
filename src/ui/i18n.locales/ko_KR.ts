@@ -1573,6 +1573,7 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
   'itemUi.money.silver': '은화',
   'itemUi.money.copper': '동화',
   'itemUi.slots.mainhand': '주장비',
+  'itemUi.slots.twoHand': '양손',
   'itemUi.slots.chest': '가슴',
   'itemUi.slots.legs': '다리',
   'itemUi.slots.feet': '발',

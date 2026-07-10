@@ -173,8 +173,7 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.talentRows.comingSoon",
     "hudChrome.talentRows.defaultLoadout",
     "hudChrome.talentRows.tab",
-    "hudChrome.unitFrame.targetOfTargetLabel",
-    "itemUi.slots.twoHand"
+    "hudChrome.unitFrame.targetOfTargetLabel"
   ],
   "es_ES": [
     "entities.abilities.arcane_power.description",
@@ -340,8 +339,7 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.talentRows.comingSoon",
     "hudChrome.talentRows.defaultLoadout",
     "hudChrome.talentRows.tab",
-    "hudChrome.unitFrame.targetOfTargetLabel",
-    "itemUi.slots.twoHand"
+    "hudChrome.unitFrame.targetOfTargetLabel"
   ],
   "fr_FR": [
     "entities.abilities.arcane_power.description",
@@ -1167,8 +1165,7 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.talentRows.comingSoon",
     "hudChrome.talentRows.defaultLoadout",
     "hudChrome.talentRows.tab",
-    "hudChrome.unitFrame.targetOfTargetLabel",
-    "itemUi.slots.twoHand"
+    "hudChrome.unitFrame.targetOfTargetLabel"
   ],
   "zh_TW": [
     "entities.abilities.arcane_power.description",
@@ -1325,8 +1322,7 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.talentRows.comingSoon",
     "hudChrome.talentRows.defaultLoadout",
     "hudChrome.talentRows.tab",
-    "hudChrome.unitFrame.targetOfTargetLabel",
-    "itemUi.slots.twoHand"
+    "hudChrome.unitFrame.targetOfTargetLabel"
   ],
   "ko_KR": [
     "entities.abilities.arcane_power.description",
@@ -1483,8 +1479,7 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.talentRows.comingSoon",
     "hudChrome.talentRows.defaultLoadout",
     "hudChrome.talentRows.tab",
-    "hudChrome.unitFrame.targetOfTargetLabel",
-    "itemUi.slots.twoHand"
+    "hudChrome.unitFrame.targetOfTargetLabel"
   ],
   "ja_JP": [
     "entities.abilities.arcane_power.description",
@@ -1641,8 +1636,7 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.talentRows.comingSoon",
     "hudChrome.talentRows.defaultLoadout",
     "hudChrome.talentRows.tab",
-    "hudChrome.unitFrame.targetOfTargetLabel",
-    "itemUi.slots.twoHand"
+    "hudChrome.unitFrame.targetOfTargetLabel"
   ],
   "pt_BR": [
     "entities.abilities.arcane_power.description",
@@ -1966,8 +1960,7 @@ export const pending: Record<string, readonly string[]> = {
     "hudChrome.talentRows.comingSoon",
     "hudChrome.talentRows.defaultLoadout",
     "hudChrome.talentRows.tab",
-    "hudChrome.unitFrame.targetOfTargetLabel",
-    "itemUi.slots.twoHand"
+    "hudChrome.unitFrame.targetOfTargetLabel"
   ],
   "cs_CZ": [
     "entities.abilities.arcane_power.description",

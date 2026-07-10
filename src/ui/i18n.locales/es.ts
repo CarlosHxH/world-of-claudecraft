@@ -2566,6 +2566,7 @@ export const es: Partial<Record<TranslationKey, string>> = {
   'itemUi.money.silver': 'plata',
   'itemUi.money.copper': 'cobre',
   'itemUi.slots.mainhand': 'Mano principal',
+  'itemUi.slots.twoHand': 'Dos manos',
   'itemUi.slots.chest': 'Pecho',
   'itemUi.slots.legs': 'Piernas',
   'itemUi.slots.feet': 'Pies',

@@ -1607,6 +1607,7 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
   'itemUi.money.silver': 'серебро',
   'itemUi.money.copper': 'медь',
   'itemUi.slots.mainhand': 'Правая рука',
+  'itemUi.slots.twoHand': 'Двуручное',
   'itemUi.slots.chest': 'Грудь',
   'itemUi.slots.legs': 'Ноги',
   'itemUi.slots.feet': 'Ступни',

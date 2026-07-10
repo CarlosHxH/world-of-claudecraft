@@ -4845,7 +4845,7 @@ export const ja_JP: EnTranslations = {
     },
     "slots": {
       "mainhand": "メインハンド",
-      "twoHand": "Two-Hand",
+      "twoHand": "両手",
       "helmet": "頭",
       "neck": "首",
       "shoulder": "肩",

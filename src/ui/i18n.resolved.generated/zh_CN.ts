@@ -4845,7 +4845,7 @@ export const zh_CN: EnTranslations = {
     },
     "slots": {
       "mainhand": "主手",
-      "twoHand": "Two-Hand",
+      "twoHand": "双手",
       "helmet": "头部",
       "neck": "颈部",
       "shoulder": "肩部",

@@ -1517,6 +1517,7 @@ export const zh_TW: Partial<Record<TranslationKey, string>> = {
   'itemUi.money.silver': '銀幣',
   'itemUi.money.copper': '銅幣',
   'itemUi.slots.mainhand': '主手',
+  'itemUi.slots.twoHand': '雙手',
   'itemUi.slots.chest': '胸部',
   'itemUi.slots.legs': '腿部',
   'itemUi.slots.feet': '腳部',
