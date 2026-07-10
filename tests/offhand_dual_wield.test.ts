@@ -174,3 +174,49 @@ describe('offhand combat rules', () => {
     expect(p.offhandSwingTimer).toBeGreaterThan(0);
   });
 });
+
+// A two-hander occupies both hands: mainhand 2H + a filled offhand must never
+// coexist (equipItem displaces the other hand to the bags, classic style), or
+// the two-hand mastery would stack with shield block / a dual-wield swing.
+describe('two-hander hand exclusivity', () => {
+  // autoEquip: true dresses the starting kit, but the pickup-time auto-equip on
+  // addItem would race these explicit equips; turn the player toggle off.
+  function freshWarrior(): Sim {
+    const sim = new Sim({ seed: 7, playerClass: 'warrior', autoEquip: true });
+    requirePlayerMeta(sim, sim.player.id).autoEquip = false;
+    return sim;
+  }
+
+  it('equipping a 2H displaces the shield to the bags', () => {
+    const sim = freshWarrior();
+    expect(sim.equipment.offhand).toBe('eastbrook_buckler');
+    sim.addItem('eastbrook_greatsword', 1);
+    sim.equipItem('eastbrook_greatsword');
+    expect(sim.equipment.mainhand).toBe('eastbrook_greatsword');
+    expect(sim.equipment.offhand).toBeUndefined();
+    expect(sim.countItem('eastbrook_buckler')).toBe(1); // displaced, not destroyed
+    expect(sim.countItem('worn_sword')).toBe(1); // the old mainhand swap
+  });
+
+  it('equipping a shield while wielding a 2H displaces the 2H to the bags', () => {
+    const sim = freshWarrior();
+    sim.addItem('eastbrook_greatsword', 1);
+    sim.equipItem('eastbrook_greatsword');
+    expect(sim.equipment.offhand).toBeUndefined();
+    sim.equipItem('eastbrook_buckler');
+    expect(sim.equipment.offhand).toBe('eastbrook_buckler');
+    expect(sim.equipment.mainhand).toBeUndefined();
+    expect(sim.countItem('eastbrook_greatsword')).toBe(1); // displaced, not destroyed
+  });
+
+  it('refuses a 2H equip when the displaced shield has no bag room', () => {
+    const sim = freshWarrior();
+    sim.addItem('eastbrook_greatsword', 1);
+    // Gear never stacks, so each copy fills one pooled slot: pack the bags solid.
+    while (sim.canAddItem('worn_sword', 1)) sim.addItem('worn_sword', 1);
+    sim.equipItem('eastbrook_greatsword');
+    expect(sim.equipment.mainhand).toBe('worn_sword'); // unchanged
+    expect(sim.equipment.offhand).toBe('eastbrook_buckler'); // unchanged
+    expect(sim.countItem('eastbrook_greatsword')).toBe(1); // still in the bags
+  });
+});

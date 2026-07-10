@@ -140,7 +140,31 @@ export function equipItem(ctx: SimContext, itemId: string, pid?: number): void {
     return;
   }
   const old = meta.equipment[slot];
+  // A two-hander occupies both hands: mainhand 2H + a filled offhand must never
+  // coexist (shield block or a dual-wield swing would stack with the two-hand
+  // mastery). Equipping into the offhand while wielding a 2H displaces the 2H to
+  // the bags, and equipping a 2H displaces the offhand piece, the classic swap in
+  // both directions. With no bag room for the displaced piece the equip is
+  // refused, mirroring unequipItem (nothing is ever force-dropped).
+  let displacedSlot: EquipSlot | null = null;
+  if (slot === 'offhand') {
+    const mh = meta.equipment.mainhand ? ITEMS[meta.equipment.mainhand] : undefined;
+    if (mh?.kind === 'weapon' && weaponHand(mh) === 'twohand') displacedSlot = 'mainhand';
+  } else if (slot === 'mainhand' && def.kind === 'weapon' && weaponHand(def) === 'twohand') {
+    if (meta.equipment.offhand) displacedSlot = 'offhand';
+  }
+  const displacedId = displacedSlot ? meta.equipment[displacedSlot] : undefined;
+  if (displacedSlot && displacedId) {
+    // With a swap also returning `old`, the displaced piece needs its own free
+    // slot beyond the one the equipped item vacates; check before mutating.
+    if (old && !ctx.canAddItem(displacedId, 1, meta.entityId)) {
+      bagsFullError(ctx, meta.entityId);
+      return;
+    }
+    delete meta.equipment[displacedSlot];
+  }
   ctx.removeItem(itemId, 1, meta.entityId);
+  if (displacedId) addItemSilent(displacedId, 1, meta);
   if (old) addItemSilent(old, 1, meta);
   meta.equipment[slot] = itemId;
   recalcPlayerStats(p, meta.cls, meta.equipment, ctx.playerMods(meta));
