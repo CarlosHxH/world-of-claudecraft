@@ -149,7 +149,7 @@ describe('prepare_ai_review: event and prompt validation', () => {
     } finally {
       fs.rmSync(fixture, { recursive: true, force: true });
     }
-  });
+  }, 30_000);
 });
 
 describe('post_ai_review: structured output', () => {
