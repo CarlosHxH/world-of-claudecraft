@@ -3094,6 +3094,143 @@
     }
   }
 
+  /* ---------- bags + bank AAA frame ---------- */
+  /* Batch 1 of the all-windows AAA pass: the bags (#bags) and bank (#bank-window)
+     grids adopt the shared .window-frame chrome (window_frame.ts) plus the
+     .item-cell / .filter-row / .chip / .search-field / .empty-state grammar (spec
+     6.1 to 8), mirroring the vendor pilot. The frame mounts on an INNER container
+     (bags_window.ts / bank_window.ts), so each shared root stays pristine
+     .window.panel: the cluster docks (body.vendor-open / body.bank-open, the mobile
+     50/50 pairing) key on the root by id and are untouched, and the root overrides
+     below are scoped with :has(> .window-frame). The legacy grid/toolbar containers
+     (.bag-grid / .bank-grid / .bank-scroll / .bag-filter-bar / .bag-tools / .money /
+     .bank-capacity / .bank-buy-row / .bank-bonus*) keep their classes so the docking
+     and mobile rules that reference them stay live. Tokens only, no raw hex. */
+
+  /* Neutralize the legacy .panel chrome under the mounted frame (the vendor
+     :has(> .window-frame) precedent): the inner .window-frame draws its own border,
+     edge line, and background, so the root must not double them. The docking
+     geometry (left / width / transform / max-height in the bags + bank sections
+     below, and the mobile pairing) lives on the root and is untouched. */
+  #bags:has(> .window-frame),
+  #bank-window:has(> .window-frame) {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+  }
+
+  /* The body is a flex column so the slot grid (bags) / .bank-scroll region (bank)
+     is the ONE internal scroll region between the pinned bag bar / filter header /
+     capacity above and the money row (bags) / sticky footer (bank) below, exactly as
+     the pre-frame column did. The existing #bags/.bank-* flex:none/flex:1 rules in
+     the sections below still match (they are descendant selectors), so only the
+     column context moves from the root to .window-body. */
+  #bags > .window-frame > .window-body,
+  #bank-window > .window-frame > .window-body {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Slot cells: the fixed 44px .item-cell grammar becomes a fluid square that fills
+     the auto-fill grid track (the classic bag look), the item icon fills the cell,
+     and the free-slot pad is a muted decorative cell. The rarity border + count
+     corner + focus ring come from the shared .item-cell grammar via data-quality. */
+  .window-frame .bag-grid .item-cell,
+  .window-frame .bank-grid .item-cell {
+    width: auto;
+    height: auto;
+    aspect-ratio: 1;
+    /* SC 2.5.8: the 42px column floor keeps every cell >= 40x40 on touch too. */
+    min-height: var(--touch-min);
+    padding: 0;
+    overflow: hidden;
+    font-family: var(--font-ui);
+  }
+  .window-frame .bag-grid .item-cell .item-icon,
+  .window-frame .bank-grid .item-cell .item-icon {
+    position: absolute;
+    inset: 2px;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    border: 0;
+    border-radius: var(--radius-sm);
+  }
+  .window-frame .bag-grid .item-cell:not(.is-empty):hover,
+  .window-frame .bank-grid .item-cell:not(.is-empty):hover {
+    filter: brightness(1.2);
+  }
+  .window-frame .bag-grid .item-cell.is-empty,
+  .window-frame .bank-grid .item-cell.is-empty {
+    cursor: default;
+    opacity: 0.5;
+  }
+  /* The empty / no-match line spans the whole grid rather than sitting in cell 1. */
+  .window-frame .bag-grid .empty-state,
+  .window-frame .bank-grid .empty-state {
+    grid-column: 1 / -1;
+  }
+
+  /* Search field fills the tools row (no leading icon in this set, so the grammar's
+     icon/clear padding is normalized back to a plain field). */
+  #bags .bag-tools .search-field,
+  #bank-window .bag-tools .search-field {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  #bags .bag-tools .search-field input,
+  #bank-window .bag-tools .search-field input {
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+  }
+
+  /* The buy-slots expansion row is the bank's sticky-footer bottom action: the
+     footer supplies the top border and padding, so drop the row's own separators and
+     let it fill the footer width (its .bank-buy-btn is already width:100%). */
+  #bank-window .window-footer .bank-buy-row {
+    flex: 1 1 auto;
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+  /* The transient "banker too far" away state builds the frame (footer included)
+     but appends no buy row; hide the empty footer bar so it never shows as a bare
+     strip in that brief pre-grace-close flash. */
+  #bank-window .window-footer:empty {
+    display: none;
+  }
+
+  /* Touch: the grammar's own tap floors apply (spec 6.1; the 44px item-cell already
+     clears 40x40 via the column floor above, so only the 24px chip needs raising).
+     This components rule governs on touch because the hud-mobile layer carries no
+     .chip / .filter-row rule to outrank it. */
+  body.mobile-touch .window-frame .chip {
+    min-height: var(--touch-min);
+  }
+  /* Short landscape phones: keep the bank-cluster chip filter-row ONE horizontally
+     scrollable row so a two-row wrap never squeezes the docked grid to a sliver
+     (the behavior the legacy .bag-chips rule protected, re-provided for the grammar
+     container; standalone bags and the vendor cluster keep the family wrap). */
+  body.mobile-touch #bank-window .window-frame .filter-row,
+  body.mobile-touch.bank-open #bags .window-frame .filter-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  body.mobile-touch #bank-window .window-frame .filter-row .chip,
+  body.mobile-touch.bank-open #bags .window-frame .filter-row .chip {
+    flex: 0 0 auto;
+  }
+  /* The bank's own close hides under the 50/50 pairing (the visible bags close is
+     the cluster's single close control, bags_window.ts), re-providing the legacy
+     .panel-title .x-btn hide for the grammar close. */
+  body.mobile-touch.bank-open #bank-window .window-close {
+    display: none;
+  }
+
   /* ---------- bags ---------- */
   /* bags, centred in the bottom gap between the action cluster and micro-menu */
   #bags {
