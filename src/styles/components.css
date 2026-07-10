@@ -14,9 +14,27 @@
 
 @layer components {
   /* ---------- delve board ---------- */
+  /* Opened as display:flex by openDelveBoard so the window is a bounded flex
+     column: the chrome (title, delve name, marks, requirement lines, DELVE/SHOP
+     tab rail) is fixed and .delve-board-body is the one scroll region, so content
+     reflows on a corner resize (grow fills, shrink scrolls the body, chrome
+     stays) instead of the root growing past content-height. Mirrors the shared
+     .window-frame model (the frame windows get this from .window-body); the
+     hud-mobile layer re-asserts overflow-y:auto on the root exactly as it does
+     for the framed windows. */
   #delve-board {
     width: 360px;
     --window-pad: 14px;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  #delve-board > *:not(.delve-board-body) {
+    flex: none;
+  }
+  #delve-board .delve-board-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
   }
   #delve-board .delve-board-name {
     font-family: var(--title-font);
@@ -132,12 +150,14 @@
     outline: 2px solid var(--color-border-focus);
     outline-offset: -2px;
   }
+  /* No own max-height/scroll: the shop list flows and the .delve-board-body
+     scroll region owns the single scroll, so the list follows the window size
+     (grows to fill a taller window, scrolls in a shorter one) instead of being
+     pinned to a fixed 320px height. */
   #delve-board .delve-shop-list {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    max-height: 320px;
-    overflow-y: auto;
   }
   #delve-board .delve-shop-row {
     display: flex;

@@ -7233,13 +7233,15 @@ export class Hud {
     if (npc?.kind !== 'npc') return;
     const delve = Object.values(DELVES).find((d) => d.boardNpcId === npc.templateId);
     if (!delve) return;
-    if ($('#delve-board').style.display !== 'block')
+    // display:flex (not block): the delve board is a bounded flex column so its
+    // body flex-fills and scrolls on a corner resize (see the #delve-board CSS).
+    if ($('#delve-board').style.display !== 'flex')
       this.delveTrap = this.focusManager.open({ root: () => $('#delve-board') });
     this.openDelveBoardNpcId = npcId;
     this.selectedDelveTier = 'normal';
     this.delveBoardTab = 'delve';
     this.closeOtherWindows('#delve-board');
-    $('#delve-board').style.display = 'block';
+    $('#delve-board').style.display = 'flex';
     this.renderDelveBoard(true);
   }
 
