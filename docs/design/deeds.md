@@ -24,8 +24,9 @@ The catalog is data-as-code: `src/sim/content/deeds.ts` exports `DEEDS`
 (id to `DeedDef`) and the append-only `DEED_ORDER`, and the same table runs
 identically in the offline browser world, on the authoritative server, and in
 the headless RL env. The evaluator (`src/sim/deeds.ts`, a system module behind
-the `SimContext` seam) runs at the very end of the tick tail over dirty
-players only, draws zero rng, grants into `PlayerMeta.deedsEarned`, maintains
+the `SimContext` seam) runs at the very end of the tick tail (grant
+evaluation over dirty players only, plus a 1 Hz proximity sweep that sets
+visit marks), draws zero rng, grants into `PlayerMeta.deedsEarned`, maintains
 the `renown` sum and the persisted `deedStats` lifetime counters, and emits
 the id-based `deedUnlocked` event (never English text); on world join it
 re-evaluates every predicate against loaded state and grants with

@@ -86,7 +86,7 @@ Each module owns the FUNCTIONS for one system; the backing STATE stays on `Sim` 
 | `market.ts` | the World Market (`Market` class) |
 | `mail/post_office.ts` | player mail (send/take/read/delete, the mailbox anchor gate) |
 | `bank.ts` | the personal pooled bank (The Gilded Strongbox): capacity math + the container-agnostic `moveBetweenContainers`, `bankDeposit`/`bankWithdraw`/`bankBuySlots`, `bankInfoFor` (boundary-clones), `sanitizeBankState` (the one load path), `nearBanker`; state on `PlayerMeta.bank`, the `bankerIds` anchor list on `Sim`; draws NO rng |
-| `deeds.ts` | the Book of Deeds evaluator (`updateDeeds`): runs at the very end of the tick tail over dirty players only (`markDeedsDirty`), draws NO rng, grants into `PlayerMeta.deedsEarned` + maintains `deedStats`/`renown`, emits id-based `deedUnlocked` (retro on join); plus the bespoke `manual`-deed grant sites and the session-only `DeedRuntime` encounter tracking. Authoring contract: `docs/design/deeds.md` |
+| `deeds.ts` | the Book of Deeds evaluator (`updateDeeds`): runs at the very end of the tick tail (grant evaluation over dirty players only via `markDeedsDirty`, plus a 1 Hz proximity sweep for visit marks), draws NO rng, grants into `PlayerMeta.deedsEarned` + maintains `deedStats`/`renown`, emits id-based `deedUnlocked` (retro on join); plus the bespoke `manual`-deed grant sites and the session-only `DeedRuntime` encounter tracking. Authoring contract: `docs/design/deeds.md` |
 | `loot/loot_roll.ts` | loot rolls, corpse loot, party-loot strategy, `rollLoot` |
 
 ## The SimContext seam (final shape)
