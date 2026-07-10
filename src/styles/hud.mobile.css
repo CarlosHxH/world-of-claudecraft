@@ -4153,6 +4153,15 @@
     transform: none;
     box-sizing: border-box;
   }
+  /* Solid (never see-through) panel on touch (live feedback: the menu "shouldn't
+     have so much opacity", it should not be "completely see-through"). The L1
+     panel gradient (--panel-l1-bg) carries a slight alpha, so lay it over a solid
+     dark base (--color-panel-l2-base, the shell header's own fill) so the 3D world
+     never shows through the content. Both touch modes (the narrow back-stack shell
+     and the wide rail two-pane); the base rule's gradient image is untouched. */
+  body.mobile-touch #options-menu > .window-frame {
+    background-color: var(--color-panel-l2-base);
+  }
   body.mobile-touch #options-menu > .window-frame > .window-titlebar,
   body.mobile-touch #options-menu > .window-frame > .window-footer {
     display: none;
