@@ -126,6 +126,12 @@ export function updatePlayerAutoAttack(ctx: SimContext, p: Entity, meta: PlayerM
   const facingDiff = Math.abs(normAngle(angleTo(p.pos, t.pos) - p.facing));
   if (facingDiff > MELEE_ARC) return;
 
+  // Ranged autos gate on the plain swing timer HERE, before the ranged branch:
+  // ranged classes never dual-wield, and the dual-wield-aware guard below sits
+  // after this branch, so without this line a ranged attacker re-enters every
+  // tick and fires 20 shots a second (review round 2, item 1).
+  if (p.swingTimer > 0 && CLASSES[meta.cls].ranged) return;
+
   // ranged auto-attack: hunters (auto shot, dead zone inside minRange) and
   // casters (wand-style, no dead zone so they don't run into melee — #94)
   const ranged = CLASSES[meta.cls].ranged;
