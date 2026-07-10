@@ -823,6 +823,12 @@ export class OptionsWindow {
       case 'pageDown':
         this.pageScrollDetail(fi === 'pageDown' ? 1 : -1);
         return;
+      default: {
+        // Exhaustiveness guard (task 9 review follow-up): a new FocusIntent that is
+        // not routed above fails compilation here rather than silently no-opping.
+        const _never: never = fi;
+        return _never;
+      }
     }
   }
 
