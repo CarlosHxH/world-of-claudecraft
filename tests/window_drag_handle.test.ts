@@ -57,4 +57,31 @@ describe('isWindowDragHandle: grammar-window titlebar drag', () => {
     const { target, win } = scenario('map-window', { headerless: true });
     expect(isWindowDragHandle(target, win)).toBe(true);
   });
+
+  it('static centered dialogs never drag, even from a real titlebar', () => {
+    // Quest/gossip, modal confirm + input prompts, the delve board / rite /
+    // lockpick popups, the cursor-anchored loot window, and the report form all
+    // share a header grammar with the movable windows but are transient
+    // question-and-answer surfaces: dragging them bakes a session-sticky
+    // windowMoved position for a dialog the player never expects to manage.
+    for (const id of [
+      'quest-dialog',
+      'confirm-dialog',
+      'delve-board',
+      'lockpick-panel',
+      'delve-rite-panel',
+      'loot-window',
+      'report-window',
+    ]) {
+      const { target, win } = scenario(id);
+      expect(isWindowDragHandle(target, win), `${id} must not drag`).toBe(false);
+    }
+  });
+
+  it('the deliberately movable windows keep dragging (exclusion list is scoped)', () => {
+    for (const id of ['bags', 'char-window', 'market-window', 'quest-log-window']) {
+      const { target, win } = scenario(id);
+      expect(isWindowDragHandle(target, win), `${id} must drag`).toBe(true);
+    }
+  });
 });

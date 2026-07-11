@@ -20,6 +20,24 @@ const DRAG_HANDLE_EXCLUDE =
 // and the AAA `.window-titlebar` (window_frame.ts).
 const DRAG_HANDLE_SELECTOR = '.panel-title, .window-titlebar';
 
+// Static, centered, transient dialogs that share a header grammar with the
+// movable windows but must never move: quest/gossip and confirm prompts are
+// modal question-and-answer surfaces, the delve board / rite / lockpick popups
+// are short-lived interaction sheets, the loot window is cursor-anchored, and
+// the report dialog is a one-shot form. The deliberately movable windows
+// (bags, character, vendor, market, the Codex, ...) stay off this list. The
+// sibling per-window opt-out for resizing is NON_RESIZABLE_WINDOW_IDS
+// (window_resize.ts); this is the drag twin.
+const STATIC_DIALOG_WINDOW_IDS = new Set([
+  'quest-dialog',
+  'confirm-dialog',
+  'delve-board',
+  'lockpick-panel',
+  'delve-rite-panel',
+  'loot-window',
+  'report-window',
+]);
+
 /**
  * True when a pointerdown on `target` should begin dragging `win`.
  *
@@ -30,6 +48,10 @@ const DRAG_HANDLE_SELECTOR = '.panel-title, .window-titlebar';
  * the session; this is the same disease placeNewWindow's mobile bail guards
  * against (hud.ts, issue 1577), applied to the drag write.
  *
+ * Also returns false for every STATIC_DIALOG_WINDOW_IDS window: a static,
+ * centered, transient dialog shares its header grammar with the movable
+ * windows but must never move (maintainer direction from the fix round).
+ *
  * Otherwise returns false for any excluded interactive control (so the close
  * button never drags), true when the target is within a `.panel-title` /
  * `.window-titlebar` that belongs to `win`, and true for the headerless
@@ -39,6 +61,7 @@ const DRAG_HANDLE_SELECTOR = '.panel-title, .window-titlebar';
  */
 export function isWindowDragHandle(target: HTMLElement, win: HTMLElement): boolean {
   if (target.ownerDocument.body.classList.contains('mobile-touch')) return false;
+  if (STATIC_DIALOG_WINDOW_IDS.has(win.id)) return false;
   if (target.closest(DRAG_HANDLE_EXCLUDE)) return false;
   const handle = target.closest(DRAG_HANDLE_SELECTOR);
   if (handle && win.contains(handle)) return true;
