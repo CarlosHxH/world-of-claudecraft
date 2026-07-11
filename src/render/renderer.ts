@@ -55,6 +55,7 @@ import { CLICK_MARKER_LIFETIME, clickMarkerAnim, clickMarkerColor } from './clic
 import { trackWebGLContext } from './context_release';
 import { buildCritters, type CritterField } from './critters';
 import { animatesEveryFrame, crowdLodScaleSq, midAnimCadence } from './crowd_lod';
+import { shouldPlayDeedFirework } from './deed_fx_gate';
 import { buildDelveModule } from './delve_interiors';
 import { buildDelveInteractable } from './delve_props';
 import { buildDoorBody } from './door_portal';
@@ -3003,7 +3004,7 @@ export class Renderer {
         // the HUD folds them into a single summary line. A reduced-motion
         // player skips the burst too: it is a sudden personal flash at the
         // camera's focus, and the banner plus gold log line carry the moment.
-        if (ev.retro || this.reducedMotion()) break;
+        if (!shouldPlayDeedFirework(ev, this.reducedMotion())) break;
         const v = this.views.get(this.sim.playerId);
         if (!v) break;
         const p = this.sim.player;

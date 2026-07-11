@@ -331,8 +331,11 @@ describe('keybind dispatch chain', () => {
 
 describe('renderer celebration + nameplate title', () => {
   it('fires one festival-gold burst for a fresh unlock and nothing for retro', () => {
+    // The retro/reduced-motion decision lives in the pure shouldPlayDeedFirework
+    // gate (tests/deed_fx_gate.test.ts covers its arms); pin that the arm routes
+    // through it and bails on a false, so nobody can bypass the gate.
     expect(rendererSrc).toMatch(
-      /case 'deedUnlocked': \{[\s\S]{0,500}?if \(ev\.retro \|\| this\.reducedMotion\(\)\) break;/,
+      /case 'deedUnlocked': \{[\s\S]{0,500}?if \(!shouldPlayDeedFirework\(ev, this\.reducedMotion\(\)\)\) break;/,
     );
     expect(rendererSrc).toMatch(
       /this\.vfx\.fireworkBurst\(this\.tmpV, FESTIVAL_GOLD_COLORS, 46, 1\.1\);/,
