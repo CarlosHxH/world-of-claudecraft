@@ -1,0 +1,109 @@
+import type { Api } from '../net/online';
+import { DESKTOP_APP } from '../net/online';
+import { desktopBridge } from '../runtime';
+import { userFacingApiError } from './api_error_i18n';
+import { t } from './i18n';
+
+// Steam account link (the deeds achievement mirror), a stacked card beside the
+// GitHub one. Entirely capability-driven: the group renders ONLY when the
+// server's /api/status advert says the Steam surface is lit, so a dark server
+// shows nothing anywhere. Linking needs a Steam session ticket, which only the
+// desktop shell can mint (wocDesktop.steamLinkTicket); the web build shows
+// link status and Unlink only.
+//
+// Extracted from main.ts so the client entry stays a firewall; the shell ids
+// referenced here exist only in index.html, so every lookup keeps tolerating
+// absence (main.ts is shared with play.html).
+
+// Flash a message into the Steam status line for 4s, then restore whatever it
+// was showing (the flashGithubError shape in main.ts, targeting #steam-status).
+function flashSteamStatus(message: string): void {
+  const statusEl = document.getElementById('steam-status');
+  if (!statusEl) return;
+  const previousText = statusEl.textContent;
+  const previousHidden = statusEl.hidden;
+  statusEl.textContent = message;
+  statusEl.hidden = false;
+  window.setTimeout(() => {
+    if (statusEl.textContent !== message) return; // a real status refresh already overwrote it
+    statusEl.textContent = previousText;
+    statusEl.hidden = previousHidden;
+  }, 4000);
+}
+
+export async function refreshSteamLinkStatus(api: Api): Promise<void> {
+  const group = document.getElementById('cs-steam-group');
+  if (!group) return;
+  if (!api.token) {
+    group.hidden = true;
+    return;
+  }
+  // The public capability advert gates everything below; without it no
+  // authed steam call is even attempted.
+  if (!(await api.steamAdvert())) {
+    group.hidden = true;
+    return;
+  }
+  let status: Record<string, unknown> | null = null;
+  try {
+    status = await api.steamStatus();
+  } catch (err) {
+    console.error('[steam] could not load status', err);
+  }
+  if (!status || status.enabled !== true) {
+    group.hidden = true;
+    return;
+  }
+  group.hidden = false;
+  const linked = status.linked === true;
+  const steamId = typeof status.steamId === 'string' ? status.steamId : '';
+  const statusEl = document.getElementById('steam-status');
+  if (statusEl) {
+    if (linked) {
+      statusEl.textContent = t('hudChrome.steam.linked', { id: steamId });
+      statusEl.hidden = false;
+    } else {
+      statusEl.hidden = true;
+    }
+  }
+  const bridge = DESKTOP_APP ? desktopBridge() : null;
+  const canMintTicket = typeof bridge?.steamLinkTicket === 'function';
+  const linkBtn = document.getElementById('btn-steam-link');
+  if (linkBtn) linkBtn.hidden = linked || !canMintTicket;
+  const unlinkBtn = document.getElementById('btn-steam-unlink');
+  if (unlinkBtn) unlinkBtn.hidden = !linked;
+}
+
+async function startSteamLink(api: Api): Promise<void> {
+  const bridge = DESKTOP_APP ? desktopBridge() : null;
+  if (typeof bridge?.steamLinkTicket !== 'function') return;
+  let ticket: string | null = null;
+  try {
+    ticket = await bridge.steamLinkTicket();
+  } catch {
+    ticket = null;
+  }
+  if (!ticket) {
+    flashSteamStatus(t('hudChrome.steam.noTicket'));
+    return;
+  }
+  try {
+    await api.steamLink(ticket);
+  } catch (err) {
+    flashSteamStatus(userFacingApiError(err));
+  }
+  void refreshSteamLinkStatus(api);
+}
+
+export function wireSteamLink(api: Api): void {
+  document.getElementById('btn-steam-link')?.addEventListener('click', () => {
+    void startSteamLink(api);
+  });
+  document.getElementById('btn-steam-unlink')?.addEventListener('click', () => {
+    void api
+      .unlinkSteam()
+      .then(() => refreshSteamLinkStatus(api))
+      .catch((err) => console.error('[steam] unlink failed', err));
+  });
+  void refreshSteamLinkStatus(api);
+}
