@@ -120,4 +120,29 @@ export const GATHER_NODES: GatherNodeDef[] = [
     pos: { x: -45, z: 452 },
     level: 10,
   },
+  { id: 'ore_mirefen_1', zoneId: 'mirefen_marsh', type: 'ore', pos: { x: 40, z: 340 } },
+  { id: 'ore_mirefen_2', zoneId: 'mirefen_marsh', type: 'ore', pos: { x: -30, z: 360 } },
+  { id: 'ore_mirefen_3', zoneId: 'mirefen_marsh', type: 'ore', pos: { x: 15, z: 310 } },
+
+  { id: 'wood_mirefen_1', zoneId: 'mirefen_marsh', type: 'wood', pos: { x: 10, z: 330 } },
+  { id: 'wood_mirefen_2', zoneId: 'mirefen_marsh', type: 'wood', pos: { x: -15, z: 355 } },
+  { id: 'wood_mirefen_3', zoneId: 'mirefen_marsh', type: 'wood', pos: { x: -20, z: 315 } },
+
+  { id: 'herb_mirefen_1', zoneId: 'mirefen_marsh', type: 'herb', pos: { x: 60, z: 385 } },
+  { id: 'herb_mirefen_2', zoneId: 'mirefen_marsh', type: 'herb', pos: { x: -45, z: 452 } },
+  { id: 'herb_mirefen_3', zoneId: 'mirefen_marsh', type: 'herb', pos: { x: 30, z: 355 } },
+
+  // Thornpeak Heights (thornpeak_heights) had no gather nodes at all, forcing
+  // higher-level players back down to zone 1 for every mining/logging/herb
+  // trip. Ore sits by Deeprock Burrows (the zone's mine-themed POI, guarded by
+  // the deeprock_kobold camp, matching the eastbrook_vale ore-vs-tunnel_rat
+  // precedent); wood and herb sit on the safer shore of The Glimmermere.
+  { id: 'ore_thornpeak_1', zoneId: 'thornpeak_heights', type: 'ore', pos: { x: 90, z: 608 } },
+  { id: 'ore_thornpeak_2', zoneId: 'thornpeak_heights', type: 'ore', pos: { x: 78, z: 630 } },
+
+  { id: 'wood_thornpeak_1', zoneId: 'thornpeak_heights', type: 'wood', pos: { x: -55, z: 765 } },
+  { id: 'wood_thornpeak_2', zoneId: 'thornpeak_heights', type: 'wood', pos: { x: -82, z: 782 } },
+
+  { id: 'herb_thornpeak_1', zoneId: 'thornpeak_heights', type: 'herb', pos: { x: 18, z: 648 } },
+  { id: 'herb_thornpeak_2', zoneId: 'thornpeak_heights', type: 'herb', pos: { x: -18, z: 678 } },
 ];

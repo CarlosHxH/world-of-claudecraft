@@ -57,4 +57,17 @@ describe('gather node content', () => {
       expect(dist).toBeLessThanOrEqual(20);
     }
   });
+
+  it('every zone offers all three gather node types, so players are not forced back to one zone', () => {
+    // Regression: thornpeak_heights had zero gather nodes of any type, and
+    // mirefen_marsh had fewer than eastbrook_vale, so every player past the
+    // starting zone funneled back to eastbrook_vale's ore to progress mining,
+    // creating the exact contention this pins against.
+    for (const zone of ZONES) {
+      for (const type of GATHER_NODE_TYPES) {
+        const count = GATHER_NODES.filter((n) => n.zoneId === zone.id && n.type === type).length;
+        expect(count, `${zone.id} should have at least one ${type} node`).toBeGreaterThan(0);
+      }
+    }
+  });
 });
