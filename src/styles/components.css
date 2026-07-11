@@ -7086,7 +7086,13 @@
       animation: none;
     }
   }
-  /* On-screen Cancel affordance next to the capturing cap (touch has no Escape). */
+  /* On-screen Cancel affordance next to the capturing cap (touch has no Escape).
+     The compound .window-frame .btn.kb-cancel (0,3,0) is load-bearing: the button
+     renders inside the options window's frame, where the later
+     '.window-frame .btn { margin: 0 }' reset (0,2,0) outranked the old bare
+     .kb-cancel (0,1,0) and welded Cancel to the capturing cap (the same cascade
+     disease the sell-junk gap fix documents). */
+  .window-frame .btn.kb-cancel,
   .kb-cancel {
     margin-inline-start: var(--spacing-xs);
     padding: 3px 6px;
