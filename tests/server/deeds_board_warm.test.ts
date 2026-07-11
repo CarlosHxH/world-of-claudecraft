@@ -1,0 +1,88 @@
+// Demand gate for the Renown (deeds) board warm loop (server/deeds_board_warm.ts).
+// The board is a full-table roll-up of character_deeds, so the 30s warm loop must
+// re-read it only while someone is viewing. These pin the decision helper's window
+// logic and the wiring gate, with a spy standing in for the full-table read so a
+// regression that drops the gate (warming an idle board) fails decisively.
+
+import { describe, expect, it, vi } from 'vitest';
+import {
+  DEEDS_BOARD_DEMAND_TTL_MS,
+  shouldWarmDeedsBoard,
+  warmDeedsBoardIfDemanded,
+} from '../../server/deeds_board_warm';
+
+// A fixed, realistic wall clock so `now - 0` for an unrequested board is the full
+// epoch distance (far past any window), exactly as at runtime.
+const NOW = Date.parse('2026-07-11T12:00:00.000Z');
+
+describe('DEEDS_BOARD_DEMAND_TTL_MS', () => {
+  it('is ten minutes', () => {
+    // Pinned as a literal, not re-derived from the export: the window is a
+    // deliberate balance (longer than a viewer's gaps between clicks, short enough
+    // that an abandoned board stops costing the read within one window).
+    expect(DEEDS_BOARD_DEMAND_TTL_MS).toBe(600_000);
+    expect(DEEDS_BOARD_DEMAND_TTL_MS).toBe(10 * 60_000);
+  });
+});
+
+describe('shouldWarmDeedsBoard', () => {
+  it('is false before any request (lastRequestAt 0), so an untouched board never warms', () => {
+    expect(shouldWarmDeedsBoard(0, NOW, DEEDS_BOARD_DEMAND_TTL_MS)).toBe(false);
+  });
+
+  it('is true when the last request is inside the window', () => {
+    const recent = NOW - (DEEDS_BOARD_DEMAND_TTL_MS - 1);
+    expect(shouldWarmDeedsBoard(recent, NOW, DEEDS_BOARD_DEMAND_TTL_MS)).toBe(true);
+  });
+
+  it('is false once demand has lapsed past the window', () => {
+    const lapsed = NOW - (DEEDS_BOARD_DEMAND_TTL_MS + 1);
+    expect(shouldWarmDeedsBoard(lapsed, NOW, DEEDS_BOARD_DEMAND_TTL_MS)).toBe(false);
+  });
+
+  it('treats exactly at the window edge as lapsed (exclusive upper bound)', () => {
+    expect(
+      shouldWarmDeedsBoard(NOW - DEEDS_BOARD_DEMAND_TTL_MS, NOW, DEEDS_BOARD_DEMAND_TTL_MS),
+    ).toBe(false);
+  });
+
+  it('defaults to DEEDS_BOARD_DEMAND_TTL_MS when no ttl is passed', () => {
+    expect(shouldWarmDeedsBoard(NOW - 1_000, NOW)).toBe(true);
+    expect(shouldWarmDeedsBoard(NOW - (DEEDS_BOARD_DEMAND_TTL_MS + 1), NOW)).toBe(false);
+  });
+});
+
+describe('warmDeedsBoardIfDemanded', () => {
+  it('skips the board read when there has been no request within the window', () => {
+    // `read` stands in for refreshDeedsBoard, whose one job is the deedsBoardRows
+    // full-table pull. Under no demand the gate must never invoke it.
+    const read = vi.fn();
+    const warmed = warmDeedsBoardIfDemanded(read, 0, NOW, DEEDS_BOARD_DEMAND_TTL_MS);
+    expect(warmed).toBe(false);
+    expect(read).not.toHaveBeenCalled();
+  });
+
+  it('runs the board read exactly once when a request landed within the window', () => {
+    const read = vi.fn();
+    const recent = NOW - (DEEDS_BOARD_DEMAND_TTL_MS - 1);
+    const warmed = warmDeedsBoardIfDemanded(read, recent, NOW, DEEDS_BOARD_DEMAND_TTL_MS);
+    expect(warmed).toBe(true);
+    expect(read).toHaveBeenCalledOnce();
+  });
+
+  it('skips the board read again once demand has lapsed', () => {
+    const read = vi.fn();
+    const lapsed = NOW - (DEEDS_BOARD_DEMAND_TTL_MS + 1);
+    const warmed = warmDeedsBoardIfDemanded(read, lapsed, NOW, DEEDS_BOARD_DEMAND_TTL_MS);
+    expect(warmed).toBe(false);
+    expect(read).not.toHaveBeenCalled();
+  });
+
+  it('honors a caller-supplied ttl override', () => {
+    const read = vi.fn();
+    // A 1s request is inside a 60s window but outside a 500ms one.
+    expect(warmDeedsBoardIfDemanded(read, NOW - 1_000, NOW, 60_000)).toBe(true);
+    expect(warmDeedsBoardIfDemanded(read, NOW - 1_000, NOW, 500)).toBe(false);
+    expect(read).toHaveBeenCalledOnce();
+  });
+});

@@ -124,6 +124,7 @@ import {
   deedsBoardSelf,
   type RankedDeedsAccount,
 } from './deeds_board';
+import { DEEDS_BOARD_DEMAND_TTL_MS, warmDeedsBoardIfDemanded } from './deeds_board_warm';
 import { deedRarityCounts, recentDeedsForCharacter } from './deeds_db';
 import { publicRarityPayload } from './deeds_records';
 import {
@@ -458,6 +459,12 @@ interface DeedsBoardCache {
   totalRanked: number;
 }
 let deedsBoardCache: DeedsBoardCache | null = null;
+// Wall-clock ms of the last actual deeds-board request in THIS process, 0 before
+// the first. Stamped on the shared read path (ensureDeedsBoard) and read by the
+// warm loop's demand gate so the full-table board read only runs while someone is
+// viewing (see deeds_board_warm.ts). Per-process like the board caches: peer
+// realm processes gate their own warm loops off their own local demand.
+let deedsBoardLastRequestAt = 0;
 
 async function refreshDeedsBoard(): Promise<DeedsBoardCache> {
   const board = computeDeedsBoard(await deedsBoardRows(), DEEDS);
@@ -486,6 +493,12 @@ async function refreshDeedsBoard(): Promise<DeedsBoardCache> {
 // Freshness gate shared by the two board reads below: serve the cache inside
 // the TTL, else refresh, else stale-serve (or null before the first success).
 async function ensureDeedsBoard(): Promise<DeedsBoardCache | null> {
+  // Mark demand on every board read (fresh-cache hit included): this is the one
+  // chokepoint both dispatch arms funnel through, and it is never on the warm
+  // path, so the stamp measures real viewer demand and nothing else. It keeps the
+  // warm loop refreshing the board for DEEDS_BOARD_DEMAND_TTL_MS after the last
+  // request; a cold or stale request still refreshes inline just below.
+  deedsBoardLastRequestAt = Date.now();
   if (deedsBoardCache && Date.now() - deedsBoardCache.at < LEADERBOARD_TTL_MS) {
     return deedsBoardCache;
   }
@@ -2507,7 +2520,19 @@ export async function startServer(): Promise<http.Server> {
     void refreshGuildLeaderboard('global').catch((err) =>
       console.error('guild leaderboard refresh failed (global):', err),
     );
-    void refreshDeedsBoard().catch((err) => console.error('deeds board refresh failed:', err));
+    // Demand-gated: the Renown board is a full-table roll-up, so keep it warm
+    // only while it is actually being viewed (a request within
+    // DEEDS_BOARD_DEMAND_TTL_MS). An idle board pays nothing here; a cold or stale
+    // request still refreshes inline on its own read path (ensureDeedsBoard), then
+    // this loop keeps it fresh until demand lapses again.
+    warmDeedsBoardIfDemanded(
+      () => {
+        void refreshDeedsBoard().catch((err) => console.error('deeds board refresh failed:', err));
+      },
+      deedsBoardLastRequestAt,
+      Date.now(),
+      DEEDS_BOARD_DEMAND_TTL_MS,
+    );
   };
   warmLeaderboards();
   setInterval(warmLeaderboards, LEADERBOARD_TTL_MS).unref();
