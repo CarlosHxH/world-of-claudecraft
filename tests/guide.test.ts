@@ -18,6 +18,7 @@ import { pageFor } from '../src/guide/pages';
 import { controls as controlsPage } from '../src/guide/pages/controls';
 import { catalogSections, deeds as deedsPage } from '../src/guide/pages/deeds';
 import { dungeons as dungeonsPage } from '../src/guide/pages/dungeons';
+import { world as worldPage } from '../src/guide/pages/world';
 import {
   GUIDE_BASE,
   GUIDE_ROUTES,
@@ -371,6 +372,9 @@ describe('Guide bestiary spoiler safety', () => {
 // dropped from the wiki while the freshness gate stays green (the generated file would
 // be "fresh" and just missing the creatures). These gates tie the published bestiary to
 // the camp registry, so a camped creature a player can walk into is never unlisted.
+// NOTE: the exclusion filters below (elite/boss, warlock_, vision, fixture) mirror the
+// generator's own filters in scripts/wiki/build_content.mjs; the two lists must move
+// together, or this completeness gate and the published set silently diverge.
 describe('Guide bestiary completeness', () => {
   const published = new Set(GUIDE_FAMILIES.flatMap((f) => f.creatures.map((c) => c.templateId)));
   const isFixture = (m: { dmgBase?: number; dmgPerLevel?: number }) => !m.dmgBase && !m.dmgPerLevel;
@@ -403,6 +407,32 @@ describe('Guide bestiary completeness', () => {
         expect(familyNames.has(fam), `zone ${z.id} lists unknown family ${fam}`).toBe(true);
       }
     }
+  });
+
+  // The decisive geography pin: burrowers' level band OVERLAPS the marsh's, but every
+  // burrower camp sits outside the marsh z-band, so a regression from camp-geography
+  // back to level-band overlap would re-list burrower here and fail this literal. The
+  // full list is pinned so any silent derivation change surfaces as a reviewable diff.
+  it('derives marsh residents from camp geography, never level-band overlap', () => {
+    const marsh = GUIDE_ZONES.find((z) => z.id === 'mirefen_marsh');
+    expect(marsh).toBeDefined();
+    expect(marsh?.families).not.toContain('burrower');
+    expect(marsh?.families).toEqual(['beast', 'spider', 'mudfin', 'humanoid', 'troll', 'undead']);
+  });
+
+  it('renders the residents cross-links into the bestiary on the world page', () => {
+    setLanguage('en');
+    const html = worldPage.render({ params: [], sub: 'world', titleKey: 'guide.nav.world' });
+    // The marsh card links its troll residents to the bestiary's own family anchor,
+    // with the localized family label as the link text.
+    expect(html).toContain(`href="${hrefFor('bestiary')}#fam-troll"`);
+    expect(html).toContain('>Trolls</a>');
+    // And the geography fix holds at the render layer too: no burrower link on marsh.
+    // (Burrowers still render for the zones that really camp them.)
+    const marshCard = html.slice(html.indexOf('id="zone-marsh"'), html.indexOf('id="zone-peaks"'));
+    expect(marshCard.length).toBeGreaterThan(0);
+    expect(marshCard).not.toContain('#fam-burrower');
+    expect(html).toContain('#fam-burrower');
   });
 });
 
