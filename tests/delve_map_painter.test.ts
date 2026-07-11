@@ -236,9 +236,11 @@ describe('vendor window WCAG-chrome (compositional, markup intact)', () => {
     expect(vendor).toContain('renderWindowFrame(');
     // Close control, half 2: the builder emits it as a real <button> with an
     // aria-label (keyboard reachable, native target size, accessible name).
-    expect(frame).toContain('data-window-close aria-label=');
+    // data-label-key sits between the two since the relocalizable-chrome work
+    // (it lets a live language switch re-resolve the stamped label).
+    expect(frame).toMatch(/data-window-close[^>]*aria-label=/);
     expect(frame).toMatch(
-      /<button type="button" class="\$\{model\.close\.className\}" data-window-close/,
+      /<button type="button" class="\$\{model\.close\.className\}"[^>]*data-window-close/,
     );
     // Item rows: real <button>s with per-row aria-labels (keyboard reachable,
     // native target size), unchanged by the composition.
