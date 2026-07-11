@@ -4,8 +4,9 @@
 // earn real deeds, the title is equipped through the actual Titles pane, and
 // every window opens through its shipped key or button.
 //
-// Viewports: desktop 1600x900 dsf1, small laptop 1280x720 dsf1, tablet
-// 1024x768 dsf2, phone landscape 844x390 dsf3, narrow phone 740x360 dsf3.
+// Viewports: desktop 1600x900 dsf1 and phone landscape 844x390 dsf3, the two
+// committed PR evidence tiers (intermediate tiers were dropped once tier-flip
+// QA closed; the ignore rule keeps any extra local captures out of git).
 // EVERY viewport, desktop included, is applied via raw CDP
 // Emulation.setDeviceMetricsOverride (puppeteer's setViewport omits
 // screenWidth/screenHeight and headless then fit-scales narrower viewports,
@@ -533,39 +534,32 @@ async function surfacePass(vp, phone) {
   await shot(page, `04-watch-tracker-${vp}.png`, 'HUD watch tracker with entries', vp);
 
   // Renown leaderboard tab (offline shows the tab frame).
-  if (vp !== '740x360') {
-    let lbOpen;
-    if (phone) {
-      await evr(() => window.__game.hud.toggleLeaderboard());
-      await sleep(900);
-      lbOpen = await evr(
-        () =>
-          (document.querySelector('#leaderboard-window')?.getBoundingClientRect().width ?? 0) > 0,
-      );
-    } else {
-      lbOpen = await pressKey(
-        'KeyK',
-        () =>
-          (document.querySelector('#leaderboard-window')?.getBoundingClientRect().width ?? 0) > 0,
-      );
-    }
-    check(lbOpen, `${vp}: the leaderboard window opens`);
-    await evr(() => document.querySelector('[data-leaderboard-tab="deeds"]')?.click());
+  let lbOpen;
+  if (phone) {
+    await evr(() => window.__game.hud.toggleLeaderboard());
     await sleep(900);
-    await shot(page, `05-leaderboard-renown-${vp}.png`, 'Renown leaderboard tab', vp);
-    await page.keyboard.press('Escape');
-    await sleep(400);
+    lbOpen = await evr(
+      () =>
+        (document.querySelector('#leaderboard-window')?.getBoundingClientRect().width ?? 0) > 0,
+    );
+  } else {
+    lbOpen = await pressKey(
+      'KeyK',
+      () =>
+        (document.querySelector('#leaderboard-window')?.getBoundingClientRect().width ?? 0) > 0,
+    );
   }
+  check(lbOpen, `${vp}: the leaderboard window opens`);
+  await evr(() => document.querySelector('[data-leaderboard-tab="deeds"]')?.click());
+  await sleep(900);
+  await shot(page, `05-leaderboard-renown-${vp}.png`, 'Renown leaderboard tab', vp);
+  await page.keyboard.press('Escape');
+  await sleep(400);
 }
 
 await surfacePass('1600x900', false);
 
-const TIERS = [
-  { vp: '1280x720', w: 1280, h: 720, dsf: 1, phone: false },
-  { vp: '1024x768', w: 1024, h: 768, dsf: 2, phone: false },
-  { vp: '844x390', w: 844, h: 390, dsf: 3, phone: true },
-  { vp: '740x360', w: 740, h: 360, dsf: 3, phone: true },
-];
+const TIERS = [{ vp: '844x390', w: 844, h: 390, dsf: 3, phone: true }];
 for (const tier of TIERS) {
   await flipViewport(tier.w, tier.h, tier.dsf, tier.phone);
   await surfacePass(tier.vp, tier.phone);
