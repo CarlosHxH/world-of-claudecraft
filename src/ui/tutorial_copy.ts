@@ -61,12 +61,19 @@ export function tutorialSlayHintPlan(touch: boolean): TutorialBodyPlan {
     : { bodyKey: 'hudChrome.tutorial.slayTargetHint', params: ['targetKey'] };
 }
 
-// True when a step's body copy actually changes between the touch and keyboard
-// interfaces. move/talk/return/done have touch variants; seek/slay describe the
-// world (a marker to follow, wolves to hunt) and read identically, so a mode
-// toggle on them is a no-op for the rendered text.
+// True when a step's rendered card actually changes between the touch and
+// keyboard interfaces. move/talk/return/done have touch variants; seek reads
+// identically (it describes a marker to follow), so a mode toggle on it is a
+// no-op for the rendered text. slay's own body is mode-agnostic (it just names
+// the objective), but its rendered card also appends the slayHintPlan hint,
+// which DOES differ by mode (targetKey vs a tap), so slay counts as
+// mode-dependent through the hint even though its body key does not change.
 export function tutorialStepDiffersByTouch(step: TutorialStep): boolean {
-  return tutorialBodyPlan(step, true).bodyKey !== tutorialBodyPlan(step, false).bodyKey;
+  if (tutorialBodyPlan(step, true).bodyKey !== tutorialBodyPlan(step, false).bodyKey) return true;
+  if (step === 'slay') {
+    return tutorialSlayHintPlan(true).bodyKey !== tutorialSlayHintPlan(false).bodyKey;
+  }
+  return false;
 }
 
 // Whether the overlay must rebuild its card. True on a step change (including the
