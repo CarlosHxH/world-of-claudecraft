@@ -50,7 +50,12 @@ import {
   normalizeProject,
 } from './project.mjs';
 
-export const REPO_ROOT = fileURLToPath(new URL('../..', import.meta.url));
+const CHECKED_IN_REPO_ROOT = fileURLToPath(new URL('../..', import.meta.url));
+export const REPO_ROOT = resolve(
+  process.env.WOC_SFX_STUDIO_TEST_ROOT && process.env.WOC_SFX_STUDIO_TEST_REPO_ROOT
+    ? process.env.WOC_SFX_STUDIO_TEST_REPO_ROOT
+    : CHECKED_IN_REPO_ROOT,
+);
 const REPO_STUDIO_ROOT = join(REPO_ROOT, 'tmp/sfx_studio');
 const DEFAULT_STUDIO_ROOT = process.env.WOC_SFX_STUDIO_TEST_ROOT
   ? join(
@@ -1119,13 +1124,16 @@ function normalizeMasteringMeasurement(raw) {
   };
 }
 
-export function normalizeProductionMastering(raw) {
+export function normalizeProductionMastering(raw, { allowHistoricalRevision = false } = {}) {
   assertOnlyFields(
     raw,
     new Set(['revision', 'mode', 'authoringMode', 'measurement', 'conform']),
     'production mastering metadata',
   );
-  if (raw.revision !== MASTERING_REVISION || raw.mode !== 'production-conform') {
+  const revisionIsCompatible = allowHistoricalRevision
+    ? Number.isInteger(raw.revision) && raw.revision >= 0 && raw.revision <= MASTERING_REVISION
+    : raw.revision === MASTERING_REVISION;
+  if (!revisionIsCompatible || raw.mode !== 'production-conform') {
     throw new Error('production mastering metadata has an incompatible revision or mode');
   }
   if (!['direct', 'linear'].includes(raw.authoringMode)) {
@@ -1160,7 +1168,7 @@ export function normalizeProductionMastering(raw) {
     };
   });
   return {
-    revision: MASTERING_REVISION,
+    revision: raw.revision,
     mode: 'production-conform',
     authoringMode: raw.authoringMode,
     measurement,
@@ -1618,6 +1626,44 @@ function readVersionArchive(key, hash) {
   return { audio, metadata };
 }
 
+function restoredOutput(raw, info, loudness) {
+  if (raw === undefined || raw === null) {
+    return {
+      channels: info.channels,
+      sampleRate: info.sampleRate,
+      bitrate: info.bitrate,
+      integratedLufs: loudness.integratedLufs,
+      truePeakDb: loudness.truePeakDb,
+    };
+  }
+  assertOnlyFields(
+    raw,
+    new Set(['channels', 'sampleRate', 'bitrate', 'integratedLufs', 'truePeakDb']),
+    'version output metadata',
+  );
+  if (![1, 2].includes(raw.channels) || raw.channels !== info.channels) {
+    throw new Error('version output metadata has invalid channels');
+  }
+  if (
+    !Number.isInteger(raw.sampleRate) ||
+    raw.sampleRate < 8_000 ||
+    raw.sampleRate > 96_000 ||
+    raw.sampleRate !== info.sampleRate
+  ) {
+    throw new Error('version output metadata has an invalid sample rate');
+  }
+  if (!Number.isInteger(raw.bitrate) || raw.bitrate < 1 || raw.bitrate > 1_000_000) {
+    throw new Error('version output metadata has an invalid bitrate');
+  }
+  return {
+    channels: raw.channels,
+    sampleRate: raw.sampleRate,
+    bitrate: raw.bitrate,
+    integratedLufs: masteringNumber(raw.integratedLufs, 'version integrated loudness'),
+    truePeakDb: masteringNumber(raw.truePeakDb, 'version true peak'),
+  };
+}
+
 export function restoredMixEntry(raw, info, loudness, key) {
   if (raw === null) return null;
   const project = normalizeProject(raw.project ?? {}, {
@@ -1628,22 +1674,25 @@ export function restoredMixEntry(raw, info, loudness, key) {
     duration: 300,
   });
   project.sourceId = null;
-  const revision = Math.round(
-    Math.min(1_000_000, Math.max(0, Number(raw.mastering?.revision) || 0)),
-  );
-  const mode = ['linear', 'direct', 'production-conform'].includes(raw.mastering?.mode)
-    ? raw.mastering.mode
-    : 'restored';
+  const legacyProductionMetadata =
+    raw.mastering?.mode === 'production-conform' &&
+    Object.keys(raw.mastering).every((field) => ['revision', 'mode'].includes(field));
+  let mastering;
+  if (raw.mastering?.mode === 'production-conform' && !legacyProductionMetadata) {
+    mastering = normalizeProductionMastering(raw.mastering, { allowHistoricalRevision: true });
+  } else {
+    const revision = Math.round(
+      Math.min(1_000_000, Math.max(0, Number(raw.mastering?.revision) || 0)),
+    );
+    const mode = ['linear', 'direct', 'production-conform'].includes(raw.mastering?.mode)
+      ? raw.mastering.mode
+      : 'restored';
+    mastering = { revision, mode };
+  }
   return {
     project,
-    mastering: { revision, mode },
-    output: {
-      channels: info.channels,
-      sampleRate: info.sampleRate,
-      bitrate: info.bitrate,
-      integratedLufs: loudness.integratedLufs,
-      truePeakDb: loudness.truePeakDb,
-    },
+    mastering,
+    output: restoredOutput(raw.output, info, loudness),
   };
 }
 

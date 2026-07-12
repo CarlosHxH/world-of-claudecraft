@@ -1,6 +1,14 @@
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import {
+  copyFileSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import ffmpegPath from 'ffmpeg-static';
@@ -30,6 +38,31 @@ function storedZipEntries(zip: Buffer): Map<string, Buffer> {
     offset = dataStart + size;
   }
   return entries;
+}
+
+function writeArtifact(root: string, files: Map<string, Buffer>): void {
+  for (const [name, bytes] of files) {
+    const output = join(root, name);
+    mkdirSync(dirname(output), { recursive: true });
+    writeFileSync(output, bytes);
+  }
+}
+
+function snapshotDirectory(root: string, relative = ''): Record<string, string> {
+  const snapshot: Record<string, string> = {};
+  const directory = join(root, relative);
+  for (const entry of readdirSync(directory, { withFileTypes: true }).sort((left, right) =>
+    left.name.localeCompare(right.name),
+  )) {
+    const name = relative ? `${relative}/${entry.name}` : entry.name;
+    if (entry.isDirectory()) {
+      snapshot[`${name}/`] = 'directory';
+      Object.assign(snapshot, snapshotDirectory(root, name));
+    } else {
+      snapshot[name] = `file:${hash(readFileSync(join(root, name)))}`;
+    }
+  }
+  return snapshot;
 }
 
 describe('SFX production bundle', () => {
@@ -174,26 +207,131 @@ describe('SFX production bundle', () => {
     expect(files.has('install-blobs.txt')).toBe(true);
     expect(files.has('SHA256SUMS')).toBe(true);
 
-    const installFixture = mkdtempSync(join(tmpdir(), 'woc-sfx-posix-install-'));
+    const installFixture = mkdtempSync(join(tmpdir(), 'woc-sfx-install-'));
     try {
       const artifactRoot = join(installFixture, 'artifact');
-      const staticRoot = join(installFixture, 'static');
-      for (const [name, bytes] of files) {
-        const output = join(artifactRoot, name);
-        mkdirSync(dirname(output), { recursive: true });
-        writeFileSync(output, bytes);
-      }
+      writeArtifact(artifactRoot, files);
       execFileSync('sh', ['-n', join(artifactRoot, 'install.sh')]);
-      execFileSync('sh', [join(artifactRoot, 'install.sh'), staticRoot]);
-      expect(readFileSync(join(staticRoot, 'audio/sfx/runtime-pack.json'))).toEqual(
-        files.get('activate/audio/sfx/runtime-pack.json'),
+      const installers = [
+        { name: 'POSIX', command: 'sh', script: join(artifactRoot, 'install.sh') },
+        { name: 'Node', command: process.execPath, script: join(artifactRoot, 'install.mjs') },
+      ];
+      for (const installer of installers) {
+        const staticRoot = join(installFixture, `static-${installer.name.toLowerCase()}`);
+        execFileSync(installer.command, [installer.script, staticRoot]);
+        expect(readFileSync(join(staticRoot, 'audio/sfx/runtime-pack.json'))).toEqual(
+          files.get('activate/audio/sfx/runtime-pack.json'),
+        );
+        for (const clip of Object.values(runtime.clips) as {
+          variants: { url: string; sha256: string }[];
+        }[]) {
+          for (const variant of clip.variants) {
+            expect(hash(readFileSync(join(staticRoot, variant.url)))).toBe(variant.sha256);
+          }
+        }
+      }
+
+      const corruptArtifactRoot = join(installFixture, 'artifact-corrupt');
+      writeArtifact(corruptArtifactRoot, files);
+      const blobIdentities = (files.get('install-blobs.txt')?.toString('utf8') ?? '')
+        .trim()
+        .split('\n');
+      const corruptIdentity = blobIdentities.at(-1);
+      if (!corruptIdentity) throw new Error('export has no audio blobs to corrupt');
+      const corruptBlob = join(
+        corruptArtifactRoot,
+        `payload/audio/sfx/blobs/${corruptIdentity}.mp3`,
       );
-      const firstVariant = runtime.clips.foot_grass.variants[0];
-      expect(hash(readFileSync(join(staticRoot, firstVariant.url)))).toBe(firstVariant.sha256);
+      const corruptBytes = Buffer.from(readFileSync(corruptBlob));
+      corruptBytes[0] ^= 0xff;
+      writeFileSync(corruptBlob, corruptBytes);
+
+      for (const installer of [
+        { name: 'POSIX', command: 'sh', script: join(corruptArtifactRoot, 'install.sh') },
+        {
+          name: 'Node',
+          command: process.execPath,
+          script: join(corruptArtifactRoot, 'install.mjs'),
+        },
+      ]) {
+        const staticRoot = join(installFixture, `sentinel-${installer.name.toLowerCase()}`);
+        mkdirSync(staticRoot);
+        writeFileSync(join(staticRoot, 'sentinel.txt'), 'production stays untouched\n');
+        const before = snapshotDirectory(staticRoot);
+        const result = spawnSync(installer.command, [installer.script, staticRoot], {
+          encoding: 'utf8',
+        });
+        expect(result.error, `${installer.name} installer failed to execute`).toBeUndefined();
+        expect(result.status, `${installer.name} installer accepted a corrupt blob`).not.toBe(0);
+        expect(result.stderr).toContain('artifact audio checksum failed');
+        expect(snapshotDirectory(staticRoot)).toEqual(before);
+      }
+
+      const lastRuntimeVariant = (
+        Object.values(runtime.clips) as { variants: { sha256: string }[] }[]
+      )
+        .flatMap((clip) => clip.variants)
+        .at(-1);
+      if (!lastRuntimeVariant) throw new Error('runtime pack has no audio blobs');
+      for (const installer of [
+        { ...installers[0], corruptIdentity },
+        { ...installers[1], corruptIdentity: lastRuntimeVariant.sha256 },
+      ]) {
+        const staticRoot = join(installFixture, `existing-corrupt-${installer.name.toLowerCase()}`);
+        const corruptTarget = join(staticRoot, `audio/sfx/blobs/${installer.corruptIdentity}.mp3`);
+        mkdirSync(dirname(corruptTarget), { recursive: true });
+        writeFileSync(corruptTarget, 'corrupt production blob');
+        writeFileSync(join(staticRoot, 'sentinel.txt'), 'production stays untouched\n');
+        const before = snapshotDirectory(staticRoot);
+        const result = spawnSync(installer.command, [installer.script, staticRoot], {
+          encoding: 'utf8',
+        });
+        expect(result.error, `${installer.name} installer failed to execute`).toBeUndefined();
+        expect(result.status, `${installer.name} installer accepted a corrupt target`).not.toBe(0);
+        expect(result.stderr).toContain('existing audio blob checksum failed');
+        expect(snapshotDirectory(staticRoot)).toEqual(before);
+      }
+
+      const originalList = files.get('install-blobs.txt');
+      if (!originalList) throw new Error('export has no install blob list');
+      expect(originalList.length).toBeGreaterThan(0);
+      expect(originalList.at(-1)).not.toBe(0x0a);
+      const lastLineStart = originalList.lastIndexOf(0x0a);
+      const listFailures = [
+        {
+          name: 'tampered',
+          bytes: Buffer.concat([
+            Buffer.from(originalList.subarray(0, originalList.length - 1)),
+            Buffer.from(originalList.at(-1) === 0x61 ? 'b' : 'a'),
+          ]),
+        },
+        {
+          name: 'truncated',
+          bytes: lastLineStart < 0 ? Buffer.alloc(0) : originalList.subarray(0, lastLineStart),
+        },
+        { name: 'empty', bytes: Buffer.alloc(0) },
+      ];
+      for (const failure of listFailures) {
+        const artifact = join(installFixture, `artifact-list-${failure.name}`);
+        writeArtifact(artifact, files);
+        writeFileSync(join(artifact, 'install-blobs.txt'), failure.bytes);
+        const staticRoot = join(installFixture, `list-${failure.name}-target`);
+        mkdirSync(join(staticRoot, 'audio/sfx'), { recursive: true });
+        writeFileSync(join(staticRoot, 'audio/sfx/runtime-pack.json'), 'old manifest\n');
+        writeFileSync(join(staticRoot, 'sentinel.txt'), 'production stays untouched\n');
+        const before = snapshotDirectory(staticRoot);
+        const result = spawnSync('sh', [join(artifact, 'install.sh'), staticRoot], {
+          encoding: 'utf8',
+        });
+        expect(result.error, `${failure.name} list test failed to execute`).toBeUndefined();
+        expect(result.status, `${failure.name} list was accepted`).not.toBe(0);
+        expect(result.stderr).toContain('artifact audio list checksum failed');
+        expect(snapshotDirectory(staticRoot)).toEqual(before);
+      }
     } finally {
       rmSync(installFixture, { recursive: true, force: true });
     }
-  }, 30_000);
+  }, 90_000);
 
   it('exports numbered takes in exact round-robin order with runtime mix values', () => {
     const fixture = mkdtempSync(join(tmpdir(), 'woc-sfx-export-round-robin-'));
@@ -245,7 +383,9 @@ describe('SFX production bundle', () => {
 
   it('rejects unsafe and duplicate ZIP paths', () => {
     for (const name of ['/absolute', '../escape', 'a/../escape', 'a\\escape', 'a//b']) {
-      expect(() => buildDeterministicZip([{ name, bytes: Buffer.from('x') }]), name).toThrow();
+      expect(() => buildDeterministicZip([{ name, bytes: Buffer.from('x') }]), name).toThrow(
+        `unsafe ZIP entry name: ${name}`,
+      );
     }
     expect(() =>
       buildDeterministicZip([

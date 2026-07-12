@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import * as fs from 'node:fs';
 import * as http from 'node:http';
 import * as path from 'node:path';
@@ -228,6 +227,7 @@ import {
   requestedSfxVersion,
   sfxBlobIntegrityMatches,
 } from './static_cache';
+import { readStaticSfxSnapshot, type StaticSfxSnapshot } from './static_sfx';
 import { passesTurnstile } from './turnstile';
 import { MAX_ASSET_BYTES } from './user_assets';
 import {
@@ -668,16 +668,6 @@ const MIME: Record<string, string> = {
   '.webp': 'image/webp',
   '.mp3': 'audio/mpeg',
 };
-const staticSfxHashes = new Map<string, { size: number; mtimeMs: number; hash: string }>();
-
-function staticSfxHash(file: string, stats: fs.Stats): string {
-  const cached = staticSfxHashes.get(file);
-  if (cached?.size === stats.size && cached.mtimeMs === stats.mtimeMs) return cached.hash;
-  const hash = createHash('sha256').update(fs.readFileSync(file)).digest('hex');
-  staticSfxHashes.set(file, { size: stats.size, mtimeMs: stats.mtimeMs, hash });
-  return hash;
-}
-
 // The admin dashboard is reached via the admin.* subdomain (Caddy proxies it
 // to this same port) or /admin for local dev. The hostname only picks which
 // HTML shell is served, the admin API itself is gated by admin tokens.
@@ -710,10 +700,31 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse): void 
   urlPath = path.posix.normalize(urlPath).replace(/^([.][.][/\\])+/, '');
   const overlayFile = resolveSfxOverlayFile(SFX_PACK_DIR, urlPath);
   const file = overlayFile ?? path.join(STATIC_DIR, urlPath);
-  const stats =
-    (overlayFile !== null || file.startsWith(STATIC_DIR)) && fs.existsSync(file)
-      ? fs.statSync(file)
-      : null;
+  const cachePath = `${urlPath}${requestUrl.search}`;
+  const requestedVersion = requestedSfxVersion(cachePath);
+  const requestedBlobHash = requestedSfxBlobHash(cachePath);
+  const needsVerifiedSfx = requestedVersion !== null || requestedBlobHash !== null;
+  let verifiedSfx: StaticSfxSnapshot | null = null;
+  let stats: fs.Stats | null = null;
+  if (overlayFile !== null || file.startsWith(STATIC_DIR)) {
+    try {
+      if (needsVerifiedSfx) {
+        verifiedSfx = readStaticSfxSnapshot(file);
+        stats = verifiedSfx.stats;
+      } else {
+        // statSync is already the existence check. Keeping it inside this catch
+        // closes the former existsSync-to-statSync disappearance race.
+        stats = fs.statSync(file);
+      }
+    } catch {
+      if (needsVerifiedSfx) {
+        res.writeHead(404, { 'Content-Type': 'text/plain', 'Cache-Control': 'no-store' });
+        res.end('SFX asset changed during integrity verification');
+        return;
+      }
+      stats = null;
+    }
+  }
   if (!stats?.isFile()) {
     // Asset paths must 404, not SPA-fall-back: a missing .glb served as index.html
     // surfaces as a cryptic GLTFLoader parse error instead of a clear 404.
@@ -735,13 +746,7 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse): void 
   }
   const isReadMethod = req.method === 'GET' || req.method === 'HEAD';
   const etag = etagFor(stats);
-  const cachePath = `${urlPath}${requestUrl.search}`;
-  const requestedVersion = requestedSfxVersion(cachePath);
-  const requestedBlobHash = requestedSfxBlobHash(cachePath);
-  const actualSfxHash =
-    requestedVersion === null && requestedBlobHash === null
-      ? undefined
-      : staticSfxHash(file, stats);
+  const actualSfxHash = verifiedSfx?.hash;
   if (!sfxBlobIntegrityMatches(cachePath, actualSfxHash)) {
     res.writeHead(404, { 'Content-Type': 'text/plain', 'Cache-Control': 'no-store' });
     res.end('content-addressed SFX blob failed integrity verification');
@@ -760,11 +765,15 @@ function serveStatic(req: http.IncomingMessage, res: http.ServerResponse): void 
   res.writeHead(200, {
     ...validators,
     'Content-Type': MIME[path.extname(file)] ?? 'application/octet-stream',
-    'Content-Length': stats.size,
+    'Content-Length': verifiedSfx?.bytes.length ?? stats.size,
   });
   if (req.method === 'HEAD') {
-    // don't read a multi-MB asset from disk just to discard the bytes
+    // Versioned SFX was already snapshotted for integrity, but HEAD sends no body.
     res.end();
+    return;
+  }
+  if (verifiedSfx !== null) {
+    res.end(verifiedSfx.bytes);
     return;
   }
   fs.createReadStream(file).pipe(res);

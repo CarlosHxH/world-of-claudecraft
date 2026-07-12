@@ -188,6 +188,15 @@ describe('shared conform command', () => {
 });
 
 describe('classify: loudness gate', () => {
+  it('pins sustained masters to -14 LUFS', () => {
+    expect(TARGET_LUFS).toBe(-14);
+    expect(classify({ ...AT_SPEC, duration: 2, lufs: -14 })).toMatchObject({
+      reject: false,
+      normBranch: 'lufs',
+      problems: [],
+    });
+  });
+
   it('flags peak loudness out of spec for short clips', () => {
     const { problems } = classify({ ...AT_SPEC, duration: 0.5, peakDb: TARGET_PEAK_DBFS - 6 });
     expect(problems.some((p) => p.includes('dBFS'))).toBe(true);

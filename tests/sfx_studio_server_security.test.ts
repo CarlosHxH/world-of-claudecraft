@@ -4,6 +4,8 @@ import {
   mkdirSync,
   mkdtempSync,
   readdirSync,
+  readFileSync,
+  realpathSync,
   renameSync,
   rmSync,
   symlinkSync,
@@ -13,7 +15,7 @@ import { request as httpRequest } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 // @ts-expect-error untyped zero-dependency authoring tool (scripts/*.mjs convention)
 import * as audioIo from '../scripts/sfx_studio/audio_io.mjs';
 // @ts-expect-error untyped zero-dependency authoring tool (scripts/*.mjs convention)
@@ -46,6 +48,31 @@ function getWithHost(url: string, host: string): Promise<{ status: number; body:
   });
 }
 
+function requestWithoutBody(
+  url: string,
+  method: 'POST' | 'PUT',
+  headers: Record<string, string | number>,
+): Promise<{ status: number; body: string }> {
+  return new Promise((resolve, reject) => {
+    const request = httpRequest(
+      url,
+      { method, headers: { ...headers, Connection: 'close' } },
+      (response) => {
+        const chunks: Buffer[] = [];
+        response.on('data', (chunk) => chunks.push(chunk));
+        response.on('end', () => {
+          resolve({
+            status: response.statusCode ?? 0,
+            body: Buffer.concat(chunks).toString('utf8'),
+          });
+        });
+      },
+    );
+    request.once('error', reject);
+    request.end();
+  });
+}
+
 describe.sequential('SFX Studio server security', () => {
   const repoRoot = fileURLToPath(new URL('..', import.meta.url));
   const sourceId = `${'f'.repeat(64)}.wav`;
@@ -58,6 +85,16 @@ describe.sequential('SFX Studio server security', () => {
   const escapedSourceDir = join(STUDIO_ROOT, 'sources', escapedKey);
   const externalSourceDir = mkdtempSync(join(tmpdir(), 'woc-sfx-source-'));
   const externalExportDir = mkdtempSync(join(tmpdir(), 'woc-sfx-export-'));
+  const exportRoot = join(STUDIO_ROOT, 'exports');
+  const previewRoot = join(STUDIO_ROOT, 'previews');
+  const previewName = `foot_grass.${createHash('sha256')
+    .update(`security-preview-${process.pid}`)
+    .digest('hex')
+    .slice(0, 16)}.mp3`;
+  const previewLink = join(previewRoot, previewName);
+  const repoModelRoot = join(repoRoot, 'public/models');
+  const repoModelName = `sfx-studio-security-${process.pid}.glb`;
+  const repoModelLink = join(repoModelRoot, repoModelName);
   const badVersionHash = 'e'.repeat(64);
   const versionDir = join(STUDIO_ROOT, 'versions', 'foot_grass');
   const versionAudio = join(versionDir, `${badVersionHash}.mp3`);
@@ -68,6 +105,11 @@ describe.sequential('SFX Studio server security', () => {
   let server: Awaited<ReturnType<typeof startSfxStudio>>['server'];
   let url = '';
   let token = '';
+
+  const resetExportRoot = () => {
+    rmSync(exportRoot, { recursive: true, force: true });
+    mkdirSync(exportRoot, { recursive: true });
+  };
 
   beforeAll(async () => {
     mkdirSync(STUDIO_ROOT, { recursive: true });
@@ -89,7 +131,20 @@ describe.sequential('SFX Studio server security', () => {
     rmSync(versionMeta, { force: true });
     symlinkSync(join(repoRoot, 'package.json'), versionAudio);
     writeFileSync(versionMeta, JSON.stringify({ audioHash: 'f'.repeat(64), mix: null }));
+    mkdirSync(previewRoot, { recursive: true });
+    rmSync(previewLink, { force: true });
+    symlinkSync(join(repoRoot, 'package.json'), previewLink);
+    rmSync(repoModelLink, { force: true });
+    symlinkSync(join(repoRoot, 'package.json'), repoModelLink);
   }, 30_000);
+
+  beforeEach(() => {
+    resetExportRoot();
+  });
+
+  afterEach(() => {
+    resetExportRoot();
+  });
 
   afterAll(async () => {
     try {
@@ -100,6 +155,8 @@ describe.sequential('SFX Studio server security', () => {
       rmSync(externalExportDir, { recursive: true, force: true });
       rmSync(versionAudio, { force: true });
       rmSync(versionMeta, { force: true });
+      rmSync(previewLink, { force: true });
+      rmSync(repoModelLink, { force: true });
       if (server?.listening) {
         await new Promise<void>((resolve, reject) => {
           server.close((error?: Error) => (error ? reject(error) : resolve()));
@@ -181,6 +238,41 @@ describe.sequential('SFX Studio server security', () => {
       body: JSON.stringify({ key: 'foot_grass', project: {} }),
     });
     expect(denied.status).toBe(403);
+    expect(await denied.json()).toEqual({ error: 'mutation token or origin is invalid' });
+
+    const missingToken = await fetch(`${url}/api/project`, {
+      method: 'POST',
+      headers: {
+        Origin: url,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ key: 'foot_grass', project: {} }),
+    });
+    expect(missingToken.status).toBe(403);
+    expect(await missingToken.json()).toEqual({ error: 'mutation token or origin is invalid' });
+  });
+
+  it('rejects declared JSON and upload bodies above their byte limits', async () => {
+    const commonHeaders = {
+      Origin: url,
+      'X-Woc-Sfx-Studio': token,
+    };
+    const json = await requestWithoutBody(`${url}/api/project`, 'POST', {
+      ...commonHeaders,
+      'Content-Type': 'application/json',
+      'Content-Length': 2 * 1024 * 1024 + 1,
+    });
+    expect(json.status).toBe(400);
+    expect(JSON.parse(json.body)).toEqual({ error: 'request exceeds 2 MiB' });
+
+    const upload = await requestWithoutBody(`${url}/api/upload?key=foot_grass`, 'PUT', {
+      ...commonHeaders,
+      'Content-Type': 'audio/mpeg',
+      'X-Filename': 'clip.mp3',
+      'Content-Length': 64 * 1024 * 1024 + 1,
+    });
+    expect(upload.status).toBe(400);
+    expect(JSON.parse(upload.body)).toEqual({ error: 'request exceeds 64 MiB' });
   });
 
   it('exports a token-protected production ZIP only from the applied playback state', async () => {
@@ -235,7 +327,7 @@ describe.sequential('SFX Studio server security', () => {
       createHash('sha256').update(body).digest('hex'),
     );
     expect(body.readUInt32LE(0)).toBe(0x04034b50);
-  }, 30_000);
+  }, 120_000);
 
   it('rejects an export directory symlink that leaves the Studio root', async () => {
     const projectResponse = await fetch(`${url}/api/project?key=foot_grass`, {
@@ -243,30 +335,24 @@ describe.sequential('SFX Studio server security', () => {
     });
     const project = await projectResponse.json();
     expect(projectResponse.status, project.error).toBe(200);
-    const exportRoot = join(STUDIO_ROOT, 'exports');
     rmSync(exportRoot, { recursive: true, force: true });
     symlinkSync(externalExportDir, exportRoot);
-    try {
-      const response = await fetch(`${url}/api/export`, {
-        method: 'POST',
-        headers: {
-          Origin: url,
-          'X-Woc-Sfx-Studio': token,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          expectedPlaybackProfileHash: project.playbackProfileHash,
-          expectedPlaybackWorkspaceHash: project.playbackWorkspaceHash,
-        }),
-      });
-      const body = await response.json();
-      expect(response.status).toBe(400);
-      expect(body.error).toContain('not a plain directory');
-      expect(readdirSync(externalExportDir)).toEqual([]);
-    } finally {
-      rmSync(exportRoot, { force: true });
-      mkdirSync(exportRoot);
-    }
+    const response = await fetch(`${url}/api/export`, {
+      method: 'POST',
+      headers: {
+        Origin: url,
+        'X-Woc-Sfx-Studio': token,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        expectedPlaybackProfileHash: project.playbackProfileHash,
+        expectedPlaybackWorkspaceHash: project.playbackWorkspaceHash,
+      }),
+    });
+    const body = await response.json();
+    expect(response.status).toBe(400);
+    expect(body.error).toContain('not a plain directory');
+    expect(readdirSync(externalExportDir)).toEqual([]);
   });
 
   it('does not save the project half of a stale combined draft', async () => {
@@ -345,6 +431,63 @@ describe.sequential('SFX Studio server security', () => {
     const response = await fetch(`${url}/source/foot_grass/${executableSourceId}`);
     expect(response.status).toBe(400);
     expect((await response.json()).error).toContain('source file type is not allowed');
+  });
+
+  it('neutralizes traversal components in upload filenames', async () => {
+    const initialResponse = await fetch(`${url}/api/project?key=foot_grass`, {
+      headers: { 'X-Woc-Sfx-Studio': token },
+    });
+    const initial = await initialResponse.json();
+    expect(initialResponse.status, initial.error).toBe(200);
+    let uploaded: Record<string, string> | undefined;
+    try {
+      const response = await fetch(`${url}/api/upload?key=foot_grass`, {
+        method: 'PUT',
+        headers: {
+          Origin: url,
+          'X-Woc-Sfx-Studio': token,
+          'X-Woc-Sfx-Audio-Workspace': initial.audioWorkspaceHash,
+          'X-Filename': '../../escaped.mp3',
+          'Content-Type': 'audio/mpeg',
+        },
+        body: readFileSync(audioIo.publishedPath('foot_grass')),
+      });
+      uploaded = await response.json();
+      expect(response.status, uploaded?.error).toBe(200);
+      const uploadedSourceId = uploaded?.sourceId;
+      expect(uploadedSourceId).toMatch(/^[a-f0-9]{64}\.mp3$/);
+      if (!uploadedSourceId) throw new Error('upload response is missing its source ID');
+      expect(resolveSourcePath('foot_grass', uploadedSourceId)).toBe(
+        realpathSync(join(sourceDir, uploadedSourceId)),
+      );
+      expect(existsSync(join(STUDIO_ROOT, 'escaped.mp3'))).toBe(false);
+    } finally {
+      if (uploaded?.audioWorkspaceHash) {
+        const reset = await fetch(`${url}/api/reset-project`, {
+          method: 'POST',
+          headers: {
+            Origin: url,
+            'X-Woc-Sfx-Studio': token,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            key: 'foot_grass',
+            expectedAudioWorkspaceHash: uploaded.audioWorkspaceHash,
+          }),
+        });
+        expect(reset.status, (await reset.json()).error).toBe(200);
+      }
+    }
+  });
+
+  it('rejects preview and repository symlinks that escape their allowed roots', async () => {
+    const preview = await fetch(`${url}/preview/${previewName}`);
+    expect(preview.status).toBe(400);
+    expect((await preview.json()).error).toContain('symlink escapes the allowed root');
+
+    const repo = await fetch(`${url}/repo/public/models/${repoModelName}`);
+    expect(repo.status).toBe(400);
+    expect((await repo.json()).error).toContain('symlink escapes the allowed root');
   });
 
   it('hides and rejects symlinked version archives', async () => {

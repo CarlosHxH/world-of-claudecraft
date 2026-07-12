@@ -113,7 +113,15 @@ export function assertExportableSfxTrack(path) {
 function nodeInstallScript() {
   return Buffer.from(`#!/usr/bin/env node
 import { createHash, randomBytes } from 'node:crypto';
-import { copyFileSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync } from 'node:fs';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+  statSync,
+} from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -136,26 +144,42 @@ const runtimeIdentity = createHash('sha256')
 if (runtime.bundleId !== runtimeIdentity || runtime.bundleId !== metadata.runtimeBundleId) {
   throw new Error('artifact runtime identity failed');
 }
-const targetSfx = join(staticRoot, 'audio/sfx');
-mkdirSync(join(targetSfx, 'blobs'), { recursive: true });
 
+const sources = new Map();
 for (const clip of Object.values(runtime.clips)) {
   for (const variant of clip.variants) {
     if (!/^[a-f0-9]{64}$/.test(variant.sha256)) throw new Error('artifact audio identity failed');
     const source = join(sourceRoot, 'payload/audio/sfx/blobs', variant.sha256 + '.mp3');
-    if (hash(source) !== variant.sha256) throw new Error('artifact audio checksum failed');
-    const target = join(targetSfx, 'blobs', variant.sha256 + '.mp3');
-    if (existsSync(target)) {
-      if (hash(target) !== variant.sha256) throw new Error('existing audio blob checksum failed');
-      continue;
+    if (!existsSync(source) || hash(source) !== variant.sha256) {
+      throw new Error('artifact audio checksum failed');
     }
-    const temporary = target + '.' + process.pid + '.' + randomBytes(4).toString('hex') + '.tmp';
-    try {
-      copyFileSync(source, temporary, 1);
-      renameSync(temporary, target);
-    } finally {
-      rmSync(temporary, { force: true });
-    }
+    sources.set(variant.sha256, source);
+  }
+}
+
+const targetSfx = join(staticRoot, 'audio/sfx');
+for (const identity of sources.keys()) {
+  const target = join(targetSfx, 'blobs', identity + '.mp3');
+  if (
+    existsSync(target) &&
+    (!statSync(target).isFile() || hash(target) !== identity)
+  ) {
+    throw new Error('existing audio blob checksum failed');
+  }
+}
+
+mkdirSync(join(targetSfx, 'blobs'), { recursive: true });
+for (const [identity, source] of sources) {
+  const target = join(targetSfx, 'blobs', identity + '.mp3');
+  if (existsSync(target)) {
+    continue;
+  }
+  const temporary = target + '.' + process.pid + '.' + randomBytes(4).toString('hex') + '.tmp';
+  try {
+    copyFileSync(source, temporary, 1);
+    renameSync(temporary, target);
+  } finally {
+    rmSync(temporary, { force: true });
   }
 }
 
@@ -172,7 +196,7 @@ console.log('Activated SFX bundle ' + runtime.bundleId + ' in ' + targetSfx);
 `);
 }
 
-function posixInstallScript({ runtimeManifestSha256, runtimeBundleId }) {
+function posixInstallScript({ runtimeManifestSha256, runtimeBundleId, installBlobsSha256 }) {
   return Buffer.from(`#!/bin/sh
 set -eu
 
@@ -215,9 +239,14 @@ if [ "$(hash_file "$runtime_source")" != "${runtimeManifestSha256}" ]; then
   exit 1
 fi
 
-target_sfx="$static_root/audio/sfx"
-mkdir -p "$target_sfx/blobs"
-while IFS= read -r identity; do
+install_blobs="$source_root/install-blobs.txt"
+if [ ! -f "$install_blobs" ] || [ "$(hash_file "$install_blobs")" != "${installBlobsSha256}" ]; then
+  echo "artifact audio list checksum failed" >&2
+  exit 1
+fi
+
+identity_count=0
+while IFS= read -r identity || [ -n "$identity" ]; do
   case "$identity" in
     ''|*[!0-9a-f]*) echo "artifact audio identity failed" >&2; exit 1 ;;
   esac
@@ -230,16 +259,32 @@ while IFS= read -r identity; do
     echo "artifact audio checksum failed: $identity" >&2
     exit 1
   fi
+  identity_count=$((identity_count + 1))
+done < "$install_blobs"
+if [ "$identity_count" -eq 0 ]; then
+  echo "artifact audio list is empty" >&2
+  exit 1
+fi
+
+target_sfx="$static_root/audio/sfx"
+while IFS= read -r identity || [ -n "$identity" ]; do
   target_file="$target_sfx/blobs/\${identity}.mp3"
   if [ -e "$target_file" ]; then
     if [ ! -f "$target_file" ] || [ "$(hash_file "$target_file")" != "$identity" ]; then
       echo "existing audio blob checksum failed: $identity" >&2
       exit 1
     fi
-  else
+  fi
+done < "$install_blobs"
+
+mkdir -p "$target_sfx/blobs"
+while IFS= read -r identity || [ -n "$identity" ]; do
+  if [ ! -e "$target_sfx/blobs/\${identity}.mp3" ]; then
+    source_file="$source_root/payload/audio/sfx/blobs/\${identity}.mp3"
+    target_file="$target_sfx/blobs/\${identity}.mp3"
     install_atomic "$source_file" "$target_file"
   fi
-done < "$source_root/install-blobs.txt"
+done < "$install_blobs"
 
 install_atomic "$runtime_source" "$target_sfx/runtime-pack.json"
 echo "Activated SFX bundle ${runtimeBundleId} in $target_sfx"
@@ -373,6 +418,8 @@ export function buildSfxProductionBundle(repoRoot) {
   };
   const runtimeBytes = Buffer.from(serializeRuntimeSfxPack(runtimePack));
   const runtimeManifestSha256 = sha256(runtimeBytes);
+  const installBlobsBytes = Buffer.from([...blobs.keys()].sort().join('\n'));
+  const installBlobsSha256 = sha256(installBlobsBytes);
   const metadata = {
     format: EXPORT_FORMAT,
     version: EXPORT_VERSION,
@@ -396,13 +443,17 @@ export function buildSfxProductionBundle(repoRoot) {
     { name: 'authoring/sfx_speed_map.json', bytes: speedBytes },
     {
       name: 'install.sh',
-      bytes: posixInstallScript({ runtimeManifestSha256, runtimeBundleId }),
+      bytes: posixInstallScript({
+        runtimeManifestSha256,
+        runtimeBundleId,
+        installBlobsSha256,
+      }),
       mode: 0o100755,
     },
     { name: 'install.mjs', bytes: nodeInstallScript(), mode: 0o100755 },
     {
       name: 'install-blobs.txt',
-      bytes: Buffer.from(`${[...blobs.keys()].sort().join('\n')}\n`),
+      bytes: installBlobsBytes,
     },
     { name: 'sfx-pack.json', bytes: jsonBytes(metadata) },
   ];

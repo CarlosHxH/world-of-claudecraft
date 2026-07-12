@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
+  cpSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
@@ -203,6 +204,76 @@ describe('SFX Studio project schema', () => {
       'expected published hash must be a full SHA-256 digest',
     );
   });
+
+  it('restores the exact audio bytes and published identity after two publishes', async () => {
+    const repoRoot = mkdtempSync(join(tmpdir(), 'woc-sfx-restore-repo-'));
+    temporaryRoots.push(repoRoot);
+    cpSync(join(ROOT, 'public/audio/sfx'), join(repoRoot, 'public/audio/sfx'), {
+      recursive: true,
+    });
+    cpSync(join(ROOT, 'scripts/sfx'), join(repoRoot, 'scripts/sfx'), { recursive: true });
+    mkdirSync(join(repoRoot, 'src/game'), { recursive: true });
+    cpSync(
+      join(ROOT, 'src/game/sfx_manifest.generated.ts'),
+      join(repoRoot, 'src/game/sfx_manifest.generated.ts'),
+    );
+
+    const previousTestRoot = process.env.WOC_SFX_STUDIO_TEST_ROOT;
+    const previousRepoRoot = process.env.WOC_SFX_STUDIO_TEST_REPO_ROOT;
+    const studioTestRoot = join(repoRoot, 'studio-test');
+    mkdirSync(studioTestRoot);
+    process.env.WOC_SFX_STUDIO_TEST_ROOT = studioTestRoot;
+    process.env.WOC_SFX_STUDIO_TEST_REPO_ROOT = repoRoot;
+
+    try {
+      const moduleUrl = new URL('../scripts/sfx_studio/audio_io.mjs', import.meta.url);
+      moduleUrl.searchParams.set('restore-roundtrip', `${process.pid}-${Date.now()}`);
+      const isolated = await import(/* @vite-ignore */ moduleUrl.href);
+      expect(isolated.REPO_ROOT).toBe(repoRoot);
+
+      const key = 'ui_error';
+      const audioPath = isolated.publishedPath(key);
+      const mixPath = join(repoRoot, 'scripts/sfx/sfx_mix.json');
+      const firstDraft = await isolated.loadDraft(key);
+      const first = await isolated.publishProject(
+        key,
+        firstDraft,
+        isolated.publishedStateHashForKey(key),
+        isolated.audioWorkspaceHash(firstDraft),
+      );
+      const firstAudio = readFileSync(audioPath);
+      const firstMix = JSON.parse(readFileSync(mixPath, 'utf8')).clips[key];
+      const secondDraft = await isolated.saveDraft(
+        key,
+        { ...first.project, reverse: !first.project.reverse },
+        first.audioWorkspaceHash,
+      );
+      const second = await isolated.publishProject(
+        key,
+        secondDraft.project,
+        first.hash,
+        secondDraft.audioWorkspaceHash,
+      );
+
+      expect(readFileSync(audioPath)).not.toEqual(firstAudio);
+
+      const restored = await isolated.restoreVersion(
+        key,
+        first.hash,
+        second.hash,
+        second.audioWorkspaceHash,
+      );
+      expect(readFileSync(audioPath)).toEqual(firstAudio);
+      expect(JSON.parse(readFileSync(mixPath, 'utf8')).clips[key]).toEqual(firstMix);
+      expect(restored.hash).toBe(first.hash);
+      expect(isolated.publishedStateHashForKey(key)).toBe(first.hash);
+    } finally {
+      if (previousTestRoot === undefined) delete process.env.WOC_SFX_STUDIO_TEST_ROOT;
+      else process.env.WOC_SFX_STUDIO_TEST_ROOT = previousTestRoot;
+      if (previousRepoRoot === undefined) delete process.env.WOC_SFX_STUDIO_TEST_REPO_ROOT;
+      else process.env.WOC_SFX_STUDIO_TEST_REPO_ROOT = previousRepoRoot;
+    }
+  }, 60_000);
 
   it('binds optimistic published state to both audio bytes and its tracked recipe', () => {
     const audioHash = 'a'.repeat(64);
@@ -931,6 +1002,18 @@ describe('SFX Studio project schema', () => {
     };
     expect(normalizeProductionMastering(mastering)).toEqual(mastering);
     expect(() =>
+      normalizeProductionMastering({ ...mastering, revision: MASTERING_REVISION - 1 }),
+    ).toThrow('incompatible revision or mode');
+    expect(
+      normalizeProductionMastering(
+        { ...mastering, revision: MASTERING_REVISION - 1 },
+        { allowHistoricalRevision: true },
+      ),
+    ).toEqual({ ...mastering, revision: MASTERING_REVISION - 1 });
+    expect(() => normalizeProductionMastering({ ...mastering, mode: 'direct' })).toThrow(
+      'incompatible revision or mode',
+    );
+    expect(() =>
       normalizeProductionMastering({ ...mastering, outputFile: '/tmp/untrusted.mp3' }),
     ).toThrow('unknown field: outputFile');
     expect(() =>
@@ -956,6 +1039,39 @@ describe('SFX Studio project schema', () => {
       'foot_grass',
     );
     expect(restored.project.segments).toEqual([{ start: 8, end: 9 }]);
+
+    const historicalMastering = {
+      revision: MASTERING_REVISION - 1,
+      mode: 'production-conform',
+      authoringMode: 'direct',
+      measurement: null,
+      conform: {
+        normBranch: 'peak',
+        inputLevel: -10,
+        outputLevel: -6,
+        gainDb: 4,
+        attempts: [{ gainDb: 4, measuredOutput: -6, error: 0 }],
+      },
+    };
+    const historicalOutput = {
+      channels: 1,
+      sampleRate: 44_100,
+      bitrate: 192_000,
+      integratedLufs: -18.25,
+      truePeakDb: -6.1,
+    };
+    const historical = restoredMixEntry(
+      {
+        project: archivedProject,
+        mastering: historicalMastering,
+        output: historicalOutput,
+      },
+      { duration: 1, channels: 1, sampleRate: 44_100, bitrate: 191_997 },
+      { integratedLufs: -18, truePeakDb: -6 },
+      'foot_grass',
+    );
+    expect(historical.mastering).toEqual(historicalMastering);
+    expect(historical.output).toEqual(historicalOutput);
 
     const neutral = neutralPublishedProject('amb_dungeon', `${'a'.repeat(64)}.mp3`, 5);
     expect(neutral).toMatchObject({
@@ -1150,18 +1266,19 @@ describe('SFX runtime manifest generation', () => {
   });
 
   it('rejects catalogs that exceed the shared runtime track cap', () => {
+    expect(SFX_MAX_TRACKS_PER_KEY).toBe(8);
     const source = SFX.find((entry: { key: string }) => entry.key === 'foot_grass') as {
       key: string;
       variants?: { id: string }[];
     };
     const previous = source.variants;
-    source.variants = Array.from({ length: SFX_MAX_TRACKS_PER_KEY + 1 }, (_, index) => ({
+    source.variants = Array.from({ length: 9 }, (_, index) => ({
       id: `take_${index + 1}`,
     }));
     try {
       expect(() =>
         buildSfxManifestData(manifestFixture(0).root, { requireComplete: false }),
-      ).toThrow(`maximum is ${SFX_MAX_TRACKS_PER_KEY}`);
+      ).toThrow('maximum is 8');
     } finally {
       if (previous === undefined) delete source.variants;
       else source.variants = previous;

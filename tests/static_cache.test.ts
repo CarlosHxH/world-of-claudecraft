@@ -100,6 +100,10 @@ describe('isPublicSfxPath', () => {
     expect(source).toContain('isApi || publicCorsPath || publicSfxPath');
     expect(source).toContain('sfxBlobIntegrityMatches(cachePath, actualSfxHash)');
     expect(source).toContain('content-addressed SFX blob failed integrity verification');
+    expect(source).toContain('verifiedSfx = readStaticSfxSnapshot(file)');
+    expect(source).toContain("'Content-Length': verifiedSfx?.bytes.length ?? stats.size");
+    expect(source).toContain('res.end(verifiedSfx.bytes)');
+    expect(source).toContain('SFX asset changed during integrity verification');
   });
 });
 

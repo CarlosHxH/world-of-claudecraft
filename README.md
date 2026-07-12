@@ -295,6 +295,9 @@ And almost none of it is a shipped asset. The world is drawn from code:
 
 ## Development
 
+The SFX validation tests require `ffmpeg` and `ffprobe` on `PATH`. Install FFmpeg with your
+platform package manager before running `npm test`, `npm run gate`, or the SFX Studio.
+
 ```bash
 npm test                        # vitest: formulas, combat, AI, quests, all 9 classes, parties, duels, trades, dungeons
 npm run gate                    # complete CI-equivalent contribution gate
