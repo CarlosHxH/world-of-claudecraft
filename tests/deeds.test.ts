@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { dealDamage } from '../src/sim/combat/damage';
 import { DEED_ORDER, DEEDS } from '../src/sim/content/deeds';
 import { emptyAllocation, type TalentAllocation } from '../src/sim/content/talents';
-import { ITEMS, MOBS, QUESTS } from '../src/sim/data';
+import { ITEMS, MOBS, QUESTS, ZONES } from '../src/sim/data';
 import {
   bumpDeedStat,
   checkDeedTrigger,
@@ -18,6 +18,7 @@ import {
   onDungeonFinalBossKilledForDeeds,
   onFishCaughtForDeeds,
   restoreDeedStats,
+  updateDeeds,
 } from '../src/sim/deeds';
 import { BATTLEFIELD_XP_TRICKLE } from '../src/sim/professions/battlefield_xp';
 import { queueGatheringGrant } from '../src/sim/professions/gathering';
@@ -691,7 +692,7 @@ describe('persistence', () => {
     const { meta } = primary(sim);
     bumpDeedStat(sim.ctx, meta, 'kills', 3);
     bumpDeedStat(sim.ctx, meta, 'lootCopper', 12345);
-    markVisited(sim.ctx, meta, 'poi:eastbrook_vale:Eastbrook');
+    markVisited(sim.ctx, meta, 'poi:eastbrook_vale:eastbrook');
     markItemDiscovered(sim.ctx, meta, 'glimmerfin_koi');
     meta.deedStats.dungeonClears['hollow_crypt:heroic'] = 2;
     // A bare poke bypasses the clear helper's narrow mark; request the full
@@ -710,7 +711,7 @@ describe('persistence', () => {
     const m2 = sim2.players.get(pid)!;
     expect(m2.deedStats.counters.kills).toBe(3);
     expect(m2.deedStats.counters.lootCopper).toBe(12345);
-    expect(m2.deedStats.visited.has('poi:eastbrook_vale:Eastbrook')).toBe(true);
+    expect(m2.deedStats.visited.has('poi:eastbrook_vale:eastbrook')).toBe(true);
     expect(m2.deedStats.itemsDiscovered.has('glimmerfin_koi')).toBe(true);
     expect(m2.deedStats.dungeonClears['hollow_crypt:heroic']).toBe(2);
     expect(m2.activeTitle).toBe('prog_veteran');
@@ -856,7 +857,7 @@ describe('persistence', () => {
       expect(mark).toMatch(/^(poi|gather|fish|npc|slain|quality|fiesta|dungeon|witness):/);
     }
     // The spawn-square sweep marked the hub POI (bounded, authored input).
-    expect(meta.deedStats.visited.has('poi:eastbrook_vale:Eastbrook')).toBe(true);
+    expect(meta.deedStats.visited.has('poi:eastbrook_vale:eastbrook')).toBe(true);
   });
 });
 
@@ -1183,10 +1184,10 @@ describe('bounded sets on load', () => {
   it('restoreDeedStats drops marks outside the authored namespaces and unknown item ids', () => {
     const stats = restoreDeedStats({
       itemsDiscovered: ['glimmerfin_koi', 'not_a_real_item'],
-      visited: ['poi:eastbrook_vale:Eastbrook', 'garbage', 'evil:namespace'],
+      visited: ['poi:eastbrook_vale:eastbrook', 'garbage', 'evil:namespace'],
     });
     expect([...stats.itemsDiscovered]).toEqual(['glimmerfin_koi']);
-    expect([...stats.visited]).toEqual(['poi:eastbrook_vale:Eastbrook']);
+    expect([...stats.visited]).toEqual(['poi:eastbrook_vale:eastbrook']);
   });
 });
 
@@ -1655,5 +1656,80 @@ describe('live sites grant in the same run (retro cannot mask a broken site)', (
     expect(meta.craftSkills.alchemy).toBe(75); // the trickle crossed the threshold
     sim.tick();
     expect(meta.deedsEarned.has('prog_craft_specialist')).toBe(true);
+  });
+});
+
+describe('exploration poi identity (marks key on the stable id, not the label)', () => {
+  it('a visit marks the id form, never the label form', () => {
+    const sim = makeSim();
+    const { meta, e } = primary(sim);
+    const poi = ZONES.find((z) => z.id === 'eastbrook_vale')!.pois.find(
+      (p) => p.id === 'eastbrook',
+    )!;
+    e.pos.x = poi.x;
+    e.pos.z = poi.z;
+    e.prevPos = { ...e.pos };
+    sim.tickCount = 20; // land the 1 Hz proximity sweep
+    updateDeeds(sim.ctx);
+    // The mark is the id form; the display label (a genuinely different string) is
+    // never written, so a label copy edit cannot strand the visit.
+    expect(meta.deedStats.visited.has('poi:eastbrook_vale:eastbrook')).toBe(true);
+    expect(meta.deedStats.visited.has(`poi:eastbrook_vale:${poi.label}`)).toBe(false);
+    expect(poi.id).not.toBe(poi.label);
+  });
+
+  it('visiting every named place in a zone unlocks its wayfarer deed end-to-end', () => {
+    const sim = makeSim();
+    const { meta, e } = primary(sim);
+    const zone = ZONES.find((z) => z.id === 'eastbrook_vale')!;
+    for (const poi of zone.pois) {
+      e.pos.x = poi.x;
+      e.pos.z = poi.z;
+      e.prevPos = { ...e.pos };
+      sim.tickCount = 20;
+      updateDeeds(sim.ctx);
+    }
+    expect(meta.deedsEarned.has('exp_vale_wayfarer')).toBe(true);
+  });
+});
+
+describe('trade completion counts only non-empty trades (soc_first_trade)', () => {
+  it('an empty double-confirm does not count; a one-item trade unlocks it for both', () => {
+    const sim = makeSim();
+    const a = sim.addPlayer('warrior', 'Aleph');
+    const b = sim.addPlayer('mage', 'Bet');
+    const ea = sim.entities.get(a)!;
+    const eb = sim.entities.get(b)!;
+    ea.pos.x = 0;
+    ea.pos.z = -40;
+    ea.prevPos = { ...ea.pos };
+    eb.pos.x = 2;
+    eb.pos.z = -40;
+    eb.prevPos = { ...eb.pos };
+    const metaA = sim.players.get(a)!;
+    const metaB = sim.players.get(b)!;
+    // Empty double-confirm: both sides offer nothing. The trade still completes
+    // (and emits tradeDone), but it is not a trade for deed purposes.
+    sim.tradeRequest(b, a);
+    sim.tradeAccept(b);
+    sim.tradeConfirm(a);
+    sim.tradeConfirm(b);
+    sim.tick();
+    expect(metaA.deedStats.counters.tradesCompleted).toBe(0);
+    expect(metaB.deedStats.counters.tradesCompleted).toBe(0);
+    expect(metaA.deedsEarned.has('soc_first_trade')).toBe(false);
+    expect(metaB.deedsEarned.has('soc_first_trade')).toBe(false);
+    // A one-item trade counts for both sides and unlocks the deed for both.
+    sim.addItem('wolf_fang', 1, a);
+    sim.tradeRequest(b, a);
+    sim.tradeAccept(b);
+    sim.tradeSetOffer([{ itemId: 'wolf_fang', count: 1 }], 0, a);
+    sim.tradeConfirm(a);
+    sim.tradeConfirm(b);
+    sim.tick();
+    expect(metaA.deedStats.counters.tradesCompleted).toBe(1);
+    expect(metaB.deedStats.counters.tradesCompleted).toBe(1);
+    expect(metaA.deedsEarned.has('soc_first_trade')).toBe(true);
+    expect(metaB.deedsEarned.has('soc_first_trade')).toBe(true);
   });
 });

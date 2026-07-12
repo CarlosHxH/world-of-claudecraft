@@ -1398,7 +1398,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 410,
-      "state": "1f384219",
+      "state": "caa20159",
       "events": "40dfbbdd",
       "rng": {
         "draws": 0,
@@ -1409,7 +1409,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 410,
-      "state": "1f384219",
+      "state": "caa20159",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -1444,7 +1444,7 @@
               "worn_sword"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "delveClears": {},
@@ -1504,7 +1504,7 @@
               "wolf_fang"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "delveClears": {},
@@ -1646,7 +1646,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 410,
-      "state": "78b4a8cb",
+      "state": "e715a78b",
       "events": "627b358b",
       "rng": {
         "draws": 0,
@@ -1684,7 +1684,7 @@
               "worn_sword"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "delveClears": {},
@@ -1744,7 +1744,7 @@
               "wolf_fang"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "delveClears": {},
@@ -1886,7 +1886,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 410,
-      "state": "78b4a8cb",
+      "state": "e715a78b",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -1924,7 +1924,7 @@
               "worn_sword"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "delveClears": {},
@@ -1984,7 +1984,7 @@
               "wolf_fang"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "delveClears": {},

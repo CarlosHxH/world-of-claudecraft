@@ -4,6 +4,7 @@
 // idiom) with decisive positive AND negative cases: every grant is asserted through
 // the player's earned set, every negative targets one exact gate condition.
 import { describe, expect, it } from 'vitest';
+import { handleDeath } from '../src/sim/combat/damage';
 import {
   CRAFTING_HUB_MIN_LEVEL,
   CRAFTING_HUB_POS,
@@ -592,6 +593,67 @@ describe('encounter mechanical arms (onMobKillCreditForDeeds)', () => {
     // A distinct character who never died still earns it on the same kill.
     expect(survivor.deedsEarned.has('cmb_thunzharr_unbroken')).toBe(true);
   });
+
+  it('cmb_thunzharr_unbroken: a heal-only contributor who dies keeps the kill but loses the record', () => {
+    // Regression: a heal-only contributor lands no damage, so is absent from
+    // bossDamagers; their only proof of engagement is the live hate table. The
+    // death taint must be recorded from that pre-death threat, which means the
+    // death hook must run BEFORE handleDeath clears the dying player off threat.
+    const sim = makeSim();
+    const boss = spawnMob(sim, 'thunzharr_waking_peak', { x: 5, y: 0, z: -5 }, 30);
+    boss.hostile = true;
+    boss.inCombat = true;
+    const healer = sim.players.get(sim.addPlayer('warrior', 'Healer', { characterId: 9001 }))!;
+    const damager = sim.players.get(sim.addPlayer('warrior', 'Damager', { characterId: 9002 }))!;
+    // Heal-only: threat but never a damage hit. The damager is on the roster.
+    boss.threat.set(healer.entityId, 30);
+    boss.bossDamagers.add(damager.entityId);
+    // The boss kills the heal-only healer mid-fight (the real death path).
+    handleDeath(sim.ctx, entityOf(sim, healer), boss);
+    expect(boss.threat.has(healer.entityId)).toBe(false); // handleDeath cleared threat
+    // The healer resurrects and heals again, rejoining the boss's hate table so
+    // they are still a loot contributor when it finally falls.
+    entityOf(sim, healer).dead = false;
+    boss.threat.set(healer.entityId, 20);
+    onWorldBossKilledForDeeds(sim.ctx, boss, [healer, damager]);
+    expect(healer.deedsEarned.has('cmb_thunzharr')).toBe(true);
+    expect(healer.deedsEarned.has('cmb_thunzharr_unbroken')).toBe(false);
+    // A never-died damager on the same kill still earns the record.
+    expect(damager.deedsEarned.has('cmb_thunzharr_unbroken')).toBe(true);
+  });
+
+  it('cmb_thunzharr_unbroken: a returning healer who lands one hit after dying still loses it', () => {
+    // Even after the healer re-enters the fight and deals damage (joining
+    // bossDamagers), the character-keyed death taint already stands.
+    const sim = makeSim();
+    const boss = spawnMob(sim, 'thunzharr_waking_peak', { x: 5, y: 0, z: -5 }, 30);
+    boss.hostile = true;
+    boss.inCombat = true;
+    const healer = sim.players.get(sim.addPlayer('warrior', 'Healer', { characterId: 9101 }))!;
+    boss.threat.set(healer.entityId, 30); // heal-only when they die
+    handleDeath(sim.ctx, entityOf(sim, healer), boss);
+    entityOf(sim, healer).dead = false;
+    boss.bossDamagers.add(healer.entityId); // returns and lands a melee hit
+    onWorldBossKilledForDeeds(sim.ctx, boss, [healer]);
+    expect(healer.deedsEarned.has('cmb_thunzharr')).toBe(true);
+    expect(healer.deedsEarned.has('cmb_thunzharr_unbroken')).toBe(false);
+  });
+
+  it('cmb_thunzharr_unbroken: a damager dying through the real death path taints same-tick', () => {
+    // Guards the reorder for the ordinary damager arm: routing the death through
+    // handleDeath (not the direct hook) still records the taint before the kill.
+    const sim = makeSim();
+    const boss = spawnMob(sim, 'thunzharr_waking_peak', { x: 5, y: 0, z: -5 }, 30);
+    boss.hostile = true;
+    boss.inCombat = true;
+    const diver = sim.players.get(sim.addPlayer('warrior', 'Diver', { characterId: 9201 }))!;
+    boss.bossDamagers.add(diver.entityId);
+    boss.threat.set(diver.entityId, 40);
+    handleDeath(sim.ctx, entityOf(sim, diver), boss);
+    onWorldBossKilledForDeeds(sim.ctx, boss, [diver]);
+    expect(diver.deedsEarned.has('cmb_thunzharr')).toBe(true);
+    expect(diver.deedsEarned.has('cmb_thunzharr_unbroken')).toBe(false);
+  });
 });
 
 describe('Vale Cup sites', () => {
@@ -1090,6 +1152,43 @@ describe('hidden, delve, and chronicle simple sites', () => {
       killerNear,
     ]);
     expect(killerNear.deedsEarned.has('chr_marsh_hush_the_mending')).toBe(true);
+  });
+
+  it('chr_marsh_hush_the_mending: killing a tended cultist first taints the mender', () => {
+    // The deed is an ORDER requirement: slay the mender BEFORE any cultist it
+    // tends. Felling a cultist inside the radius first must block a later kill of
+    // that mender even though another warded cultist still lives.
+    const sim = makeSim();
+    const killer = addMeta(sim, 'Reaper');
+    const mender = spawnMob(sim, 'gravecaller_mender', { x: 0, y: 0, z: 0 }, 3);
+    const cultist1 = spawnMob(sim, 'gravecaller_cultist', { x: 5, y: 0, z: 0 }, 3);
+    spawnMob(sim, 'gravecaller_cultist', { x: -5, y: 0, z: 0 }, 3); // still alive at the mender kill
+    cultist1.dead = true; // the credited kill sets this before the deed hook runs
+    onMobKillCreditForDeeds(sim.ctx, cultist1, entityOf(sim, killer), killer, [killer]);
+    onMobKillCreditForDeeds(sim.ctx, mender, entityOf(sim, killer), killer, [killer]);
+    expect(killer.deedsEarned.has('chr_marsh_hush_the_mending')).toBe(false);
+  });
+
+  it('chr_marsh_hush_the_mending: killing the mender first with both cultists alive grants', () => {
+    const sim = makeSim();
+    const killer = addMeta(sim, 'Reaper');
+    const mender = spawnMob(sim, 'gravecaller_mender', { x: 0, y: 0, z: 0 }, 3);
+    spawnMob(sim, 'gravecaller_cultist', { x: 5, y: 0, z: 0 }, 3);
+    spawnMob(sim, 'gravecaller_cultist', { x: -5, y: 0, z: 0 }, 3);
+    onMobKillCreditForDeeds(sim.ctx, mender, entityOf(sim, killer), killer, [killer]);
+    expect(killer.deedsEarned.has('chr_marsh_hush_the_mending')).toBe(true);
+  });
+
+  it('chr_marsh_hush_the_mending: a cultist slain OUTSIDE the radius is no false taint', () => {
+    const sim = makeSim();
+    const killer = addMeta(sim, 'Reaper');
+    const mender = spawnMob(sim, 'gravecaller_mender', { x: 0, y: 0, z: 0 }, 3);
+    const farCultist = spawnMob(sim, 'gravecaller_cultist', { x: 40, y: 0, z: 0 }, 3);
+    spawnMob(sim, 'gravecaller_cultist', { x: 6, y: 0, z: 0 }, 3); // in-radius, alive
+    farCultist.dead = true;
+    onMobKillCreditForDeeds(sim.ctx, farCultist, entityOf(sim, killer), killer, [killer]);
+    onMobKillCreditForDeeds(sim.ctx, mender, entityOf(sim, killer), killer, [killer]);
+    expect(killer.deedsEarned.has('chr_marsh_hush_the_mending')).toBe(true);
   });
 
   it('hid_saul_footnote: nine consecutive Saul talks grant; another NPC mid-streak resets', () => {

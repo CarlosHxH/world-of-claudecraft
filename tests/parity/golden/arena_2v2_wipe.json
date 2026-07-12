@@ -1448,7 +1448,7 @@
       "tick": 225,
       "time": 11.25,
       "nextId": 412,
-      "state": "36a4f18a",
+      "state": "34e5442a",
       "events": "2bbf670f",
       "rng": {
         "draws": 1011,
@@ -1459,7 +1459,7 @@
       "tick": 243,
       "time": 12.15,
       "nextId": 412,
-      "state": "87db852a",
+      "state": "f89ac84a",
       "events": "741638a5",
       "rng": {
         "draws": 1087,
@@ -1496,7 +1496,7 @@
               "worn_sword"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "deedsEarned": [
@@ -1562,7 +1562,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "deedsEarned": [
@@ -1635,7 +1635,7 @@
               "rusty_dagger"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "deedsEarned": [
@@ -1705,7 +1705,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "deedsEarned": [
@@ -1954,7 +1954,7 @@
       "tick": 243,
       "time": 12.15,
       "nextId": 412,
-      "state": "87db852a",
+      "state": "f89ac84a",
       "events": "741638a5",
       "rng": {
         "draws": 1087,
@@ -1991,7 +1991,7 @@
               "worn_sword"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "deedsEarned": [
@@ -2057,7 +2057,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "deedsEarned": [
@@ -2130,7 +2130,7 @@
               "rusty_dagger"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "deedsEarned": [
@@ -2200,7 +2200,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "deedsEarned": [

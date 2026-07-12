@@ -490,7 +490,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 411,
-      "state": "b163c2fd",
+      "state": "804ec5dd",
       "events": "b21aa940",
       "rng": {
         "draws": 0,
@@ -501,7 +501,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 411,
-      "state": "a2622b07",
+      "state": "11f50fa7",
       "events": "8f7db692",
       "rng": {
         "draws": 0,
@@ -512,7 +512,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 412,
-      "state": "be37f2b3",
+      "state": "643e1053",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -548,7 +548,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "deedsEarned": [
@@ -771,7 +771,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 412,
-      "state": "49dcc04c",
+      "state": "bd3c666c",
       "events": "84276814",
       "rng": {
         "draws": 0,
@@ -807,7 +807,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "deedsEarned": [
@@ -969,7 +969,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 414,
-      "state": "aef29624",
+      "state": "cd5203c4",
       "events": "920d0a0f",
       "rng": {
         "draws": 0,
@@ -1005,7 +1005,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "deedsEarned": [
@@ -1208,7 +1208,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 414,
-      "state": "9162625c",
+      "state": "3ed6933c",
       "events": "cc9844fc",
       "rng": {
         "draws": 0,
@@ -1244,7 +1244,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "deedsEarned": [
@@ -1447,7 +1447,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 414,
-      "state": "49dcc04c",
+      "state": "bd3c666c",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -1483,7 +1483,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "deedsEarned": [
@@ -1645,7 +1645,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 415,
-      "state": "49dcc04c",
+      "state": "bd3c666c",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -1681,7 +1681,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "deedsEarned": [
@@ -1843,7 +1843,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 417,
-      "state": "1aaf6217",
+      "state": "041de577",
       "events": "f41adc35",
       "rng": {
         "draws": 0,
@@ -1879,7 +1879,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "deedsEarned": [
@@ -2194,7 +2194,7 @@
       "tick": 60,
       "time": 3,
       "nextId": 417,
-      "state": "0fb7649a",
+      "state": "f5b69bba",
       "events": "456c6ddc",
       "rng": {
         "draws": 82,
@@ -2205,7 +2205,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 417,
-      "state": "4a76755c",
+      "state": "c135bcbc",
       "events": "7a438e74",
       "rng": {
         "draws": 158,
@@ -2216,7 +2216,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 417,
-      "state": "4a76755c",
+      "state": "c135bcbc",
       "events": "741638a5",
       "rng": {
         "draws": 158,
@@ -2254,7 +2254,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "deedsEarned": [
@@ -2593,7 +2593,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 419,
-      "state": "7ef9ad56",
+      "state": "fd27b8b6",
       "events": "7c254068",
       "rng": {
         "draws": 158,
@@ -2631,7 +2631,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "deedsEarned": [
@@ -2970,7 +2970,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 421,
-      "state": "90352a58",
+      "state": "28ab2ef8",
       "events": "0d8fbe8d",
       "rng": {
         "draws": 158,
@@ -3008,7 +3008,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "deedsEarned": [
@@ -3356,7 +3356,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 421,
-      "state": "90352a58",
+      "state": "28ab2ef8",
       "events": "741638a5",
       "rng": {
         "draws": 158,
@@ -3394,7 +3394,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "deedsEarned": [

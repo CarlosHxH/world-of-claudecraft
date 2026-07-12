@@ -567,6 +567,14 @@ export function handleDeath(ctx: SimContext, e: Entity, killer: Entity | null): 
   // so a stale mark would otherwise reappear on the respawn
   if (e.kind === 'mob') ctx.clearEntityMarker(e.id);
 
+  // Book of Deeds death bookkeeping runs BEFORE the hate tables are cleared just
+  // below, so its world-boss survival taint and the engaged-room folds observe
+  // the dying player's own pre-death threat: a heal-only contributor leaves no
+  // damage trace, so their live threat entry is the only proof they were engaged,
+  // and the clear loop would erase it out from under the hook. (The player-block
+  // counters and side effects stay below; only this pure read-of-threat moves up.)
+  if (e.kind === 'player') deedsMod.onPlayerDeathForDeeds(ctx, e);
+
   // the dead drop off every hate table (and any taunt lock on them)
   for (const m of ctx.entities.values()) {
     if (m.kind !== 'mob' || m.id === e.id) continue;
@@ -580,9 +588,9 @@ export function handleDeath(ctx: SimContext, e: Entity, killer: Entity | null): 
   if (e.kind === 'player') {
     const meta = ctx.players.get(e.id);
     if (meta) meta.counters.deaths++;
-    // Book of Deeds: the lifetime deaths counter, the Keeper's Toll delight,
-    // perfection-window taints, and the world-boss survival record.
-    deedsMod.onPlayerDeathForDeeds(ctx, e);
+    // The Book of Deeds death hook (lifetime deaths counter, the Keeper's Toll
+    // delight, perfection-window taints, the world-boss survival record) already
+    // ran above, before the hate tables were cleared.
     e.autoAttack = false;
     e.queuedOnSwing = null;
     delete e.queuedOnSwingFree;

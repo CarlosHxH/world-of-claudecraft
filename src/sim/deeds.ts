@@ -301,6 +301,11 @@ export interface DeedRuntime {
   // bog_bloat corpse entity id -> credited pid, resolved when the delayed
   // death-throes blast fires (chr_marsh_unburst counts blast-clean kills).
   bloatPending: Map<number, number>;
+  // Entity ids of gravecaller_mender mobs whose kill-order is already broken:
+  // a cultist they still tend was slain first, so a later kill of that mender
+  // must NOT grant chr_marsh_hush_the_mending (the deed requires slaying the
+  // mender BEFORE any of its cultists). Cleared when the mender dies or despawns.
+  menderTainted: Set<number>;
   // Vale Cup per-match personal-outcome memory (match id keyed; practices can
   // run beside the public match). Cleared when the match ends.
   cupTouched: Map<number, Set<number>>;
@@ -313,6 +318,7 @@ export function createDeedRuntime(): DeedRuntime {
     wolfKills: new Map(),
     saulTalks: new Map(),
     bloatPending: new Map(),
+    menderTainted: new Set(),
     cupTouched: new Map(),
     cupGoals: new Map(),
   };
@@ -938,8 +944,12 @@ function sweepProximityMarks(ctx: SimContext): void {
     if (!e || e.dead) continue;
     const zone = zoneAt(e.pos.z);
     for (const poi of zone.pois ?? []) {
+      // The mark keys on the stable poi id, never the display label (a label copy
+      // edit must not strand exploration progress). Custom-map pois may omit the
+      // id; only the static ZONES carry one, and only they drive exploration deeds.
+      if (poi.id === undefined) continue;
       if (dist2d(e.pos, { x: poi.x, y: 0, z: poi.z }) <= POI_VISIT_RADIUS) {
-        markVisited(ctx, meta, `poi:${zone.id}:${poi.label}`);
+        markVisited(ctx, meta, `poi:${zone.id}:${poi.id}`);
       }
     }
     if (thunzharr && dist2d(e.pos, thunzharr.pos) <= THUNZHARR_WITNESS_RADIUS) {
@@ -955,7 +965,14 @@ function sweepProximityMarks(ctx: SimContext): void {
   // state (never an entity or the rng), so its placement cannot fork the draw.
   for (const [bossId, st] of ctx.deedRuntime.encounters) {
     const boss = ctx.entities.get(bossId);
-    if (!boss || boss.dead || !PARTICIPANT_TRACKED.has(boss.templateId)) continue;
+    // A vanished boss entity can never resolve to a kill: prune its leaked entry
+    // (dropEntityFromRoster is the primary cleanup; this is the backstop for any
+    // despawn path that bypasses it). Map deletion mid-iteration is safe here.
+    if (!boss) {
+      ctx.deedRuntime.encounters.delete(bossId);
+      continue;
+    }
+    if (boss.dead || !PARTICIPANT_TRACKED.has(boss.templateId)) continue;
     for (const attackerId of boss.threat.keys()) {
       const key = deedCharKeyForEntityId(ctx, attackerId);
       if (key !== null) st.participants.add(key);
@@ -1120,7 +1137,13 @@ export function onPlayerDeathForDeeds(ctx: SimContext, e: Entity): void {
   // hot path.
   for (const ent of ctx.entities.values()) {
     if (ent.kind !== 'mob' || ent.dead || ent.templateId !== THUNZHARR_ID) continue;
-    if (meta && ent.bossDamagers.has(e.id))
+    // A heal-only contributor never lands damage (so is absent from bossDamagers),
+    // but their live threat entry proves they were engaged. handleDeath runs this
+    // hook BEFORE it clears the dying player off the hate table, so the threat
+    // read here is still the pre-death table. Threat is keyed on the player's own
+    // id (healing threat and pet damage both resolve to the owner id already), so
+    // no owner resolution is needed.
+    if (meta && (ent.bossDamagers.has(e.id) || ent.threat.has(e.id)))
       ensureEncounter(ctx, ent.id).diedKeys.add(deedCharKey(meta));
   }
 }
@@ -1277,11 +1300,26 @@ export function onMobKillCreditForDeeds(
     }
   }
 
+  // chr_marsh_hush_the_mending kill-order taint: felling a warded cultist marks
+  // every living mender still tending it (within the Grave Mending radius of the
+  // now-dead cultist) as broken-order, so a later kill of that mender cannot claim
+  // the deed. The deed is "slay the mender BEFORE any of the cultists it tends".
+  if (MENDER_WARD_TEMPLATES.includes(mob.templateId)) {
+    for (const ent of ctx.entities.values()) {
+      if (ent.kind !== 'mob' || ent.dead || ent.templateId !== MENDER_TEMPLATE) continue;
+      if (dist2d(ent.pos, mob.pos) <= MENDER_WARD_RADIUS) {
+        ctx.deedRuntime.menderTainted.add(ent.id);
+      }
+    }
+  }
+
   // chr_marsh_hush_the_mending: a mender felled by your blow while it still
-  // tends a living cultist within its Grave Mending radius.
+  // tends a living cultist within its Grave Mending radius, AND whose kill-order
+  // is intact (no cultist it tends was slain first). The taint is consumed here
+  // whether or not the grant fires.
   if (mob.templateId === MENDER_TEMPLATE && killerPid !== null) {
     const killerMeta = ctx.players.get(killerPid);
-    if (killerMeta) {
+    if (killerMeta && !ctx.deedRuntime.menderTainted.has(mob.id)) {
       for (const ent of ctx.entities.values()) {
         if (ent.kind !== 'mob' || ent.dead) continue;
         if (!MENDER_WARD_TEMPLATES.includes(ent.templateId)) continue;
@@ -1291,6 +1329,7 @@ export function onMobKillCreditForDeeds(
         }
       }
     }
+    ctx.deedRuntime.menderTainted.delete(mob.id);
   }
 
   // Dungeon completion credit (the Nythraxis raid routes through the room

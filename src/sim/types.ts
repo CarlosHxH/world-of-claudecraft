@@ -1605,7 +1605,11 @@ export interface ZoneDef {
   hub: { x: number; z: number; radius: number; name: string };
   graveyard: { x: number; z: number };
   lakes: { x: number; z: number; radius: number }[];
-  pois: { x: number; z: number; label: string }[];
+  // id is the PERSISTED identity of a point of interest (deed visit marks key on
+  // it, so it must never change once shipped); label is display-only and may be
+  // re-worded freely. Optional because user-authored custom maps (MapDocContent
+  // reuses ZoneDef) omit it; every static ZONES poi carries one (content-guarded).
+  pois: { x: number; z: number; label: string; id?: string }[];
   welcome: string; // chat-log hint shown on first entry
   welcomeQuestId?: string; // only show the hint while this quest is available
 }

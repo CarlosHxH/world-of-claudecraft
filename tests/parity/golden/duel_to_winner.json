@@ -29,7 +29,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 410,
-      "state": "e4dee192",
+      "state": "46f56708",
       "events": "671a7082",
       "rng": {
         "draws": 0,
@@ -40,7 +40,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 410,
-      "state": "79092176",
+      "state": "054ebf6c",
       "events": "ae5fecde",
       "rng": {
         "draws": 0,
@@ -51,7 +51,7 @@
       "tick": 60,
       "time": 3,
       "nextId": 410,
-      "state": "f06dddde",
+      "state": "78d48f94",
       "events": "da66a0cc",
       "rng": {
         "draws": 71,
@@ -62,7 +62,7 @@
       "tick": 61,
       "time": 3.05,
       "nextId": 410,
-      "state": "26d0ab30",
+      "state": "eb756756",
       "events": "22d88bb9",
       "rng": {
         "draws": 78,
@@ -97,7 +97,7 @@
               "worn_sword"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "delveClears": {},
@@ -152,7 +152,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "delveClears": {},
@@ -289,7 +289,7 @@
       "tick": 61,
       "time": 3.05,
       "nextId": 410,
-      "state": "20a24107",
+      "state": "14f9a0fb",
       "events": "a8bd51a8",
       "rng": {
         "draws": 78,
@@ -327,7 +327,7 @@
               "worn_sword"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "delveClears": {},
@@ -384,7 +384,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "delveClears": {},
@@ -521,7 +521,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 410,
-      "state": "08259460",
+      "state": "e0850666",
       "events": "30ae529b",
       "rng": {
         "draws": 150,
@@ -532,7 +532,7 @@
       "tick": 100,
       "time": 5,
       "nextId": 410,
-      "state": "1cf2c478",
+      "state": "716c033e",
       "events": "741638a5",
       "rng": {
         "draws": 262,
@@ -543,7 +543,7 @@
       "tick": 101,
       "time": 5.05,
       "nextId": 410,
-      "state": "491d9cb2",
+      "state": "4c816908",
       "events": "741638a5",
       "rng": {
         "draws": 263,
@@ -581,7 +581,7 @@
               "worn_sword"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "deedsEarned": [
@@ -645,7 +645,7 @@
               "spring_water"
             ],
             "visited": [
-              "poi:eastbrook_vale:Reliquary Hill"
+              "poi:eastbrook_vale:reliquary_hill"
             ]
           },
           "deedsEarned": [

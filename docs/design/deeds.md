@@ -66,7 +66,10 @@ server store always canonical.
 6. **Count outcomes, not attempts.** No deed may reward griefing, AFK
    attendance, or pure login. PvP uses rating thresholds and milestones that
    cannot be win-traded profitably; multiplayer deeds must be satisfiable
-   only by being a better teammate.
+   only by being a better teammate. Encounter skill tasks deliberately credit
+   the instance/room presence roster, so a healer or taunt tank who leaves no
+   damage trace is still credited, and because instance slots are group-private
+   a passenger riding the kill is the group's own choice, not open-world AFK.
 7. **Thresholds sit where natural play lands.** Most of the catalog is
    reachable in the first two-thirds of a character's journey; sub-1%
    unlocks are deliberate prestige only.

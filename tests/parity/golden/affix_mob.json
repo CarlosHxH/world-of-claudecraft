@@ -132,7 +132,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 411,
-      "state": "ca46805d",
+      "state": "a972c53d",
       "events": "da981db4",
       "rng": {
         "draws": 14,
@@ -143,7 +143,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 411,
-      "state": "11f7676a",
+      "state": "42c7f28a",
       "events": "bd4b9aed",
       "rng": {
         "draws": 28,
@@ -154,7 +154,7 @@
       "tick": 50,
       "time": 2.5,
       "nextId": 411,
-      "state": "76366eb8",
+      "state": "fc4f8258",
       "events": "334f8acb",
       "rng": {
         "draws": 57,
@@ -194,7 +194,7 @@
               "worn_sword"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "deedsEarned": [
@@ -431,7 +431,7 @@
       "tick": 54,
       "time": 2.7,
       "nextId": 411,
-      "state": "30b5a4af",
+      "state": "8e99ddcf",
       "events": "741638a5",
       "rng": {
         "draws": 71,
@@ -471,7 +471,7 @@
               "worn_sword"
             ],
             "visited": [
-              "poi:eastbrook_vale:Eastbrook"
+              "poi:eastbrook_vale:eastbrook"
             ]
           },
           "deedsEarned": [

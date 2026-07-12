@@ -140,7 +140,7 @@ describe('frozen trigger + renown catalog (design rule 9: never retro-edit a tri
   // Regenerate after a DELIBERATE catalog change, then paste the printed hex
   // into FROZEN_CATALOG_SHA256 below (run from the repo root):
   //   npx tsx -e "import {DEED_ORDER,DEEDS} from './src/sim/content/deeds'; import {createHash} from 'node:crypto'; console.log(createHash('sha256').update(JSON.stringify(DEED_ORDER.map((id)=>[id,DEEDS[id].trigger,DEEDS[id].renown])),'utf8').digest('hex'))"
-  const FROZEN_CATALOG_SHA256 = '574764651ecf9705581112f928dd91986fd345f4694732fbf4007099c1714502';
+  const FROZEN_CATALOG_SHA256 = 'e61f98af54cf091cd06f3e62f7852cc36b8b009665802584e3025427ea6495e3';
 
   it('every shipped deed keeps its trigger and renown unchanged', () => {
     const canonical = JSON.stringify(
@@ -279,7 +279,10 @@ describe('trigger references resolve against the real content tables', () => {
 
   it('every visited mark belongs to an authored namespace and resolves to real content', () => {
     const powerupIds = new Set(POWERUPS.map((p) => p.id));
-    const zonePoiLabels = new Map(ZONES.map((z) => [z.id, new Set(z.pois?.map((p) => p.label))]));
+    // A poi mark keys on the poi's STABLE id, never its display label (a label
+    // copy edit must not strand exploration progress). The mark resolves to a real
+    // poi id in a real zone.
+    const zonePoiIds = new Map(ZONES.map((z) => [z.id, new Set(z.pois?.map((p) => p.id))]));
     const checkMark = (deedId: string, mark: string): void => {
       const ns = mark.split(':')[0];
       expect(VISITED_MARK_NAMESPACES, `${deedId}: ${mark}`).toContain(ns);
@@ -287,10 +290,10 @@ describe('trigger references resolve against the real content tables', () => {
         const rest = mark.slice(4);
         const cut = rest.indexOf(':');
         const zoneId = rest.slice(0, cut);
-        const label = rest.slice(cut + 1);
-        const labels = zonePoiLabels.get(zoneId);
-        expect(labels, `${deedId}: unknown zone in ${mark}`).toBeDefined();
-        expect(labels?.has(label), `${deedId}: unknown poi in ${mark}`).toBe(true);
+        const poiId = rest.slice(cut + 1);
+        const ids = zonePoiIds.get(zoneId);
+        expect(ids, `${deedId}: unknown zone in ${mark}`).toBeDefined();
+        expect(ids?.has(poiId), `${deedId}: unknown poi id in ${mark}`).toBe(true);
       } else if (ns === 'slain' || ns === 'witness') {
         expect(MOBS[mark.slice(ns.length + 1)], `${deedId}: ${mark}`).toBeDefined();
       } else if (ns === 'npc') {
@@ -299,7 +302,7 @@ describe('trigger references resolve against the real content tables', () => {
         expect(FISHING_TABLES[mark.slice(5)], `${deedId}: ${mark}`).toBeDefined();
       } else if (ns === 'gather') {
         const [, zoneId, type] = mark.split(':');
-        expect(zonePoiLabels.has(zoneId), `${deedId}: ${mark}`).toBe(true);
+        expect(zonePoiIds.has(zoneId), `${deedId}: ${mark}`).toBe(true);
         expect(['ore', 'wood', 'herb'], `${deedId}: ${mark}`).toContain(type);
       } else if (ns === 'quality') {
         expect(['rare', 'epic', 'legendary'], `${deedId}: ${mark}`).toContain(mark.slice(8));
@@ -314,6 +317,20 @@ describe('trigger references resolve against the real content tables', () => {
       if (def.trigger.kind === 'visits') {
         for (const mark of def.trigger.markIds) checkMark(def.id, mark);
       }
+    }
+  });
+
+  it('every static-zone poi carries a stable id, unique within its zone', () => {
+    // id is the PERSISTED identity behind every poi visit mark; the deed sweep
+    // keys on it, so each static poi MUST declare one and no two pois in a zone
+    // may collide (a collision would let one poi satisfy another's mark).
+    for (const zone of ZONES) {
+      const ids = (zone.pois ?? []).map((p) => p.id);
+      for (const id of ids) {
+        expect(id, `zone ${zone.id}: a poi is missing its stable id`).toBeDefined();
+        expect(typeof id, `zone ${zone.id}: poi id must be a string`).toBe('string');
+      }
+      expect(new Set(ids).size, `zone ${zone.id}: poi ids must be unique`).toBe(ids.length);
     }
   });
 
