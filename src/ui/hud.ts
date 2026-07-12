@@ -207,6 +207,7 @@ import {
   zoneDisplayName,
   zonePoiLabel,
 } from './entity_i18n';
+import { ERROR_LOG_COLOR, shouldMirrorErrorToast } from './error_toast_log';
 import { esc } from './esc';
 import { fctSpawnShape } from './fct_event';
 import { FctPainter } from './fct_painter';
@@ -8324,7 +8325,10 @@ export class Hud {
         } else if (ev.crit && tgt.kind === 'mob' && shouldPlayCritSfxForTarget(tgt)) {
           const fam = mobVoiceFamily(tgt.templateId);
           if (fam && shouldPlayMobVoiceSfxForEntity(tgt))
-            this.combat(mobSfxKey(fam, tgt.templateId, 'attack'), tp.x, tp.y, tp.z, 0.6, { rate: 1.25, cooldown: 0.1 });
+            this.combat(mobSfxKey(fam, tgt.templateId, 'attack'), tp.x, tp.y, tp.z, 0.6, {
+              rate: 1.25,
+              cooldown: 0.1,
+            });
         }
         return;
       }
@@ -8404,7 +8408,14 @@ export class Hud {
       if (this.ensureMobEngaged(src)) return; // just fired the aggro alert
       const fam = mobVoiceFamily(src.templateId);
       if (fam && shouldPlayMobVoiceSfxForEntity(src))
-        this.combat(mobSfxKey(fam, src.templateId, 'attack'), src.pos.x, src.pos.y, src.pos.z, 0.55, { cooldown: 0.25 });
+        this.combat(
+          mobSfxKey(fam, src.templateId, 'attack'),
+          src.pos.x,
+          src.pos.y,
+          src.pos.z,
+          0.55,
+          { cooldown: 0.25 },
+        );
     } else if (src.kind === 'player') {
       this.combat(weaponSwingKey(src.templateId), src.pos.x, src.pos.y, src.pos.z, 0.5, {
         cooldown: 0.08,
@@ -10210,13 +10221,18 @@ export class Hud {
   }
 
   showError(text: string): void {
-    this.errorEl.textContent = this.localizeErrorText(text);
+    const localized = this.localizeErrorText(text);
+    this.errorEl.textContent = localized;
     this.errorEl.style.opacity = '1';
     clearTimeout(this.errorTimer);
     this.errorTimer = window.setTimeout(() => {
       this.errorEl.style.opacity = '0';
     }, 1600);
     audio.error();
+    // Mirror into the chat log's system channel (the same one loot/level-up/death
+    // lines use) so the toast is not lost once it fades: WoW-style error/system
+    // logging. The on-screen toast's own timing above is unchanged.
+    if (shouldMirrorErrorToast(localized)) this.log(localized, ERROR_LOG_COLOR);
   }
 
   showBanner(text: string): void {
