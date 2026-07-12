@@ -1919,6 +1919,23 @@ describe('client HTML shell', () => {
     expect(hudMobileCss).toContain('transform: scale(calc(0.57 * var(--mobile-chrome-scale, 1)));');
   });
 
+  it('shrinks the compact-tier page-toggle digit so it is not clipped by the ring circle', () => {
+    // On the compact tier the toggle is clamped to the 40px touch floor
+    // (--mobile-ring-toggle-size: max(40px, ...)), whose border-box inner
+    // height is only 40 - 2 * 2px border = 36px. The base 20px digit plus the
+    // 2px-margin 15px icon below it (37px) overflowed that by a hair, and
+    // #mobile-action-ring > button's overflow:hidden (needed to clip the
+    // cooldown sweep) cropped the digit's top pixels instead of showing it in
+    // full at 1044x480 (the compact tier's exact 480px height boundary).
+    // Regression for that clip: the compact tier must shrink the digit enough
+    // to clear the 36px inner floor with the icon still under it.
+    expect(hudMobileCss).toContain(
+      'body.mobile-touch.hud-mobile-compact #mobile-action-page-toggle .mobile-action-page-indicator {\n' +
+        '    font-size: 15px;\n' +
+        '  }',
+    );
+  });
+
   it('gates the camera joystick behind its opt-in setting (swipe-look is the primary camera)', () => {
     // The base's declutter removed the camera joystick outright; this branch
     // keeps it as an OPT-IN (settings.mobileCameraJoystick stamps
