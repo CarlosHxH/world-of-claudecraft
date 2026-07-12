@@ -10,69 +10,99 @@
 
 export const pending: Record<string, readonly string[]> = {
   "es": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "es_ES": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "fr_FR": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "fr_CA": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "en_CA": [],
   "it_IT": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "de_DE": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "zh_CN": [],
   "zh_TW": [],
   "ko_KR": [],
   "ja_JP": [],
   "pt_BR": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "ru_RU": [],
   "cs_CZ": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "nl_NL": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "pl_PL": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "id_ID": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "tr_TR": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "sv_SE": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "vi_VN": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ],
   "da_DK": [
-    "hudChrome.tutorial.slayTargetHint",
-    "hudChrome.tutorial.slayTargetHintTouch"
+    "hudChrome.tutorial.nextTipMap",
+    "hudChrome.tutorial.nextTipQuestLog",
+    "hudChrome.tutorial.nextTipSocial",
+    "hudChrome.tutorial.nextTipsTitle"
   ]
 };

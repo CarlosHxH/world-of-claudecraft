@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { hudChromeStrings } from '../src/ui/i18n.catalog/hud_chrome';
 import type { TutorialStep } from '../src/ui/tutorial';
 import {
+  TUTORIAL_NEXT_TIPS,
   tutorialBodyPlan,
   tutorialNeedsRerender,
   tutorialSlayHintPlan,
@@ -92,6 +93,27 @@ describe('tutorialStepDiffersByTouch', () => {
       expect(tutorialStepDiffersByTouch(step)).toBe(true);
     }
     expect(tutorialStepDiffersByTouch('seek')).toBe(false);
+  });
+});
+
+describe('TUTORIAL_NEXT_TIPS', () => {
+  it('points each tip at a real Interface keybind id', () => {
+    // 'questlog'/'map'/'social' are the ids keybinds.ts registers; a typo here
+    // would silently render "Unbound" for every player on the done card.
+    expect(TUTORIAL_NEXT_TIPS.map((t) => t.keybindId)).toEqual(['questlog', 'map', 'social']);
+  });
+
+  it('every tip body key resolves to a real English string with a {key} splice point', () => {
+    for (const tip of TUTORIAL_NEXT_TIPS) {
+      const [domain, ...rest] = tip.bodyKey.split('.');
+      expect(domain).toBe('hudChrome');
+      const leaf = rest.reduce<unknown>(
+        (obj, k) => (obj as Record<string, unknown>)?.[k],
+        hudChromeStrings,
+      );
+      expect(typeof leaf).toBe('string');
+      expect(leaf as string).toContain('{key}');
+    }
   });
 });
 
