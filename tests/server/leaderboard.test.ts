@@ -439,8 +439,21 @@ describe('readPublicSheet (FakeCharactersDb, resolved by name)', () => {
     } as typeof row.state;
     db.seed(row);
     // Seed one more row than the bound to prove the limit is passed through.
-    const seeded = Array.from({ length: SHEET_RECENT_DEEDS + 1 }, (_, i) => ({
-      deedId: `deed_${i}`,
+    // Real catalog ids: the public arm fails CLOSED on unknown or hidden ids
+    // (mixed-version fleet / rollback skew), so a synthetic deed_N fixture
+    // would be stripped and assert nothing about the bound.
+    const recentIds = [
+      'prog_first_steps',
+      'prog_finding_your_feet',
+      'prog_double_digits',
+      'prog_the_long_middle',
+      'prog_level_cap',
+      'prog_well_rested',
+    ];
+    expect(recentIds.length).toBe(SHEET_RECENT_DEEDS + 1);
+    for (const id of recentIds) expect(DEEDS[id]?.hidden).not.toBe(true);
+    const seeded = recentIds.map((deedId, i) => ({
+      deedId,
       earnedAt: `2026-07-0${Math.min(i + 1, 8)}T00:00:00.000Z`,
     }));
     db.seedRecentDeeds(31, seeded);
