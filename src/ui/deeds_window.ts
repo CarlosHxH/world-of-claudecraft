@@ -69,6 +69,26 @@ const FILTER_LABEL_KEYS: Record<DeedsFilter, TranslationKey> = {
 };
 
 /**
+ * The stable-identity selector a rerender uses to put focus back on the
+ * role-equivalent fresh control. Selector-quote escaping, not HTML escaping:
+ * the value sits inside a double-quoted CSS attribute string (CSS.escape is
+ * absent in the jsdom test env, and quote+backslash is the full special set
+ * there). Disabled matches are excluded so a watch button rendered disabled
+ * at DEED_WATCH_CAP falls through to the Close fallback.
+ */
+export function refocusSelector(active: Element | null): string | null {
+  if (active === null) return null;
+  for (const attr of ['data-cat', 'data-filter', 'data-watch', 'data-title']) {
+    const value = active.getAttribute(attr);
+    if (value !== null) {
+      const cssValue = value.replace(/["\\]/g, '\\$&');
+      return `[${attr}="${cssValue}"]:not([disabled])`;
+    }
+  }
+  return null;
+}
+
+/**
  * Hud-supplied glue: the shared presentation bag plus the window surface (the
  * world reads/commands, trapping focus capture/return, close/teardown chrome,
  * and the watch-change nudge so the HUD tracker repaints without waiting for
@@ -214,16 +234,7 @@ export class DeedsWindow {
     // fresh control (the social/market/mailbox refocus family). A match that
     // vanished or renders disabled (a watch button at DEED_WATCH_CAP) must not
     // take focus; those fall through to the Close fallback below.
-    let refocusSel: string | null = null;
-    if (hadFocus && searchFocus === null && active !== null) {
-      for (const attr of ['data-cat', 'data-filter', 'data-watch', 'data-title']) {
-        const value = active.getAttribute(attr);
-        if (value !== null) {
-          refocusSel = `[${attr}="${esc(value)}"]:not([disabled])`;
-          break;
-        }
-      }
-    }
+    const refocusSel = hadFocus && searchFocus === null ? refocusSelector(active) : null;
     this.deps.hideTooltip();
     markDialogRoot(el, { label: t('hudChrome.deeds.title') });
     const prevScrollTop = el.querySelector('.deeds-scroll')?.scrollTop ?? 0;

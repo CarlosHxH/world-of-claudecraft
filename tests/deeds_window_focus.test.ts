@@ -12,7 +12,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { freshDeedStats } from '../src/sim/deeds';
 import { DEED_WATCH_CAP } from '../src/ui/deeds_view';
-import { DeedsWindow, type DeedsWindowDeps } from '../src/ui/deeds_window';
+import { DeedsWindow, type DeedsWindowDeps, refocusSelector } from '../src/ui/deeds_window';
 
 // jsdom ships no 2D canvas, so the procedural crest compositor cannot run
 // here; the painter only ever uses the returned string as an <img src>.
@@ -166,5 +166,24 @@ describe('DeedsWindow: focus survives rebuilds', () => {
     expect(document.activeElement).toBe(fresh);
     expect(fresh.selectionStart).toBe(2);
     expect(fresh.selectionEnd).toBe(2);
+  });
+});
+
+describe('refocusSelector', () => {
+  it('builds the identity selector and escapes selector-quote specials', () => {
+    const host = document.createElement('div');
+    host.innerHTML = '<button data-cat="combat"></button>';
+    const plain = host.firstElementChild as HTMLElement;
+    expect(refocusSelector(plain)).toBe('[data-cat="combat"]:not([disabled])');
+
+    const weird = document.createElement('button');
+    weird.setAttribute('data-title', 'a"b\\c');
+    host.appendChild(weird);
+    const sel = refocusSelector(weird);
+    expect(sel).toBe('[data-title="a\\"b\\\\c"]:not([disabled])');
+    expect(host.querySelector(sel as string)).toBe(weird);
+
+    expect(refocusSelector(null)).toBeNull();
+    expect(refocusSelector(document.createElement('button'))).toBeNull();
   });
 });
