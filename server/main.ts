@@ -130,7 +130,7 @@ import {
   warmDeedsBoardIfDemanded,
 } from './deeds_board_warm';
 import { deedRarityCounts, recentDeedsForCharacter } from './deeds_db';
-import { publicRarityPayload } from './deeds_records';
+import { deedRecordsIdle, publicRarityPayload } from './deeds_records';
 import {
   type DesktopLoginRouteDeps,
   handleDesktopLoginExchange,
@@ -2651,6 +2651,11 @@ export async function startServer(): Promise<http.Server> {
     // transient mismatch). Rejections log inside the writer, so the drain never
     // throws.
     await bankLedgerIdle();
+    // Drain the character_deeds FIFO too: saveAll above already persisted every
+    // blob, and an insert still queued here would be rejected by pool.end() and
+    // go missing until that character's next login (the join reconcile is the
+    // only heal). Rejections log inside the writer, so the drain never throws.
+    await deedRecordsIdle();
     // Drop every character load lease this process holds so a clean restart can
     // reload its characters immediately instead of waiting out the lease TTL.
     // Runs before pool.end(); a failure here must not abort the shutdown, so log

@@ -56,8 +56,12 @@ const broadcastsFlagMock = vi.mocked(getDeedBroadcasts);
 const onDeedRecordedMock = vi.mocked(onDeedRecorded);
 
 // Let the fire-and-forget promise chains (FIFO tail + the broadcast gate)
-// settle deterministically before asserting.
+// settle deterministically before asserting. Unlocks routed through
+// detectActivity chain their inserts behind the durable character save, so
+// flush the queues once BEFORE draining the tail (the tail only carries an
+// unlock after its save resolves), then once after for the mirror/broadcast.
 async function settle(): Promise<void> {
+  await new Promise((resolve) => setImmediate(resolve));
   await deedRecordsIdle();
   await new Promise((resolve) => setImmediate(resolve));
 }
@@ -489,6 +493,129 @@ describe('deedUnlocked through GameServer.detectActivity', () => {
     tickAndDetect();
     await settle();
     expect(server.sim.meta(session.pid)?.deedsEarned.has('prog_callused_hands')).toBe(true);
+  });
+
+  it('never inserts into character_deeds before the character save resolves', async () => {
+    // Crash-ordering: if the index row (and the Steam push chained off it)
+    // could land while the authoritative blob save is still in flight, a hard
+    // crash would leave the public record ahead of the Book, the one drift
+    // direction the join reconcile cannot heal.
+    const fc = fakeWs();
+    const session = server.join(fc.ws as never, 7, 42, 'Hilda', 'warrior', null);
+    if ('error' in session) throw new Error(session.error);
+    tickAndDetect();
+    await settle();
+    insertMock.mockClear();
+
+    let releaseSave: () => void = () => {};
+    const saveSpy = vi.spyOn(server, 'saveCharacter').mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          releaseSave = resolve;
+        }),
+    );
+    (server as unknown as { detectActivity(events: unknown[]): void }).detectActivity([
+      { type: 'deedUnlocked', pid: session.pid, deedId: 'gone_deed' },
+    ]);
+    // Give a wrongly-immediate insert every chance to fire first.
+    await new Promise((resolve) => setImmediate(resolve));
+    expect(saveSpy).toHaveBeenCalledTimes(1);
+    expect(saveSpy).toHaveBeenCalledWith(session);
+    expect(insertMock).not.toHaveBeenCalled();
+    expect(onDeedRecordedMock).not.toHaveBeenCalled();
+    releaseSave();
+    await settle();
+    expect(insertMock).toHaveBeenCalledTimes(1);
+    expect(insertMock).toHaveBeenCalledWith({
+      realm: 'Claudemoon',
+      characterId: 42,
+      accountId: 7,
+      deedId: 'gone_deed',
+    });
+  });
+
+  it('a burst of unlocks for one session coalesces into ONE save with inserts in event order', async () => {
+    // The retro back-credit on a veteran's first login lands dozens of
+    // unlocks in one tick; one blob write must cover them all.
+    const fc = fakeWs();
+    const session = server.join(fc.ws as never, 7, 42, 'Hilda', 'warrior', null);
+    if ('error' in session) throw new Error(session.error);
+    tickAndDetect();
+    await settle();
+    insertMock.mockClear();
+
+    const saveSpy = vi.spyOn(server, 'saveCharacter').mockResolvedValue(undefined);
+    (server as unknown as { detectActivity(events: unknown[]): void }).detectActivity([
+      { type: 'deedUnlocked', pid: session.pid, deedId: 'gone_first' },
+      { type: 'deedUnlocked', pid: session.pid, deedId: 'gone_second' },
+      { type: 'deedUnlocked', pid: session.pid, deedId: 'gone_third' },
+    ]);
+    await settle();
+    expect(saveSpy).toHaveBeenCalledTimes(1);
+    expect(insertMock.mock.calls.map((c) => c[0].deedId)).toEqual([
+      'gone_first',
+      'gone_second',
+      'gone_third',
+    ]);
+  });
+
+  it('a rejected save logs and still records every unlock in the tick', async () => {
+    // The failure arm must stay no worse than the pre-ordering behavior: the
+    // index write was never gated on the blob landing, so a save rejection
+    // cannot be allowed to drop rows (the reconcile would heal them only at
+    // the NEXT login).
+    const fc = fakeWs();
+    const session = server.join(fc.ws as never, 7, 42, 'Hilda', 'warrior', null);
+    if ('error' in session) throw new Error(session.error);
+    tickAndDetect();
+    await settle();
+    insertMock.mockClear();
+
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(server, 'saveCharacter').mockRejectedValue(new Error('db down'));
+    (server as unknown as { detectActivity(events: unknown[]): void }).detectActivity([
+      { type: 'deedUnlocked', pid: session.pid, deedId: 'gone_first' },
+      { type: 'deedUnlocked', pid: session.pid, deedId: 'gone_second' },
+    ]);
+    await settle();
+    expect(errorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('deed-unlock save failed'),
+      expect.any(Error),
+    );
+    expect(insertMock.mock.calls.map((c) => c[0].deedId)).toEqual(['gone_first', 'gone_second']);
+  });
+
+  it('the marquee broadcast fires immediately, never gated on the save', async () => {
+    // The guild-chat fan-out is cosmetic (no durability contract), so it must
+    // not inherit the save's latency, or a slow autosave queue would delay
+    // every congratulation by seconds.
+    const fc = fakeWs();
+    const session = server.join(fc.ws as never, 7, 42, 'Hilda', 'warrior', null);
+    if ('error' in session) throw new Error(session.error);
+    const broadcastSpy = vi
+      .spyOn(server.social, 'broadcastDeedUnlock')
+      .mockResolvedValue(undefined);
+    tickAndDetect();
+    await settle();
+    insertMock.mockClear();
+
+    let releaseSave: () => void = () => {};
+    vi.spyOn(server, 'saveCharacter').mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          releaseSave = resolve;
+        }),
+    );
+    (server as unknown as { detectActivity(events: unknown[]): void }).detectActivity([
+      { type: 'deedUnlocked', pid: session.pid, deedId: 'prog_veteran' },
+    ]);
+    // The async opt-out read resolves on the microtask queue; the save has not.
+    await new Promise((resolve) => setImmediate(resolve));
+    expect(broadcastSpy).toHaveBeenCalledWith({ characterId: 42, name: 'Hilda' }, 'prog_veteran');
+    expect(insertMock).not.toHaveBeenCalled();
+    releaseSave();
+    await settle();
+    expect(insertMock.mock.calls.map((c) => c[0].deedId)).toEqual(['prog_veteran']);
   });
 
   it('a non-marquee live unlock records without ever reading the opt-out flag', async () => {

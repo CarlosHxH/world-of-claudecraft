@@ -4566,6 +4566,10 @@ export class GameServer {
   // dedupes so one moment yields one card.
   private detectActivity(events: SimEvent[]): void {
     const now = Date.now();
+    // Deed unlocks accumulate per session and record AFTER the loop, behind a
+    // durable character save (see below); only the cosmetic broadcast stays
+    // inline.
+    const deedUnlocks = new Map<ClientSession, string[]>();
     for (const ev of events) {
       if (ev.type === 'deedUnlocked' && ev.pid !== undefined) {
         const s = this.clients.get(ev.pid);
@@ -4575,7 +4579,9 @@ export class GameServer {
           // under the UNIQUE constraint). Bots have no session, so
           // this.clients.get filters them naturally, and no client message
           // reaches this path: the sim alone emits deedUnlocked.
-          recordDeedUnlock({ characterId: s.characterId, accountId: s.accountId }, ev.deedId);
+          const ids = deedUnlocks.get(s);
+          if (ids) ids.push(ev.deedId);
+          else deedUnlocks.set(s, [ev.deedId]);
           // Marquee unlocks fan out to guildmates and followers; retro
           // unlocks NEVER broadcast (a veteran's first login after rollout
           // must not spam their guild).
@@ -4767,6 +4773,31 @@ export class GameServer {
           now,
         );
       }
+    }
+    // Durability ordering: the authoritative blob otherwise persists only on
+    // the 30s autosave, so an unlock recorded inline could sit in
+    // character_deeds (and on Steam, which chains off the insert) for up to
+    // 30s before the Book itself is durable; a hard crash in that window
+    // leaves the public record ahead of the source, the one drift direction
+    // the join-time reconcile cannot heal (it is insert-only). Saving FIRST
+    // flips any crash residue into the healable direction. One save covers
+    // every unlock the tick produced for a session (a retro burst on join is
+    // a single blob write); characterSaveQueues plus the recorder's FIFO
+    // preserve per-character unlock order. A rejected save logs and still
+    // records: the index write was never gated on the blob landing, so the
+    // failure arm must not drop rows the reconcile would only heal at the
+    // NEXT login.
+    for (const [session, deedIds] of deedUnlocks) {
+      void this.saveCharacter(session)
+        .catch((err) => console.error(`deed-unlock save failed for ${session.name}:`, err))
+        .then(() => {
+          for (const deedId of deedIds) {
+            recordDeedUnlock(
+              { characterId: session.characterId, accountId: session.accountId },
+              deedId,
+            );
+          }
+        });
     }
   }
 
