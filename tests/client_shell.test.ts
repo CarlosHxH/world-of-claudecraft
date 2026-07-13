@@ -507,14 +507,13 @@ describe('client HTML shell', () => {
     expect(hudMobileCss).toContain(
       'body.mobile-touch #party-frames.party-expanded #party-chip .ui-icon {\n    transform: rotate(90deg);',
     );
-    // Collapsed OR chat-yielded (no .party-expanded on mobile) hides the member rows +
-    // Leave button, so both states leave only the chip (if present) as the party UI.
+    // Collapsed OR chat-yielded (no .party-expanded on mobile) hides the member rows,
+    // leaving only the chip (if present) as the party UI. (Leaving the party moved to
+    // the self portrait context menu, so there is no longer a #party-leave button.)
     expect(hudMobileCss).toContain(
-      'body.mobile-touch #party-frames:not(.party-expanded) .party-frame,',
+      'body.mobile-touch #party-frames:not(.party-expanded) .party-frame {\n    display: none;',
     );
-    expect(hudMobileCss).toContain(
-      'body.mobile-touch #party-frames:not(.party-expanded) #party-leave {\n    display: none;',
-    );
+    expect(hudMobileCss).not.toContain('#party-frames:not(.party-expanded) #party-leave');
   });
 
   it('drives the arena window relocalize from refreshLocalizedDynamicUi (live language switch)', () => {
@@ -1197,22 +1196,19 @@ describe('client HTML shell', () => {
     expect(hudMobileCss).toContain(
       'body.mobile-touch #party-frames .party-frame:not(:first-of-type) {\n    margin-top: -1px;',
     );
-    // F1: the container is a simple flex column now (chip, rows wrapper, master-loot,
-    // leave), so the leave button carries no grid placement and no member frame can
-    // auto-flow beside the chip.
+    // F1: the container is a simple flex column now (chip, rows wrapper, master-loot),
+    // so no member frame can auto-flow beside the chip. The leave button is gone (moved
+    // to the self portrait context menu), so no #party-leave rule remains on mobile.
     expect(hudMobileCss).toMatch(
       /body\.mobile-touch #party-frames \{[^}]*display: flex;[^}]*flex-direction: column;/,
     );
-    expect(hudMobileCss).toContain(
-      'body.mobile-touch #party-frames #party-leave {\n    width: auto;\n    min-width: 0;\n    min-height: 40px;',
-    );
-    expect(hudMobileCss).not.toMatch(/#party-leave \{\n {4}grid-column/);
+    expect(hudMobileCss).not.toContain('body.mobile-touch #party-frames #party-leave');
     // The mobile double-stack keeps its own two-row column grid. On desktop the
     // .party-rows wrapper now drives the configurable party layout: a column grid
     // sized by the --party-frame-columns / --party-frame-width / --party-frame-spacing
     // custom properties (columns default to 1, i.e. the classic single stack).
     expect(hudMobileCss).toContain(
-      'body.mobile-touch #party-frames .party-rows {\n    display: grid;\n    grid-auto-flow: column;\n    grid-template-rows: repeat(2, auto);',
+      'body.mobile-touch #party-frames .party-rows {\n    display: grid;\n    zoom: 1;\n    grid-template-columns: none;\n    grid-auto-flow: column;\n    grid-template-rows: repeat(2, auto);',
     );
     expect(hudCss).toContain(
       '#party-frames .party-rows {\n    display: grid;\n    grid-template-columns: repeat(var(--party-frame-columns, 1), var(--party-frame-width, 170px));',
