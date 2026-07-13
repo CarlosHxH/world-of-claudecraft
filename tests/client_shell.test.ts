@@ -1207,13 +1207,16 @@ describe('client HTML shell', () => {
       'body.mobile-touch #party-frames #party-leave {\n    width: auto;\n    min-width: 0;\n    min-height: 40px;',
     );
     expect(hudMobileCss).not.toMatch(/#party-leave \{\n {4}grid-column/);
-    // The double-stack grid the container used to carry moved to the .party-rows WRAPPER;
-    // on desktop the wrapper is transparent (display: contents), so the desktop stack is
-    // unchanged. Both pins guard the two-arm structure.
+    // The mobile double-stack keeps its own two-row column grid. On desktop the
+    // .party-rows wrapper now drives the configurable party layout: a column grid
+    // sized by the --party-frame-columns / --party-frame-width / --party-frame-spacing
+    // custom properties (columns default to 1, i.e. the classic single stack).
     expect(hudMobileCss).toContain(
       'body.mobile-touch #party-frames .party-rows {\n    display: grid;\n    grid-auto-flow: column;\n    grid-template-rows: repeat(2, auto);',
     );
-    expect(hudCss).toContain('#party-frames .party-rows {\n    display: contents;\n  }');
+    expect(hudCss).toContain(
+      '#party-frames .party-rows {\n    display: grid;\n    grid-template-columns: repeat(var(--party-frame-columns, 1), var(--party-frame-width, 170px));',
+    );
     expect(hudMobileCss).toContain(
       'body.mobile-touch #party-frames .party-frame {\n      width: calc(100px * var(--mobile-chrome-scale, 1));\n      min-height: 40px;',
     );
@@ -1245,10 +1248,11 @@ describe('client HTML shell', () => {
     // If a future change moves the pool back inline or drops the keyed builder, this
     // fails instead of silently losing the guard.
 
-    // Party rows: the per-member row + the #party-leave button are built once by
-    // the pooled row builder, not re-created on every party rebuild in hud.ts.
+    // Party rows: the per-member row is built once by the pooled row builder, not
+    // re-created on every party rebuild in hud.ts. (Leaving the party moved from a
+    // per-row button to the self portrait context menu, so the row no longer builds
+    // a #party-leave button.)
     expect(partyFrameRowTs).toContain("row.className = 'party-frame panel';");
-    expect(partyFrameRowTs).toContain("btn.id = 'party-leave';");
 
     // Aura slots: one node per aura id, held in a keyed pool and built once in
     // createNode() as .buff > .dur + .stacks. The hud.ts-wiring assertion (mirroring the

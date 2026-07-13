@@ -16,6 +16,9 @@ export interface PartyMemberAura {
   id: string;
   kind: AuraKind;
   neg?: 1;
+  /** Whole seconds remaining, when a source populates it (else the strip shows no
+   *  countdown, as before). Optional so no server/sim wire change is required. */
+  remaining?: number;
 }
 
 export interface PartyMemberInfo {
@@ -33,6 +36,19 @@ export interface PartyMemberInfo {
   dead: number;
   inCombat: number;
   group: 1 | 2;
+  /** Remaining absorb-shield total on this member. Optional so no server/sim wire
+   *  change is required; the compact frame treats an absent value as no shield. */
+  absorb?: number;
+  /** Active specialization role, when known. Older snapshots omit it. */
+  role?: 'tank' | 'healer' | 'dps';
+  /** Effective health Rewind could currently restore to this member. */
+  rewind?: number;
+  /** 0 only when the realm reports this member linkdead/disconnected. */
+  connected?: number;
+  /** 1 while at least one living hostile mob is actively targeting this member. */
+  hasAggro?: number;
+  /** Base healing already being cast toward this member. */
+  incomingHeal?: number;
   /** Optional (an older server snapshot without it decodes as "no auras"). */
   auras?: PartyMemberAura[];
 }
