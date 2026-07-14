@@ -206,7 +206,11 @@ export function buildYumiMaze(
       group.add(bowl);
     }
     const flame = new THREE.Mesh(brazierFlameGeo, flameMat(flameColor));
-    flame.position.set(bx, BRAZIER_FLAME_Y, bz);
+    // The procedural bowl's rim sits at 1.51 (bowl y 1.3 + half its 0.42
+    // height), which tucks the flame cone's 1.4 base inside it. The GLB
+    // stand is only 1.30 tall, so re-seat the flame down to match its rim
+    // instead of floating above it.
+    flame.position.set(bx, stand ? BRAZIER_FLAME_Y - 0.1 : BRAZIER_FLAME_Y, bz);
     group.add(flame);
     lights.flames.push(flame);
     fireLight(bx, BRAZIER_LIGHT_Y, bz, flameColor);

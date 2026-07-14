@@ -14,7 +14,19 @@ let loadedDoorArchGltf: THREE.Group | null = null;
 if (typeof window !== 'undefined') {
   registerPreload(
     loadGltf(DOOR_ARCH_ASSET_URL).then((gltf) => {
-      loadedDoorArchGltf = gltf.scene;
+      const scene = gltf.scene;
+      // The GLB opening faces its local X axis; the procedural arch it
+      // replaces (and the portal swirl it frames) faces Z, so rotate the
+      // authored geometry into place once, before any clone is taken.
+      scene.rotation.y = Math.PI / 2;
+      scene.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          markSharedGeometry(child.geometry);
+          const mats = Array.isArray(child.material) ? child.material : [child.material];
+          for (const mat of mats) markSharedMaterial(mat);
+        }
+      });
+      loadedDoorArchGltf = scene;
     }),
   );
 }
