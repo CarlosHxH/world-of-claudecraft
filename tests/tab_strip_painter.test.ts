@@ -1,18 +1,24 @@
 import { describe, expect, it } from 'vitest';
-import { wireTabStrip } from '../src/ui/tab_strip_painter';
+import { focusActiveTab, wireTabStrip } from '../src/ui/tab_strip_painter';
 
 // Hand-rolled fake DOM (repo convention: no jsdom for src/ui/ wiring tests). Models
 // only the contract wireTabStrip uses: querySelectorAll by class, dataset.tab, and a
 // per-type listener list a test fires directly instead of a real event loop.
 class FakeTab {
   dataset: { tab?: string };
+  classes: Set<string>;
   listeners: Record<string, ((e: unknown) => void)[]> = {};
-  constructor(tab: string) {
+  focused = false;
+  constructor(tab: string, classes: string[] = []) {
     this.dataset = { tab };
+    this.classes = new Set(classes);
   }
   addEventListener(type: string, cb: (e: unknown) => void): void {
     if (!this.listeners[type]) this.listeners[type] = [];
     this.listeners[type].push(cb);
+  }
+  focus(): void {
+    this.focused = true;
   }
   fire(type: string, event: unknown = { preventDefault: () => {} }): void {
     for (const cb of this.listeners[type] ?? []) cb(event);
@@ -23,6 +29,11 @@ class FakeContainer {
   constructor(private readonly tabs: FakeTab[]) {}
   querySelectorAll<T>(_sel: string): T[] {
     return this.tabs as unknown as T[];
+  }
+  querySelector<T>(sel: string): T | null {
+    const classes = sel.split('.').filter(Boolean);
+    const found = this.tabs.find((tab) => classes.every((c) => tab.classes.has(c)));
+    return (found ?? null) as unknown as T | null;
   }
 }
 
@@ -83,5 +94,48 @@ describe('wireTabStrip', () => {
     );
     friends.fire('keydown', { key: 'a', preventDefault: () => {} });
     expect(calls).toEqual([]);
+  });
+
+  it("honors an explicit 'both' orientation (Up/Down roving, for a future vertical strip)", () => {
+    const [a, b] = [new FakeTab('a'), new FakeTab('b')];
+    const calls: [string, boolean][] = [];
+    wireTabStrip(
+      new FakeContainer([a, b]) as unknown as HTMLElement,
+      'tal-tab',
+      (id, f) => calls.push([id, f]),
+      'both',
+    );
+    a.fire('keydown', { key: 'ArrowDown', preventDefault: () => {} });
+    expect(calls).toEqual([['b', true]]);
+  });
+
+  it("defaults to 'horizontal' orientation (ArrowDown is not a navigation key)", () => {
+    const [a, b] = [new FakeTab('a'), new FakeTab('b')];
+    const calls: [string, boolean][] = [];
+    wireTabStrip(new FakeContainer([a, b]) as unknown as HTMLElement, 'soc-tab', (id, f) =>
+      calls.push([id, f]),
+    );
+    a.fire('keydown', { key: 'ArrowDown', preventDefault: () => {} });
+    expect(calls).toEqual([]);
+  });
+});
+
+describe('focusActiveTab', () => {
+  it('focuses the tab matching both the tab class and the selected class', () => {
+    const friends = new FakeTab('friends', ['soc-tab']);
+    const guild = new FakeTab('guild', ['soc-tab', 'on']);
+    const container = new FakeContainer([friends, guild]);
+    focusActiveTab(container as unknown as HTMLElement, 'soc-tab', 'on');
+    expect(guild.focused).toBe(true);
+    expect(friends.focused).toBe(false);
+  });
+
+  it('is a no-op when no tab is selected', () => {
+    const friends = new FakeTab('friends', ['soc-tab']);
+    const container = new FakeContainer([friends]);
+    expect(() =>
+      focusActiveTab(container as unknown as HTMLElement, 'soc-tab', 'on'),
+    ).not.toThrow();
+    expect(friends.focused).toBe(false);
   });
 });

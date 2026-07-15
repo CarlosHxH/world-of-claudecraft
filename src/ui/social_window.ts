@@ -38,7 +38,7 @@ import {
   type SocialTab,
   socialStructSig,
 } from './social_view';
-import { wireTabStrip } from './tab_strip_painter';
+import { focusActiveTab, wireTabStrip } from './tab_strip_painter';
 import { tabStripHtml, tabStripModel } from './tab_strip_view';
 import { svgIcon } from './ui_icons';
 
@@ -569,7 +569,7 @@ export class SocialWindow {
       this.notice = null;
       this.lastStruct = this.structSig();
       this.render();
-      if (focusFollow) (el.querySelector('.soc-tab.on') as HTMLElement | null)?.focus();
+      if (focusFollow) focusActiveTab(el, 'soc-tab', 'on');
     });
     const w = this.deps.world();
     const field = (sel: string): string =>

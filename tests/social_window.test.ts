@@ -64,8 +64,7 @@ describe('social_window: WAI-ARIA tabs', () => {
 
   it('refocuses the newly active tab only on a keyboard move, matching the shared wiring contract', () => {
     expect(painter).toContain('(id, focusFollow) => {');
-    expect(painter).toContain('if (focusFollow)');
-    expect(painter).toContain(".querySelector('.soc-tab.on')");
+    expect(painter).toContain('if (focusFollow) focusActiveTab(el,');
   });
 });
 

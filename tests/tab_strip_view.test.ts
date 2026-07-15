@@ -16,8 +16,8 @@ describe('tabStripModel', () => {
       selected: 'guild',
     });
     expect(m.tabs).toEqual([
-      { id: 'friends', label: 'Friends', selected: false },
-      { id: 'guild', label: 'Guild', selected: true },
+      { id: 'friends', label: 'Friends', extraHtml: '', buttonId: undefined, selected: false },
+      { id: 'guild', label: 'Guild', extraHtml: '', buttonId: undefined, selected: true },
     ]);
   });
 
@@ -57,6 +57,42 @@ describe('tabStripHtml', () => {
         '<button type="button" class="soc-tab " data-tab="guild" role="tab" aria-selected="false" tabindex="-1" aria-controls="soc-body-panel">Guild</button>' +
         '</div>',
     );
+  });
+
+  it('supports a div tag with a per-tab badge (extraHtml), for a talents_window-style strip', () => {
+    const html = tabStripHtml(
+      tabStripModel({
+        ariaLabel: 'Talents',
+        panelId: 'tal-body',
+        stripClass: 'tal-tabs',
+        tabClass: 'tal-tab',
+        selectedClass: 'active',
+        tag: 'div',
+        tabs: [{ id: 'class', label: 'Class', extraHtml: '<span class="tt-pts">3</span>' }],
+        selected: 'class',
+      }),
+    );
+    expect(html).toBe(
+      '<div class="tal-tabs" role="tablist" aria-label="Talents">' +
+        '<div class="tal-tab active" data-tab="class" role="tab" aria-selected="true" ' +
+        'tabindex="0" aria-controls="tal-body">Class<span class="tt-pts">3</span></div>' +
+        '</div>',
+    );
+  });
+
+  it('omits aria-controls when no panelId is given, and emits a per-tab id when buttonId is set', () => {
+    const html = tabStripHtml(
+      tabStripModel({
+        ariaLabel: 'Store',
+        stripClass: 'woc-store-tabs',
+        tabClass: 'woc-store-tab',
+        selectedClass: 'sel',
+        tabs: [{ id: 'store', label: 'Store', buttonId: 'woc-store-tab-store' }],
+        selected: 'store',
+      }),
+    );
+    expect(html).not.toContain('aria-controls');
+    expect(html).toContain('id="woc-store-tab-store"');
   });
 
   it('escapes label / aria-label / id text', () => {
