@@ -122,6 +122,10 @@ describe('CI workflow parity', () => {
       2,
     );
     expect(workflow).not.toContain('npx vitest');
+    // The local gate is the one place the whole suite still runs as a single
+    // unsharded pass (bounded workers); a --shard flag there would silently
+    // turn the pre-merge gate into a partial run.
+    expect(gate).not.toContain('--shard');
     // pr-checks stays a single unsharded job: its serialized checks run once.
     expect(prChecks).not.toContain('strategy:');
     expect(prChecks).not.toContain('matrix:');
