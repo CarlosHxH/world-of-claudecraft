@@ -12,7 +12,7 @@
 | Phase 3 QA | complete: PASS (0 BLOCKING; 8 SHOULD-FIX found and resolved; release base merged in as e0f442637; 2 tests added) | 2026-07-15 | 2026-07-15 |
 | Phase 4: Test sharding | MERGED into release/v0.27.0 (PR #1967, merge 6f5976dda) | 2026-07-15 | 2026-07-15 |
 | Phase 4 QA | complete: PASS (0 BLOCKING; 4 SHOULD-FIX found and resolved; 2 pin NICE-TO-HAVEs closed; independent re-derivation, stability runs, and the red-path probe all clean) | 2026-07-15 | 2026-07-15 |
-| Phase 5: TypeScript 7 flip | not started | | |
+| Phase 5: TypeScript 7 flip | IMPLEMENTED: draft PR #1976 off release/v0.27.0 (Phase 5 QA next) | 2026-07-15 | 2026-07-15 |
 | Phase 5 QA (closes packet) | not started | | |
 
 ## Phase 1 deliverables
@@ -145,15 +145,39 @@
 
 ## Phase 5 deliverables
 
-- [ ] Dual-alias devDependencies installed (D1); node_modules/.bin/tsc reports the
-      installed 7.0.x version (recorded here after the Phase 5 forward probe); npm run
-      check:types green (tsc AND svelte-check)
-- [ ] .githooks/pre-push probes by executing tsc --version instead of stat
-- [ ] Docs sweep: CONTRIBUTING.md, root CLAUDE.md typescript mentions, contributor
-      editor note (VS Code TS7 extension until built-in support ships); re-evaluation
-      triggers recorded (TS 7.1 API, sveltejs/language-tools issue 3063)
-- [ ] npm run gate green; CI green; new check:ts wall time recorded; a one-off
-      tsc --checkers 8 run is clean (parallelism-sensitivity sanity check)
+- [x] Dual-alias devDependencies installed (D1, verbatim versions): node_modules/.bin/tsc
+      reports Version 7.0.2 (the native binary via @typescript/native);
+      require('typescript') resolves the 6.0.3 JS API with ts.sys present (the
+      @typescript/typescript6 wrapper's @typescript/old dependency; the wrapper ships
+      only a tsc6 bin, so there is no tsc bin collision). The Phase 5 forward probe
+      re-ran green on the v0.27.0 base BEFORE the flip (exit 0 at 2.27s wall; 7.0.2
+      still the newest stable 7.x, only 7.1.0-dev nightlies newer, so OPEN item 5
+      resolved with no version change). npm run check:types green end to end: tsc AND
+      svelte-check, with svelte-check re-verified explicitly on the LOCKED 4.7.1 under
+      the alias layout (330 files, 0 errors, 0 warnings; the phase doc's bump-or-verify
+      choice resolved to verify, keeping the lockfile diff typescript-only)
+- [x] .githooks/pre-push probes by executing tsc --version instead of the -x existence
+      test (vitest and biome keep -x: plain JS bins, no platform binary). Both skip
+      paths verified live: a present-but-failing stub (which the old -x probe wrongly
+      passed) and a missing bin each skip with the legible note while the copy scan
+      still runs and the hook exits green
+- [x] Docs sweep: CONTRIBUTING.md gained the TypeScript toolchain subsection under
+      Getting started (recipe unchanged, new expected speed, the VS Code
+      marketplace-extension editor note, and the re-evaluation triggers recorded there
+      as the durable copy: TS 7.1 stable JS API plus sveltejs/language-tools issue 3063
+      closing with a release); root CLAUDE.md states no compiler version (verified, no
+      edit); README badge 5.5 to 7.0 (the 19 localized README mirrors under docs/i18n/
+      carry the same badge and follow the maintainer's release-time mirror sync per
+      docs/CLAUDE.md, deliberately untouched)
+- [x] npm run gate green through step 6 (1129 test files: 1127 passed + 2 skipped;
+      14,257 tests passed + 22 skipped, identical counts to the Phase 4 record) with
+      browser regressions red ONLY at the known environmental armory_mobile_layout
+      pixel assertion and the manual tail (check:types at 4.2s wall plus the env,
+      server, and client builds) green; check:ts wall time recorded at 1.8 to 2.0s
+      local over three samples (target at or under 5s; the TS 5.9.3 post-Phase-2
+      baseline was 12.4 to 12.9s); the one-off tsc --noEmit --checkers 8 run clean at
+      1.3s (the Phase 2 union removed the type-ordering cliff, now proven on the
+      parallel checker); CI record in the Phase 5 note below
 
 ## QA phase checklists
 
@@ -330,6 +354,65 @@ tests added, dead code removed, deferrals.
 ## Notes per phase
 
 (Fill in after each phase completes.)
+
+- Phase 5 (2026-07-15): implemented as draft PR #1976 off release/v0.27.0 tip 6f5976dda
+  (the Phase 4 merge; the base did not move during the phase), four commits: the Phase 4
+  stamp port, the alias flip, the pre-push hardening, the contributor docs sweep, plus
+  this docs commit. OPEN item 5 settled BEFORE the flip: typescript 7.0.2 is still the
+  newest stable 7.x (only 7.1.0-dev nightlies newer) and the forward probe re-ran green
+  on this base (exit 0 at 2.27s wall), so D1's pinned versions stand unchanged.
+  Environment finding worth keeping (the phase's one misstep, caught by CI within
+  minutes): the committed package-lock.json is maintained under npm 10 semantics (the
+  npm CI uses with Node 22), and NEWER npm majors (the local nvm Node 24 ships npm 12)
+  re-resolve svelte-check's nested optional-peer picomatch entry away on any
+  lockfile-writing install. The first push carried an npm-12-written lockfile plus a
+  misdiagnosed "drift heal" commit removing that entry, and every CI job failed at
+  npm ci with EUSAGE "Missing: picomatch@4.0.5 from lock file" (run 29434601544). Fixed
+  by rebuilding the stack with the lockfile regenerated via npx npm@10 (in sync under
+  npm ci --dry-run on BOTH npm 10.9.8 and npm 12) and force-pushing; the semantic
+  entry-level diff was then re-verified as exactly the typescript packages (root
+  devDependencies swap, the node_modules/typescript wrapper entry, 22 added
+  @typescript/* entries; picomatch only moved serialization position). RULE FOR LATER
+  WORK: regenerate this repo's lockfile with npx npm@10 (or the CI Node's bundled npm),
+  never a newer local npm; plain npm ci is fine on any npm major. Validation record:
+  check:ts 1.80/1.86/1.97s over three samples (target at or under 5s; the TS 5.9.3
+  post-Phase-2 baseline was 12.4 to 12.9s); check:types 4.0 to 4.2s wall end to end;
+  tsc --noEmit --checkers 8 clean at 1.3s; the golden child
+  tests/server/new_endpoint.test.ts green with the three-rung scaffold type-checked
+  through the real node_modules/.bin/tsc Go binary in 903ms; tests/ci_workflow.test.ts
+  green UNCHANGED (as the phase doc predicted: every pin sits on the check:types
+  indirection layer); both tests/i18n_union_teeth.test.ts red paths re-proven under the
+  TS7 binary (widening member: TS2322 on the anti-vacuity pin plus three TS2578, plus
+  the runtime shape pin naming the member; dropped overlay annotation: tsc exit 0, the
+  designed silent channel, with the vitest teeth red naming de_DE.ts); pre-push floor
+  green in a dry run and on the live push, with both broken-toolchain skip paths
+  demonstrated (a present-but-failing tsc stub, which the old -x probe wrongly passed,
+  and a missing bin). Gate (Node 24, no ffmpeg shim): steps 1 to 6 green (1129 files,
+  14,257 passed + 22 skipped, identical to the Phase 4 counts), browser red only at the
+  known environmental armory_mobile_layout assertion, manual tail (check:types plus the
+  env, server, and client builds) green. CI on the rebuilt head 85ac093d4: run
+  29434999251 all green at 181s wall (run createdAt to last job completion, the packet
+  convention): all four pr-gate shards green (job walls 177/165/169/129s), pr-checks
+  67s with its Typecheck step at 10s under TS7 (37 to 38s under TS 5.9.3 in the Phase 3
+  and Phase 4 records), browser and lint green, release jobs correctly skipped on a PR.
+  Review dispatch: per the phase doc's STEP 3 note the diff matches no Review Dispatch
+  Matrix row; qa-checklist ran at completion, verdict READY (0 BLOCKING, 0 SHOULD-FIX;
+  verified the lockfile semantic diff, the D1 layout including no hasInstallScript on
+  any added package, the hook bash short-circuit logic, the copy scan, and that
+  svelte-check is the sole typescript JS-API consumer). Its DEPLOY.md coverage note was
+  closed in-session with a clean-room simulation: a fresh clone plus
+  npm ci --ignore-scripts --no-audit --no-fund leaves tsc --version at 7.0.2 (the
+  platform binary is an optionalDependency, not a lifecycle script, so --ignore-scripts
+  does not strip it) and npx --no-install tsc --noEmit exits 0, proving the production
+  deploy drift-gate recipe works under the flip. HANDOFF ITEM for Phase 5 QA (the
+  reviewer's one open coverage note): nothing pins the ACTIVE node_modules/.bin/tsc to
+  major 7; both TS6 and TS7 check the repo clean, so a silent bin flip back to the TS6
+  wrapper would keep every suite green while losing the phase's speed goal. A one-line
+  version pin (e.g. spawn tsc --version and match /^Version 7\./ next to the golden
+  child) is the QA closer's call, mirroring how Phase 4 QA added its pin hardenings.
+  The 19 localized README mirrors still carry the TypeScript-5.5 badge (maintainer
+  release-time mirror sync per docs/CLAUDE.md); the version surfaces still say 0.26.0
+  (the expected new-cycle state, owner-bumped, out of scope here).
 
 - Phase 2 (2026-07-14): implemented in the packet's four-commit cadence plus the
   stamps carry-over commit. Design point worth keeping: the union's committed home

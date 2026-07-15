@@ -2,6 +2,35 @@
 
 ## Current phase
 
+Phase 5 (TypeScript 7 flip): IMPLEMENTED 2026-07-15 on feature/typescript-7 off
+release/v0.27.0 (worktree cut at 6f5976dda, the Phase 4 merge; the base did not
+move during the phase), draft PR #1976. OPEN item 5 settled first: typescript
+7.0.2 is still the newest stable 7.x and the forward probe re-ran green on this
+base (exit 0 at 2.27s), so D1 executed with its pinned versions unchanged. All
+deliverables landed: the dual alias installed exactly per D1
+(node_modules/.bin/tsc is the 7.0.2 native binary; require('typescript')
+resolves the 6.0.3 JS API via the wrapper's @typescript/old dependency with
+ts.sys present; the wrapper ships only a tsc6 bin, no collision), svelte-check
+re-verified green on the LOCKED 4.7.1 under the alias layout (330 files, 0
+errors; the phase doc's bump-or-verify choice resolved to verify, keeping the
+lockfile diff typescript-only), the pre-push tsc probe now executes
+tsc --version instead of the -x test (both skip paths proven live), and the
+docs sweep landed (CONTRIBUTING.md toolchain subsection carrying the
+re-evaluation triggers as the durable copy; README badge 5.5 to 7.0; root
+CLAUDE.md needed no edit; the 19 localized README mirrors follow the
+maintainer's release-time sync). Measured: check:ts 1.8 to 2.0s local (target
+at or under 5s; baseline 12.4 to 12.9s), checkers-8 clean at 1.3s, the golden
+child green through the Go binary, both i18n_union_teeth red paths re-proven
+under TS7, gate green through step 6 with the known environmental armory
+browser red and the manual tail green. ENVIRONMENT RULE from the phase's one
+misstep (first CI run 29434601544 all-red at npm ci): the lockfile is
+maintained under npm 10 semantics; regenerate it with npx npm@10, never a
+newer local npm major (npm 12 drops svelte-check's nested optional-peer
+picomatch entry and desyncs CI), then verify with npm ci --dry-run under both
+majors. Full record in progress.md Phase 5. Next: Phase 5 QA
+(phase-05-qa.md), the packet closer.
+Phase 5 execution notes for later phases are in the progress.md Phase 5 note.
+
 Phase 4 (Test-suite sharding): IMPLEMENTED 2026-07-15 on feature/ci-test-sharding
 off release/v0.26.0 (worktree cut at 2d85c9939; base resynced to 9d6d1e4c0
 mid-phase as merge 99e0873a9, release-merge-audit clean), draft PR #1967.
@@ -580,6 +609,12 @@ Phase 3 (phase-03-ci-parallel-checks-ffmpeg.md).
   "typescript": "npm:@typescript/typescript6@^6.0.2" plus
   "@typescript/native": "npm:typescript@^7.0.2". svelte-check stays on the TS6 wrapper
   until the TS 7.1 API ships AND sveltejs/language-tools adopts it.
+  (EXECUTED 2026-07-15 by Phase 5, PR #1976, exactly as specified. The
+  re-evaluation triggers, collapse the dual alias to a single typescript
+  dependency once the TS 7.1 stable JS API ships AND sveltejs/language-tools
+  issue 3063 closes with a released svelte-check adopting it, are recorded in
+  CONTRIBUTING.md's TypeScript toolchain subsection as the durable copy; this
+  mirror exists only while the packet does.)
 - D2: TranslationKey becomes a build-generated flat literal union
   (src/ui/i18n.catalog/translation_keys.generated.ts, emitted by scripts/i18n_build.mjs),
   replacing the Leaves-based computation in src/ui/i18n.catalog/index.ts. The Leaves type
@@ -812,6 +847,10 @@ Workstream C (Phases 3, 4 touch set):
    requiring a subset of shards leaves those test files non-blocking.)
 5. At Phase 5 execution: if typescript 7.0.3+ exists, re-run the Phase 2 forward probe
    against it before flipping (the plan assumes 7.0.2 semantics).
+   RESOLVED 2026-07-15 (Phase 5): no 7.0.3+ exists; 7.0.2 is still the npm
+   latest dist-tag (only 7.1.0-dev nightlies are newer). The forward probe was
+   re-run on the release/v0.27.0 base anyway and exited 0 in 2.27s wall, so the
+   flip proceeded on 7.0.2 semantics as planned.
 6. jgyy's issue #1868 comment reproduces at --checkers 8; the discrepancies are explained
    and recorded in brainstorm.md (7 vs 8 files, timing, leaf counts).
 7. The i18n:gen output is deterministic; running it twice must leave a clean tree. Any
