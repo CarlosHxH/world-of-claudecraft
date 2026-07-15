@@ -93,7 +93,7 @@ export function mountWelcomeScreen(
   const chestTileEl = root.querySelector<HTMLElement>('#ws-chest-tile');
   const statusEl = root.querySelector<HTMLElement>('#ws-status');
   const continueBtn = root.querySelector<HTMLButtonElement>('#ws-continue');
-  const continueHintEl = continueBtn?.querySelector<HTMLElement>('small') ?? null;
+  const continueHintEl = root.querySelector<HTMLElement>('#ws-continue-hint');
   const versionEl = root.querySelector<HTMLElement>('#ws-version');
 
   markDialogRoot(root, { label: t('welcome.continue'), modal: true });
@@ -140,7 +140,12 @@ export function mountWelcomeScreen(
 
   function paintStatus(): void {
     if (!statusEl) return;
-    statusEl.textContent = connectionReady ? '' : t('loading.connectingRealm');
+    statusEl.textContent = '';
+    if (connectionReady) return;
+    const spin = document.createElement('span');
+    spin.className = 'ws-spin';
+    spin.setAttribute('aria-hidden', 'true');
+    statusEl.append(spin, document.createTextNode(t('loading.connectingRealm')));
   }
 
   function refreshContinue(): void {

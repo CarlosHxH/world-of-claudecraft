@@ -1511,14 +1511,16 @@
        (desktop web only) the Season 1 Armory promo. Shown after Enter World, before
        the loading fade; painted by src/ui/welcome_screen_window.ts. Hidden by default. -->
   <div id="welcome-screen" hidden>
-    <div class="ws-wordmark">
-      <img src="/worldofclaudecraft-logo.png" data-i18n-alt="serverUnavailable.logoAlt" alt="World of ClaudeCraft" />
-    </div>
+    <div class="ws-stars" aria-hidden="true"></div>
+    <div class="ws-wordmark">World of ClaudeCraft</div>
     <div id="ws-header" class="ws-header"></div>
     <div class="ws-body">
       <div class="ws-main">
-        <div id="ws-news" class="ws-news" aria-live="polite">
-          <div class="news-loading" data-i18n="news.loading">Loading the latest updates...</div>
+        <div class="ws-news-panel">
+          <div class="ws-panel-title" data-i18n="news.title">News & Updates</div>
+          <div id="ws-news" class="ws-news" aria-live="polite">
+            <div class="news-loading" data-i18n="news.loading">Loading the latest updates...</div>
+          </div>
         </div>
         <div id="ws-discord" class="ws-discord-strip" hidden>
           <div class="ws-discord-badge" aria-hidden="true"></div>
@@ -1532,18 +1534,23 @@
       <div id="ws-rail" class="ws-rail">
         <div id="ws-armory-card" class="ws-armory-card" hidden></div>
         <div id="ws-chest-tile" class="ws-chest-tile" hidden>
-          <span class="ws-chest-icon" aria-hidden="true"></span>
-          <span data-i18n="welcome.chest.ready">Daily chest ready</span>
+          <img class="ws-chest-icon" src="/ui/daily-rewards/treasure_chest.webp" alt="" draggable="false" decoding="async" />
+          <span class="ws-chest-ready">
+            <span class="ws-chest-dot" aria-hidden="true"></span>
+            <span data-i18n="welcome.chest.ready">Daily chest ready</span>
+          </span>
         </div>
         <div id="ws-event-slot" class="ws-event-slot" hidden></div>
       </div>
     </div>
     <div class="ws-footer">
       <div id="ws-status" class="ws-status"></div>
-      <button type="button" id="ws-continue" class="btn btn-primary ws-continue" disabled>
-        <span data-i18n="welcome.continue">Enter World</span>
-        <small data-i18n="welcome.continueHint">Enter to continue, Esc to skip</small>
-      </button>
+      <div class="ws-enter-wrap">
+        <button type="button" id="ws-continue" class="btn btn-primary ws-continue" disabled>
+          <span data-i18n="welcome.continue">Enter World</span>
+        </button>
+        <div id="ws-continue-hint" class="ws-continue-hint" data-i18n="welcome.continueHint">Enter to continue, Esc to skip</div>
+      </div>
       <div id="ws-version" class="ws-version"></div>
     </div>
   </div>
