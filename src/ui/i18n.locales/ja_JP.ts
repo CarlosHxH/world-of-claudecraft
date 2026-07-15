@@ -6729,6 +6729,7 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
   'hudChrome.gathering.mining': '採掘',
   'hudChrome.gathering.logging': '伐採',
   'hudChrome.gathering.herbalism': '薬草学',
+  'hudChrome.gathering.notReady': 'この資源ノードはまだあなたのために再生していません。',
   'hudChrome.archetypeTitle.label': '称号',
   'hudChrome.archetypeTitle.none': 'なし',
   'hudChrome.archetypeTitle.hobbyLabel': '趣味',

@@ -6391,6 +6391,7 @@ export const zh_TW: Partial<Record<TranslationKey, string>> = {
   'hudChrome.gathering.mining': '採礦',
   'hudChrome.gathering.logging': '伐木',
   'hudChrome.gathering.herbalism': '藥草學',
+  'hudChrome.gathering.notReady': '這個資源節點尚未為你重新生成。',
   'hudChrome.archetypeTitle.label': '稱號',
   'hudChrome.archetypeTitle.none': '無',
   'hudChrome.archetypeTitle.hobbyLabel': '愛好',

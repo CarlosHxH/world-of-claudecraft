@@ -6844,6 +6844,7 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
   'hudChrome.gathering.mining': 'Горное дело',
   'hudChrome.gathering.logging': 'Лесозаготовка',
   'hudChrome.gathering.herbalism': 'Травничество',
+  'hudChrome.gathering.notReady': 'Этот ресурсный узел еще не восстановился для вас.',
   'hudChrome.archetypeTitle.label': 'Титул',
   'hudChrome.archetypeTitle.none': 'Нет',
   'hudChrome.archetypeTitle.hobbyLabel': 'Хобби',
