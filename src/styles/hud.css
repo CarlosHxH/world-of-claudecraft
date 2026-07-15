@@ -4182,6 +4182,19 @@
     min-width: 0;
     pointer-events: none;
   }
+  #party-frames.party-style-raid .party-frame .pfm-name-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+  /* Compact raid cells read HP from the bar fill (WoW-style), so the centered
+     percent text is dropped here: in a narrow cell (e.g. landscape phone) it
+     collided with the member name. The bar still conveys HP, so no actionable
+     information is lost. */
+  #party-frames.party-style-raid .party-frame .pfm-hp-text {
+    display: none;
+  }
   #party-frames.party-style-raid .party-frame .pfm-id {
     min-width: 0;
     color: #fff;
