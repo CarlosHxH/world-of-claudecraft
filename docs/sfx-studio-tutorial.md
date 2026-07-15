@@ -12,12 +12,11 @@ Studio export.
 
 ## 1. Start the Studio
 
-Install dependencies and confirm that FFmpeg and FFprobe are available:
+Install dependencies (this also downloads the bundled FFmpeg and FFprobe static
+binaries the Studio spawns; no system install is needed) and start the Studio:
 
 ```bash
 npm ci
-ffmpeg -version
-ffprobe -version
 npm run sfx:studio
 ```
 
@@ -284,7 +283,9 @@ npm run gate
 ## Troubleshooting
 
 `FFmpeg is unavailable`
-: Install FFmpeg and FFprobe and ensure both commands are on `PATH`.
+: The bundled `ffmpeg-static`/`ffprobe-static` binaries are missing (an install
+  that skipped package scripts leaves them undownloaded). Rerun `npm ci`, or
+  install FFmpeg and FFprobe on `PATH` as the fallback.
 
 `another SFX Studio server is already using this repository`
 : Stop the earlier process. If it crashed, rerun after confirming no Studio

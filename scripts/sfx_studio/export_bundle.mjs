@@ -15,6 +15,7 @@ import {
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import { inspectSfxConformance } from '../sfx/conform_audio.mjs';
+import { FFMPEG_PATH, FFPROBE_PATH } from '../sfx/ffmpeg_paths.mjs';
 import {
   buildSfxManifestData,
   catalogHashForEntries,
@@ -63,8 +64,8 @@ function validateProductionTrack(path, identity, bytes) {
   try {
     writeFileSync(validationPath, bytes, { flag: 'wx', mode: 0o600 });
     report = inspectSfxConformance(validationPath, {
-      ffmpegPath: 'ffmpeg',
-      ffprobePath: 'ffprobe',
+      ffmpegPath: FFMPEG_PATH,
+      ffprobePath: FFPROBE_PATH,
     });
   } catch (error) {
     throw new Error(

@@ -301,11 +301,11 @@ And almost none of it is a shipped asset. The world is drawn from code:
 
 ## Development
 
-The SFX conformance checks (`npm run sfx:check`) and the audio tests use the bundled
-`ffmpeg-static`/`ffprobe-static` npm packages, so `npm test` needs no system install. The SFX
-Studio and the audio generator scripts shell out to `ffmpeg` on `PATH`, and `npm run gate`
-checks for it up front: install FFmpeg with your platform package manager before running the
-gate or the Studio.
+The SFX conformance checks (`npm run sfx:check`), the audio tests, the SFX Studio, and
+`npm run gate` all resolve `ffmpeg`/`ffprobe` from the bundled `ffmpeg-static`/`ffprobe-static`
+npm packages (falling back to `PATH` when a scripts-skipped install left the static binaries
+missing), so no system FFmpeg install is needed. Some standalone audio generator scripts
+(for example `scripts/gen_ui_sfx.mjs`) still default to `PATH` `ffmpeg`.
 
 ```bash
 npm test                        # vitest: formulas, combat, AI, quests, all 9 classes, parties, duels, trades, dungeons

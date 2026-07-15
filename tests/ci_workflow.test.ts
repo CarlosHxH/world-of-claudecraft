@@ -17,6 +17,15 @@ describe('CI workflow parity', () => {
     expect(gate).toContain("['typecheck', 'npm', ['run', 'check:types']]");
   });
 
+  it('provisions FFmpeg from the static npm packages instead of apt', () => {
+    // The gate and the SFX suites resolve ffmpeg/ffprobe via
+    // scripts/sfx/ffmpeg_paths.mjs (ffmpeg-static/ffprobe-static with a PATH
+    // fallback), so no CI job apt-installs system FFmpeg; reintroducing the
+    // install step would put its cost back on every job it touches.
+    expect(workflow).not.toContain('apt-get');
+    expect(gate).toContain("from './sfx/ffmpeg_paths.mjs'");
+  });
+
   it('runs the opt-in Chromium browser regressions in their own CI job', () => {
     const browserGate = jobSource('browser-gate');
     expect(browserGate).toContain('run: npx playwright install --with-deps chromium');
