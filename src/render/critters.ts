@@ -163,9 +163,20 @@ if (typeof window !== 'undefined') {
   }
 }
 
-/** Test-only window into the preload asset set (mirrors props.ts). */
+/**
+ * Test-only window into the preload asset set (mirrors props.ts), plus a way
+ * to inject a fake "loaded" GLB scene so the GLB code path (normally only
+ * reachable once `window` exists and the real fetch resolves) can be
+ * exercised deterministically in plain Node (#1862 regression coverage).
+ */
 export const critterPreloadInternalsForTest = {
   speciesAssetUrl: SPECIES_ASSET_URL,
+  setLoadedForTest: (species: Species, scene: THREE.Group): void => {
+    loadedSpeciesGltf.set(species, scene);
+  },
+  clearLoadedForTest: (): void => {
+    loadedSpeciesGltf.clear();
+  },
 };
 
 interface Critter {
@@ -217,7 +228,14 @@ export function buildCritters(seed: number): CritterField {
         if (child instanceof THREE.Mesh) child.castShadow = GFX.standardMaterials;
       });
       seatAndOrientCreatureInstance(inst);
-      return inst;
+      // The per-frame loop below does a hard c.obj.position.set(...)/rotation.y
+      // write every tick (world placement + heading), which would otherwise
+      // clobber the seat/orient correction just applied to inst. Wrap it in an
+      // outer group, same as delve_props.ts/mailbox.ts: the group is what the
+      // loop transforms, and inst keeps its correction untouched underneath.
+      const group = new THREE.Group();
+      group.add(inst);
+      return group;
     }
     const mesh = new THREE.Mesh(geos[species], mats[species]);
     mesh.castShadow = GFX.standardMaterials;

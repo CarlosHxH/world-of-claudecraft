@@ -1,8 +1,10 @@
+import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import {
   buildCritters,
   causewayPopScale,
   creatureForwardCorrectionYaw,
+  critterPreloadInternalsForTest,
 } from '../src/render/critters';
 
 // The Eastbrook Vale / Mirefen Marsh boundary runs along the causeway at z=180.
@@ -79,5 +81,41 @@ describe('critter forward-axis correction (#1862)', () => {
   it('only trips past the 15% margin, not at exact equality with it', () => {
     expect(creatureForwardCorrectionYaw(1.15, 1)).toBe(0);
     expect(creatureForwardCorrectionYaw(1.1501, 1)).toBeCloseTo(Math.PI / 2, 6);
+  });
+});
+
+// The other half of #1862 ("critters clip trough the ground") is the seat/orient
+// correction actually surviving the per-frame heading write. The loop below does
+// a hard c.obj.position.set(...)/c.obj.rotation.y = ... every tick, so the fix
+// wraps the corrected GLB clone in an outer group instead of returning it
+// directly: without that wrapper the per-frame write lands on the very object
+// the correction was just applied to and erases it immediately.
+describe('critter GLB seat/orient correction survives per-frame updates (#1862)', () => {
+  it('keeps the baked correction on the inner clone across many wander ticks', () => {
+    // A synthetic "GLB scene" shaped like the real squirrel_critter.glb bbox
+    // ratio (elongated X, vertically centered, i.e. not seated at y=0).
+    const fakeScene = new THREE.Group();
+    fakeScene.add(new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.84, 0.43)));
+    critterPreloadInternalsForTest.setLoadedForTest('rabbit', fakeScene);
+    critterPreloadInternalsForTest.setLoadedForTest('squirrel', fakeScene);
+    critterPreloadInternalsForTest.setLoadedForTest('bird', fakeScene);
+    try {
+      const { group, update } = buildCritters(3);
+      for (let i = 0; i < 30; i++) update(0, 0, 0.1);
+      const visible = group.children.find((c) => c.visible);
+      expect(visible).toBeDefined();
+      const inner = visible?.children[0];
+      expect(inner).toBeDefined();
+      // Correction baked once at load: yaw flipped 90deg (x=1.0 > z=0.43*1.15)
+      // and feet re-seated to y=0 (box min.y was -0.42, so +0.42 brings it up).
+      // If the wrapper were missing, the per-frame heading write above would
+      // have overwritten both by now (heading is rng-driven, so an unclobbered
+      // rotation.y landing on exactly PI/2 after 30 wander ticks would be
+      // astronomically unlikely).
+      expect(inner?.rotation.y).toBeCloseTo(Math.PI / 2, 6);
+      expect(inner?.position.y).toBeCloseTo(0.42, 6);
+    } finally {
+      critterPreloadInternalsForTest.clearLoadedForTest();
+    }
   });
 });
