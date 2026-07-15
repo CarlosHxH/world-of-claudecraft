@@ -6,7 +6,7 @@
 |---|---|---|---|
 | Phase 1: Degit i18n aggregates | MERGED into release/v0.26.0 (PR #1931, merge 0313a58f6) | 2026-07-14 | 2026-07-14 |
 | Phase 1 QA | complete: PASS-WITH-FOLLOWUPS (criterion 2 re-scoped by the owner's OPEN item 8 decision; pending.ts durable fix specced as a follow-up); 2 SHOULD-FIX fixed | 2026-07-14 | 2026-07-14 |
-| Phase 2: Flat TranslationKey + baseUrl | not started | | |
+| Phase 2: Flat TranslationKey + baseUrl | implemented on feature/flat-translationkey-union; DRAFT PR pending QA | 2026-07-14 | |
 | Phase 2 QA | not started | | |
 | Phase 3: CI parallel checks + FFmpeg | not started | | |
 | Phase 3 QA | not started | | |
@@ -46,18 +46,35 @@
 
 ## Phase 2 deliverables
 
-- [ ] scripts/i18n_build.mjs emits src/ui/i18n.catalog/translation_keys.generated.ts
-      (sorted, one key per line, no aggregates in the file)
-- [ ] TranslationKey definition in src/ui/i18n.catalog/index.ts swapped to re-export the
-      generated union; Leaves kept exported; the depth-6 comment updated
-- [ ] Hygiene wiring: new path added to ci.yml freshness diffs (both jobs), gate.mjs
-      I18N_ARTIFACTS, .gitattributes (linguist-generated); the existing biome
-      *.generated.ts glob verified to cover it; a tracked-and-regen-byte-identical test
-      covers the new artifact and it appears in the perturbed-env determinism outFiles
-      (the generator honors the I18N_OUT_DIR-style override)
-- [ ] baseUrl line deleted from tsconfig.json (paths untouched)
-- [ ] tests/i18n_overlay_key_membership.test.ts retired
-- [ ] Recorded: new local tsc wall time, and the typescript@7.0.2 forward probe result
+- [x] scripts/i18n_build.mjs emits src/ui/i18n.catalog/translation_keys.generated.ts
+      (sorted, one key per line, no aggregates in the file; one member per en leaf,
+      about 6.2k at emit time and growing with the catalog, count NOT in the file
+      per D6 and not pinned anywhere per the docs anchor rule)
+- [x] TranslationKey definition in src/ui/i18n.catalog/index.ts swapped to re-export the
+      generated union; Leaves kept exported (grep re-verified: zero other
+      instantiations); the depth-6 comment rewritten around the generated design
+      (TS2590, issue #1868)
+- [x] Hygiene wiring: new path added to ci.yml freshness diffs (both jobs, the
+      ci_workflow pin updated in the same commit), gate.mjs I18N_ARTIFACTS,
+      .gitattributes (linguist-generated); the existing biome !**/*.generated.ts glob
+      verified to cover it (biome check reports the path ignored; no redundant entry
+      added); tests/i18n_resolved_equivalence.test.ts gained a tracked +
+      regen-byte-identical + explicit determinism-outFiles block for the union (the
+      generator emits into I18N_OUT_DIR in override mode, so the perturbed-env harness
+      exercises it hermetically)
+- [x] baseUrl line deleted from tsconfig.json (paths untouched;
+      tests/server/new_endpoint.test.ts green through the extends chain)
+- [x] tests/i18n_overlay_key_membership.test.ts retired (tsc now enforces strictly
+      more: both negative probes fail, see below); the 13 overlay headers and the
+      lazy-locales doc references updated
+- [x] Recorded: local tsc 5.9.3 wall time 12.9s (baseline re-measured same machine
+      same day: 27.4s; state.md baseline band 26 to 35s); typescript@7.0.2 forward
+      probe exit 0 at 2.4s wall (7.0.2 confirmed still the newest stable 7.x on npm;
+      only 7.1.0-dev nightlies are newer). Negative probes: the bogus overlay key
+      entities.itemSets.bogus_zzz.name fails tsc (TS2353) and the bogus t() literal
+      fails tsc (TS2345); scratch file deleted. i18n:gen twice leaves a clean tree;
+      resolved output byte-identical to base. OPEN item 8 rider spike: ran, measured,
+      deferred with the full record in state.md item 8.
 
 ## Phase 3 deliverables
 
@@ -135,3 +152,16 @@ tests added, dead code removed, deferrals.
 ## Notes per phase
 
 (Fill in after each phase completes.)
+
+- Phase 2 (2026-07-14): implemented in the packet's four-commit cadence plus the
+  stamps carry-over commit. Design point worth keeping: the union's committed home
+  (src/ui/i18n.catalog/) is OUTSIDE I18N_OUT_DIR, so the generator emits it into
+  OUT_DIR when the override is set (after writeModuleDir, which prunes unknown *.ts)
+  and into the catalog otherwise; without that, the perturbed-env determinism runs
+  would have written the committed file from inside the test harness. The stronger
+  tsc checking surfaced zero latent violations: no real code depended on the 85
+  template-literal pattern members (the stopping rule stayed dormant), and all 22
+  overlays were already clean against the exact leaf set. The OPEN item 8 rider
+  spike ran after the main deliverables and recorded a measured deferral in
+  state.md (mechanism sound, 21/21 derivation equivalence; bundle premise false:
+  sameAsEnglish is 3,753 keys, one-file emit costs ~8 KB gzip eager at release).

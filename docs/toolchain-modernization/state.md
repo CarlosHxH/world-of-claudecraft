@@ -10,9 +10,20 @@ specced as a follow-up). The release-gate arm of the three i18n steps ran live a
 green on the merge push (run 29379864925), closing that deferral; the run's overall
 red is the pre-existing mid-cycle release-tier state (empty-pending plus release
 version surfaces), identical pre-merge. The packet directory is now ON the release
-base: fresh worktrees no longer need the bootstrap copy. Next: Phase 2
-(phase-02-flat-translationkey-baseurl.md) off the latest release/**, carrying the
-OPEN item 8 spike as its non-blocking rider.
+base: fresh worktrees no longer need the bootstrap copy.
+
+Phase 2 (Generated flat TranslationKey union + baseUrl removal): IMPLEMENTED
+2026-07-14 on feature/flat-translationkey-union off release/v0.26.0 (tip
+0313a58f6). All deliverables landed: the generator emits
+src/ui/i18n.catalog/translation_keys.generated.ts (committed, line-item, D6
+clean), TranslationKey re-exports it, baseUrl deleted, the membership test
+retired, freshness wiring complete. Measured: tsc 5.9.3 27.4s -> 12.9s local;
+the typescript@7.0.2 forward probe exits 0 in 2.4s (7.0.2 still the newest
+stable 7.x); both negative probes fail tsc; resolved output byte-identical.
+The OPEN item 8 rider spike RAN and recorded its measured result in item 8
+below: mechanism validates, bundle premise fails, implementation deferred to
+its own PR per the fallback rule. Next: Phase 2 QA (phase-02-qa.md), then
+Phase 3 (phase-03-ci-parallel-checks-ffmpeg.md).
 
 ## Phase 1 execution notes (2026-07-14, for later phases)
 
@@ -227,6 +238,9 @@ Workstream C (Phases 3, 4 touch set):
 
 (Planned entries below; confirm or amend as phases complete.)
 - Phase 2: src/ui/i18n.catalog/translation_keys.generated.ts (committed, line-item).
+  CONFIRMED 2026-07-14: emitted exactly there by scripts/i18n_build.mjs (in
+  override mode it lands inside I18N_OUT_DIR instead, so the determinism harness
+  exercises it hermetically); no other new files.
 - Phase 4: the tests/vale_cup.test.ts split files (2 to 3, names chosen at split time)
   plus a possible shared local test util.
 
@@ -278,3 +292,43 @@ Workstream C (Phases 3, 4 touch set):
      surface for src/ui/i18n.ts and src/admin/i18n.ts (shape change vs accessor);
      determinism under the perturbed-env tests; measured bundle delta (expected near
      zero); and re-run the two-branch merge experiment as the acceptance proof.
+   - SPIKE RESULT (2026-07-14, run as the Phase 2 rider on
+     feature/flat-translationkey-union): the MECHANISM VALIDATES but the
+     near-zero-bundle premise FAILS MEASURABLY, so per the fallback rule the
+     implementation is DEFERRED to its own PR instead of riding Phase 2.
+     Measured probes (live data, release tip 0313a58f6 plus the Phase 2 diff):
+     (1) Lockstep soundness: derived pending (resolved[L][k] === resolved.en[k]
+     AND k not in sameAsEnglish[L]; en-dialects always empty) equals the
+     committed pending.ts EXACTLY for all 21 non-en locales (0 mismatches,
+     including es_ES/fr_CA dialect chains and en_CA). (2) Whitespace edge:
+     0 overlay rows carry a non-isPresent value today, so byte-derivation and
+     providedByLang agree; an implementation must add a build-time guard
+     rejecting whitespace-only overlay values to keep that equivalence forced.
+     (3) Tiny-list premise: FALSE. sameAsEnglish measures 3,753 keys total
+     (per locale 78 to 297: de_DE 297, id_ID 273, fr_FR 269, ..., zh_CN 78);
+     translators legitimately keep many values byte-identical (proper nouns,
+     cognate UI terms). (4) Measured bundle cost, the snag: a one-file
+     same_as_english.ts emit is 123,465 bytes raw / 8,168 bytes gzip and must be
+     EAGER (the runtime imports it to derive). Today's pending.ts is 70,259 raw
+     / 1,982 gzip mid-cycle (near-identical per-locale lists cross-compress) and
+     ~700 raw / ~150 gzip at release. So one-file (d) is a permanent ~+8 KB gzip
+     eager add at release vs today's ~0: not near zero, though 3 to 4x below
+     option (a)'s 25 to 35 KB estimate. (5) A near-zero variant exists but grows
+     the change: ship each locale's sameAsEnglish inside its lazy locale chunk
+     (the game client is already lazy-flipped) and derive that locale's pending
+     set when ensureLocaleLoaded resolves. Eager delta ~0, but it reshapes the
+     loaders.ts emit, the residency lifecycle, and the release hard-fail timing
+     (derive-on-load instead of static import), and the non-lazy admin runtime
+     still eats its (unmeasured, admin-scoped) list eagerly. That is standalone
+     PR scope. Also validated for whichever shape ships: the
+     i18n_t_behavior pending-injection mock re-points cleanly (inject the
+     synthetic key into the mocked en and es slices with byte-equal values;
+     no pending module left to mock); the release-tier empty-pending assertion
+     and the runtime surface should move behind a derivePendingKeys(lang)
+     accessor; runtime derivation cost is one ~6.2k-leaf walk per loaded locale,
+     negligible. RECOMMENDATION: implement (d) as its own follow-up PR in the
+     per-locale lazy shape (near-zero eager delta) with the whitespace guard and
+     the two-branch merge experiment as acceptance; if the owner prefers the
+     simple one-file shape, accept the measured ~8 KB gzip eager cost
+     explicitly. Do not fall back to (a): measured (d) dominates (a) on every
+     axis (cost, and it also shrinks what concurrent PRs can touch).
