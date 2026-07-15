@@ -6,7 +6,7 @@
 // (nothing extra ever draws when it is null).
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { cardTitleLayout } from '../src/ui/player_card';
+import { cardTitleLayout } from '../src/ui/hud/player_card/player_card';
 
 describe('cardTitleLayout (the pure title-line gate)', () => {
   it('returns null for absent, empty, and whitespace titles (untitled cards draw nothing)', () => {
@@ -28,7 +28,10 @@ describe('cardTitleLayout (the pure title-line gate)', () => {
   });
 
   it('the compositor guards its ONE title draw call on this gate (source pin)', () => {
-    const src = readFileSync(new URL('../src/ui/player_card.ts', import.meta.url), 'utf8');
+    const src = readFileSync(
+      new URL('../src/ui/hud/player_card/player_card.ts', import.meta.url),
+      'utf8',
+    );
     const drawSite = src.slice(src.indexOf('const titleLine = cardTitleLayout('));
     expect(drawSite.length).toBeGreaterThan(0);
     expect(drawSite.slice(0, 300)).toContain('if (titleLine) {');

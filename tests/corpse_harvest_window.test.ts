@@ -14,8 +14,8 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
-import type { CorpseHarvestViewModel } from '../src/ui/corpse_harvest_view';
-import { renderCorpseHarvestPicker } from '../src/ui/corpse_harvest_window';
+import type { CorpseHarvestViewModel } from '../src/ui/hud/loot/corpse_harvest_view';
+import { renderCorpseHarvestPicker } from '../src/ui/hud/loot/corpse_harvest_window';
 
 // hud.ts (read-only here, see module comment above) is not unit-testable in isolation:
 // openLoot builds the Take All button straight off a live Hud/Sim instance. Pin the

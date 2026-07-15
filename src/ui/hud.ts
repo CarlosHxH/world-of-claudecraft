@@ -1,7 +1,8 @@
 import { audio } from '../game/audio';
 import type { GamepadKind } from '../game/gamepad_map';
+import { InstanceMusicController } from '../game/instance_music';
 import { type Keybinds, keyCapLabel } from '../game/keybinds';
-import { music, musicZoneForLocation, shouldResetMusicForDungeonEntry } from '../game/music';
+import { music } from '../game/music';
 import type { GameSettings, Settings } from '../game/settings';
 import { sfx } from '../game/sfx';
 import type { UiEffectsTier } from '../game/ui_effects_profile';
@@ -54,7 +55,6 @@ import {
   DELVES,
   DUNGEON_LIST,
   DUNGEON_X_THRESHOLD,
-  delveAt,
   dungeonAt,
   ITEMS,
   isDelvePos,
@@ -134,22 +134,7 @@ import {
   abilityPrimaryEffect,
   abilitySecondaryEffect,
 } from './ability_damage';
-import { isSelfOnlyAbility } from './ability_self_only';
-import { ActionBarPainter, type ActionBarSlotElements } from './action_bar_painter';
-import {
-  ABILITY_ICON_PREFIX,
-  type ActionBarView,
-  ATTACK_ICON_KEY,
-  createActionBarView,
-  EMPTY_ICON_KEY,
-  ITEM_ICON_PREFIX,
-} from './action_bar_view';
 import { ArenaWindow } from './arena_window';
-import {
-  abilityStartsAutoAttack,
-  deferAutoAttackUntilCastEnd,
-  hasAutoAttackTarget,
-} from './attack_on_ability';
 import { type AuraEffectInput, auraEffectDescriptor } from './aura_effect';
 import { AurasPainter, type AurasPainterDeps } from './auras_painter';
 import { type AurasDeps, createAurasView } from './auras_view';
@@ -166,28 +151,6 @@ import {
   activeCharacterAppearancePreview,
   characterAppearanceOptions,
 } from './character_appearance';
-import { ChatAnnouncer } from './chat_announcer';
-import {
-  CHANNEL_LABEL_KEYS,
-  CHAT_TAB_CHANNELS,
-  type ChatInputTintTarget,
-  type ChatOpenTab,
-  type ChatTabChannel,
-  type ChatTabId,
-  channelNeedsJoin,
-  chatChannelColor,
-  chatInputTint,
-  chatOpenTabLabelKey,
-  composeChatLine,
-  composeWhisperReply,
-  isChatOpenTab,
-  isChatTabChannel,
-  parseChatTabs,
-  sentLineChannel,
-  serializeChatTabs,
-  WHISPER_TAB,
-  WHISPER_TAB_LABEL_KEY,
-} from './chat_channels';
 import {
   ignoreKey,
   type PlayerSocialFlags,
@@ -195,15 +158,6 @@ import {
   resolvePlayerSocialFlags,
   serializeIgnoreList,
 } from './chat_ignore_core';
-import { appendChatLineParts, CHAT_MESSAGE_TOKEN, CHAT_NAME_TOKEN, chatAiTagEl } from './chat_line';
-import { type ChatClock, clampChatClock, formatChatTimestamp } from './chat_timestamp';
-import {
-  CHAT_BOX_LIMITS,
-  type ChatBoxGeometry,
-  parseChatBox,
-  placeChatBox,
-  serializeChatBox,
-} from './chat_window';
 import type { ClaudiumRail, ClaudiumSnapshot } from './claudium_window';
 import { ClaudiumWindow } from './claudium_window';
 import { formatClockTime } from './clock';
@@ -223,10 +177,7 @@ import {
   spellFxCue,
 } from './combat_sfx';
 import { type CardinalId, compassView } from './compass';
-import { CONSUMABLE_BAR_SLOTS, consumableBarItems } from './consumable_bar_view';
 import { formatMinimapCoords } from './coords';
-import { corpseHarvestView } from './corpse_harvest_view';
-import { renderCorpseHarvestPicker } from './corpse_harvest_window';
 import { buildCraftingView } from './crafting_view';
 import { renderCraftingWindow } from './crafting_window';
 import { DailyRewardsWindow } from './daily_rewards_window';
@@ -246,7 +197,6 @@ import {
   makeDeedTrackerView,
 } from './deeds_view';
 import { DeedsWindow } from './deeds_window';
-import { DelveMapPainter } from './delve_map_painter';
 import { devTierBadgeDataUrl, devTierByIndex, devTierDisplayName } from './dev_tier';
 import { markDialogRoot } from './dialog_root';
 import { discordRoleTagLabel } from './discord_role_tag';
@@ -273,7 +223,28 @@ import {
   resetFramePositionsOnce,
   TARGET_FRAME_POS_KEY,
 } from './frame_pos_reset';
-import { gossipMenuIsEmpty } from './gossip_menu';
+import {
+  holderTierBadgeDataUrl,
+  holderTierByIndex,
+  holderTierDisplayName,
+  holderTierForBalance,
+} from './holder_tier';
+import { isSelfOnlyAbility } from './hud/action_bar/ability_self_only';
+import { ActionBarPainter, type ActionBarSlotElements } from './hud/action_bar/action_bar_painter';
+import {
+  ABILITY_ICON_PREFIX,
+  type ActionBarView,
+  ATTACK_ICON_KEY,
+  createActionBarView,
+  EMPTY_ICON_KEY,
+  ITEM_ICON_PREFIX,
+} from './hud/action_bar/action_bar_view';
+import {
+  abilityStartsAutoAttack,
+  deferAutoAttackUntilCastEnd,
+  hasAutoAttackTarget,
+} from './hud/action_bar/attack_on_ability';
+import { CONSUMABLE_BAR_SLOTS, consumableBarItems } from './hud/action_bar/consumable_bar_view';
 import {
   type AimPoint,
   abilityAoeRadius,
@@ -283,15 +254,7 @@ import {
   createGroundAimState,
   enterGroundAim,
   type GroundAimState,
-} from './ground_aim';
-import { buildHeroicVendorView } from './heroic_vendor_view';
-import { renderHeroicVendorWindow } from './heroic_vendor_window';
-import {
-  holderTierBadgeDataUrl,
-  holderTierByIndex,
-  holderTierDisplayName,
-  holderTierForBalance,
-} from './holder_tier';
+} from './hud/action_bar/ground_aim';
 import {
   actionForAttackSlot,
   applyLoadoutBar as applyLoadoutBarActions,
@@ -314,7 +277,94 @@ import {
   shouldSeedFormBar,
   swapHotbarSlots,
   syncHotbarActions,
-} from './hotbar';
+} from './hud/action_bar/hotbar';
+import {
+  clampMobilePage,
+  mobilePageCount,
+  nextMobilePage,
+  sourceSlotForMobileButton,
+} from './hud/action_bar/mobile_action_page_view';
+import { MobileActionRingPainter } from './hud/action_bar/mobile_action_ring_painter';
+import { playerStealthed } from './hud/action_bar/player_stealthed';
+import { ChatAnnouncer } from './hud/chat/chat_announcer';
+import {
+  CHANNEL_LABEL_KEYS,
+  CHAT_TAB_CHANNELS,
+  type ChatInputTintTarget,
+  type ChatOpenTab,
+  type ChatTabChannel,
+  type ChatTabId,
+  channelNeedsJoin,
+  chatChannelColor,
+  chatInputTint,
+  chatOpenTabLabelKey,
+  composeChatLine,
+  composeWhisperReply,
+  isChatOpenTab,
+  isChatTabChannel,
+  parseChatTabs,
+  sentLineChannel,
+  serializeChatTabs,
+  WHISPER_TAB,
+  WHISPER_TAB_LABEL_KEY,
+} from './hud/chat/chat_channels';
+import {
+  appendChatLineParts,
+  CHAT_MESSAGE_TOKEN,
+  CHAT_NAME_TOKEN,
+  chatAiTagEl,
+} from './hud/chat/chat_line';
+import { type ChatClock, clampChatClock, formatChatTimestamp } from './hud/chat/chat_timestamp';
+import {
+  CHAT_BOX_LIMITS,
+  type ChatBoxGeometry,
+  parseChatBox,
+  placeChatBox,
+  serializeChatBox,
+} from './hud/chat/chat_window';
+import { DelveMapPainter } from './hud/delve/delve_map_painter';
+import { PICK_ACTION_HOTKEYS } from './hud/delve/lockpick_panel';
+import { LockpickWindow } from './hud/delve/lockpick_window';
+import { RiteWindow } from './hud/delve/rite_window';
+import { corpseHarvestView } from './hud/loot/corpse_harvest_view';
+import { renderCorpseHarvestPicker } from './hud/loot/corpse_harvest_window';
+import { reconcileLootRolls as computeLootRollReconcile } from './hud/loot/loot_roll_reconcile';
+import {
+  computeLootRollStatusRows,
+  type LootRollStatusRow,
+  lootRollStatusFingerprint,
+} from './hud/loot/loot_roll_status_view';
+import { lootSettingsView } from './hud/loot/loot_settings_view';
+import { renderLootSettingsWindow } from './hud/loot/loot_settings_window';
+import {
+  CARD_POSES,
+  cardCanvasToBlob,
+  cardCanvasToUploadBlob,
+  type PlayerCardData,
+  type PlayerCardStat,
+  renderPlayerCardCanvas,
+} from './hud/player_card/player_card';
+import {
+  type CharacterStanding,
+  cardHostingAvailable,
+  fetchReferralInfo,
+  fetchStanding,
+  type PublishedCard,
+  publishCard,
+} from './hud/player_card/player_card_share';
+import { gossipMenuIsEmpty } from './hud/quest/gossip_menu';
+import { encodeItemLink, encodeQuestLink, parseChatSegments } from './hud/quest/quest_link';
+import { QuestProgressBanner } from './hud/quest/quest_progress_banner';
+import {
+  type QuestTrackerView,
+  questTrackerView,
+  type TrackedQuest,
+} from './hud/quest/quest_tracker';
+import { QuestLogWindow } from './hud/quest/questlog_window';
+import { buildHeroicVendorView } from './hud/vendor/heroic_vendor_view';
+import { renderHeroicVendorWindow } from './hud/vendor/heroic_vendor_window';
+import { buildVendorView } from './hud/vendor/vendor_view';
+import { renderVendorWindow } from './hud/vendor/vendor_window';
 import {
   formatMoney as formatLocalizedMoney,
   formatNumber,
@@ -334,17 +384,7 @@ import { ItemDragState } from './item_drag_state';
 import { itemSetMemberCounts, itemSetTooltipModel } from './item_set_tooltip_view';
 import { LeaderboardWindow } from './leaderboard_window';
 import { ReannounceMarker } from './live_region_reannounce';
-import { PICK_ACTION_HOTKEYS } from './lockpick_panel';
-import { LockpickWindow } from './lockpick_window';
 import { isCombatFlavorLog } from './log_event_route';
-import { reconcileLootRolls as computeLootRollReconcile } from './loot_roll_reconcile';
-import {
-  computeLootRollStatusRows,
-  type LootRollStatusRow,
-  lootRollStatusFingerprint,
-} from './loot_roll_status_view';
-import { lootSettingsView } from './loot_settings_view';
-import { renderLootSettingsWindow } from './loot_settings_window';
 import { lowHealthVignette } from './low_health';
 import { lowResourceView } from './low_resource';
 import { mailIndicatorView } from './mailbox_view';
@@ -372,13 +412,6 @@ import {
   nextMinimapZoom,
 } from './minimap_zoom';
 import { type MobTooltipI18n, type MobTooltipModel, mobTooltipHtml } from './mob_tooltip_view';
-import {
-  clampMobilePage,
-  mobilePageCount,
-  nextMobilePage,
-  sourceSlotForMobileButton,
-} from './mobile_action_page_view';
-import { MobileActionRingPainter } from './mobile_action_ring_painter';
 import { MovableFrame } from './movable_frame';
 import { OptionsWindow } from './options_window';
 import { makeWriterFacet, type PainterHostPresentation } from './painter_host';
@@ -389,39 +422,17 @@ import { PartyFramesPainter } from './party_frames_painter';
 import type { PerfOverlayHooks } from './perf_overlay_settings';
 import { PET_ACTION_ICONS, petFeedButtonState } from './pet_action_icons';
 import {
-  CARD_POSES,
-  cardCanvasToBlob,
-  cardCanvasToUploadBlob,
-  type PlayerCardData,
-  type PlayerCardStat,
-  renderPlayerCardCanvas,
-} from './player_card';
-import {
-  type CharacterStanding,
-  cardHostingAvailable,
-  fetchReferralInfo,
-  fetchStanding,
-  type PublishedCard,
-  publishCard,
-} from './player_card_share';
-import {
   chatPlayerContextActions,
   type PlayerContextAction,
   type PlayerContextActionId,
   streamerActionPlatform,
   streamerMenuActions,
 } from './player_context_menu';
-import { playerStealthed } from './player_stealthed';
 import { hydratePortraits, portraitChipHtml } from './portrait_chip';
 import { maskProfanity } from './profanity';
-import { encodeItemLink, encodeQuestLink, parseChatSegments } from './quest_link';
-import { QuestProgressBanner } from './quest_progress_banner';
-import { type QuestTrackerView, questTrackerView, type TrackedQuest } from './quest_tracker';
-import { QuestLogWindow } from './questlog_window';
 import { lockoutParts, lockoutShape } from './raid_lockout';
 import { type RaidLockoutI18n, raidLockoutPanelHtml } from './raid_lockout_view';
 import { restView } from './rest_indicator';
-import { RiteWindow } from './rite_window';
 import { localizeServerText } from './server_i18n';
 import { localizeSimAuraName, localizeSimText } from './sim_i18n';
 import { SocialWindow } from './social_window';
@@ -474,8 +485,6 @@ import { buildVcupHudView } from './vale_cup_hud_view';
 import { ValeCupIndicator } from './vale_cup_indicator';
 import { buildVcupIndicatorView } from './vale_cup_indicator_view';
 import { ValeCupWindow, vcupNationName } from './vale_cup_window';
-import { buildVendorView } from './vendor_view';
-import { renderVendorWindow } from './vendor_window';
 import { nextVoicedYell, type VoicedYellState, voicedYellGain } from './voice_events';
 import {
   onWalletUiChange,
@@ -1198,7 +1207,7 @@ export class Hud {
   private hotDomSkippedWrites = 0;
   private subzoneTimer: number | undefined;
   private lastSubzone: string | null = null;
-  private lastMusicDungeonId: string | null = null;
+  private readonly instanceMusic = new InstanceMusicController(music);
   private minimapCtx: CanvasRenderingContext2D;
   private minimapBg: HTMLCanvasElement;
   private clockEl: HTMLElement | null = null;
@@ -7577,75 +7586,19 @@ export class Hud {
         }
       }
 
-      // soundtrack: pick the zone theme and layer in combat percussion.
-      // Combat = a mob is on us, or we traded blows in the last few seconds
-      // (the wire protocol doesn't ship the inCombat flag).
-      let aggroed = false;
-      let bossEngaged = false; // the Nythraxis raid boss is pulled -> its own track
-      const dungeon = dungeonAt(p.pos.x);
-      const inNythraxisArena = dungeon?.id === 'nythraxis_boss_arena';
-      for (const e of sim.entities.values()) {
-        if (e.kind !== 'mob' || e.dead) continue;
-        if (e.aggroTargetId === sim.playerId) aggroed = true;
-        if (e.templateId === 'nythraxis_scourge_of_thornpeak') {
-          if (e.aggroTargetId !== null) bossEngaged = true;
-        }
-      }
-      const inCombat = aggroed || now - this.lastCombatEventAt < 5000;
-      const musicCombat = inCombat || inNythraxisArena;
-      bossEngaged =
-        bossEngaged || inNythraxisArena || now - this.lastNythraxisCombatEventAt < 10000;
-      const hub = currentZone.hub;
-      const inHub = !inDungeon && Math.hypot(p.pos.x - hub.x, p.pos.z - hub.z) < hub.radius + 10;
-      // Delves sit past the dungeon x-threshold (so inDungeon is already true) but
-      // dungeonAt() returns null for them, so feed the delve id as the instance id:
-      // delves use the dungeon theme (dungeonMusicZoneForDungeon falls back to
-      // dungeon_hollow_crypt) and get the same fresh-phrasing reset on entry that
-      // real dungeons do, instead of relying on the accidental null fallback.
-      const inDelveBand = isDelvePos(p.pos.x);
-      const instanceId = inDelveBand
-        ? (delveAt(p.pos.x)?.id ?? 'collapsed_reliquary')
-        : (dungeon?.id ?? null);
-      // The Sowfield stadium plays its own jaunty match theme (a positional
-      // override inside Eastbrook Vale; the zone LABEL stays Eastbrook Vale,
-      // the Sowfield is a poi, not a zone).
-      const atSowfield = !inDungeon && isAtSowfield(p.pos.x, p.pos.z);
-      const zone = atSowfield
-        ? 'vale_cup'
-        : musicZoneForLocation(
-            currentZone.id,
-            currentZone.biome,
-            inHub,
-            inDungeon || inNythraxisArena,
-            instanceId,
-          );
-      const musicDungeonId = inDungeon || inNythraxisArena ? instanceId : null;
-      if (shouldResetMusicForDungeonEntry(this.lastMusicDungeonId, musicDungeonId)) {
-        music.resetForDungeonEntry(musicDungeonId);
-      }
-      this.lastMusicDungeonId = musicDungeonId;
-      music.update(zone, musicCombat);
-      music.setBossCombat(bossEngaged);
-      // Sowfield area music: the 'match' track once a game has kicked off (ball in
-      // play or a goal being celebrated), the 'waiting' track any other time you
-      // are at the stadium, and silence (procedural score returns) once you leave.
-      // Reads whichever match view we hold: our own if playing, else the walk-up
-      // spectate view the sim fills only at the Sowfield.
-      const cupMatchView = sim.cupInfo?.match ?? sim.cupInfo?.spectate ?? null;
-      const cupKickedOff =
-        cupMatchView?.phase === 'active' ||
-        cupMatchView?.phase === 'goal' ||
-        cupMatchView?.phase === 'golden';
-      // A private practice bout plays the SAME boarball soundtrack as the real
-      // Sowfield (the match beat once it kicks off, the waiting bed before), not
-      // the instance/combat theme its far-out pitch would otherwise pick. The
-      // practice pitch is an offset instance (match.origin is non-zero); a real
-      // match is {0,0} and already covered by atSowfield.
-      const myMatch = sim.cupInfo?.match;
-      const inPracticeMatch = !!myMatch && (myMatch.origin.x !== 0 || myMatch.origin.z !== 0);
-      music.setSowfieldTrack(
-        atSowfield || inPracticeMatch ? (cupKickedOff ? 'match' : 'waiting') : null,
-      );
+      const musicState = this.instanceMusic.update({
+        now,
+        lastCombatEventAt: this.lastCombatEventAt,
+        lastBossCombatEventAt: this.lastNythraxisCombatEventAt,
+        playerId: sim.playerId,
+        playerPos: p.pos,
+        zone: currentZone,
+        inDungeon,
+        entities: sim.entities.values(),
+        cupInfo: sim.cupInfo,
+      });
+      const inCombat = musicState.inCombat;
+      const { atSowfield } = musicState;
 
       // classic combat indicator: crossed swords + red ring on the player portrait.
       // Routed through the cached ref + the elided toggleClass writer: a counted,

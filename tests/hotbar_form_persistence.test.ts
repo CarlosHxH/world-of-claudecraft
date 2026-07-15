@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { HotbarAction } from '../src/ui/hotbar';
 import { Hud } from '../src/ui/hud';
+import type { HotbarAction } from '../src/ui/hud/action_bar/hotbar';
 
 vi.mock('../src/render/characters', () => ({ CharacterPreview: class {} }));
 vi.mock('../src/render/characters/assets', () => ({ preloadMechAssets: vi.fn() }));

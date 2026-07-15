@@ -63,17 +63,6 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import type { CastBarState } from '../src/render/cast_bar';
 import type { AbilityDef, Aura } from '../src/sim/types';
-import {
-  type ActionBarPaintDescriptor,
-  ActionBarPainter,
-  type ActionBarSlotElements,
-} from '../src/ui/action_bar_painter';
-import {
-  type ActionBarDeps,
-  type ActionBarState,
-  type ActionBarWorldInput,
-  createActionBarView,
-} from '../src/ui/action_bar_view';
 import { type AuraInput, type AurasDeps, createAurasView } from '../src/ui/auras_view';
 import {
   type CastBarElements,
@@ -82,6 +71,17 @@ import {
   type CastBarPaintInput,
 } from '../src/ui/cast_bar_painter';
 import { FCT_POOL_CAP } from '../src/ui/fct_painter';
+import {
+  type ActionBarPaintDescriptor,
+  ActionBarPainter,
+  type ActionBarSlotElements,
+} from '../src/ui/hud/action_bar/action_bar_painter';
+import {
+  type ActionBarDeps,
+  type ActionBarState,
+  type ActionBarWorldInput,
+  createActionBarView,
+} from '../src/ui/hud/action_bar/action_bar_view';
 import { makeWriterFacet, type PainterHostWriters } from '../src/ui/painter_host';
 import type { SwingTimerState } from '../src/ui/swing_timer';
 import { SwingTimerPainter } from '../src/ui/swing_timer_painter';
