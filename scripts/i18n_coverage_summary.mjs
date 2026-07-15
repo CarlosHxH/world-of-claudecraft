@@ -1,14 +1,14 @@
 // Post the i18n coverage counts to the CI job summary as the out-of-band audit trail.
 //
-// src/ui/i18n.status.summary.json (the small committed rollup emitted by
-// scripts/i18n_scan.mjs alongside the gitignored full registry) is being dropped
-// from version control, so its committed-bytes `git diff` trail goes away. This
-// script replaces that trail: it reads the summary and appends a compact markdown
+// src/ui/i18n.status.summary.json (the small gitignored rollup emitted by
+// scripts/i18n_scan.mjs alongside the gitignored full registry) is not committed,
+// so it has no committed-bytes `git diff` trail. This script provides the audit
+// trail instead: it reads the summary and appends a compact markdown
 // block (headline totals + a per-locale rollup) to the file named by
 // GITHUB_STEP_SUMMARY, so every CI run records the counts in its job summary.
 //
 // Zero runtime deps (node: builtins only) and deterministic: a pure function of
-// the committed summary, with no timestamps, Date.now, or Math.random.
+// the generated summary, with no timestamps, Date.now, or Math.random.
 //
 // Usage:
 //   node scripts/i18n_coverage_summary.mjs
