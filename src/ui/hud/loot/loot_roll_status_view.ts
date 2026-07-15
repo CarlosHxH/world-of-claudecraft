@@ -3,7 +3,7 @@
 // and the set of locally shown need/greed prompts, it decides which rows the HUD
 // renders (a prompt row grows a vote strip; a status with no local prompt renders
 // as a watch-only row so the frame stays up after the player answers) and yields
-// a cheap fingerprint so the thin hud consumer re-renders only when membership,
+// a cheap fingerprint so the thin controller consumer re-renders only when membership,
 // prompt-ness, or a vote actually changes. Follows the pure-core + thin-consumer
 // pattern (see unit_portrait.ts) next to its sibling loot_roll_reconcile.ts.
 import type { LootRollChoice, LootRollGroupStatus } from '../../../sim/types';

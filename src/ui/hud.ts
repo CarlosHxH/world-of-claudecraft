@@ -80,7 +80,6 @@ import type {
   HonorReason,
   InvSlot,
   ItemSlot,
-  LootRollChoice,
   MailResultCode,
   PetMode,
   PlayerClass,
@@ -292,12 +291,7 @@ import { RiteController } from './hud/delve/rite_controller';
 import { FiestaController } from './hud/fiesta/fiesta_controller';
 import { corpseHarvestView } from './hud/loot/corpse_harvest_view';
 import { renderCorpseHarvestPicker } from './hud/loot/corpse_harvest_window';
-import { reconcileLootRolls as computeLootRollReconcile } from './hud/loot/loot_roll_reconcile';
-import {
-  computeLootRollStatusRows,
-  type LootRollStatusRow,
-  lootRollStatusFingerprint,
-} from './hud/loot/loot_roll_status_view';
+import { LootRollController } from './hud/loot/loot_roll_controller';
 import { lootSettingsView } from './hud/loot/loot_settings_view';
 import { renderLootSettingsWindow } from './hud/loot/loot_settings_window';
 import {
@@ -1181,36 +1175,7 @@ export class Hud {
   // keyed by module id, redrawn only when the module changes.
   private openLootMobId: number | null = null;
   private openLootChestId: number | null = null;
-  private activeLootRolls = new Map<
-    number,
-    { event: Extract<SimEvent, { type: 'lootRoll' }>; receivedAt: number; durationMs: number }
-  >();
-  // rolls the player has answered or let expire locally, mapped to the wall-clock
-  // time of that dismissal. The reconcile keeps them out of the DOM while the
-  // authoritative mirror still lists them open, re-showing only if one stays open
-  // past a short grace (a genuinely dropped submit) so a normal answer does not
-  // flash back; the entry is forgotten once the server drops the roll.
-  private dismissedLootRolls = new Map<number, number>();
-  // shown rolls already observed in the open-roll mirror at least once, so their
-  // later absence from the mirror means the server resolved them (retire), not
-  // that the mirror simply has not caught up to a just-shown event yet.
-  private confirmedLootRolls = new Set<number>();
-  // Group vote strip (the XLoot-style monitor): the authoritative per-candidate
-  // choices on every open roll, polled from IWorld.lootRollGroupStatus and
-  // re-rendered only when the fingerprint changes. A status row with no local
-  // prompt renders as a watch-only row, which is what keeps the roll frame up
-  // after the player answers until the server resolves the roll.
-  private lootRollStatusRows: LootRollStatusRow[] = [];
-  private lootRollStatusFp = '';
-  // rollId -> receivedAt for the watch-only rows' countdown bar (a prompt row
-  // keeps its own receivedAt; a watch row starts timing at first sight).
-  private lootRollWatchTimers = new Map<number, number>();
-  // Master-loot assignment prompts, shown only to the master looter alongside
-  // the loot-roll rail. Same lifetime/expiry as a need/greed roll.
-  private activeMasterRolls = new Map<
-    number,
-    { event: Extract<SimEvent, { type: 'masterLoot' }>; receivedAt: number; durationMs: number }
-  >();
+  private readonly lootRolls: LootRollController;
   private openVendorNpcId: number | null = null;
   private openHeroicVendorNpcId: number | null = null;
   private readonly delveBoard: DelveBoardController;
@@ -1457,6 +1422,15 @@ export class Hud {
       questTitle,
       objectiveLabel: questObjectiveLabel,
       click: () => audio.click(),
+    });
+    this.lootRolls = new LootRollController({
+      document,
+      world: () => this.sim,
+      now: () => performance.now(),
+      isMobileLayout: () => this.isMobileLayout(),
+      itemIcon: (item) => this.itemIcon(item),
+      itemTooltip: (item) => this.itemTooltip(item),
+      attachTooltip: (element, html) => this.attachTooltip(element, html),
     });
     this.chatGeometry = new ChatGeometryController({
       document,
@@ -6263,9 +6237,7 @@ export class Hud {
     this.meters.update();
     this.lockpickController.repaintIfChanged();
     this.tutorial.update(sim, this.renderer, this.keybinds);
-    this.reconcileLootRolls();
-    this.reconcileLootRollStatus(now);
-    this.updateLootRollTimers(now);
+    this.lootRolls.update(now);
     if (slowHud) this.updateRaidLockoutBadge();
     if (slowHud) this.refreshDailyRewardsLauncher();
     this.syncActiveHotbarForm();
@@ -7996,7 +7968,7 @@ export class Hud {
             / assigned .+ to .+\.$/.test(ev.text) ||
             /^.+ was not assigned and is free for all\.$/.test(ev.text)
           )
-            this.closeLootRollsForItem(ev.text);
+            this.lootRolls.closeForItem(ev.text);
           if (
             ev.text.includes('loot') ||
             ev.text.includes('Sold') ||
@@ -8035,11 +8007,11 @@ export class Hud {
           break;
         }
         case 'lootRoll': {
-          this.showLootRoll(ev);
+          this.lootRolls.showRoll(ev);
           break;
         }
         case 'masterLoot': {
-          this.showMasterLoot(ev);
+          this.lootRolls.showMasterRoll(ev);
           break;
         }
         case 'vendor': {
@@ -10051,368 +10023,6 @@ export class Hud {
   // -------------------------------------------------------------------------
   // Loot window
   // -------------------------------------------------------------------------
-
-  private lootRollRoot(): HTMLElement {
-    let root = document.getElementById('loot-rolls');
-    const uiRoot = document.getElementById('ui');
-    if (!root) {
-      root = document.createElement('div');
-      root.id = 'loot-rolls';
-      root.setAttribute('aria-live', 'polite');
-    }
-    if (uiRoot && root.parentElement !== uiRoot) uiRoot.appendChild(root);
-    else if (!root.parentElement) document.body.appendChild(root);
-    return root;
-  }
-
-  private showLootRoll(ev: Extract<SimEvent, { type: 'lootRoll' }>): void {
-    // A master-loot prompt that converts to a need/greed roll reuses the same rollId;
-    // drop the superseded master panel so the looter sees only the need/greed panel.
-    this.activeMasterRolls.delete(ev.rollId);
-    this.activeLootRolls.set(ev.rollId, {
-      event: ev,
-      receivedAt: performance.now(),
-      durationMs: 60_000,
-    });
-    this.renderLootRolls();
-  }
-
-  private submitLootRoll(rollId: number, choice: LootRollChoice): void {
-    this.sim.submitLootRoll(rollId, choice);
-    this.activeLootRolls.delete(rollId);
-    this.dismissedLootRolls.set(rollId, performance.now());
-    this.renderLootRolls();
-  }
-
-  // Reconcile the shown loot-roll prompts against the server's authoritative
-  // open-roll mirror. Loot-roll events are best-effort (a single frame), so this
-  // both RE-SHOWS an open roll whose event was missed (reconnect, interest
-  // churn, a dropped snapshot) and RETIRES a shown roll the server has since
-  // resolved (the mirror drops it to []), so a stale dead-button prompt no
-  // longer lingers until the local timer. The three-way decision lives in
-  // the pure computeLootRollReconcile; here we apply it to the live DOM state.
-  private reconcileLootRolls(): void {
-    const open = this.sim.activeLootRolls();
-    // Steady state (no open rolls and nothing shown/tracked): nothing to do, and
-    // skip allocating the decision arrays every frame.
-    if (
-      open.length === 0 &&
-      this.activeLootRolls.size === 0 &&
-      this.dismissedLootRolls.size === 0 &&
-      this.confirmedLootRolls.size === 0
-    ) {
-      return;
-    }
-    const promptById = new Map(open.map((p) => [p.rollId, p] as const));
-    const dismissedAt: Record<number, number> = {};
-    for (const [id, at] of this.dismissedLootRolls) dismissedAt[id] = at;
-    const decision = computeLootRollReconcile({
-      open: open.map((p) => p.rollId),
-      shown: [...this.activeLootRolls.keys()],
-      dismissed: [...this.dismissedLootRolls.keys()],
-      confirmed: [...this.confirmedLootRolls],
-      dismissedAt,
-      nowMs: performance.now(),
-    });
-    this.confirmedLootRolls = new Set(decision.confirmed);
-    for (const id of decision.toPrune) this.dismissedLootRolls.delete(id); // server confirmed it is gone
-    let changed = false;
-    for (const id of decision.toRetire) {
-      this.activeLootRolls.delete(id);
-      changed = true;
-    }
-    for (const id of decision.toShow) {
-      const p = promptById.get(id);
-      if (!p) continue;
-      this.activeLootRolls.set(id, {
-        event: { type: 'lootRoll', ...p },
-        receivedAt: performance.now(),
-        durationMs: 60_000,
-      });
-      changed = true;
-    }
-    if (changed) this.renderLootRolls();
-  }
-
-  private showMasterLoot(ev: Extract<SimEvent, { type: 'masterLoot' }>): void {
-    this.activeMasterRolls.set(ev.rollId, {
-      event: ev,
-      receivedAt: performance.now(),
-      // The master looter's curate window is 5 minutes (sim MASTER_LOOT_TIMEOUT),
-      // longer than a need/greed roll, so the countdown bar must span the full window.
-      durationMs: 300_000,
-    });
-    this.renderLootRolls();
-  }
-
-  private assignMasterLoot(rollId: number, targetPids: number[]): void {
-    this.sim.assignMasterLoot(rollId, targetPids);
-    this.activeMasterRolls.delete(rollId);
-    this.renderLootRolls();
-  }
-
-  // Poll the authoritative group vote state and re-render the roll rail only
-  // when it actually changes (the view core's fingerprint). Also owns the watch
-  // timers: a watch-only row starts its countdown at first sight and is dropped
-  // the moment the server stops listing the roll (resolution/expiry).
-  private reconcileLootRollStatus(now: number): void {
-    const statuses = this.sim.lootRollGroupStatus();
-    if (statuses.length === 0 && this.lootRollStatusRows.length === 0) return;
-    const rows = computeLootRollStatusRows(
-      statuses,
-      [...this.activeLootRolls.keys()],
-      this.sim.playerId,
-      !this.isMobileLayout(),
-    );
-    const fp = lootRollStatusFingerprint(rows);
-    if (fp === this.lootRollStatusFp) return;
-    this.lootRollStatusFp = fp;
-    this.lootRollStatusRows = rows;
-    const live = new Set(rows.map((row) => row.rollId));
-    for (const rollId of this.lootRollWatchTimers.keys())
-      if (!live.has(rollId)) this.lootRollWatchTimers.delete(rollId);
-    for (const row of rows)
-      if (!this.lootRollWatchTimers.has(row.rollId)) this.lootRollWatchTimers.set(row.rollId, now);
-    this.renderLootRolls();
-  }
-
-  private updateLootRollTimers(now: number): void {
-    if (
-      this.activeLootRolls.size === 0 &&
-      this.activeMasterRolls.size === 0 &&
-      this.lootRollStatusRows.length === 0
-    )
-      return;
-    let changed = false;
-    for (const [rollId, roll] of this.activeLootRolls) {
-      if (now - roll.receivedAt >= roll.durationMs) {
-        this.activeLootRolls.delete(rollId);
-        // Expired locally: stamp the dismissal so reconcile only re-shows it if
-        // the server still lists it open past the grace, not on the next frame.
-        this.dismissedLootRolls.set(rollId, now);
-        changed = true;
-      }
-    }
-    for (const [rollId, roll] of this.activeMasterRolls) {
-      if (now - roll.receivedAt >= roll.durationMs) {
-        this.activeMasterRolls.delete(rollId);
-        changed = true;
-      }
-    }
-    if (changed) this.renderLootRolls();
-    const root = document.getElementById('loot-rolls');
-    if (!root) return;
-    for (const row of root.querySelectorAll<HTMLElement>('.loot-roll')) {
-      const rollId = Number(row.dataset.rollId);
-      if (row.dataset.watch) {
-        // Watch-only rows time against first sight; the row itself lives and
-        // dies with the server's group status, the bar is purely cosmetic.
-        const receivedAt = this.lootRollWatchTimers.get(rollId);
-        if (receivedAt === undefined) continue;
-        const remaining = Math.max(0, 1 - (now - receivedAt) / 60_000);
-        row.style.setProperty('--loot-roll-frac', remaining.toFixed(3));
-        continue;
-      }
-      const roll = row.dataset.master
-        ? this.activeMasterRolls.get(rollId)
-        : this.activeLootRolls.get(rollId);
-      if (!roll) continue;
-      const remaining = Math.max(0, 1 - (now - roll.receivedAt) / roll.durationMs);
-      row.style.setProperty('--loot-roll-frac', remaining.toFixed(3));
-    }
-  }
-
-  private closeLootRollsForItem(text: string): void {
-    const match =
-      /^.+ wins \[\[i:([A-Za-z0-9_]+)\]\] \(\d+\)$/.exec(text) ??
-      /^Everyone passed on \[\[i:([A-Za-z0-9_]+)\]\]\.$/.exec(text) ??
-      /^.+ assigned \[\[i:([A-Za-z0-9_]+)\]\] to .+\.$/.exec(text) ??
-      /^(.+) was not assigned and is free for all\.$/.exec(text);
-    if (!match) return;
-    const id = match[1];
-    for (const [rollId, roll] of this.activeLootRolls) {
-      if (roll.event.itemId === id || roll.event.itemName === id)
-        this.activeLootRolls.delete(rollId);
-    }
-    for (const [rollId, roll] of this.activeMasterRolls) {
-      if (roll.event.itemId === id || roll.event.itemName === id)
-        this.activeMasterRolls.delete(rollId);
-    }
-    this.renderLootRolls();
-  }
-
-  // The per-candidate vote strip (the XLoot-style monitor): one chip per
-  // candidate showing their live need/greed/pass choice, or an empty chip while
-  // they are still deciding, headed by an "N/M rolled" count so a full raid
-  // (RAID_MAX = 10) reads at a glance without scanning every chip. Roll numbers
-  // are never shown here; the sim broadcasts them as loot chat lines at
-  // resolution. The strip is aria-hidden: it re-renders on every vote, so
-  // leaving it in the #loot-rolls live region would spam a screen reader up to
-  // ten times per roll. The accessible surface is the prompt (announced once on
-  // show) plus the full per-roller reveal in the chat log at resolution.
-  private lootRollVotesHtml(status: LootRollStatusRow): string {
-    const votes = status.entries
-      .map(
-        (entry) => `
-        <span class="loot-roll-vote${entry.self ? ' self' : ''}">
-          <span class="loot-roll-vote-name">${esc(entry.name)}</span>
-          <span class="loot-roll-vote-chip ${entry.choice ?? 'undecided'}">${entry.choice ? esc(t(`itemUi.lootRoll.${entry.choice}`)) : ''}</span>
-        </span>`,
-      )
-      .join('');
-    const count = t('itemUi.lootRoll.rolled', {
-      answered: formatNumber(status.answered, { maximumFractionDigits: 0 }),
-      total: formatNumber(status.total, { maximumFractionDigits: 0 }),
-    });
-    return `<div class="loot-roll-votes" aria-hidden="true">
-      <div class="loot-roll-votes-count">${esc(count)}</div>
-      <div class="loot-roll-votes-list">${votes}</div>
-    </div>`;
-  }
-
-  private renderLootRolls(): void {
-    const root = this.lootRollRoot();
-    if (
-      this.activeLootRolls.size === 0 &&
-      this.activeMasterRolls.size === 0 &&
-      this.lootRollStatusRows.length === 0
-    ) {
-      root.style.display = 'none';
-      root.innerHTML = '';
-      return;
-    }
-    root.style.display = 'flex';
-    root.innerHTML = '';
-    const statusByRoll = new Map(this.lootRollStatusRows.map((row) => [row.rollId, row]));
-    for (const [rollId, roll] of this.activeMasterRolls)
-      this.renderMasterLootRow(root, rollId, roll.event);
-    for (const [rollId, roll] of this.activeLootRolls) {
-      const ev = roll.event;
-      const item = ITEMS[ev.itemId];
-      const itemName = item ? itemDisplayName(item) : ev.itemName;
-      const quality = item?.quality ?? ev.quality ?? 'common';
-      const status = statusByRoll.get(rollId);
-      const row = document.createElement('div');
-      row.className = 'loot-roll panel';
-      row.dataset.rollId = String(rollId);
-      row.style.setProperty('--loot-roll-frac', '1');
-      row.innerHTML = `
-        <div class="loot-roll-item">
-          ${item ? this.itemIcon(item) : `<img class="item-icon q-${quality}" src="${iconDataUrl('item', ev.itemId)}" alt="" draggable="false">`}
-          <div class="loot-roll-copy">
-            <div class="loot-roll-title">${esc(t('itemUi.lootRoll.title'))}</div>
-            <div class="loot-roll-name" style="color:${QUALITY_COLOR[quality] ?? '#fff'}">${esc(itemName)}</div>
-          </div>
-        </div>
-        <div class="loot-roll-timer" aria-hidden="true"><span></span></div>
-        ${status ? this.lootRollVotesHtml(status) : ''}
-        <div class="loot-roll-actions">
-          <button type="button" class="loot-roll-btn need" data-choice="need">${esc(t('itemUi.lootRoll.need'))}</button>
-          <button type="button" class="loot-roll-btn greed" data-choice="greed">${esc(t('itemUi.lootRoll.greed'))}</button>
-          <button type="button" class="loot-roll-btn pass" data-choice="pass">${esc(t('itemUi.lootRoll.pass'))}</button>
-        </div>`;
-      if (item)
-        this.attachTooltip(row.querySelector('.loot-roll-item') as HTMLElement, () =>
-          this.itemTooltip(item),
-        );
-      row.querySelectorAll<HTMLButtonElement>('[data-choice]').forEach((btn) => {
-        const choice = btn.dataset.choice as LootRollChoice;
-        btn.setAttribute('aria-label', t(`itemUi.lootRoll.${choice}Aria`, { item: itemName }));
-        btn.addEventListener('click', () => this.submitLootRoll(rollId, choice));
-      });
-      root.appendChild(row);
-    }
-    // Watch-only rows: open rolls this player is not (or no longer) answering,
-    // kept up so the whole group can follow the votes until the server resolves
-    // the roll and drops it from the group status.
-    for (const status of this.lootRollStatusRows) {
-      if (this.activeLootRolls.has(status.rollId) || this.activeMasterRolls.has(status.rollId))
-        continue;
-      const item = ITEMS[status.itemId];
-      const itemName = item ? itemDisplayName(item) : status.itemName;
-      const quality = item?.quality ?? status.quality ?? 'common';
-      const row = document.createElement('div');
-      row.className = 'loot-roll panel watch';
-      row.dataset.rollId = String(status.rollId);
-      row.dataset.watch = '1';
-      row.style.setProperty('--loot-roll-frac', '1');
-      row.innerHTML = `
-        <div class="loot-roll-item">
-          ${item ? this.itemIcon(item) : `<img class="item-icon q-${quality}" src="${iconDataUrl('item', status.itemId)}" alt="" draggable="false">`}
-          <div class="loot-roll-copy">
-            <div class="loot-roll-title">${esc(t('itemUi.lootRoll.title'))}</div>
-            <div class="loot-roll-name" style="color:${QUALITY_COLOR[quality] ?? '#fff'}">${esc(itemName)}</div>
-          </div>
-        </div>
-        <div class="loot-roll-timer" aria-hidden="true"><span></span></div>
-        ${this.lootRollVotesHtml(status)}`;
-      if (item)
-        this.attachTooltip(row.querySelector('.loot-roll-item') as HTMLElement, () =>
-          this.itemTooltip(item),
-        );
-      root.appendChild(row);
-    }
-  }
-
-  private renderMasterLootRow(
-    root: HTMLElement,
-    rollId: number,
-    ev: Extract<SimEvent, { type: 'masterLoot' }>,
-  ): void {
-    const item = ITEMS[ev.itemId];
-    const itemName = item ? itemDisplayName(item) : ev.itemName;
-    const quality = item?.quality ?? ev.quality ?? 'common';
-    const row = document.createElement('div');
-    row.className = 'loot-roll panel master';
-    row.dataset.rollId = String(rollId);
-    row.dataset.master = '1';
-    row.style.setProperty('--loot-roll-frac', '1');
-    const picks = ev.candidates
-      .map(
-        (c) =>
-          `<label><input type="checkbox" class="ml-pick" value="${c.pid}"><span>${esc(c.name)}</span></label>`,
-      )
-      .join('');
-    row.innerHTML = `
-      <div class="loot-roll-item">
-        ${item ? this.itemIcon(item) : `<img class="item-icon q-${quality}" src="${iconDataUrl('item', ev.itemId)}" alt="" draggable="false">`}
-        <div class="loot-roll-copy">
-          <div class="loot-roll-title">${esc(t('hudChrome.masterLoot.assignPrompt', { item: itemName }))}</div>
-          <div class="loot-roll-name" style="color:${QUALITY_COLOR[quality] ?? '#fff'}">${esc(itemName)}</div>
-        </div>
-      </div>
-      <div class="loot-roll-timer" aria-hidden="true"><span></span></div>
-      <div class="master-loot-picks">
-        <label class="ml-all-row"><input type="checkbox" class="ml-all"><span>${esc(t('hudChrome.masterLoot.selectAll'))}</span></label>
-        ${picks}
-      </div>
-      <div class="loot-roll-actions"><button type="button" class="loot-roll-btn assign ml-roll" disabled>${esc(t('hudChrome.masterLoot.rollButton'))}</button></div>`;
-    if (item)
-      this.attachTooltip(row.querySelector('.loot-roll-item') as HTMLElement, () =>
-        this.itemTooltip(item),
-      );
-    // Curate-then-roll: the looter checks a subset and presses Roll. One checked
-    // member is granted directly server-side; two or more open a need/greed roll for
-    // just that subset. The select-all header mirrors / drives the per-member boxes.
-    const all = row.querySelector<HTMLInputElement>('.ml-all')!;
-    const pickEls = [...row.querySelectorAll<HTMLInputElement>('.ml-pick')];
-    const rollBtn = row.querySelector<HTMLButtonElement>('.ml-roll')!;
-    const syncRoll = (): void => {
-      const checked = pickEls.filter((p) => p.checked).length;
-      rollBtn.disabled = checked === 0;
-      all.checked = pickEls.length > 0 && checked === pickEls.length;
-    };
-    all.addEventListener('change', () => {
-      for (const p of pickEls) p.checked = all.checked;
-      syncRoll();
-    });
-    for (const p of pickEls) p.addEventListener('change', syncRoll);
-    rollBtn.addEventListener('click', () => {
-      const pids = pickEls.filter((p) => p.checked).map((p) => Number(p.value));
-      if (pids.length > 0) this.assignMasterLoot(rollId, pids);
-    });
-    root.appendChild(row);
-  }
 
   openLoot(mobId: number, screenX: number, screenY: number): void {
     const mob = this.sim.entities.get(mobId);
