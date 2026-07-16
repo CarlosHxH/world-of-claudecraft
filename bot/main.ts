@@ -33,7 +33,9 @@ import {
   memberRolesFromPayload,
   type RawVoiceState,
   reconcileMemberRolesFromUpdate,
+  rosterComplete,
   SLASH_COMMANDS,
+  staleFlairedIds,
   tierRoleColor,
   topSpecialRoleKeyFor,
   voiceMembersForChannel,
@@ -255,8 +257,11 @@ async function main(): Promise<void> {
           // Guilds larger than large_threshold omit offline members from
           // GUILD_CREATE; backfill the full member list (op 8) so offline holders
           // of a special role (e.g. Admins) are known. Chunks arrive as
-          // GUILD_MEMBERS_CHUNK dispatches, which re-push member meta when done.
+          // GUILD_MEMBERS_CHUNK dispatches, which re-push member meta and run the
+          // departed-member reconcile when done. A small guild's GUILD_CREATE is
+          // already the complete roster, so it reconciles right away.
           if (memberTotal > GUILD_LARGE_THRESHOLD) gateway.requestGuildMembers(cfg.guildId);
+          else void reconcileDepartedMembers().catch((e) => console.error(e));
           schedulePresencePush();
           // Sync tier roles for everyone online right away, so a freshly linked
           // member's role matches their points without waiting for the poll.
@@ -358,7 +363,10 @@ async function main(): Promise<void> {
           }
           const idx = typeof d.chunk_index === 'number' ? d.chunk_index : 0;
           const count = typeof d.chunk_count === 'number' ? d.chunk_count : 1;
-          if (idx >= count - 1) void pushAllMemberMeta().catch((e) => console.error(e));
+          if (idx >= count - 1) {
+            void pushAllMemberMeta().catch((e) => console.error(e));
+            void reconcileDepartedMembers().catch((e) => console.error(e));
+          }
           break;
         }
         case 'MESSAGE_CREATE': {
@@ -423,6 +431,28 @@ async function main(): Promise<void> {
   const pushMemberMeta = async (id: string): Promise<void> => {
     if (!id || !memberRoles.has(id)) return;
     await server.pushMembersMeta([memberMetaRecord(id)]);
+  };
+
+  // Members who left while the bot was OFFLINE never fire GUILD_MEMBER_REMOVE,
+  // so their stored membership flag + role key would stay stale forever. After a
+  // COMPLETE roster seed (small-guild GUILD_CREATE, or the final op 8 chunk),
+  // diff the server's flagged ids against the live roster and clear exactly the
+  // departed ones: their meta row (null role) first, then the membership flag.
+  // A server fetch failure (null) changes nothing, and a member re-observed
+  // between steps is skipped: the live event handlers own their state.
+  const reconcileDepartedMembers = async (): Promise<void> => {
+    if (!rosterComplete(memberRoles.size, memberTotal)) return;
+    const flagged = await server.flairedIds();
+    if (!flagged) return;
+    const stale = staleFlairedIds(flagged, new Set(memberRoles.keys()));
+    for (const batch of chunk(stale, MEMBERS_META_BATCH)) {
+      const records = batch.filter((id) => !memberRoles.has(id)).map(clearedMemberMeta);
+      if (records.length) await server.pushMembersMeta(records);
+    }
+    for (const id of stale) {
+      if (memberRoles.has(id)) continue;
+      await server.setMember(id, false);
+    }
   };
 
   // Daily Discord-engagement reward: the first time a linked member posts a message

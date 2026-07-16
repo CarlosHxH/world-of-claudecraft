@@ -35,6 +35,7 @@ vi.mock('../../server/db', () => ({ pool: { __fake: 'internal-pool' } }));
 vi.mock('../../server/discord_db', () => ({
   accountForDiscord: vi.fn(),
   discordForAccount: vi.fn(),
+  discordIdsWithGuildFlair: vi.fn(),
   grantRewardPoints: vi.fn(),
   loadRewardState: vi.fn(),
   setDiscordGuildMember: vi.fn(),
@@ -54,6 +55,7 @@ vi.mock('../../server/daily_rewards', () => ({
 }));
 
 import type * as http from 'node:http';
+import { MEMBERS_META_BATCH } from '../../bot/logic';
 import { dailyRewardService } from '../../server/daily_rewards';
 import { pool } from '../../server/db';
 import {
@@ -67,6 +69,7 @@ import type { DiscordLinkRow } from '../../server/discord_db';
 import {
   accountForDiscord,
   discordForAccount,
+  discordIdsWithGuildFlair,
   grantRewardPoints,
   loadRewardState,
   setDiscordGuildMember,
@@ -92,7 +95,9 @@ const DISCORD_SECRET = 'discord-secret';
 const DEPLOY_HEADERS = { 'x-woc-deploy-secret': DEPLOY_SECRET };
 const DISCORD_HEADERS = { 'x-woc-discord-secret': DISCORD_SECRET };
 
-// The 11 routes as [method, path], the legacy handleInternalApi ladder order.
+// The 12 routes as [method, path], the legacy handleInternalApi ladder order
+// (the 11 migrated routes plus flaired-ids, added after the migration on both
+// arms per the dual-edit rule).
 const EXPECTED_ROUTES: ReadonlyArray<readonly [Method, string]> = [
   ['POST', '/internal/restart-countdown'],
   ['GET', '/internal/discord/flex'],
@@ -105,6 +110,7 @@ const EXPECTED_ROUTES: ReadonlyArray<readonly [Method, string]> = [
   ['GET', '/internal/discord/daily-rewards-winners'],
   ['POST', '/internal/discord/daily-rewards-winners/mark'],
   ['POST', '/internal/discord/members-meta'],
+  ['GET', '/internal/discord/flaired-ids'],
 ];
 
 /** Read status/body/content-type/headers off the fakeCtx's FakeRes. */
@@ -236,8 +242,8 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('internal route registration', () => {
-  it('registers exactly 11 routes matching the legacy method+path ladder', () => {
-    expect(routes).toHaveLength(11);
+  it('registers exactly 12 routes matching the legacy method+path ladder', () => {
+    expect(routes).toHaveLength(12);
     const actual = routes.map((r) => `${r.method} ${r.path}`).sort();
     const expected = EXPECTED_ROUTES.map(([m, p]) => `${m} ${p}`).sort();
     expect(actual).toEqual(expected);
@@ -711,21 +717,64 @@ describe('discord/members-meta', () => {
     expect(calls[1]).toEqual([pool, 'u2', null, null, null]);
   });
 
-  it('caps each request at 1000 members (pins the batch size the bot mirrors)', async () => {
+  it('slices each request at 1000 entries, at or above the bot batch size', async () => {
     process.env.DISCORD_BOT_SECRET = DISCORD_SECRET;
 
-    // The bot chunks its member-meta pushes at MEMBERS_META_BATCH (1000) because
-    // this endpoint processes only the first 1000 of each request. Pin the cap so
-    // it cannot drift back and start silently dropping the tail (see #1986).
+    // The bot splits its roster into MEMBERS_META_BATCH-sized requests on the
+    // promise that the server processes AT LEAST that many entries per request;
+    // anything past the server's slice is silently dropped. Pin the slice cap
+    // to its literal and the bot batch at or under it, so a drift on either
+    // side fails here instead of silently re-dropping the roster tail. (The
+    // records are id-only on purpose: full records at this count would trip
+    // the 64 KiB readBody cap FIRST, which is why the bot batch is byte-sized;
+    // that bound is pinned in tests/discord_bot.test.ts.)
+    expect(MEMBERS_META_BATCH).toBeLessThanOrEqual(1000);
     const members = Array.from({ length: 1001 }, (_, i) => ({ discord_user_id: `u${i}` }));
+
     const r = await runRoute('POST', '/internal/discord/members-meta', {
       headers: DISCORD_HEADERS,
       body: { members },
     });
 
     expect(r.status).toBe(200);
+    // Exactly the first 1000 process; the 1001st is sliced off by the cap.
     expect(r.body).toEqual({ success: true, data: { updated: 1000 }, error: null });
-    expect(vi.mocked(setDiscordMemberMeta).mock.calls).toHaveLength(1000);
+    const calls = vi.mocked(setDiscordMemberMeta).mock.calls;
+    expect(calls).toHaveLength(1000);
+    expect(calls[0][1]).toBe('u0');
+    expect(calls[999][1]).toBe('u999');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// discord/flaired-ids (the stored-flair id list the bot diffs against the live
+// roster to clear members who left while it was offline).
+// ---------------------------------------------------------------------------
+
+describe('discord/flaired-ids', () => {
+  it('returns the flagged id list in the { success, data, error } envelope', async () => {
+    process.env.DISCORD_BOT_SECRET = DISCORD_SECRET;
+    vi.mocked(discordIdsWithGuildFlair).mockResolvedValue(['u1', 'u2']);
+
+    const r = await runRoute('GET', '/internal/discord/flaired-ids', {
+      headers: DISCORD_HEADERS,
+    });
+
+    expect(r.status).toBe(200);
+    expect(r.body).toEqual({ success: true, data: { ids: ['u1', 'u2'] }, error: null });
+    expect(vi.mocked(discordIdsWithGuildFlair)).toHaveBeenCalledWith(pool);
+  });
+
+  it('is gated: a wrong secret is a 401 that never reaches the handler', async () => {
+    process.env.DISCORD_BOT_SECRET = DISCORD_SECRET;
+
+    const r = await runRoute('GET', '/internal/discord/flaired-ids', {
+      headers: { 'x-woc-discord-secret': 'wrong' },
+    });
+
+    expect(r.status).toBe(401);
+    expect(r.reached).toBe(false);
+    expect(vi.mocked(discordIdsWithGuildFlair)).not.toHaveBeenCalled();
   });
 });
 
