@@ -86,6 +86,19 @@ describe('druid wand: caster and Moonwing form fire the class wand at range', ()
     expect(CLASSES.druid.ranged?.speed).toBe(1.8);
   });
 
+  it('a caster-form druid wands even at point-blank range, like the other casters', () => {
+    // Wand profiles have no dead zone (#94), so a caster druid never melee
+    // white-hits; in-reach auto-attacks still fire the bolt, exactly like a
+    // mage. (tests/form_swing.test.ts moved its staff-cadence control to bear
+    // form for this reason.)
+    const { sim, p } = makeSim();
+    const mob = spawnDummy(sim, p, 2);
+    const events = capture(sim);
+    (sim as any).startAutoAttack(p.id);
+    for (let i = 0; i < 60 && !events.some(isWandBolt); i++) sim.tick();
+    expect(events.some(isWandBolt)).toBe(true);
+  });
+
   it('a Moonwing-form druid keeps the wand', () => {
     const { sim, p } = makeSim();
     enterMoonwing(sim, p);
