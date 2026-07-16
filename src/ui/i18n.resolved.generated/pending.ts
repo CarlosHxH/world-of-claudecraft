@@ -9,25 +9,85 @@
 // Reproducibility is checked by tests/i18n_resolved_equivalence.test.ts.
 
 export const pending: Record<string, readonly string[]> = {
-  "es": [],
-  "es_ES": [],
-  "fr_FR": [],
-  "fr_CA": [],
+  "es": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
+  "es_ES": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
+  "fr_FR": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
+  "fr_CA": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
   "en_CA": [],
-  "it_IT": [],
-  "de_DE": [],
+  "it_IT": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
+  "de_DE": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
   "zh_CN": [],
   "zh_TW": [],
   "ko_KR": [],
   "ja_JP": [],
-  "pt_BR": [],
+  "pt_BR": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
   "ru_RU": [],
-  "cs_CZ": [],
-  "nl_NL": [],
-  "pl_PL": [],
-  "id_ID": [],
-  "tr_TR": [],
-  "sv_SE": [],
-  "vi_VN": [],
-  "da_DK": []
+  "cs_CZ": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
+  "nl_NL": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
+  "pl_PL": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
+  "id_ID": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
+  "tr_TR": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
+  "sv_SE": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
+  "vi_VN": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ],
+  "da_DK": [
+    "entities.letters.heroic_marks_reward.body",
+    "entities.letters.heroic_marks_reward.sender",
+    "entities.letters.heroic_marks_reward.subject"
+  ]
 };

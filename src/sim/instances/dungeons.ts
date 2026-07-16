@@ -508,13 +508,16 @@ function heroicRewardWindowToken(lockedUntil: number): string {
   return `reset:${Math.floor(lockedUntil / HEROIC_REWARD_WINDOW_MS)}`;
 }
 
-// Settle a heroic final-boss kill in one synchronous mutation. The whole group
-// owning the claim (plus anyone still inside) receives the realm-reset lockout,
-// while the death-time participation snapshot receives the configured marks.
-// A recipient already locked for this reset is not paid again. This makes the
-// authoritative lockout boundary the only income gate and removes the former
-// UTC-day mismatch. Marks go straight into inventory, so corpse cleanup, a UI
-// failure, or logout cannot persist an entitlement without its reward.
+// Settle a heroic final-boss kill in one synchronous mutation. Every player who
+// takes the realm-reset lockout for this kill (the whole group owning the claim,
+// plus anyone still inside) also earns the configured marks: locked means paid,
+// so the lockout can never outrun the reward. A recipient already locked for this
+// reset is not paid again. Delivery splits on presence at the corpse: a player in
+// the death-time participation snapshot takes the marks straight to bags (they
+// were there to loot), while one locked from afar (a back-line healer, a fallen
+// or released raider) has them posted to the Ravenpost so a distant participant
+// never eats the daily lockout without the reward. This makes the authoritative
+// lockout boundary the only income gate and removes the former UTC-day mismatch.
 export function awardHeroicMarks(ctx: SimContext, mob: Entity, recipients: PlayerMeta[]): void {
   const inst = ctx.instances.find((i) => i.partyKey !== null && i.mobIds.includes(mob.id));
   if (!inst || inst.difficulty !== 'heroic') return;
@@ -522,7 +525,7 @@ export function awardHeroicMarks(ctx: SimContext, mob: Entity, recipients: Playe
   if (!tuning || mob.templateId !== tuning.finalBossId) return;
   const lockedUntil = ctx.raidResetMs(ctx.lockoutNowMs());
   const rewardWindow = heroicRewardWindowToken(lockedUntil);
-  const rewardIds = new Set(recipients.map((meta) => meta.entityId));
+  const presentIds = new Set(recipients.map((meta) => meta.entityId));
   const lockoutRecipients = new Map<number, PlayerMeta>();
   for (const meta of instanceLockoutMetas(ctx, inst)) lockoutRecipients.set(meta.entityId, meta);
   // A tap holder who left both party and instance before the kill remains in
@@ -531,8 +534,12 @@ export function awardHeroicMarks(ctx: SimContext, mob: Entity, recipients: Playe
 
   for (const meta of lockoutRecipients.values()) {
     const alreadyLocked = isRaidLocked(ctx, meta, heroicLockoutId(inst.dungeonId));
-    if (!alreadyLocked && rewardIds.has(meta.entityId)) {
-      ctx.addItem(HEROIC_MARK_ITEM_ID, tuning.marksPerParticipant, meta.entityId);
+    if (!alreadyLocked) {
+      if (presentIds.has(meta.entityId)) {
+        ctx.addItem(HEROIC_MARK_ITEM_ID, tuning.marksPerParticipant, meta.entityId);
+      } else {
+        ctx.mailHeroicMarks(meta.entityId, HEROIC_MARK_ITEM_ID, tuning.marksPerParticipant);
+      }
       // The Book of Deeds daily circuit observes successful rewards, but it is
       // telemetry only: the realm-reset lockout above remains the income gate.
       if (meta.heroicDaily.date !== rewardWindow) {

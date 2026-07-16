@@ -3560,6 +3560,7 @@ export class Sim {
       partyCapacity: (party) => sim.party.partyCapacity(party),
       marketListingBelongsTo: (listing, meta) => sim.market.marketListingBelongsTo(listing, meta),
       queueQuestLetter: (questId, pid) => sim.postOffice.queueQuestLetter(questId, pid),
+      mailHeroicMarks: (pid, itemId, count) => sim.postOffice.mailHeroicMarks(pid, itemId, count),
       // Book of Deeds seam callbacks (owned by deeds.ts). Late-bound arrows so
       // sim.ctx resolves at call time (the Q1 pattern).
       bumpDeedStat: (meta, stat, delta) => deedsMod.bumpDeedStat(sim.ctx, meta, stat, delta),

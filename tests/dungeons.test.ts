@@ -19,10 +19,12 @@ import {
 } from '../src/sim/instances/dungeons';
 import { Sim } from '../src/sim/sim';
 import {
+  dist2d,
   type Entity,
   type MobTemplate,
   NYTHRAXIS_ADD_ID,
   NYTHRAXIS_BOSS_ID,
+  PARTY_XP_RANGE,
 } from '../src/sim/types';
 
 type AnySim = Sim & Record<string, any>;
@@ -1188,6 +1190,43 @@ describe('dungeons: heroic Nythraxis raid arena', () => {
     expect(((boss.loot?.items ?? []) as any[]).some((s) => s.itemId === HEROIC_MARK_ITEM_ID)).toBe(
       false,
     );
+  });
+
+  it('mails the marks to a raider locked from far back, so lockout never outruns reward', () => {
+    const { sim, raiders, inst } = raidSetup('heroic');
+    const boss = mobInInstance(sim, inst, NYTHRAXIS_BOSS_ID);
+    // The melee stack takes the kill at the boss; the back-line healer holds
+    // well past PARTY_XP_RANGE, but is still a raid member inside the instance.
+    raiders.slice(0, 4).forEach((pid, i) => {
+      teleport(sim, sim.entities.get(pid) as AnyEntity, boss.pos.x + (i - 2), boss.pos.z - 4);
+    });
+    const healer = raiders[4];
+    teleport(sim, sim.entities.get(healer) as AnyEntity, boss.pos.x, boss.pos.z + 140);
+    expect(dist2d(sim.entities.get(healer)!.pos, boss.pos)).toBeGreaterThan(PARTY_XP_RANGE);
+
+    (sim as any).dealDamage(
+      sim.entities.get(raiders[0]),
+      boss,
+      boss.hp + 100,
+      false,
+      'physical',
+      null,
+      'hit',
+    );
+    expect(boss.dead).toBe(true);
+
+    // The whole raid takes the daily lockout, the far healer included...
+    expect(sim.players.get(healer)!.raidLockouts.has('nythraxis_boss_arena:heroic')).toBe(true);
+    // ...so the marks must reach them too. Not present at the corpse to loot, so
+    // they ride the Ravenpost instead of dropping into a distant player's bags.
+    expect(sim.countItem(HEROIC_MARK_ITEM_ID, healer)).toBe(0);
+    const healerName = sim.players.get(healer)!.name;
+    const mailedMarks = ((sim.postOffice as any).mail as any[])
+      .filter((m) => m.recipientName === healerName)
+      .flatMap((m) => m.items as { itemId: string; count: number }[])
+      .filter((s) => s.itemId === HEROIC_MARK_ITEM_ID)
+      .reduce((n, s) => n + s.count, 0);
+    expect(mailedMarks).toBe(3);
   });
 
   it('lets a locked ghost return to its defeated heroic raid instance for loot', () => {
