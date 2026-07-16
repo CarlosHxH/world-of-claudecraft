@@ -3974,8 +3974,6 @@ export const sv_SE: Partial<Record<TranslationKey, string>> = {
   'guide.gear.fishingTitle': 'Fiske',
   'guide.gear.intro':
     'Utrustning är det din karaktär bär och föremålen du har med dig. Bättre utrustning är det stadigaste sättet att bli starkare, och du plockar upp det mesta bara genom att spela.',
-  'guide.gear.itemLevelBody':
-    'Om du vill ha ett snabbt sätt att jämföra två pjäser, slå på Visa föremålsnivå i alternativen. Utrustning som vunnits ute i världen, från fiender och uppdrag, visar då en föremålsnivå, en enda siffra för ungefär hur kraftfull den är utifrån var den kom ifrån, så att du på ett ögonkast kan se vilken uppgradering som väger tyngst, även mellan olika platser. Pjäser utan en sådan källa, som enkla handlarvaror och nybörjarutrustning, visar ingen föremålsnivå, så en saknad siffra är normalt, inte ett fel.',
   'guide.gear.qualityBody':
     'Varje föremål har en kvalitet, och dess namn är färglagt för att matcha så att du kan avläsa dess värde med en blick. Från vanligast till mest eftertraktad:',
   'guide.gear.qualityCommon': 'Vanlig',
@@ -7094,8 +7092,6 @@ export const sv_SE: Partial<Record<TranslationKey, string>> = {
   'guide.models.formTravel': 'Fleetform',
   'guide.models.groupForms': 'Druidformer',
   'guide.nav.sidebarLabel': 'Guideämnen',
-  'guide.professions.craftHowBody':
-    'Öppna Hantverksfönstret (standardtangent T) för att se varje recept du kan, vad vart och ett kräver och vad du har till hands; när materialen finns där gör ett klick jobbet. Vanliga recept kan tillverkas var som helst i världen. En handfull avancerade verktygsrecept ber dig i stället att stå vid hantverksnavet i Highwatch.',
   'guide.professions.craftHowTitle': 'Hantverksfönstret',
   'guide.professions.focusBody':
     'Varje huvudort har en Stadsfokus-panel för besökande skördare: stå i staden, öppna den bredvid minikartan, och rikta en liten budget av fokuspoäng mot de komponenttyper du bryr dig om. Ju mer fokus du ger en komponent, desto finare och rikare kommer den av varje senare kropp; din fördelning följer din karaktär vart den än vandrar, och du kan göra om den, gratis, vid vilket senare besök i staden som helst.',

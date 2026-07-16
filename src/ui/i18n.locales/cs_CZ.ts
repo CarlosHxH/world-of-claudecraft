@@ -6361,8 +6361,6 @@ export const cs_CZ: Partial<Record<TranslationKey, string>> = {
   'guide.gear.upgradeTitle': 'Udržuj výbavu aktuální',
   'guide.gear.upgradeBody':
     'Výměna starého kusu za čerstvé vylepšení udělá víc než dokonalá hra ve výbavě, ze které jsi vyrostl. Když padne něco lepšího nebo to nabídne úkol, vezmi to. Neschovávej dobré předměty na později.',
-  'guide.gear.itemLevelBody':
-    'Chceš-li rychle porovnat dva kusy, zapni v nastavení Zobrazit úroveň předmětu. Výbava vydobytá ve světě, od nepřátel a z úkolů, pak ukazuje item level, jedno číslo pro přibližnou sílu podle toho, odkud pochází, takže na první pohled poznáš, které vylepšení má větší váhu, i napříč různými sloty. Kusy bez takového původu, jako prosté základy od obchodníků a startovní výbava, žádný item level neukazují, takže chybějící číslo je normální, ne chyba.',
   'guide.gear.sourcesTitle': 'Odkud výbava pochází',
   'guide.gear.sourcesBody':
     'Většina raných vylepšení jsou odměny z úkolů, takže se vyplatí úkoly dokončovat, ne grindit. Nepřátelé pouštějí výbavu po porážce, prodejci ve městě prodávají solidní základy, řemeslníci mění nasbírané suroviny v nositelné kusy a hráčský trh ti dovolí nakupovat od ostatních dobrodruhů. Na vrcholu kopce kupují výbavu, kterou nikde jinde nenajdeš, dvě známkové měny: Známky výprav u správce výprav a Hrdinské značky u hrdinského zásobovače.',
@@ -6954,8 +6952,6 @@ export const cs_CZ: Partial<Record<TranslationKey, string>> = {
   'guide.models.formTravel': 'Svižná podoba',
   'guide.models.groupForms': 'Podoby druida',
   'guide.nav.sidebarLabel': 'Témata průvodce',
-  'guide.professions.craftHowBody':
-    'Otevři okno Výroby (výchozí klávesa T) a uvidíš každý recept, který znáš, co který potřebuje a co máš po ruce; když jsou materiály připravené, práci obstará jediné kliknutí. Běžné recepty lze vyrábět kdekoli ve světě. Hrstka pokročilých receptů na nástroje tě naopak žádá, aby ses postavil k výrobnímu centru v Highwatchi.',
   'guide.professions.craftHowTitle': 'Okno výroby',
   'guide.professions.focusBody':
     'Každé větší město drží panel Zaměření města pro přicházející sběrače: postav se ve městě, otevři ho vedle minimapy a namiř malý rozpočet bodů zaměření na typy komponent, na kterých ti záleží. Čím víc zaměření dáš dané komponentě, tím jemnější a bohatší padá z každého dalšího těla; tvé rozdělení následuje postavu, ať se toulá kamkoli, a můžeš ho zdarma přepracovat při každé pozdější návštěvě města.',

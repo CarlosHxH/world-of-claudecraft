@@ -11,28 +11,52 @@
 export const pending: Record<string, readonly string[]> = {
   "es": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.professions.craftHowBody"
   ],
   "es_ES": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.professions.craftHowBody"
   ],
   "fr_FR": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.gear.qualityBody",
+    "guide.gear.qualityCommon",
+    "guide.professions.craftHowBody",
+    "guide.professions.craftHowTitle",
+    "guide.professions.focusBody",
+    "guide.professions.focusTitle"
   ],
   "fr_CA": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.gear.qualityBody",
+    "guide.gear.qualityCommon",
+    "guide.professions.craftHowBody",
+    "guide.professions.craftHowTitle",
+    "guide.professions.focusBody",
+    "guide.professions.focusTitle"
   ],
   "en_CA": [],
   "it_IT": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.gear.qualityBody",
+    "guide.gear.qualityCommon",
+    "guide.professions.craftHowBody"
   ],
   "de_DE": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.professions.craftHowBody"
   ],
   "zh_CN": [],
   "zh_TW": [],
@@ -40,39 +64,59 @@ export const pending: Record<string, readonly string[]> = {
   "ja_JP": [],
   "pt_BR": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.professions.craftHowBody"
   ],
   "ru_RU": [],
   "cs_CZ": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.professions.craftHowBody"
   ],
   "nl_NL": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.gear.qualityBody",
+    "guide.professions.craftHowBody"
   ],
   "pl_PL": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.professions.craftHowBody"
   ],
   "id_ID": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.professions.craftHowBody"
   ],
   "tr_TR": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.professions.craftHowBody",
+    "guide.professions.craftHowTitle"
   ],
   "sv_SE": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.professions.craftHowBody"
   ],
   "vi_VN": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.professions.craftHowBody"
   ],
   "da_DK": [
     "guide.dungeonsPage.resetBody",
-    "guide.dungeonsPage.resetTitle"
+    "guide.dungeonsPage.resetTitle",
+    "guide.gear.itemLevelBody",
+    "guide.professions.craftHowBody"
   ]
 };

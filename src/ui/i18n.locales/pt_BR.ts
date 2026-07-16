@@ -5702,8 +5702,6 @@ export const pt_BR: Partial<Record<TranslationKey, string>> = {
   'guide.gear.fishingTitle': 'Pesca',
   'guide.gear.intro':
     'Equipamento é o que seu personagem veste e os itens que você carrega. Um equipamento melhor é a forma mais constante de ficar mais forte, e você pega a maior parte só de jogar.',
-  'guide.gear.itemLevelBody':
-    'Se você quer um jeito rápido de comparar duas peças, ative Mostrar nível do item nas opções. Equipamento conquistado no mundo, de inimigos e missões, passa a mostrar um nível do item, um único número para o quão poderoso ele é mais ou menos, com base em sua origem, então você percebe num relance qual melhoria pesa mais, mesmo entre espaços diferentes. Peças sem tal origem, como itens básicos de vendedor e equipamento inicial, não mostram nível do item, então um número ausente é normal, não um defeito.',
   'guide.gear.qualityBody':
     'Cada item tem uma qualidade, e seu nome é colorido para combinar, então você lê seu valor num relance. Do mais comum ao mais cobiçado:',
   'guide.gear.qualityCommon': 'Comum',
@@ -7186,8 +7184,6 @@ export const pt_BR: Partial<Record<TranslationKey, string>> = {
   'guide.models.formTravel': 'Forma de Fleet',
   'guide.models.groupForms': 'Formas de Druida',
   'guide.nav.sidebarLabel': 'Tópicos do guia',
-  'guide.professions.craftHowBody':
-    'Abra a janela de Criação (tecla padrão T) para ver cada receita que você conhece, o que cada uma exige e o que você tem em mãos; quando os materiais estão ali, um clique faz o trabalho. Receitas comuns podem ser criadas em qualquer lugar do mundo. Um punhado de receitas avançadas de ferramentas, em vez disso, pede que você esteja no polo de criação em Highwatch.',
   'guide.professions.craftHowTitle': 'A janela de criação',
   'guide.professions.focusBody':
     'Toda cidade principal mantém um painel de Foco da Cidade para os coletores de passagem: fique na cidade, abra-o ao lado do minimapa e direcione um pequeno orçamento de pontos de foco aos tipos de componente que lhe interessam. Quanto mais foco você dá a um componente, mais fino e rico ele sai de cada corpo dali em diante; sua distribuição acompanha seu personagem por onde ele andar, e você pode reajustá-la, de graça, em qualquer visita posterior à cidade.',
