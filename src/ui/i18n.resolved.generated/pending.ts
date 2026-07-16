@@ -9,25 +9,70 @@
 // Reproducibility is checked by tests/i18n_resolved_equivalence.test.ts.
 
 export const pending: Record<string, readonly string[]> = {
-  "es": [],
-  "es_ES": [],
-  "fr_FR": [],
-  "fr_CA": [],
+  "es": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
+  "es_ES": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
+  "fr_FR": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
+  "fr_CA": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
   "en_CA": [],
-  "it_IT": [],
-  "de_DE": [],
+  "it_IT": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
+  "de_DE": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
   "zh_CN": [],
   "zh_TW": [],
   "ko_KR": [],
   "ja_JP": [],
-  "pt_BR": [],
+  "pt_BR": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
   "ru_RU": [],
-  "cs_CZ": [],
-  "nl_NL": [],
-  "pl_PL": [],
-  "id_ID": [],
-  "tr_TR": [],
-  "sv_SE": [],
-  "vi_VN": [],
-  "da_DK": []
+  "cs_CZ": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
+  "nl_NL": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
+  "pl_PL": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
+  "id_ID": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
+  "tr_TR": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
+  "sv_SE": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
+  "vi_VN": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ],
+  "da_DK": [
+    "guide.dungeonsPage.resetBody",
+    "guide.dungeonsPage.resetTitle"
+  ]
 };
