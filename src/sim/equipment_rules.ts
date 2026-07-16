@@ -124,6 +124,11 @@ export function canEquipItem(cls: PlayerClass, item: ItemDef): boolean {
   if (isShieldItem(item)) {
     return !item.requiredClass || item.requiredClass.includes(cls);
   }
+  // Held offhands (caster orbs/tomes) carry no armor class or weapon proficiency:
+  // the literal requiredClass list is the whole rule, like shields.
+  if (item.kind === 'held_offhand') {
+    return !item.requiredClass || item.requiredClass.includes(cls);
+  }
   const armorType = armorTypeForItem(item);
   if (armorType) return ARMOR_RANK[armorType] <= ARMOR_RANK[maxArmorTypeForClass(cls)];
   // Rogues may dual wield one-handed weapons, but can never equip a two-hander.

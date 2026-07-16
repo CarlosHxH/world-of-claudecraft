@@ -495,6 +495,7 @@ export type ArmorType = 'cloth' | 'leather' | 'mail';
 type ItemKind =
   | 'weapon'
   | 'armor'
+  | 'held_offhand'
   | 'quest'
   | 'junk'
   | 'food'
@@ -714,12 +715,26 @@ export interface WeaponProc {
   effects: WeaponProcEffect[];
 }
 
+// Held-in-offhand caster stat stick (orb/tome): no armor class, no weapon damage,
+// equips in the offhand slot by literal requiredClass (equipment_rules).
+export interface HeldOffhandItemDef extends BaseItemDef {
+  kind: 'held_offhand';
+  slot: 'offhand';
+  armorType?: never;
+  weapon?: never;
+}
+
 export interface OtherItemDef extends BaseItemDef {
-  kind: Exclude<ItemKind, 'armor' | 'weapon'>;
+  kind: Exclude<ItemKind, 'armor' | 'weapon' | 'held_offhand'>;
   armorType?: never;
 }
 
-export type ItemDef = ArmorItemDef | WeaponItemDef | JewelryItemDef | OtherItemDef;
+export type ItemDef =
+  | ArmorItemDef
+  | WeaponItemDef
+  | JewelryItemDef
+  | HeldOffhandItemDef
+  | OtherItemDef;
 
 // Per-instance item payload (#1165). Additive and OPTIONAL: most items stay plain
 // {itemId, count} with no instance payload (fungible, market-listable). A slot

@@ -471,7 +471,9 @@ export function recalcPlayerStats(
     equipment.mainhand && ITEMS[equipment.mainhand]?.weapon ? equipment.mainhand : null;
   e.offhandItemId =
     equipment.offhand &&
-    (ITEMS[equipment.offhand]?.kind === 'weapon' || isShieldItem(ITEMS[equipment.offhand]))
+    (ITEMS[equipment.offhand]?.kind === 'weapon' ||
+      ITEMS[equipment.offhand]?.kind === 'held_offhand' ||
+      isShieldItem(ITEMS[equipment.offhand]))
       ? equipment.offhand
       : null;
   // Resolve the active weapon-skin cosmetic against the (possibly changed)

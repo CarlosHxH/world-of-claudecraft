@@ -138,7 +138,13 @@ export function buildHeroicVariants(
       const def = items[id];
       if (!def || def.heroicOf) continue; // skip missing ids and already-variants
       if (def.quality !== 'epic' && def.quality !== 'rare' && def.quality !== 'legendary') continue;
-      if (!def.slot || (def.kind !== 'armor' && def.kind !== 'weapon')) continue;
+      // Equippable combat gear only: armor (incl. shields), weapons, and held
+      // offhands, so every raid-boss normal drop has a heroic-claim upgrade.
+      if (
+        !def.slot ||
+        (def.kind !== 'armor' && def.kind !== 'weapon' && def.kind !== 'held_offhand')
+      )
+        continue;
       eligible.add(id);
     }
   }

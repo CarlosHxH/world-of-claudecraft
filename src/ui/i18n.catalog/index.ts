@@ -1243,6 +1243,11 @@ export const en = {
       soulflame_mantle: { name: 'Wraithfire Mantle' },
       stormcallers_crown: { name: 'Galecall Crown' },
       stormcallers_spaulders: { name: 'Galecall Spaulders' },
+      // Nythraxis raid (normal): the offhand-slot + two-hander epics.
+      bonewrought_greatsword: { name: 'Bonewrought Greatsword' },
+      direfang_greatblade: { name: 'Direfang Greatblade' },
+      bonewrought_bulwark: { name: 'Bonewrought Bulwark' },
+      wraithfire_orb: { name: 'Wraithfire Orb' },
       unknown_alien_weaponry: { name: 'Unknown Alien Weaponry' },
       alien_armor_plate: { name: 'Alien Armor Plate' },
       amber_crimson_armor_plate: { name: 'Amber Crimson' },

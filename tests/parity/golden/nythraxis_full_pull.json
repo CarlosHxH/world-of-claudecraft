@@ -9174,7 +9174,7 @@
       "tick": 628,
       "time": 31.4,
       "nextId": 421,
-      "state": "a243e89d",
+      "state": "3684aec9",
       "events": "7d4b7fa2",
       "rng": {
         "draws": 2994,
@@ -10043,11 +10043,11 @@
               },
               {
                 "count": 1,
-                "itemId": "stormcallers_spaulders"
+                "itemId": "nighttalon_crown"
               },
               {
                 "count": 1,
-                "itemId": "nighttalon_crown"
+                "itemId": "crownforged_dreadhelm"
               },
               {
                 "count": 1,
@@ -10427,7 +10427,7 @@
       "tick": 630,
       "time": 31.5,
       "nextId": 421,
-      "state": "4d6acbb9",
+      "state": "c406c6cd",
       "events": "741638a5",
       "rng": {
         "draws": 3000,
@@ -10438,7 +10438,7 @@
       "tick": 640,
       "time": 32,
       "nextId": 421,
-      "state": "59ae6467",
+      "state": "ee32f923",
       "events": "741638a5",
       "rng": {
         "draws": 3055,
@@ -10449,7 +10449,7 @@
       "tick": 650,
       "time": 32.5,
       "nextId": 421,
-      "state": "fd87935f",
+      "state": "9898cf63",
       "events": "741638a5",
       "rng": {
         "draws": 3091,
@@ -10460,7 +10460,7 @@
       "tick": 660,
       "time": 33,
       "nextId": 421,
-      "state": "b6ccb689",
+      "state": "d73f265d",
       "events": "741638a5",
       "rng": {
         "draws": 3140,
@@ -10471,7 +10471,7 @@
       "tick": 670,
       "time": 33.5,
       "nextId": 421,
-      "state": "a99b7231",
+      "state": "13db3fc5",
       "events": "741638a5",
       "rng": {
         "draws": 3184,
@@ -10482,7 +10482,7 @@
       "tick": 680,
       "time": 34,
       "nextId": 421,
-      "state": "e53c3b9f",
+      "state": "9f0c6643",
       "events": "741638a5",
       "rng": {
         "draws": 3243,
@@ -10493,7 +10493,7 @@
       "tick": 688,
       "time": 34.4,
       "nextId": 421,
-      "state": "9ca559f7",
+      "state": "0b3e87eb",
       "events": "7ba5f68a",
       "rng": {
         "draws": 3278,
@@ -11362,11 +11362,11 @@
               },
               {
                 "count": 1,
-                "itemId": "stormcallers_spaulders"
+                "itemId": "nighttalon_crown"
               },
               {
                 "count": 1,
-                "itemId": "nighttalon_crown"
+                "itemId": "crownforged_dreadhelm"
               },
               {
                 "count": 1,

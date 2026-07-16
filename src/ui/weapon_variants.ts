@@ -29,6 +29,8 @@ export const ITEM_WEAPON_VARIANTS: Record<string, string> = {
   wyrmfang_greatblade: 'adv_sword_2handed_color', // EPIC: gold greatblade
   deathless_greatblade: 'adv_sword_2handed_color', // EPIC: Heroic Nythraxis greatblade
   final_argument_greatblade: 'adv_sword_2handed_color', // WARFARE Strength main hand
+  bonewrought_greatsword: 'adv_sword_2handed_color', // EPIC: Nythraxis raid 2H
+  direfang_greatblade: 'adv_sword_2handed_color', // EPIC: Nythraxis hunter 2H
 
   // ---- daggers (only 4 models for ~21 daggers; spread as evenly as art allows)-
   rusty_dagger: 'dagger_a',

@@ -157,7 +157,8 @@ export function equipItem(
   if (!r) return;
   const { meta, e: p } = r;
   const def = ITEMS[itemId];
-  if (!def?.slot || (def.kind !== 'weapon' && def.kind !== 'armor')) return;
+  if (!def?.slot || (def.kind !== 'weapon' && def.kind !== 'armor' && def.kind !== 'held_offhand'))
+    return;
   if (ctx.countItem(itemId, meta.entityId) <= 0) return;
   if (targetSlot && !slotAcceptsItem(def, targetSlot)) {
     ctx.error(meta.entityId, 'That does not go in that slot.');
@@ -432,7 +433,7 @@ export function useItem(ctx: SimContext, itemId: string, pid?: number): ItemUseR
       school: 'nature',
     });
     ctx.emit({ type: 'log', text: `You quaff ${def.name}.`, color: '#c9f', pid: meta.entityId });
-  } else if (def.kind === 'weapon' || def.kind === 'armor') {
+  } else if (def.kind === 'weapon' || def.kind === 'armor' || def.kind === 'held_offhand') {
     equipItem(ctx, itemId, meta.entityId);
   } else if (def.kind === 'bag') {
     equipBagCmd(ctx, itemId, undefined, meta.entityId);

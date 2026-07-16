@@ -36,6 +36,8 @@ export const WEAPON_TYPE_BY_ITEM: Record<string, ItemWeaponType> = {
   moonscale_saber: 'sword',
   deathless_greatblade: 'sword',
   final_argument_greatblade: 'sword',
+  bonewrought_greatsword: 'sword',
+  direfang_greatblade: 'sword',
   // Daggers
   rusty_dagger: 'dagger',
   keen_dirk: 'dagger',

@@ -281,6 +281,7 @@ const WEAPONS = 'models/weapons';
 const ITEM_OFFHAND_MODELS: Readonly<Record<string, string>> = {
   eastbrook_buckler: 'shield_round',
   highwatch_wallshield: 'shield_square',
+  bonewrought_bulwark: 'shield_square',
 };
 
 function itemModelKey(

@@ -16,6 +16,9 @@ const itemStringsEn = {
     },
     slots: {
       mainhand: 'Main Hand',
+      // The tooltip label for hand:'twohand' weapons (the classic "Two-Hand"
+      // line), rendered instead of the mainhand slot name.
+      twoHand: 'Two-Hand',
       offhand: 'Off Hand',
       helmet: 'Helmet',
       neck: 'Neck',
@@ -211,6 +214,7 @@ export const itemStrings = {
       },
       slots: {
         mainhand: 'Mano principal',
+        twoHand: 'Dos manos',
         offhand: 'Mano secundaria',
         helmet: 'Cabeza',
         neck: 'Cuello',
@@ -372,6 +376,7 @@ export const itemStrings = {
       },
       slots: {
         mainhand: 'Main droite',
+        twoHand: 'Deux mains',
         offhand: 'Main gauche',
         helmet: 'Tête',
         neck: 'Cou',
@@ -534,6 +539,7 @@ export const itemStrings = {
       },
       slots: {
         mainhand: 'Mano principale',
+        twoHand: 'Due mani',
         offhand: 'Mano secondaria',
         helmet: 'Testa',
         neck: 'Collo',
@@ -692,6 +698,7 @@ export const itemStrings = {
       },
       slots: {
         mainhand: 'Waffenhand',
+        twoHand: 'Zweihändig',
         offhand: 'Nebenhand',
         helmet: 'Kopf',
         neck: 'Hals',
@@ -852,6 +859,7 @@ export const itemStrings = {
       },
       slots: {
         mainhand: '主手',
+        twoHand: '双手',
         offhand: '副手',
         helmet: '头部',
         neck: '颈部',
@@ -1005,6 +1013,7 @@ export const itemStrings = {
       },
       slots: {
         mainhand: '主手',
+        twoHand: '雙手',
         offhand: '副手',
         helmet: '頭部',
         neck: '頸部',
@@ -1158,6 +1167,7 @@ export const itemStrings = {
       },
       slots: {
         mainhand: '주장비',
+        twoHand: '양손',
         offhand: '보조장비',
         helmet: '머리',
         neck: '목',
@@ -1315,6 +1325,7 @@ export const itemStrings = {
       },
       slots: {
         mainhand: 'メインハンド',
+        twoHand: '両手',
         offhand: 'オフハンド',
         helmet: '頭',
         neck: '首',
@@ -1472,6 +1483,7 @@ export const itemStrings = {
       },
       slots: {
         mainhand: 'Mão principal',
+        twoHand: 'Duas mãos',
         offhand: 'Mão secundária',
         helmet: 'Cabeça',
         neck: 'Pescoço',
@@ -1629,6 +1641,7 @@ export const itemStrings = {
       },
       slots: {
         mainhand: 'Правая рука',
+        twoHand: 'Двуручное',
         offhand: 'Левая рука',
         helmet: 'Голова',
         neck: 'Шея',
