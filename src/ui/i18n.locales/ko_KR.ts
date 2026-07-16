@@ -2799,7 +2799,7 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': '신비의 마법 강화',
   'entities.abilities.arcane_power.description':
     '10초 동안 주문 공격력이 20%, 주문 가속이 10% 증가합니다. (비전 전문화 상징)',
-  'entities.abilities.combustion.name': '발화',
+  'entities.abilities.combustion.name': '불사조의 무아지경',
   'entities.abilities.combustion.description':
     '15초 동안 주문 치명타율이 50% 증가합니다. (화염 전문화 상징)',
   'entities.abilities.icy_veins.name': '얼음 핏줄',
@@ -7696,7 +7696,7 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
   'guide.abilityHook.fingers_of_frost':
     '냉기 화살이 때때로 얼음창을 강화해 대상을 얼어붙은 것으로 간주하게 합니다.',
   'guide.abilityHook.brain_freeze':
-    '냉기 화살이 때때로 다음 진눈깨비를 즉시 시전하게 하고 피해를 증가시킵니다.',
+    '냉기 화살이 때때로 다음 겨울의 채찍을 즉시 시전하게 하고 피해를 증가시킵니다.',
   'guide.abilityHook.shatter': '얼어붙은 대상에 대한 주문의 치명타 확률이 크게 증가합니다.',
   'guide.abilityHook.frozen_orb':
     '느리게 움직이는 얼음 구슬을 적 무리에 굴려, 주변을 얼리고 냉기 발동 효과를 생성합니다.',
@@ -7710,7 +7710,7 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.ice_lance.name': '얼음창',
   'entities.abilities.ice_lance.description':
     '얼음창을 던져 {damage}의 냉기 피해를 입힙니다. 얼어붙은 대상에게는 피해가 세 배로 증가합니다. 서리의 손가락 또는 혹한의 추위 한 충전을 소모하면 대상을 얼어붙은 것으로 간주합니다. (냉기)',
-  'entities.abilities.flurry.name': '진눈깨비',
+  'entities.abilities.flurry.name': '겨울의 채찍',
   'entities.abilities.flurry.description':
     '얼음 화살 세 발을 날려 각각 {damage}의 냉기 피해를 입히고 대상에게 혹한의 추위를 부여합니다. 다음 2회의 호환 주문은 대상을 얼어붙은 것으로 간주합니다. 두뇌 빙결이 발동하면 즉시 시전되고 피해가 30% 증가하며 재사용 대기시간을 무시합니다. (냉기)',
   'entities.abilities.frozen_orb.name': '얼어붙은 구슬',
@@ -7733,8 +7733,8 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
     '서리끝 창이 15% 확률로 서리의 손가락을 부여합니다. 최대 2회 충전됩니다. 다음 얼음창은 대상을 얼어붙은 것으로 간주합니다. (냉기)',
   'entities.abilities.brain_freeze.name': '두뇌 빙결',
   'entities.abilities.brain_freeze.description':
-    '서리끝 창이 20% 확률로 다음 진눈깨비를 즉시 시전하게 하고 피해를 30% 증가시키며 재사용 대기시간을 무시하게 합니다. (냉기)',
-  'entities.abilities.shatter.name': '산산조각',
+    '서리끝 창이 20% 확률로 다음 겨울의 채찍을 즉시 시전하게 하고 피해를 30% 증가시키며 재사용 대기시간을 무시하게 합니다. (냉기)',
+  'entities.abilities.shatter.name': '바스라지는 파멸',
   'entities.abilities.shatter.description':
     '얼어붙은 대상에 대한 주문의 치명타 확률이 50% 증가하고, 해당 치명타의 피해가 20% 증가합니다. 서리의 손가락과 혹한의 추위도 대상을 얼어붙은 것으로 간주합니다. (냉기)',
   'entities.abilities.temporal_cascade.name': '시간의 연쇄',
@@ -7760,7 +7760,7 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': '이글거리는 방벽',
   'entities.abilities.blazing_barrier.description':
     '자신을 불길로 감싸 130의 피해를 흡수합니다. 60초 동안 지속됩니다. (화염)',
-  'entities.abilities.cold_snap.name': '매서운 한파',
+  'entities.abilities.cold_snap.name': '겨울의 부름',
   'entities.abilities.cold_snap.description':
     '깜빡임 걸음, 서리장막 및 상급 투명화의 재사용 대기시간을 즉시 초기화합니다. (마법사 특성)',
   'entities.abilities.greater_invisibility.name': '상급 투명화',

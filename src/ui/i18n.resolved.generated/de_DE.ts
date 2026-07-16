@@ -6110,7 +6110,7 @@ export const de_DE: EnTranslations = {
         "description": "Hüllt Euch in Flammen und absorbiert 60 Sek. lang 130 Schaden. (Feuer)"
       },
       "cold_snap": {
-        "name": "Kälteeinbruch",
+        "name": "Ruf des Winters",
         "description": "Beendet die Abklingzeit von Flimmerschritt, Frostschleier und Großer Unsichtbarkeit. (Magiertalent)"
       },
       "greater_invisibility": {
@@ -6730,7 +6730,7 @@ export const de_DE: EnTranslations = {
         "description": "Erhöht Zauberschaden um 20% und Zaubertempo um 10% für 10 Sek. (Arkan-Signatur)"
       },
       "combustion": {
-        "name": "Verbrennung",
+        "name": "Phönix-Trance",
         "description": "Erhöht die kritische Zaubertrefferchance 15 Sek. lang um 50%. (Feuer-Signatur)"
       },
       "icy_veins": {

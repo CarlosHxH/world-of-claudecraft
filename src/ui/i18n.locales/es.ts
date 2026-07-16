@@ -3188,7 +3188,7 @@ export const es: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Barrera llameante',
   'entities.abilities.blazing_barrier.description':
     'Te envuelve en llamas y absorbe 130 de daño durante 60 s. (Fuego)',
-  'entities.abilities.cold_snap.name': 'Ola de frío',
+  'entities.abilities.cold_snap.name': 'Llamada del invierno',
   'entities.abilities.cold_snap.description':
     'Finaliza el tiempo de reutilización de Paso centelleante, Velo de Escarcha e Invisibilidad superior. (Talento de mago)',
   'entities.abilities.greater_invisibility.name': 'Invisibilidad superior',
@@ -3622,7 +3622,7 @@ export const es: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Poder Arcano',
   'entities.abilities.arcane_power.description':
     'Aumenta el daño con hechizos un 20% y la celeridad con hechizos un 10% durante 10 s. (habilidad distintiva de Arcano)',
-  'entities.abilities.combustion.name': 'Combustión',
+  'entities.abilities.combustion.name': 'Trance del fénix',
   'entities.abilities.combustion.description':
     'Aumenta la probabilidad de golpe crítico con hechizos un 50% durante 15 s. (habilidad distintiva de Fuego)',
   'entities.abilities.icy_veins.name': 'Venas heladas',

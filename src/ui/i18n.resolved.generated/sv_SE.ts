@@ -6110,7 +6110,7 @@ export const sv_SE: EnTranslations = {
         "description": "Svep in dig i lågor och absorbera 130 skada i 60 sek. (Eld)"
       },
       "cold_snap": {
-        "name": "Köldknäpp",
+        "name": "Vinterns kallelse",
         "description": "Avslutar nedkylningen för Flimmersteg, Frostslöja och Förbättrad osynlighet. (magikertalang)"
       },
       "greater_invisibility": {
@@ -6730,7 +6730,7 @@ export const sv_SE: EnTranslations = {
         "description": "Ökar besvärjelseskada med 20% och besvärjelsehastighet med 10% i 10 sek. (Arkan signatur)"
       },
       "combustion": {
-        "name": "Förbränning",
+        "name": "Fenixtrans",
         "description": "Ökar kritisk chans med besvärjelser med 50% i 15 sek. (Eldsignatur)"
       },
       "icy_veins": {

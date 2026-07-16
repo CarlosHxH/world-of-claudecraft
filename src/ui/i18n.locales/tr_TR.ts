@@ -2357,7 +2357,7 @@ export const tr_TR: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Gizemli Güç',
   'entities.abilities.arcane_power.description':
     'Büyü hasarını %20 ve büyü hızını %10 artırır, 10 sn sürer. (Gizem imza yeteneği)',
-  'entities.abilities.combustion.name': 'Yakma',
+  'entities.abilities.combustion.name': 'Anka Transı',
   'entities.abilities.combustion.description':
     'Büyü kritik şansını %50 artırır, 15 sn sürer. (Ateş imza yeteneği)',
   'entities.abilities.icy_veins.name': 'Buzlu Damarlar',
@@ -7755,7 +7755,7 @@ export const tr_TR: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Alevli Bariyer',
   'entities.abilities.blazing_barrier.description':
     'Kendini alevlerle sararak 60 sn. boyunca 130 hasarı soğurursun. (Ateş)',
-  'entities.abilities.cold_snap.name': 'Soğuk Şok',
+  'entities.abilities.cold_snap.name': 'Kışın Çağrısı',
   'entities.abilities.cold_snap.description':
     'Titrek Adım, Ayaz Örtüsü ve Üstün Görünmezlik yeteneklerinin bekleme süresini bitirir. (büyücü yeteneği)',
   'entities.abilities.greater_invisibility.name': 'Üstün Görünmezlik',

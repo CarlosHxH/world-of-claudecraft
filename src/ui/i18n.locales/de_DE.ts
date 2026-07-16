@@ -3190,7 +3190,7 @@ export const de_DE: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Flammende Barriere',
   'entities.abilities.blazing_barrier.description':
     'Hüllt Euch in Flammen und absorbiert 60 Sek. lang 130 Schaden. (Feuer)',
-  'entities.abilities.cold_snap.name': 'Kälteeinbruch',
+  'entities.abilities.cold_snap.name': 'Ruf des Winters',
   'entities.abilities.cold_snap.description':
     'Beendet die Abklingzeit von Flimmerschritt, Frostschleier und Großer Unsichtbarkeit. (Magiertalent)',
   'entities.abilities.greater_invisibility.name': 'Große Unsichtbarkeit',
@@ -3620,7 +3620,7 @@ export const de_DE: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Arkane Macht',
   'entities.abilities.arcane_power.description':
     'Erhöht Zauberschaden um 20% und Zaubertempo um 10% für 10 Sek. (Arkan-Signatur)',
-  'entities.abilities.combustion.name': 'Verbrennung',
+  'entities.abilities.combustion.name': 'Phönix-Trance',
   'entities.abilities.combustion.description':
     'Erhöht die kritische Zaubertrefferchance 15 Sek. lang um 50%. (Feuer-Signatur)',
   'entities.abilities.icy_veins.name': 'Eisige Adern',

@@ -6110,7 +6110,7 @@ export const tr_TR: EnTranslations = {
         "description": "Kendini alevlerle sararak 60 sn. boyunca 130 hasarı soğurursun. (Ateş)"
       },
       "cold_snap": {
-        "name": "Soğuk Şok",
+        "name": "Kışın Çağrısı",
         "description": "Titrek Adım, Ayaz Örtüsü ve Üstün Görünmezlik yeteneklerinin bekleme süresini bitirir. (büyücü yeteneği)"
       },
       "greater_invisibility": {
@@ -6730,7 +6730,7 @@ export const tr_TR: EnTranslations = {
         "description": "Büyü hasarını %20 ve büyü hızını %10 artırır, 10 sn sürer. (Gizem imza yeteneği)"
       },
       "combustion": {
-        "name": "Yakma",
+        "name": "Anka Transı",
         "description": "Büyü kritik şansını %50 artırır, 15 sn sürer. (Ateş imza yeteneği)"
       },
       "icy_veins": {

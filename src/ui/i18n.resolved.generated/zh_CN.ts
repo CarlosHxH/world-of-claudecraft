@@ -2841,7 +2841,7 @@ export const zh_CN: EnTranslations = {
       "ice_lance": "用来消耗冰霜触发效果的瞬发冰刺，对冻结目标造成的伤害大幅提高。",
       "flurry": "快速射出三枚冰弹，使目标寒冷，让你接下来的冰霜法术视其为已冻结。",
       "fingers_of_frost": "你的冰霜箭有时会强化一次冰枪术，使其命中时视目标为已冻结。",
-      "brain_freeze": "你的冰霜箭有时会使下一次冰风暴瞬发且造成更高伤害。",
+      "brain_freeze": "你的冰霜箭有时会使下一次凛冬之鞭瞬发且造成更高伤害。",
       "shatter": "你的法术对冻结目标的暴击几率大幅提高。",
       "frozen_orb": "让一颗缓慢的冰球穿过敌群，冻结沿途一切并触发你的冰霜效果。",
       "blizzard": "以冰雪覆盖一片区域，持续伤害并减速整群敌人。",
@@ -6110,7 +6110,7 @@ export const zh_CN: EnTranslations = {
         "description": "以烈焰环绕自身，吸收 130 点伤害，持续 60 秒。（火焰）"
       },
       "cold_snap": {
-        "name": "急速冷却",
+        "name": "冬之召还",
         "description": "立即结束闪烁步、霜幕和强效隐形术的冷却时间。（法师天赋）"
       },
       "greater_invisibility": {
@@ -6158,8 +6158,8 @@ export const zh_CN: EnTranslations = {
         "description": "投掷一枚冰刺，造成 {damage} 点冰霜伤害；对冻结目标造成三倍伤害。消耗寒冰指或一层凛冬之寒，使目标视为已冻结。（冰霜）"
       },
       "flurry": {
-        "name": "冰风暴",
-        "description": "连续射出三枚冰弹，每枚造成 {damage} 点冰霜伤害，并对目标施加凛冬之寒：接下来 2 个兼容法术会将其视为已冻结。思维冻结会使冰风暴瞬发、伤害提高 30%，并无视冷却时间。（冰霜）"
+        "name": "凛冬之鞭",
+        "description": "连续射出三枚冰弹，每枚造成 {damage} 点冰霜伤害，并对目标施加凛冬之寒：接下来 2 个兼容法术会将其视为已冻结。思维冻结会使凛冬之鞭瞬发、伤害提高 30%，并无视冷却时间。（冰霜）"
       },
       "frozen_orb": {
         "name": "寒冰宝珠",
@@ -6187,10 +6187,10 @@ export const zh_CN: EnTranslations = {
       },
       "brain_freeze": {
         "name": "思维冻结",
-        "description": "霜缘之矛有 20% 几率使你的下一次冰风暴变为瞬发、伤害提高 30%，并且不受冷却时间限制。（冰霜）"
+        "description": "霜缘之矛有 20% 几率使你的下一次凛冬之鞭变为瞬发、伤害提高 30%，并且不受冷却时间限制。（冰霜）"
       },
       "shatter": {
-        "name": "碎冰",
+        "name": "脆碎之殇",
         "description": "你的法术对冻结目标的暴击几率提高 50%，这些暴击造成的伤害提高 20%。寒冰指和凛冬之寒会将目标视为已冻结。（冰霜）"
       },
       "conjure_water": {
@@ -6730,7 +6730,7 @@ export const zh_CN: EnTranslations = {
         "description": "法术伤害提高20%，法术急速提高10%，持续10秒。（奥术专精招牌）"
       },
       "combustion": {
-        "name": "燃烧",
+        "name": "凤凰出神",
         "description": "法术暴击几率提高50%，持续15秒。（火焰专精招牌）"
       },
       "icy_veins": {

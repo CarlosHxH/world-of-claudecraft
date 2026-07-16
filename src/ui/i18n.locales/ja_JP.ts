@@ -2814,7 +2814,7 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'アーケインパワー',
   'entities.abilities.arcane_power.description':
     '10秒間、呪文ダメージが20%、呪文ヘイストが10%上がります。（アーケイン特性のシグネチャ）',
-  'entities.abilities.combustion.name': 'コンバッション',
+  'entities.abilities.combustion.name': '不死鳥のトランス',
   'entities.abilities.combustion.description':
     '15秒間、呪文クリティカル率が50%上がります。（ファイア特性のシグネチャ）',
   'entities.abilities.icy_veins.name': 'アイシーヴェインズ',
@@ -7706,7 +7706,7 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
   'guide.abilityHook.fingers_of_frost':
     '氷の矢が、ときどき次のアイスランスに対象を凍結状態として扱う力を与えます。',
   'guide.abilityHook.brain_freeze':
-    '氷の矢が、ときどき次のフルーリーを即時発動にして威力を高めます。',
+    '氷の矢が、ときどき次のウィンターラッシュを即時発動にして威力を高めます。',
   'guide.abilityHook.shatter': '凍結した対象に対する呪文のクリティカル率が大幅に上昇します。',
   'guide.abilityHook.frozen_orb':
     'ゆっくり進む氷球を敵の群れへ放ち、周囲を冷やして氷の効果を発生させます。',
@@ -7720,7 +7720,7 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.ice_lance.name': 'アイスランス',
   'entities.abilities.ice_lance.description':
     '氷の槍を投げ、{damage}の氷ダメージを与えます。凍結した対象には3倍のダメージを与えます。フィンガーズ・オブ・フロストまたはウィンターズ・チルを1チャージ消費すると、対象を凍結状態として扱います。（氷）',
-  'entities.abilities.flurry.name': 'フルーリー',
+  'entities.abilities.flurry.name': 'ウィンターラッシュ',
   'entities.abilities.flurry.description':
     '3発の氷弾を放ち、それぞれ{damage}の氷ダメージを与え、対象にウィンターズ・チルを付与します。次に命中する対応呪文2回は対象を凍結状態として扱います。ブレインフリーズ発動時は即時発動となり、威力が30%上昇してクールダウンを無視します。（氷）',
   'entities.abilities.frozen_orb.name': 'フローズンオーブ',
@@ -7743,8 +7743,8 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
     'ライムランスが15%の確率でフィンガーズ・オブ・フロストを1チャージ付与します（最大2チャージ）。次のアイスランスは対象を凍結状態として扱います。（氷）',
   'entities.abilities.brain_freeze.name': 'ブレインフリーズ',
   'entities.abilities.brain_freeze.description':
-    'ライムランスが20%の確率で、次のフルーリーを即時発動にし、威力を30%上昇させ、クールダウンを無視させます。（氷）',
-  'entities.abilities.shatter.name': '粉砕',
+    'ライムランスが20%の確率で、次のウィンターラッシュを即時発動にし、威力を30%上昇させ、クールダウンを無視させます。（氷）',
+  'entities.abilities.shatter.name': '脆き破滅',
   'entities.abilities.shatter.description':
     '凍結した対象に対する呪文のクリティカル率が50%上昇し、そのクリティカルダメージが20%上昇します。フィンガーズ・オブ・フロストとウィンターズ・チルも対象を凍結状態として扱います。（氷）',
   'entities.abilities.temporal_cascade.name': '時の連鎖',
@@ -7770,7 +7770,7 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'ブレイジングバリア',
   'entities.abilities.blazing_barrier.description':
     '自身を炎で包み、130ダメージを吸収します。60秒間持続します。（火）',
-  'entities.abilities.cold_snap.name': 'コールドスナップ',
+  'entities.abilities.cold_snap.name': '冬の呼び戻し',
   'entities.abilities.cold_snap.description':
     'フリッカーステップ、フロストヴェール、グレーターインビジビリティのクールダウンを完了させます。（メイジタレント）',
   'entities.abilities.greater_invisibility.name': 'グレーターインビジビリティ',

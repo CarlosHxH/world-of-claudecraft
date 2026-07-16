@@ -6110,7 +6110,7 @@ export const it_IT: EnTranslations = {
         "description": "Ti avvolge nelle fiamme, assorbendo 130 danni per 60 s. (Fuoco)"
       },
       "cold_snap": {
-        "name": "Colpo di freddo",
+        "name": "Richiamo dell'inverno",
         "description": "Termina il tempo di recupero di Passo fulmineo, Velo di Gelo e Invisibilità superiore. (Talento del mago)"
       },
       "greater_invisibility": {
@@ -6730,7 +6730,7 @@ export const it_IT: EnTranslations = {
         "description": "Aumenta i danni magici del 20% e la celerità magica del 10% per 10 s. (firma Arcano)"
       },
       "combustion": {
-        "name": "Combustione",
+        "name": "Trance della fenice",
         "description": "Aumenta la probabilità di critico magico del 50% per 15 s. (firma Fuoco)"
       },
       "icy_veins": {

@@ -2301,7 +2301,7 @@ export const pl_PL: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Moc Arkanów',
   'entities.abilities.arcane_power.description':
     'Zwiększa obrażenia zaklęć o 20% i przyspieszenie zaklęć o 10% na 10 sek. (specjalizacja Arkana)',
-  'entities.abilities.combustion.name': 'Zapłon',
+  'entities.abilities.combustion.name': 'Trans feniksa',
   'entities.abilities.combustion.description':
     'Zwiększa szansę na krytyczny efekt zaklęć o 50% na 15 sek. (specjalizacja Ogień)',
   'entities.abilities.icy_veins.name': 'Lodowe Żyły',
@@ -7792,7 +7792,7 @@ export const pl_PL: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Płonąca bariera',
   'entities.abilities.blazing_barrier.description':
     'Otaczasz się płomieniami, pochłaniając 130 obrażeń przez 60 sek. (Ogień)',
-  'entities.abilities.cold_snap.name': 'Nagły chłód',
+  'entities.abilities.cold_snap.name': 'Zew zimy',
   'entities.abilities.cold_snap.description':
     'Kończy czas odnowienia Migotliwego kroku, Mroźnej zasłony i Większej niewidzialności. (talent maga)',
   'entities.abilities.greater_invisibility.name': 'Większa niewidzialność',

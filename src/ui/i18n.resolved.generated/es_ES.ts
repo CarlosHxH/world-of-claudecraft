@@ -6110,7 +6110,7 @@ export const es_ES: EnTranslations = {
         "description": "Rodéate de fuego para absorber 130 de daño durante 60 s. (Fuego)"
       },
       "cold_snap": {
-        "name": "Frío súbito",
+        "name": "Llamada invernal",
         "description": "Restablece el tiempo de reutilización de Paso centelleante, Velo de Escarcha e Invisibilidad mejorada. (Talento de mago)"
       },
       "greater_invisibility": {
@@ -6730,7 +6730,7 @@ export const es_ES: EnTranslations = {
         "description": "Aumenta el daño con hechizos un 20% y la celeridad con hechizos un 10% durante 10 s. (habilidad distintiva de Arcano)"
       },
       "combustion": {
-        "name": "Combustión",
+        "name": "Trance del fénix",
         "description": "Aumenta la probabilidad de golpe crítico con hechizos un 50% durante 15 s. (habilidad distintiva de Fuego)"
       },
       "icy_veins": {

@@ -2286,7 +2286,7 @@ export const sv_SE: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Arkan kraft',
   'entities.abilities.arcane_power.description':
     'Ökar besvärjelseskada med 20% och besvärjelsehastighet med 10% i 10 sek. (Arkan signatur)',
-  'entities.abilities.combustion.name': 'Förbränning',
+  'entities.abilities.combustion.name': 'Fenixtrans',
   'entities.abilities.combustion.description':
     'Ökar kritisk chans med besvärjelser med 50% i 15 sek. (Eldsignatur)',
   'entities.abilities.icy_veins.name': 'Isiga Ådror',
@@ -7746,7 +7746,7 @@ export const sv_SE: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Flammande barriär',
   'entities.abilities.blazing_barrier.description':
     'Svep in dig i lågor och absorbera 130 skada i 60 sek. (Eld)',
-  'entities.abilities.cold_snap.name': 'Köldknäpp',
+  'entities.abilities.cold_snap.name': 'Vinterns kallelse',
   'entities.abilities.cold_snap.description':
     'Avslutar nedkylningen för Flimmersteg, Frostslöja och Förbättrad osynlighet. (magikertalang)',
   'entities.abilities.greater_invisibility.name': 'Förbättrad osynlighet',

@@ -6110,7 +6110,7 @@ export const cs_CZ: EnTranslations = {
         "description": "Obklopíš se plameny a pohltíš 130 bodů poškození po dobu 60 s. (Oheň)"
       },
       "cold_snap": {
-        "name": "Ledové sevření",
+        "name": "Volání zimy",
         "description": "Okamžitě dokončí dobu obnovení Mžikového kroku, Mrazivého závoje a Dokonalé neviditelnosti. (mágovský talent)"
       },
       "greater_invisibility": {
@@ -6730,7 +6730,7 @@ export const cs_CZ: EnTranslations = {
         "description": "Zvýší tvoje poškození kouzly o 20 % a rychlost sesílání o 10 % na 10 s. (klíčová schopnost Tajemné magie)"
       },
       "combustion": {
-        "name": "Bleskový žár",
+        "name": "Fénixův trans",
         "description": "Zvýší šanci na kritický zásah kouzlem o 50 % na 15 s. (klíčová schopnost Ohně)"
       },
       "icy_veins": {

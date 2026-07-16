@@ -3174,7 +3174,7 @@ export const it_IT: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Barriera ardente',
   'entities.abilities.blazing_barrier.description':
     'Ti avvolge nelle fiamme, assorbendo 130 danni per 60 s. (Fuoco)',
-  'entities.abilities.cold_snap.name': 'Colpo di freddo',
+  'entities.abilities.cold_snap.name': "Richiamo dell'inverno",
   'entities.abilities.cold_snap.description':
     'Termina il tempo di recupero di Passo fulmineo, Velo di Gelo e Invisibilità superiore. (Talento del mago)',
   'entities.abilities.greater_invisibility.name': 'Invisibilità superiore',
@@ -3609,7 +3609,7 @@ export const it_IT: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Potere Arcano',
   'entities.abilities.arcane_power.description':
     'Aumenta i danni magici del 20% e la celerità magica del 10% per 10 s. (firma Arcano)',
-  'entities.abilities.combustion.name': 'Combustione',
+  'entities.abilities.combustion.name': 'Trance della fenice',
   'entities.abilities.combustion.description':
     'Aumenta la probabilità di critico magico del 50% per 15 s. (firma Fuoco)',
   'entities.abilities.icy_veins.name': 'Vene Gelide',

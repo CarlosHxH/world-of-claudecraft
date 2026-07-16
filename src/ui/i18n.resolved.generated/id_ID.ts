@@ -6110,7 +6110,7 @@ export const id_ID: EnTranslations = {
         "description": "Selimuti dirimu dengan api untuk menyerap 130 kerusakan selama 60 dtk. (Api)"
       },
       "cold_snap": {
-        "name": "Hentakan Dingin",
+        "name": "Panggilan Musim Dingin",
         "description": "Mengakhiri waktu pemulihan Langkah Kedip, Selubung Beku, dan Ketaklihatan Agung. (talenta mage)"
       },
       "greater_invisibility": {
@@ -6730,7 +6730,7 @@ export const id_ID: EnTranslations = {
         "description": "Meningkatkan kerusakan mantra sebesar 20% dan haste mantra sebesar 10% selama 10 dtk. (signature Arcane)"
       },
       "combustion": {
-        "name": "Pembakaran",
+        "name": "Trans Feniks",
         "description": "Meningkatkan peluang kritis mantra sebesar 50% selama 15 dtk. (signature Fire)"
       },
       "icy_veins": {

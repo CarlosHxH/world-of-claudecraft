@@ -2392,7 +2392,7 @@ export const id_ID: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Kekuatan Arkan',
   'entities.abilities.arcane_power.description':
     'Meningkatkan kerusakan mantra sebesar 20% dan haste mantra sebesar 10% selama 10 dtk. (signature Arcane)',
-  'entities.abilities.combustion.name': 'Pembakaran',
+  'entities.abilities.combustion.name': 'Trans Feniks',
   'entities.abilities.combustion.description':
     'Meningkatkan peluang kritis mantra sebesar 50% selama 15 dtk. (signature Fire)',
   'entities.abilities.icy_veins.name': 'Urat Es',
@@ -7836,7 +7836,7 @@ export const id_ID: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Penghalang Membara',
   'entities.abilities.blazing_barrier.description':
     'Selimuti dirimu dengan api untuk menyerap 130 kerusakan selama 60 dtk. (Api)',
-  'entities.abilities.cold_snap.name': 'Hentakan Dingin',
+  'entities.abilities.cold_snap.name': 'Panggilan Musim Dingin',
   'entities.abilities.cold_snap.description':
     'Mengakhiri waktu pemulihan Langkah Kedip, Selubung Beku, dan Ketaklihatan Agung. (talenta mage)',
   'entities.abilities.greater_invisibility.name': 'Ketaklihatan Agung',

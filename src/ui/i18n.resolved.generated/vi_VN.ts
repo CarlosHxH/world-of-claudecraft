@@ -6110,7 +6110,7 @@ export const vi_VN: EnTranslations = {
         "description": "Bao bọc bản thân trong lửa, hấp thụ 130 sát thương trong 60 giây. (Lửa)"
       },
       "cold_snap": {
-        "name": "Cú Lạnh Đột Ngột",
+        "name": "Tiếng Gọi Mùa Đông",
         "description": "Hoàn tất thời gian hồi của Bước Chớp, Màn Sương Giá và Tàng Hình Cao Cấp. (tài năng pháp sư)"
       },
       "greater_invisibility": {
@@ -6730,7 +6730,7 @@ export const vi_VN: EnTranslations = {
         "description": "Tăng sát thương phép 20% và tốc độ phép 10% trong 10 giây. (kỹ năng đặc trưng Arcane)"
       },
       "combustion": {
-        "name": "Thiêu Đốt",
+        "name": "Phượng Hoàng Xuất Thần",
         "description": "Tăng tỉ lệ chí mạng phép 50% trong 15 giây. (kỹ năng đặc trưng Fire)"
       },
       "icy_veins": {

@@ -2698,7 +2698,7 @@ export const zh_TW: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': '祕法強化',
   'entities.abilities.arcane_power.description':
     '法術傷害提高20%，法術加速提高10%，持續10秒。（祕法專精招牌）',
-  'entities.abilities.combustion.name': '燃燒',
+  'entities.abilities.combustion.name': '鳳凰出神',
   'entities.abilities.combustion.description':
     '法術致命一擊機率提高50%，持續15秒。（火焰專精招牌）',
   'entities.abilities.icy_veins.name': '冰冷血脈',
@@ -7337,7 +7337,7 @@ export const zh_TW: Partial<Record<TranslationKey, string>> = {
   'guide.abilityHook.flurry': '快速射出三枚冰彈，使目標寒冷，讓你接下來的冰霜法術視其為已凍結。',
   'guide.abilityHook.fingers_of_frost':
     '你的冰霜箭有時會強化一次冰槍術，使其命中時將目標視為已凍結。',
-  'guide.abilityHook.brain_freeze': '你的冰霜箭有時會使下一次冰風暴瞬發且造成更高傷害。',
+  'guide.abilityHook.brain_freeze': '你的冰霜箭有時會使下一次凜冬之鞭瞬發且造成更高傷害。',
   'guide.abilityHook.shatter': '你的法術對凍結目標的致命一擊機率大幅提高。',
   'guide.abilityHook.frozen_orb': '讓一顆緩慢的冰球穿過敵群，冰凍沿途的一切並觸發你的冰霜效果。',
   'guide.abilityHook.blizzard': '以冰雪覆蓋一片區域，持續傷害並緩速整群敵人。',
@@ -7349,9 +7349,9 @@ export const zh_TW: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.ice_lance.name': '冰槍術',
   'entities.abilities.ice_lance.description':
     '投擲一枚冰刺，造成 {damage} 點冰霜傷害；對凍結目標造成三倍傷害。消耗寒冰指或一層凜冬之寒，使目標視為已凍結。（冰霜）',
-  'entities.abilities.flurry.name': '冰風暴',
+  'entities.abilities.flurry.name': '凜冬之鞭',
   'entities.abilities.flurry.description':
-    '連續射出三枚冰彈，每枚造成 {damage} 點冰霜傷害，並對目標施加凜冬之寒：接下來 2 個相容法術會將其視為已凍結。思維凍結會使冰風暴瞬發、傷害提高 30%，並跳過冷卻時間。（冰霜）',
+    '連續射出三枚冰彈，每枚造成 {damage} 點冰霜傷害，並對目標施加凜冬之寒：接下來 2 個相容法術會將其視為已凍結。思維凍結會使凜冬之鞭瞬發、傷害提高 30%，並跳過冷卻時間。（冰霜）',
   'entities.abilities.frozen_orb.name': '寒冰寶珠',
   'entities.abilities.frozen_orb.description':
     '釋放一顆旋轉的寒冰寶珠，向前飄移 8 秒，每秒對附近敵人造成 {damage} 點冰霜傷害並使其緩速 30%。寶珠命中時會產生寒冰指。（冰霜）',
@@ -7372,8 +7372,8 @@ export const zh_TW: Partial<Record<TranslationKey, string>> = {
     '霜緣之矛有 15% 機率賦予寒冰指，最多 2 層：你的下一次冰槍術會將目標視為已凍結。（冰霜）',
   'entities.abilities.brain_freeze.name': '思維凍結',
   'entities.abilities.brain_freeze.description':
-    '霜緣之矛有 20% 機率使你的下一次冰風暴變為瞬發、傷害提高 30%，並且不受冷卻時間限制。（冰霜）',
-  'entities.abilities.shatter.name': '碎冰',
+    '霜緣之矛有 20% 機率使你的下一次凜冬之鞭變為瞬發、傷害提高 30%，並且不受冷卻時間限制。（冰霜）',
+  'entities.abilities.shatter.name': '脆碎之殤',
   'entities.abilities.shatter.description':
     '你的法術對凍結目標的致命一擊機率提高 50%，這些致命一擊造成的傷害提高 20%。寒冰指和凜冬之寒會將目標視為已凍結。（冰霜）',
   'entities.abilities.temporal_cascade.name': '時光奔流',
@@ -7399,7 +7399,7 @@ export const zh_TW: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': '烈焰屏障',
   'entities.abilities.blazing_barrier.description':
     '以烈焰環繞自身，吸收 130 點傷害，持續 60 秒。（火焰）',
-  'entities.abilities.cold_snap.name': '急速冷卻',
+  'entities.abilities.cold_snap.name': '冬之召還',
   'entities.abilities.cold_snap.description':
     '立即結束閃爍步、霜幕與強效隱形術的冷卻時間。（法師天賦）',
   'entities.abilities.greater_invisibility.name': '強效隱形術',

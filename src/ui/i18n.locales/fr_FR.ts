@@ -3566,7 +3566,7 @@ export const fr_FR: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Barrière flamboyante',
   'entities.abilities.blazing_barrier.description':
     'Vous enveloppe de flammes et absorbe 130 points de dégâts pendant 60 s. (Feu)',
-  'entities.abilities.cold_snap.name': 'Morsure du froid',
+  'entities.abilities.cold_snap.name': "Rappel de l'hiver",
   'entities.abilities.cold_snap.description':
     'Met fin au temps de recharge de Pas scintillant, Voile de givre et Invisibilité supérieure. (Talent de mage)',
   'entities.abilities.greater_invisibility.name': 'Invisibilité supérieure',
@@ -4000,7 +4000,7 @@ export const fr_FR: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Pouvoir des Arcanes',
   'entities.abilities.arcane_power.description':
     'Augmente les dégâts des sorts de 20% et la hâte des sorts de 10% pendant 10 s. (signature Arcane)',
-  'entities.abilities.combustion.name': 'Combustion',
+  'entities.abilities.combustion.name': 'Transe du phénix',
   'entities.abilities.combustion.description':
     'Augmente les chances de coup critique des sorts de 50% pendant 15 s. (signature Feu)',
   'entities.abilities.icy_veins.name': 'Veines glaciales',

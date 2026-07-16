@@ -2362,7 +2362,7 @@ export const vi_VN: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Sức Mạnh Bí Thuật',
   'entities.abilities.arcane_power.description':
     'Tăng sát thương phép 20% và tốc độ phép 10% trong 10 giây. (kỹ năng đặc trưng Arcane)',
-  'entities.abilities.combustion.name': 'Thiêu Đốt',
+  'entities.abilities.combustion.name': 'Phượng Hoàng Xuất Thần',
   'entities.abilities.combustion.description':
     'Tăng tỉ lệ chí mạng phép 50% trong 15 giây. (kỹ năng đặc trưng Fire)',
   'entities.abilities.icy_veins.name': 'Huyết Mạch Băng Giá',
@@ -7772,7 +7772,7 @@ export const vi_VN: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Lá Chắn Rực Lửa',
   'entities.abilities.blazing_barrier.description':
     'Bao bọc bản thân trong lửa, hấp thụ 130 sát thương trong 60 giây. (Lửa)',
-  'entities.abilities.cold_snap.name': 'Cú Lạnh Đột Ngột',
+  'entities.abilities.cold_snap.name': 'Tiếng Gọi Mùa Đông',
   'entities.abilities.cold_snap.description':
     'Hoàn tất thời gian hồi của Bước Chớp, Màn Sương Giá và Tàng Hình Cao Cấp. (tài năng pháp sư)',
   'entities.abilities.greater_invisibility.name': 'Tàng Hình Cao Cấp',

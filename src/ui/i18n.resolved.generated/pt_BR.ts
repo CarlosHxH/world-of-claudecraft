@@ -6110,7 +6110,7 @@ export const pt_BR: EnTranslations = {
         "description": "Envolve você em chamas, absorvendo 130 de dano por 60 s. (Fogo)"
       },
       "cold_snap": {
-        "name": "Estalo Gélido",
+        "name": "Chamado do Inverno",
         "description": "Encerra o tempo de recarga de Passo Cintilante, Véu de Gelo e Invisibilidade Maior. (Talento de mago)"
       },
       "greater_invisibility": {
@@ -6730,7 +6730,7 @@ export const pt_BR: EnTranslations = {
         "description": "Aumenta o dano de feitiços em 20% e a aceleração de feitiços em 10% por 10 s. (assinatura Arcano)"
       },
       "combustion": {
-        "name": "Combustão",
+        "name": "Transe da Fênix",
         "description": "Aumenta a chance de acerto crítico de feitiços em 50% por 15 s. (assinatura Fogo)"
       },
       "icy_veins": {

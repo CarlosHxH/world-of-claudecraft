@@ -135,7 +135,7 @@ export const fr_CA: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Bouclier ardent',
   'entities.abilities.blazing_barrier.description':
     'Entoure-toi de feu et absorbe 130 points de dégâts pendant 60 s. (Feu)',
-  'entities.abilities.cold_snap.name': 'Vague de froid',
+  'entities.abilities.cold_snap.name': 'Rappel hivernal',
   'entities.abilities.cold_snap.description':
     'Réinitialise la recharge de Pas scintillant, Voile de givre et Invisibilité accrue. (Talent de mage)',
   'entities.abilities.greater_invisibility.name': 'Invisibilité accrue',

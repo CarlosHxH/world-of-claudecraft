@@ -2841,7 +2841,7 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Мощь тайной магии',
   'entities.abilities.arcane_power.description':
     'Повышает урон от заклинаний на 20% и скорость заклинаний на 10% на 10 сек. (знаковое умение Тайной магии)',
-  'entities.abilities.combustion.name': 'Возгорание',
+  'entities.abilities.combustion.name': 'Транс феникса',
   'entities.abilities.combustion.description':
     'Повышает шанс критического эффекта заклинаний на 50% на 15 сек. (знаковое умение Огня)',
   'entities.abilities.icy_veins.name': 'Ледяные жилы',
@@ -7851,7 +7851,7 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
   'guide.abilityHook.fingers_of_frost':
     'Ледяные стрелы иногда усиливают «Ледяное копьё», позволяя ему считать цель замороженной.',
   'guide.abilityHook.brain_freeze':
-    'Ледяные стрелы иногда делают следующую «Череду» мгновенной и более мощной.',
+    'Ледяные стрелы иногда делают следующую «Зимнюю плеть» мгновенной и более мощной.',
   'guide.abilityHook.shatter':
     'Заклинания гораздо чаще наносят критический урон замороженным целям.',
   'guide.abilityHook.frozen_orb':
@@ -7867,9 +7867,9 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.ice_lance.name': 'Ледяное копьё',
   'entities.abilities.ice_lance.description':
     'Бросает ледяное копьё, наносящее {damage} ед. урона от магии льда, втрое больше по замороженной цели. Расходует «Ледяные пальцы» или заряд «Зимней стужи», чтобы считать цель замороженной. (ветка «Лёд»)',
-  'entities.abilities.flurry.name': 'Череда',
+  'entities.abilities.flurry.name': 'Зимняя плеть',
   'entities.abilities.flurry.description':
-    'Выпускает три ледяных снаряда, каждый из которых наносит {damage} ед. урона от магии льда, и накладывает на цель «Зимнюю стужу»: следующие 2 подходящих заклинания считают её замороженной. «Заморозка мозгов» делает «Череду» мгновенной, усиливает на 30% и позволяет игнорировать время восстановления. (ветка «Лёд»)',
+    'Выпускает три ледяных снаряда, каждый из которых наносит {damage} ед. урона от магии льда, и накладывает на цель «Зимнюю стужу»: следующие 2 подходящих заклинания считают её замороженной. «Заморозка мозгов» делает «Зимнюю плеть» мгновенной, усиливает на 30% и позволяет игнорировать время восстановления. (ветка «Лёд»)',
   'entities.abilities.frozen_orb.name': 'Ледяной шар',
   'entities.abilities.frozen_orb.description':
     'Выпускает вихревой ледяной шар, который движется вперёд 8 сек., ежесекундно наносит ближайшим противникам {damage} ед. урона от магии льда и замедляет их на 30%. Попадания создают «Ледяные пальцы». (ветка «Лёд»)',
@@ -7890,8 +7890,8 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
     '«Копьё инея» с вероятностью 15% даёт заряд «Ледяных пальцев», вплоть до 2 зарядов: следующее «Ледяное копьё» считает цель замороженной. (ветка «Лёд»)',
   'entities.abilities.brain_freeze.name': 'Заморозка мозгов',
   'entities.abilities.brain_freeze.description':
-    '«Копьё инея» с вероятностью 20% делает следующую «Череду» мгновенной, усиливает её на 30% и позволяет игнорировать время восстановления. (ветка «Лёд»)',
-  'entities.abilities.shatter.name': 'Обледенение',
+    '«Копьё инея» с вероятностью 20% делает следующую «Зимнюю плеть» мгновенной, усиливает её на 30% и позволяет игнорировать время восстановления. (ветка «Лёд»)',
+  'entities.abilities.shatter.name': 'Хрупкая погибель',
   'entities.abilities.shatter.description':
     'Вероятность критического эффекта ваших заклинаний против замороженных целей повышается на 50%, а урон таких критических ударов на 20%. «Ледяные пальцы» и «Зимняя стужа» также позволяют считать цель замороженной. (ветка «Лёд»)',
   'entities.abilities.temporal_cascade.name': 'Временной каскад',
@@ -7917,7 +7917,7 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Пылающая преграда',
   'entities.abilities.blazing_barrier.description':
     'Окутывает вас пламенем, поглощая 130 ед. урона в течение 60 сек. (ветка «Огонь»)',
-  'entities.abilities.cold_snap.name': 'Холодная хватка',
+  'entities.abilities.cold_snap.name': 'Зов зимы',
   'entities.abilities.cold_snap.description':
     'Мгновенно завершает восстановление «Мерцающего шага», «Морозной завесы» и «Великой невидимости». (талант мага)',
   'entities.abilities.greater_invisibility.name': 'Великая невидимость',

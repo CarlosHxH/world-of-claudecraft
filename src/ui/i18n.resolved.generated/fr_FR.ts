@@ -6110,7 +6110,7 @@ export const fr_FR: EnTranslations = {
         "description": "Vous enveloppe de flammes et absorbe 130 points de dégâts pendant 60 s. (Feu)"
       },
       "cold_snap": {
-        "name": "Morsure du froid",
+        "name": "Rappel de l'hiver",
         "description": "Met fin au temps de recharge de Pas scintillant, Voile de givre et Invisibilité supérieure. (Talent de mage)"
       },
       "greater_invisibility": {
@@ -6730,7 +6730,7 @@ export const fr_FR: EnTranslations = {
         "description": "Augmente les dégâts des sorts de 20% et la hâte des sorts de 10% pendant 10 s. (signature Arcane)"
       },
       "combustion": {
-        "name": "Combustion",
+        "name": "Transe du phénix",
         "description": "Augmente les chances de coup critique des sorts de 50% pendant 15 s. (signature Feu)"
       },
       "icy_veins": {

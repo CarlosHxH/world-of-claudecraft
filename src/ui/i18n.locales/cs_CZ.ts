@@ -6964,7 +6964,7 @@ export const cs_CZ: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Příval éteru',
   'entities.abilities.arcane_power.description':
     'Zvýší tvoje poškození kouzly o 20 % a rychlost sesílání o 10 % na 10 s. (klíčová schopnost Tajemné magie)',
-  'entities.abilities.combustion.name': 'Bleskový žár',
+  'entities.abilities.combustion.name': 'Fénixův trans',
   'entities.abilities.combustion.description':
     'Zvýší šanci na kritický zásah kouzlem o 50 % na 15 s. (klíčová schopnost Ohně)',
   'entities.abilities.icy_veins.name': 'Ledové žíly',
@@ -7676,7 +7676,7 @@ export const cs_CZ: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Ohnivá bariéra',
   'entities.abilities.blazing_barrier.description':
     'Obklopíš se plameny a pohltíš 130 bodů poškození po dobu 60 s. (Oheň)',
-  'entities.abilities.cold_snap.name': 'Ledové sevření',
+  'entities.abilities.cold_snap.name': 'Volání zimy',
   'entities.abilities.cold_snap.description':
     'Okamžitě dokončí dobu obnovení Mžikového kroku, Mrazivého závoje a Dokonalé neviditelnosti. (mágovský talent)',
   'entities.abilities.greater_invisibility.name': 'Dokonalá neviditelnost',

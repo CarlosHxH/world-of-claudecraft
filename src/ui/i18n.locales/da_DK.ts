@@ -2278,7 +2278,7 @@ export const da_DK: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Arkan kraft',
   'entities.abilities.arcane_power.description':
     'Øger besværgelsesskade med 20% og besværgelseshast med 10% i 10 sek. (Arcane-signatur)',
-  'entities.abilities.combustion.name': 'Forbrænding',
+  'entities.abilities.combustion.name': 'Føniks-trance',
   'entities.abilities.combustion.description':
     'Øger kritisk chance med besværgelser med 50% i 15 sek. (Fire-signatur)',
   'entities.abilities.icy_veins.name': 'Iskolde Årer',
@@ -7730,7 +7730,7 @@ export const da_DK: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Flammende barriere',
   'entities.abilities.blazing_barrier.description':
     'Indhyl dig i flammer og absorber 130 skade i 60 sek. (Ild)',
-  'entities.abilities.cold_snap.name': 'Kuldechok',
+  'entities.abilities.cold_snap.name': 'Vinterens kalden',
   'entities.abilities.cold_snap.description':
     'Afslutter nedkølingen for Flimmertrin, Frostslør og Større usynlighed. (magikertalent)',
   'entities.abilities.greater_invisibility.name': 'Større usynlighed',

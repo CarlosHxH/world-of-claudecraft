@@ -2329,7 +2329,7 @@ export const nl_NL: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Arcanekracht',
   'entities.abilities.arcane_power.description':
     'Verhoogt spreukschade met 20% en spreukhaast met 10% gedurende 10 sec. (Arcane-signatuur)',
-  'entities.abilities.combustion.name': 'Verbranding',
+  'entities.abilities.combustion.name': 'Feniks-trance',
   'entities.abilities.combustion.description':
     'Verhoogt de kritieke kans van spreuken met 50% gedurende 15 sec. (Fire-signatuur)',
   'entities.abilities.icy_veins.name': 'IJzige Aders',
@@ -7845,7 +7845,7 @@ export const nl_NL: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Vlammende barrière',
   'entities.abilities.blazing_barrier.description':
     'Omhul jezelf met vlammen en absorbeer 130 schade gedurende 60 sec. (Vuur)',
-  'entities.abilities.cold_snap.name': 'Koudegolf',
+  'entities.abilities.cold_snap.name': 'Roep van de winter',
   'entities.abilities.cold_snap.description':
     'Voltooit de afkoeltijd van Flitsstap, Vorstsluier en Grotere onzichtbaarheid. (magiërstalent)',
   'entities.abilities.greater_invisibility.name': 'Grotere onzichtbaarheid',

@@ -3164,7 +3164,7 @@ export const pt_BR: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.blazing_barrier.name': 'Barreira Flamejante',
   'entities.abilities.blazing_barrier.description':
     'Envolve você em chamas, absorvendo 130 de dano por 60 s. (Fogo)',
-  'entities.abilities.cold_snap.name': 'Estalo Gélido',
+  'entities.abilities.cold_snap.name': 'Chamado do Inverno',
   'entities.abilities.cold_snap.description':
     'Encerra o tempo de recarga de Passo Cintilante, Véu de Gelo e Invisibilidade Maior. (Talento de mago)',
   'entities.abilities.greater_invisibility.name': 'Invisibilidade Maior',
@@ -3594,7 +3594,7 @@ export const pt_BR: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.arcane_power.name': 'Poder Arcano',
   'entities.abilities.arcane_power.description':
     'Aumenta o dano de feitiços em 20% e a aceleração de feitiços em 10% por 10 s. (assinatura Arcano)',
-  'entities.abilities.combustion.name': 'Combustão',
+  'entities.abilities.combustion.name': 'Transe da Fênix',
   'entities.abilities.combustion.description':
     'Aumenta a chance de acerto crítico de feitiços em 50% por 15 s. (assinatura Fogo)',
   'entities.abilities.icy_veins.name': 'Veias Gélidas',

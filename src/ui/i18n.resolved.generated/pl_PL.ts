@@ -6110,7 +6110,7 @@ export const pl_PL: EnTranslations = {
         "description": "Otaczasz się płomieniami, pochłaniając 130 obrażeń przez 60 sek. (Ogień)"
       },
       "cold_snap": {
-        "name": "Nagły chłód",
+        "name": "Zew zimy",
         "description": "Kończy czas odnowienia Migotliwego kroku, Mroźnej zasłony i Większej niewidzialności. (talent maga)"
       },
       "greater_invisibility": {
@@ -6730,7 +6730,7 @@ export const pl_PL: EnTranslations = {
         "description": "Zwiększa obrażenia zaklęć o 20% i przyspieszenie zaklęć o 10% na 10 sek. (specjalizacja Arkana)"
       },
       "combustion": {
-        "name": "Zapłon",
+        "name": "Trans feniksa",
         "description": "Zwiększa szansę na krytyczny efekt zaklęć o 50% na 15 sek. (specjalizacja Ogień)"
       },
       "icy_veins": {

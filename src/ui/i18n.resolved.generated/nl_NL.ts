@@ -6110,7 +6110,7 @@ export const nl_NL: EnTranslations = {
         "description": "Omhul jezelf met vlammen en absorbeer 130 schade gedurende 60 sec. (Vuur)"
       },
       "cold_snap": {
-        "name": "Koudegolf",
+        "name": "Roep van de winter",
         "description": "Voltooit de afkoeltijd van Flitsstap, Vorstsluier en Grotere onzichtbaarheid. (magiërstalent)"
       },
       "greater_invisibility": {
@@ -6730,7 +6730,7 @@ export const nl_NL: EnTranslations = {
         "description": "Verhoogt spreukschade met 20% en spreukhaast met 10% gedurende 10 sec. (Arcane-signatuur)"
       },
       "combustion": {
-        "name": "Verbranding",
+        "name": "Feniks-trance",
         "description": "Verhoogt de kritieke kans van spreuken met 50% gedurende 15 sec. (Fire-signatuur)"
       },
       "icy_veins": {

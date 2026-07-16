@@ -6110,7 +6110,7 @@ export const da_DK: EnTranslations = {
         "description": "Indhyl dig i flammer og absorber 130 skade i 60 sek. (Ild)"
       },
       "cold_snap": {
-        "name": "Kuldechok",
+        "name": "Vinterens kalden",
         "description": "Afslutter nedkølingen for Flimmertrin, Frostslør og Større usynlighed. (magikertalent)"
       },
       "greater_invisibility": {
@@ -6730,7 +6730,7 @@ export const da_DK: EnTranslations = {
         "description": "Øger besværgelsesskade med 20% og besværgelseshast med 10% i 10 sek. (Arcane-signatur)"
       },
       "combustion": {
-        "name": "Forbrænding",
+        "name": "Føniks-trance",
         "description": "Øger kritisk chance med besværgelser med 50% i 15 sek. (Fire-signatur)"
       },
       "icy_veins": {
