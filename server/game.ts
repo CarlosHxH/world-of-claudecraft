@@ -295,6 +295,7 @@ export const SIM_LAP_PHASES = [
   'respawns',
   'worldBosses',
   'groundAoEs',
+  'frozenOrbs',
   'despawnDecay',
   'projectiles',
   'p.move',
