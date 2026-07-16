@@ -169,7 +169,11 @@ describe('Lifesap adversarial balance checks', () => {
     expect(rage).toBe(100);
   });
 
-  it('provides at least 20x the rage from five real same-level mob swings', () => {
+  it('provides at least 12x the redesigned Warrior rage from five same-level mob swings', () => {
+    // The old 20x margin was calibrated against the pre-overhaul rage model
+    // (rage-from-taking = damage / (1.5 * attackerLevel)). The redesigned
+    // warrior mints damage / attackerLevel instead, so five swings (154 total
+    // damage at level 20) yield 7.7 rage and the comparison lands at ~13x.
     const warrior = new Sim({ seed: 11, playerClass: 'warrior', autoEquip: true });
     warrior.setPlayerLevel(20);
     const p = warrior.player;
@@ -179,8 +183,8 @@ describe('Lifesap adversarial balance checks', () => {
     wolf.facing = Math.atan2(p.pos.x - wolf.pos.x, p.pos.z - wolf.pos.z);
     for (let i = 0; i < 5; i++) (warrior as unknown as SimInternals).mobSwing(wolf, p);
 
-    expect(p.resource).toBeGreaterThan(0);
-    expect(measureLifesapPotential('bear_form')).toBeGreaterThanOrEqual(p.resource * 20);
+    expect(p.resource).toBeCloseTo(7.7);
+    expect(measureLifesapPotential('bear_form')).toBeGreaterThanOrEqual(p.resource * 12);
   });
 
   it('makes cat energy generation 2x baseline (tuned down from the 2.5x exploit finding)', () => {

@@ -49,10 +49,16 @@ describe('Pyroblast (mage)', () => {
   });
 
   it('is learned only at level 5', () => {
-    // Pyroblast rides the DPS specs since the Chronomancy gating; resolve as fire.
-    const fire = computeTalentModifiers('mage', { ...emptyAllocation(), spec: 'fire' } as never);
-    expect(abilitiesKnownAt('mage', 4, fire).some((k) => k.def.id === 'pyroblast')).toBe(false);
-    expect(abilitiesKnownAt('mage', 5, fire).some((k) => k.def.id === 'pyroblast')).toBe(true);
+    // Pyroblast is the Pyromancy SIGNATURE since the owner leveling pass
+    // (talents_classic.ts): the spec pick grants it, and grants bypass the
+    // learnLevel gate, so the level-5 arrival is enforced by the spec unlock
+    // (SPEC_UNLOCK_LEVEL = 5). Resolve the allocation at the player level like
+    // every live caller does; repairAllocation strips the spec below 5.
+    const alloc = { ...emptyAllocation(), spec: 'fire' } as never;
+    const at4 = computeTalentModifiers('mage', alloc, 4);
+    const at5 = computeTalentModifiers('mage', alloc, 5);
+    expect(abilitiesKnownAt('mage', 4, at4).some((k) => k.def.id === 'pyroblast')).toBe(false);
+    expect(abilitiesKnownAt('mage', 5, at5).some((k) => k.def.id === 'pyroblast')).toBe(true);
   });
 
   it('casts with its cast time and damages the target over time', () => {

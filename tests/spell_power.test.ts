@@ -183,10 +183,15 @@ describe('Spell Power end-to-end through the sim', () => {
   });
 
   it('each Arcane Missiles channel tick deals fixed base + Spell Power bonus', () => {
-    const { sim, p } = leveled('mage');
+    const { sim, pid, p } = leveled('mage');
+    // The mage rework gated Aether Darts (arcane_missiles) behind the Chronomancy
+    // (arcane) spec, so commit the spec before resolving the known ability.
+    expect(sim.setSpec('arcane', pid)).toBe(true);
     const dummy = spawnDummy(sim, p);
     p.targetId = dummy.id;
-    const am = abilitiesKnownAt('mage', MAX_LEVEL).find((k) => k.def.id === 'arcane_missiles')!;
+    const am = abilitiesKnownAt('mage', MAX_LEVEL, sim.meta(pid)!.talentMods).find(
+      (k) => k.def.id === 'arcane_missiles',
+    )!;
     const dd = am.effects.find((e) => e.type === 'directDamage') as { min: number; max: number };
     expect(dd.min).toBe(dd.max); // fixed per-missile base, no roll variance
     const perTickBonus = channelTickBonus(p.spellPower, am.def);

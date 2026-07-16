@@ -10,7 +10,7 @@ import { describe, expect, it } from 'vitest';
 import { abilitiesKnownAt } from '../src/sim/content/classes';
 import { computeTalentModifiers } from '../src/sim/content/talents';
 import { MOBS } from '../src/sim/data';
-import { createMob } from '../src/sim/entity';
+import { createMob, recalcPlayerStats } from '../src/sim/entity';
 import { Sim } from '../src/sim/sim';
 import type { Aura, Entity } from '../src/sim/types';
 
@@ -188,15 +188,28 @@ describe('Gloamveil Form amplifies Shadow damage by 15%', () => {
 });
 
 describe('channeled spell crits take the spell crit-damage mastery', () => {
-  it("a Fire mage's Aether Darts channel crits harder than a specless mage's (same rolls)", () => {
+  it('a spell crit-damage mastery makes the Aether Darts channel crit harder (same rolls)', () => {
     // Drive the channeled directDamage tick path (casting_lifecycle) with a guaranteed
-    // crit. Two identical mages on the same seed: only the Fire spec's +50% spell crit
-    // damage differs, so its total channel damage must exceed the specless baseline.
-    const drive = (spec: 'fire' | null): number => {
+    // crit. The mage rework gated Aether Darts to Chronomancy and swapped the fire
+    // spec's Afterflame (+50% spell crit damage) mastery for Ignition, so no spec that
+    // knows a channeled directDamage spell carries critDmgSpellPct anymore (Ruination
+    // still does, but warlocks have no such channel). Pin the mechanism itself: two
+    // identical Chronomancy mages on the same seed, one with the 0.5 critDmgSpellPct
+    // (Afterflame's and Ruination's exact value) injected through the talent-mods slot
+    // recalcPlayerStats bakes onto critDmgSpellBonus.
+    const drive = (mastery: boolean): number => {
       const sim = new Sim({ seed: 9, playerClass: 'mage', autoEquip: true });
       sim.setPlayerLevel(20);
-      if (spec) expect(sim.setSpec(spec)).toBe(true);
+      expect(sim.setSpec('arcane')).toBe(true); // Aether Darts is Chronomancy-gated
       const p = sim.entities.get(sim.playerId) as Entity;
+      if (mastery) {
+        const meta = sim.players.get(sim.playerId);
+        if (!meta) throw new Error('missing player meta');
+        // Mutating the mods (not the raw entity field) means any mid-drive recalc
+        // re-derives the same bonus instead of wiping it.
+        meta.talentMods.global.critDmgSpellPct = 0.5;
+        recalcPlayerStats(p, meta.cls, meta.equipment, meta.talentMods, meta.equipmentInstance);
+      }
       p.facing = 0;
       p.maxHp = p.hp = 5_000_000; // survive the dummy's melee during the channel
       p.castPushbackReduction = 1; // pushback-immune so the channel runs all 3 ticks
@@ -231,12 +244,12 @@ describe('channeled spell crits take the spell crit-damage mastery', () => {
       for (let i = 0; i < 20 * 5; i++) sim.tick();
       return dummy.maxHp - dummy.hp;
     };
-    const fire = drive('fire');
-    const plain = drive(null);
-    expect(fire).toBeGreaterThan(0);
+    const boosted = drive(true);
+    const plain = drive(false);
+    expect(boosted).toBeGreaterThan(0);
     expect(plain).toBeGreaterThan(0);
-    // Fire crits at 1.5 + 0.5 = 2.0x, specless at 1.5x, over the same rolls.
-    expect(fire).toBeGreaterThan(plain);
+    // The mastery crits at 1.5 + 0.5 = 2.0x, the baseline at 1.5x, over the same rolls.
+    expect(boosted).toBeGreaterThan(plain);
   });
 });
 

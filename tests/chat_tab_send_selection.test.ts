@@ -26,6 +26,7 @@ describe('chat tab send selection', () => {
     const hud = Object.create(Hud.prototype) as InstanceType<typeof Hud>;
     const state = hud as unknown as {
       activeChatTab: string;
+      stickyTarget: string;
       pendingChatLinks: Array<{ display: string; token: string }>;
       chatLogEl: {
         children: never[];
@@ -37,6 +38,9 @@ describe('chat tab send selection', () => {
       selectChatTab: (tab: string, persist: boolean) => void;
     };
     state.activeChatTab = 'party';
+    // Object.create skips field initializers; seed the sticky send target the
+    // constructor would set (hud.ts stickyTarget = 'say').
+    state.stickyTarget = 'say';
     state.pendingChatLinks = [];
     state.chatLogEl = { children: [], classList, scrollTop: 0, scrollHeight: 0 };
     state.combatLogEl = { classList };
@@ -47,8 +51,11 @@ describe('chat tab send selection', () => {
     state.selectChatTab('world', false);
     expect(hud.composeChatSend('need one healer')).toBe('/world need one healer');
 
+    // On the All tab a plain line goes to the sticky "last used" target (say by
+    // default), and say composes with the explicit /say prefix so an online
+    // session's remembered whisper/guild mode is reset (see chat_channels.ts).
     state.selectChatTab('all', false);
-    expect(hud.composeChatSend('back in chat')).toBe('/s back in chat');
+    expect(hud.composeChatSend('back in chat')).toBe('/say back in chat');
   }, 15_000);
 
   it('selects a channel opened from the add-tab menu', () => {

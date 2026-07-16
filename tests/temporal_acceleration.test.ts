@@ -1,7 +1,7 @@
 // Temporal Acceleration (the Chronomancer's Bloodlust) + the shared full-haste /
 // exhaustion rework of the group haste burst. Verifies FULL haste (attack + cast +
 // channel), the shared `sated` exhaustion that stops chaining, group/raid scope, and
-// that the base Red Banner stays attack-only with no exhaustion.
+// that the base flagless form (Wildfang Rally) stays attack-only with no exhaustion.
 import { describe, expect, it } from 'vitest';
 import { spellHasteMult } from '../src/sim/combat/spell_combat';
 import { ABILITIES } from '../src/sim/data';
@@ -134,13 +134,16 @@ describe('Temporal Acceleration: scope', () => {
   });
 });
 
-describe('Red Banner stays attack-only (no full haste, no exhaustion)', () => {
+describe('Wildfang Rally stays attack-only (no full haste, no exhaustion)', () => {
   it('keeps the base aoeAllyHaste form: no spell haste, no exhaustion, no group gate', () => {
-    // Red Banner reuses aoeAllyHaste WITHOUT the new flags, so the dispatch applies
-    // only buff_haste (attack speed), never buff_spellhaste or the sated debuff, and
+    // The ported warrior redesign removed Red Banner (the old flagless exemplar), so
+    // the surviving base-form user is the hunter's Wildfang Rally (aspect_of_the_wild):
+    // it reuses aoeAllyHaste WITHOUT the new flags, so the dispatch applies only
+    // buff_haste (attack speed), never buff_spellhaste or the sated debuff, and
     // still fans out to every friendly in radius (not group-scoped).
-    const eff = ABILITIES.red_banner.effects.find((e) => e.type === 'aoeAllyHaste');
+    const eff = ABILITIES.aspect_of_the_wild.effects.find((e) => e.type === 'aoeAllyHaste');
     expect(eff).toBeTruthy();
+    expect(eff && 'mult' in eff ? eff.mult : 0).toBe(1.05);
     expect(eff && 'spell' in eff ? eff.spell : undefined).toBeUndefined();
     expect(eff && 'exhaust' in eff ? eff.exhaust : undefined).toBeUndefined();
     expect(eff && 'groupOnly' in eff ? eff.groupOnly : undefined).toBeUndefined();

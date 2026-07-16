@@ -53,11 +53,13 @@ describe('priest redesign', () => {
     expect(p.auras.some((a) => a.kind === 'next_cast_free')).toBe(false); // consumed
   });
 
-  it('Lingering Grace ward: a full-duration Renew hardens into an absorb', () => {
+  it('Improved Whispered Prayer: every third cast wards its target', () => {
+    // The #1756 choice pass turned this row into Warding Refrain: every 3rd
+    // Whispered Prayer wards, replacing the full-duration-Renew trigger.
     const { sim, p } = rig('priest', 20, { 5: 'pri_r5_improved_renew' });
     p.hp = Math.round(p.maxHp * 0.5);
     sim.targetEntity(sim.playerId);
-    castAndSettle(sim, 'renew', 20); // well past the full HoT duration
+    for (let i = 0; i < 3; i++) castAndSettle(sim, 'lesser_heal', 3);
     expect(p.auras.some((a) => a.kind === 'absorb' && a.id === 'pri_lingering_ward')).toBe(true);
   });
 
@@ -208,18 +210,22 @@ describe('shaman redesign', () => {
     expect(before! - after).toBeGreaterThan(0.5);
   });
 
-  it('Tidal Waves: Chain Heal makes the next Mending Waters instant', () => {
+  it('Undertow Promise: every 3rd Mending Waters leaves an emergency heal echo', () => {
+    // The #1756 choice pass rebuilt this row off chain_heal (never obtainable)
+    // onto baseline Mending Waters: every 3rd cast stores an 80-heal echo that
+    // fires when the target drops below 35% inside its 10 sec window.
     const { sim, p } = rig('shaman', 20, { 20: 'sha_r20_tidal_waves' });
-    sim.setSpec('restoration');
-    p.hp = Math.round(p.maxHp * 0.5);
+    p.hp = 1;
     sim.targetEntity(sim.playerId);
-    castAndSettle(sim, 'chain_heal', 5);
-    expect(p.auras.some((a) => a.kind === 'next_cast_instant')).toBe(true);
-    p.resource = p.maxResource;
-    sim.castAbility('healing_wave');
-    sim.tick();
-    // Instant: no cast bar, the heal resolved immediately.
-    expect(p.castingAbility).toBe(null);
+    for (let i = 0; i < 3; i++) castAndSettle(sim, 'healing_wave', 5);
+    expect(p.auras.some((a) => a.id === 'sha_undertow_promise' && a.kind === 'heal_echo')).toBe(
+      true,
+    );
+    p.hp = Math.ceil(p.maxHp * 0.4);
+    const before = p.hp;
+    sim.ctx.dealDamage(null, p, Math.ceil(p.maxHp * 0.1), false, 'physical', null, 'hit');
+    expect(p.hp).toBeGreaterThan(before - Math.ceil(p.maxHp * 0.1));
+    expect(p.auras.some((a) => a.id === 'sha_undertow_promise')).toBe(false);
   });
 });
 
@@ -275,13 +281,9 @@ describe('paladin redesign', () => {
     expect(p.dead).toBe(true);
   });
 
-  it('Radiant Swell casts and hardens the paladin', () => {
-    const { sim, p } = rig('paladin', 20, { 20: 'pal_r20_aura_mastery' });
-    castAndSettle(sim, 'aura_surge', 1);
-    const swell = p.auras.find((a) => a.kind === 'buff_armor' && a.id === 'aura_surge');
-    expect(swell).toBeTruthy();
-    expect(swell?.value).toBe(160);
-  });
+  // The #1756 choice pass redesigned aura_surge from the Radiant Swell armor
+  // buff into Dawnward Ricochet (chain damage + silence); the new behavior is
+  // pinned end to end in talent_retained_semantics_v026.test.ts.
 
   it('replay determinism: the proc-heavy priest run is bit-identical', () => {
     const run = () => {

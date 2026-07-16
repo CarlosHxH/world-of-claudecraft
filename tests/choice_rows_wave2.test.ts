@@ -85,28 +85,54 @@ describe('hunter wave 2 choice rows', () => {
     });
     p.resource = p.maxResource - 30;
     for (let i = 0; i < 3; i++) completeCast(sim, 'serpent_sting');
-    expect(p.auras.some((a) => a.id === 'hun_improved_venom_barb')).toBe(true);
+    // The final #1756 choice pass renamed the row 5 proc to Venom Relay and
+    // the row 14 proc to Rattling Ambush (id hun_full_draw_rhythm).
+    expect(p.auras.some((a) => a.id === 'hun_venom_relay')).toBe(true);
     expect(p.auras.some((a) => a.id === 'hun_lean_quiver')).toBe(true);
     expect(p.resource).toBe(p.maxResource - 10);
     completeCast(sim, 'concussive_shot');
-    expect(p.auras.some((a) => a.id === 'hun_sniper_training')).toBe(true);
+    expect(p.auras.some((a) => a.id === 'hun_full_draw_rhythm')).toBe(true);
   });
 
-  it('Master Tamer, Deathless Will, and Volley use HoT, big-hit, and channel hooks', () => {
+  it('Bloodbond, Deathless Will, and Steady Rain use pet-share, big-hit, and passive hooks', () => {
+    // The final #1756 choice pass made the row 17 option (Bloodbond) a passive
+    // 20% pet damage share and the row 20 option (Steady Rain) a passive
+    // Arrowfall buff; neither is a HoT-expiry or channel proc anymore. The
+    // Steady Rain pushback immunity is pinned in
+    // tests/talent_retained_semantics_v026.test.ts.
     const { sim, p } = rig('hunter', 20, {
       11: 'hun_r11_mend_pet',
       17: 'hun_r17_master_tamer',
       20: 'hun_r20_improved_volley',
     });
-    p.hp = Math.round(p.maxHp * 0.6);
-    expireHot(sim, 'mend_pet', p);
-    expect(p.auras.some((a) => a.id === 'hun_master_tamer')).toBe(true);
-    completeCast(sim, 'volley');
-    expect(p.auras.some((a) => a.id === 'hun_improved_volley')).toBe(true);
+    const pet = createMob(9300, MOBS.forest_wolf, 20, {
+      x: p.pos.x + 2,
+      y: p.pos.y,
+      z: p.pos.z,
+    });
+    pet.hostile = false;
+    pet.ownerId = p.id;
+    pet.maxHp = pet.hp = 1000;
+    (sim as unknown as { addEntity(e: Entity): void }).addEntity(pet);
+    p.hp = p.maxHp;
+    dealDamage(sim, p, 100);
+    expect(p.maxHp - p.hp).toBe(80);
+    expect(1000 - pet.hp).toBe(20);
+    // Patch Up: revive_pet heals 50% more (baseline HoT total 240 -> 360).
+    expect(sim.resolvedAbility('revive_pet')?.effects[0]).toMatchObject({
+      type: 'hot',
+      total: 360,
+    });
+    // Steady Rain: Arrowfall ticks resolve 50% harder (12-16 -> 18-24).
+    expect(sim.resolvedAbility('volley')?.effects[0]).toMatchObject({
+      type: 'aoeDamage',
+      min: 18,
+      max: 24,
+    });
 
     const guarded = rig('hunter', 20, { 11: 'hun_r11_survival_instincts' });
     dealDamage(guarded.sim, guarded.p, Math.ceil(guarded.p.maxHp * 0.35));
-    expect(guarded.p.auras.some((a) => a.id === 'hun_deathless_will')).toBe(true);
+    expect(guarded.p.auras.find((a) => a.id === 'hun_deathless_will')?.value).toBe(200);
   });
 });
 
@@ -144,11 +170,15 @@ describe('druid wave 2 choice rows', () => {
     castAndSettle(sim, 'cat_form', 1);
     expect(p.auras.some((a) => a.id === 'dru_redmaw')).toBe(true);
 
-    const healer = rig('druid', 20, { 5: 'dru_r5_natures_bounty' }, 'restoration');
-    healer.p.cooldowns.set('swiftmend', 30);
+    // Bloom's End is self-contained since the final #1756 pass: a full
+    // Wildbloom arms an instant Wildmend instead of resetting Swiftmend
+    // (unobtainable alongside this row).
+    const healer = rig('druid', 20, { 5: 'dru_r5_natures_bounty' });
     healer.p.hp = Math.round(healer.p.maxHp * 0.5);
     expireHot(healer.sim, 'rejuvenation', healer.p);
-    expect(healer.p.cooldowns.has('swiftmend')).toBe(false);
+    expect(healer.p.auras.find((a) => a.id === 'dru_natures_bounty')?.kind).toBe(
+      'next_cast_instant',
+    );
   });
 
   it('Empowered Touch echo and Survival of the Fittest big-hit loop resolve', () => {
@@ -165,11 +195,15 @@ describe('druid wave 2 choice rows', () => {
       17: 'dru_r17_survival_of_the_fittest',
       20: 'dru_r20_improved_hurricane',
     });
+    // Ironhide Reflex is self-contained since the final #1756 pass: a big hit
+    // restores 20 rage (only in Bruin Form, via the resourceType gate) and
+    // grants a shield, instead of refunding the same-row Savage Mending.
+    castAndSettle(bear.sim, 'bear_form', 1);
+    expect(bear.p.resourceType).toBe('rage');
     bear.p.resource = 0;
-    bear.p.cooldowns.set('frenzied_regeneration', 100);
     dealDamage(bear.sim, bear.p, Math.ceil(bear.p.maxHp * 0.25));
     expect(bear.p.resource).toBe(20);
-    expect(bear.p.cooldowns.get('frenzied_regeneration')).toBe(70);
+    expect(bear.p.auras.some((a) => a.id === 'dru_survival_of_the_fittest')).toBe(true);
     bear.p.cooldowns.set('hurricane', 10);
     completeCast(bear.sim, 'hurricane');
     expect(bear.p.cooldowns.get('hurricane')).toBe(6);

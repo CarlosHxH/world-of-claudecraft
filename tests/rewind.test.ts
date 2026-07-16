@@ -268,6 +268,9 @@ describe('Rewind: rules', () => {
     });
     mob.hostile = true;
     mob.inCombat = true;
+    // createMob defaults combatTimer to 99; the ported dummy reset (5s after the
+    // last hit) would clear the threat table on the first tick otherwise.
+    mob.combatTimer = 0;
     mob.maxHp = mob.hp = 1_000_000;
     mob.threat.set(ally.id, 500);
     (sim as unknown as { addEntity(e: Entity): void }).addEntity(mob);

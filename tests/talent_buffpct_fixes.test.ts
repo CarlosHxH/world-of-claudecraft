@@ -78,16 +78,23 @@ describe('talent buffPct resolver fixes', () => {
     expect(effect.value).toBeCloseTo(0.112, 6);
   });
 
-  it('Rapid Killing preserves Fevered Draw fractional haste multiplier', () => {
-    const ability = resolvedAbility(
-      'hunter',
-      'rapid_fire',
-      rowMods('hunter', { 20: 'hun_r20_rapid_killing' }),
-    );
+  it('Redline Draw replaces the old scalar with an every-third-shot cooldown refund', () => {
+    // Talents 2.0 reworked hun_r20_rapid_killing from static cooldownPct/buffPct
+    // mods on Fevered Draw into the hun_redline_draw castNth proc; the base
+    // ability values stay untouched.
+    const mods = rowMods('hunter', { 20: 'hun_r20_rapid_killing' });
+    const ability = resolvedAbility('hunter', 'rapid_fire', mods);
     const effect = ability.effects.find((candidate) => candidate.type === 'selfBuff');
+    const proc = mods.procs.find((candidate) => candidate.id === 'hun_redline_draw');
 
-    expect(ability.cooldown).toBeCloseTo(150, 6);
-    expect(effect).toMatchObject({ kind: 'buff_haste', value: 1.75 });
+    expect(ability.cooldown).toBeCloseTo(300, 6);
+    expect(effect).toMatchObject({ kind: 'buff_haste', value: 1.4 });
+    expect(proc?.trigger).toMatchObject({ on: 'castNth', n: 3 });
+    expect(proc?.responses).toContainEqual({
+      kind: 'cooldownRefund',
+      ability: 'rapid_fire',
+      seconds: 15,
+    });
   });
 
   it('a judgement dmgPct ability mod scales the trigger damage multiplier', () => {

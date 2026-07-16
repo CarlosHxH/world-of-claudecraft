@@ -124,12 +124,14 @@ describe('retained v0.26 non-Warrior row runtime contracts', () => {
     expect(sim.player.resource).toBe(30);
   });
 
-  it('adds one talent charge for Twin Fracture and Twin Embers', () => {
+  it('adds one talent charge for Twin Fracture and Twin Icebind', () => {
     const priest = simWithRows('priest', { 14: 'pri_r14_mind_melt' });
-    const mage = simWithRows('mage', { 5: 'mag_r5_impulse' });
+    // The mage rework replaced Twin Embers (mag_r5_impulse, fire_blast) with
+    // Twin Icebind (mag_r11_twin_nova, frost_nova) as the charge-model row.
+    const mage = simWithRows('mage', { 11: 'mag_r11_twin_nova' });
 
     expect(resolved(priest, 'mind_blast')).toMatchObject({ charges: 2, bonusCharges: 1 });
-    expect(resolved(mage, 'fire_blast')).toMatchObject({ charges: 2, bonusCharges: 1 });
+    expect(resolved(mage, 'frost_nova')).toMatchObject({ charges: 2, bonusCharges: 1 });
   });
 
   it('heals from Imbued Lifeblood only while a weapon imbue is active', () => {

@@ -100,8 +100,10 @@ describe('canonical Talents V2 row registry', () => {
     for (const cls of ALL_CLASSES) expect(TALENTS[cls].specs, cls).toHaveLength(3);
     expect(ALL_CLASSES.flatMap((cls) => TALENTS[cls].specs)).toHaveLength(27);
 
+    // The mage rework (e0842ee38) replaced the fire crit-damage mastery with
+    // Ignition: spell crits bank 40% of their damage as a stacking burn.
     expect(TALENTS.mage.specs.find((spec) => spec.id === 'fire')?.mastery.effect).toEqual({
-      global: { critDmgSpellPct: 0.5 },
+      global: { ignitionPct: 0.4 },
       stats: { crit: 0.02 },
     });
     expect(TALENTS.paladin.specs.find((spec) => spec.id === 'holy')?.mastery.effect).toEqual({
@@ -151,11 +153,11 @@ describe('canonical Talents V2 allocation', () => {
   });
 
   it('validates row unlocks, mutual exclusion, option ownership, and specialization unlocks', () => {
-    const level5: TalentAllocation = { spec: 'fire', rows: { 5: 'mag_r5_impulse' } };
+    const level5: TalentAllocation = { spec: 'fire', rows: { 5: 'mag_r5_ice_floes' } };
     expect(validateAllocation('mage', level5, 5)).toEqual({ ok: true });
     expect(validateAllocation('mage', level5, 4)).toMatchObject({ ok: false });
     expect(
-      validateAllocation('mage', { spec: 'fire', rows: { 8: 'mag_r8_spellsteal' } }, 7),
+      validateAllocation('mage', { spec: 'fire', rows: { 8: 'mag_r8_warded' } }, 7),
     ).toMatchObject({ ok: false });
     expect(
       validateAllocation('mage', { spec: 'fire', rows: { 5: 'hun_r5_quick_shots' } }, 20),
@@ -163,7 +165,7 @@ describe('canonical Talents V2 allocation', () => {
     expect(
       validateAllocation(
         'mage',
-        { spec: 'fire', rows: { 5: ['mag_r5_impulse', 'mag_r5_firestarter'] } } as unknown,
+        { spec: 'fire', rows: { 5: ['mag_r5_ice_floes', 'mag_r5_double_blink'] } } as unknown,
         20,
       ),
     ).toMatchObject({ ok: false });
@@ -172,7 +174,7 @@ describe('canonical Talents V2 allocation', () => {
         'mage',
         {
           spec: 'fire',
-          rows: { 5: 'mag_r5_impulse' },
+          rows: { 5: 'mag_r5_ice_floes' },
           ranks: { legacy: 1 },
         },
         20,
@@ -183,32 +185,38 @@ describe('canonical Talents V2 allocation', () => {
   it('sanitizes malformed input and repairs semantically stale rows idempotently', () => {
     const sanitized = sanitizeAllocation({
       spec: 'fire',
-      rows: { 5: 'mag_r5_impulse', 8: 42, 9: 'bogus', 11: '' },
+      rows: { 5: 'mag_r5_ice_floes', 8: 42, 9: 'bogus', 11: '' },
       ranks: { old_point_node: 5 },
       choices: { old_choice: 'legacy' },
       rowPicks: ['dual-model-baggage'],
     });
-    expect(sanitized).toEqual({ spec: 'fire', rows: { 5: 'mag_r5_impulse' } });
+    expect(sanitized).toEqual({ spec: 'fire', rows: { 5: 'mag_r5_ice_floes' } });
 
     const repaired = repairAllocation(
       'mage',
       {
         spec: 'fire',
         rows: {
-          5: 'mag_r5_impulse',
+          5: 'mag_r5_ice_floes',
           8: 'hun_r8_startle_shot',
-          20: 'mag_r20_meteor',
+          20: 'mag_r20_evocation',
         },
       },
       8,
     );
-    expect(repaired).toEqual({ spec: 'fire', rows: { 5: 'mag_r5_impulse' } });
+    expect(repaired).toEqual({ spec: 'fire', rows: { 5: 'mag_r5_ice_floes' } });
     expect(repairAllocation('mage', repaired, 8)).toEqual(repaired);
   });
 
   it('folds each selected row exactly once', () => {
-    const mods = computeTalentModifiers('mage', { spec: null, rows: { 5: 'mag_r5_impulse' } }, 20);
-    expect(mods.abilities.fire_blast?.bonusCharges).toBe(1);
+    // The owner mage tree (89d1625a2) replaced Impulse; Double Blink is the
+    // row 5 option that grants one bonus charge (on Flickerstep/blink).
+    const mods = computeTalentModifiers(
+      'mage',
+      { spec: null, rows: { 5: 'mag_r5_double_blink' } },
+      20,
+    );
+    expect(mods.abilities.blink?.bonusCharges).toBe(1);
   });
 
   it('round-trips a versioned canonical build without legacy point-tree fields', () => {
