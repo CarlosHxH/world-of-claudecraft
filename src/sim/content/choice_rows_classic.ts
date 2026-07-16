@@ -519,10 +519,10 @@ export const PALADIN_CHOICE_ROWS: ClassChoiceRows = {
       options: [
         {
           id: 'pal_r14_swift_verdicts',
-          name: 'Swift Verdicts',
-          description: 'Verdict costs 20% less mana and deals 25% more damage.',
+          name: 'Twin Verdicts',
+          description: 'Verdict stores 2 uses.',
           icon: 'judgement',
-          effect: { ability: [{ ability: 'judgement', costPct: -0.2, dmgPct: 0.25 }] },
+          effect: { ability: [{ ability: 'judgement', bonusCharges: 1 }] },
         },
         {
           id: 'pal_r14_holy_wrath',
@@ -786,10 +786,26 @@ export const HUNTER_CHOICE_ROWS: ClassChoiceRows = {
         },
         {
           id: 'hun_r14_sniper_training',
-          name: 'Sniper Training',
-          description: "Long Draw's cast time is reduced by 30% and it deals 15% more damage.",
+          name: 'Rattling Ambush',
+          description:
+            "Rattling Shot finishes Fell Shot's cooldown and makes your next Fell Shot within 8 sec free.",
           icon: 'aimed_shot',
-          effect: { ability: [{ ability: 'aimed_shot', castPct: -0.3, dmgPct: 0.15 }] },
+          effect: {
+            proc: {
+              id: 'hun_full_draw_rhythm',
+              name: 'Rattling Ambush',
+              trigger: { on: 'castNth', n: 1, abilities: ['concussive_shot'] },
+              responses: [
+                { kind: 'cooldownRefund', ability: 'arcane_shot', seconds: 'reset' },
+                {
+                  kind: 'empowerNext',
+                  aura: 'next_cast_free',
+                  abilities: ['arcane_shot'],
+                  duration: 8,
+                },
+              ],
+            },
+          },
         },
         {
           id: 'hun_r14_serpents_venom',
@@ -1630,13 +1646,13 @@ export const SHAMAN_CHOICE_ROWS: ClassChoiceRows = {
         },
         {
           id: 'sha_r11_elemental_attunement',
-          name: 'Elemental Attunement',
+          name: 'Sky Echo',
           description: 'Arc Bolt critical strikes make your next Arc Bolt within 8 sec instant.',
           icon: 'lightning_bolt',
           effect: {
             proc: {
               id: 'sha_elemental_attunement',
-              name: 'Elemental Attunement',
+              name: 'Sky Echo',
               school: 'nature',
               trigger: { on: 'spellCrit', abilities: ['lightning_bolt'] },
               responses: [
@@ -1754,14 +1770,26 @@ export const SHAMAN_CHOICE_ROWS: ClassChoiceRows = {
         },
         {
           id: 'sha_r20_elemental_fury',
-          name: 'Earthen Fury',
-          description: 'Your Arc Bolt and Earthen Jolt deal 20% more damage.',
+          name: 'Storm Recall',
+          description:
+            "Arc Bolt critical strikes finish Earthen Jolt's cooldown and make your next Earthen Jolt within 8 sec free.",
           icon: 'lightning_bolt',
           effect: {
-            ability: [
-              { ability: 'lightning_bolt', dmgPct: 0.2 },
-              { ability: 'earth_shock', dmgPct: 0.2 },
-            ],
+            proc: {
+              id: 'sha_storm_recall',
+              name: 'Storm Recall',
+              school: 'nature',
+              trigger: { on: 'spellCrit', abilities: ['lightning_bolt'] },
+              responses: [
+                { kind: 'cooldownRefund', ability: 'earth_shock', seconds: 'reset' },
+                {
+                  kind: 'empowerNext',
+                  aura: 'next_cast_free',
+                  abilities: ['earth_shock'],
+                  duration: 8,
+                },
+              ],
+            },
           },
         },
         {
@@ -2203,22 +2231,18 @@ export const DRUID_CHOICE_ROWS: ClassChoiceRows = {
         },
         {
           id: 'dru_r8_brutal_bash',
-          name: 'Brutal Bash',
-          description: 'Concuss restores 15 rage and makes your next Bonecrush within 8 sec free.',
+          name: 'Bruin Rebound',
+          description:
+            'Concuss restores 15 rage, refunding its 10 rage cost plus 5 additional rage, and removes 20 sec from its cooldown.',
           icon: 'bash',
           effect: {
             proc: {
               id: 'dru_brutal_bash',
-              name: 'Brutal Bash',
+              name: 'Bruin Rebound',
               trigger: { on: 'castNth', n: 1, abilities: ['bash'] },
               responses: [
                 { kind: 'resource', amount: 15, resourceType: 'rage' },
-                {
-                  kind: 'empowerNext',
-                  aura: 'next_cast_free',
-                  abilities: ['maul'],
-                  duration: 8,
-                },
+                { kind: 'cooldownRefund', ability: 'bash', seconds: 20 },
               ],
             },
           },

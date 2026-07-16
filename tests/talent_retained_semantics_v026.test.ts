@@ -91,19 +91,66 @@ function effect<T extends AbilityEffect['type']>(
 }
 
 describe('retained v0.26 all-class Talents V2 semantics', () => {
-  it('resolves the final Swift Verdicts, Sniper Training, Earthen Fury, and content values', () => {
+  it('resolves the final Twin Verdicts, Rattling Ambush, Storm Recall, Sky Echo, Bruin Rebound, and content values', () => {
+    const rowOption = (cls: PlayerClass, id: string) => {
+      const option = ROW_TREES[cls].flatMap((row) => row.options).find((o) => o.id === id);
+      if (!option) throw new Error(`missing row option ${cls}:${id}`);
+      return option;
+    };
+
+    expect(rowOption('paladin', 'pal_r14_swift_verdicts').name).toBe('Twin Verdicts');
     const verdict = resolved('paladin', 'judgement', { 14: 'pal_r14_swift_verdicts' });
-    expect(verdict.cost).toBe(24);
-    expect(effect(verdict, 'judgement')).toMatchObject({ dmgMult: 1.25 });
+    expect(verdict).toMatchObject({ cost: 30, charges: 2, bonusCharges: 1 });
 
+    const ambush = rowOption('hunter', 'hun_r14_sniper_training');
+    expect(ambush.name).toBe('Rattling Ambush');
+    expect(ambush.effect.proc).toEqual({
+      id: 'hun_full_draw_rhythm',
+      name: 'Rattling Ambush',
+      trigger: { on: 'castNth', n: 1, abilities: ['concussive_shot'] },
+      responses: [
+        { kind: 'cooldownRefund', ability: 'arcane_shot', seconds: 'reset' },
+        { kind: 'empowerNext', aura: 'next_cast_free', abilities: ['arcane_shot'], duration: 8 },
+      ],
+    });
     const aimed = resolved('hunter', 'aimed_shot', { 14: 'hun_r14_sniper_training' });
-    expect(aimed.castTime).toBeCloseTo(2.1);
-    expect(effect(aimed, 'directDamage')).toMatchObject({ min: 57, max: 71 });
+    expect(aimed.castTime).toBeCloseTo(3.0);
+    expect(effect(aimed, 'directDamage')).toEqual(
+      effect(resolved('hunter', 'aimed_shot'), 'directDamage'),
+    );
 
+    const recall = rowOption('shaman', 'sha_r20_elemental_fury');
+    expect(recall.name).toBe('Storm Recall');
+    expect(recall.effect.proc).toEqual({
+      id: 'sha_storm_recall',
+      name: 'Storm Recall',
+      school: 'nature',
+      trigger: { on: 'spellCrit', abilities: ['lightning_bolt'] },
+      responses: [
+        { kind: 'cooldownRefund', ability: 'earth_shock', seconds: 'reset' },
+        { kind: 'empowerNext', aura: 'next_cast_free', abilities: ['earth_shock'], duration: 8 },
+      ],
+    });
     const bolt = resolved('shaman', 'lightning_bolt', { 20: 'sha_r20_elemental_fury' });
     const jolt = resolved('shaman', 'earth_shock', { 20: 'sha_r20_elemental_fury' });
-    expect(effect(bolt, 'directDamage')).toMatchObject({ min: 90, max: 102 });
-    expect(effect(jolt, 'directDamage')).toMatchObject({ min: 65, max: 73 });
+    expect(effect(bolt, 'directDamage')).toEqual(
+      effect(resolved('shaman', 'lightning_bolt'), 'directDamage'),
+    );
+    expect(effect(jolt, 'directDamage')).toEqual(
+      effect(resolved('shaman', 'earth_shock'), 'directDamage'),
+    );
+
+    const skyEcho = rowOption('shaman', 'sha_r11_elemental_attunement');
+    expect(skyEcho.name).toBe('Sky Echo');
+    expect(skyEcho.effect.proc?.name).toBe('Sky Echo');
+
+    const bruin = rowOption('druid', 'dru_r8_brutal_bash');
+    expect(bruin.name).toBe('Bruin Rebound');
+    expect(bruin.effect.proc?.name).toBe('Bruin Rebound');
+    expect(bruin.effect.proc?.responses).toEqual([
+      { kind: 'resource', amount: 15, resourceType: 'rage' },
+      { kind: 'cooldownRefund', ability: 'bash', seconds: 20 },
+    ]);
 
     expect(
       effect(resolved('priest', 'mind_sear', { 20: 'pri_r20_mind_sear' }), 'aoeDamage'),

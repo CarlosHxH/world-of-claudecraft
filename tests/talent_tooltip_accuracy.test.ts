@@ -111,12 +111,11 @@ describe('talent tooltip accuracy (all 9 classes x 3 specs)', () => {
       return entry.render();
     };
     const swift = render('paladin', (e) => e.id === 'pal_r14_swift_verdicts');
-    expect(swift).toContain('20%');
-    expect(swift).toContain('25%');
+    expect(swift).toContain('stores 2 uses');
 
     const sniper = render('hunter', (e) => e.id === 'hun_r14_sniper_training');
-    expect(sniper).toContain('30%');
-    expect(sniper).toContain('15%');
+    expect(sniper).toContain("finishes Fell Shot's cooldown");
+    expect(sniper).toContain('within 8 sec free');
 
     const attunement = render('shaman', (e) => e.id === 'sha_r11_elemental_attunement');
     expect(attunement).toContain('critical strikes');
