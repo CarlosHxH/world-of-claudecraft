@@ -20,18 +20,26 @@ const nodePath = require('node:path');
 //     Windows/driver combo (electron/electron#31355), hence lever 2.
 //
 //  2. Windows per-app GPU preference (the OS-authoritative lever, and the one that fixes it
-//     for good). Writing HKCU\Software\Microsoft\DirectX\UserGpuPreferences with the value
-//     NAME = the app's own exe path and DATA "GpuPreference=2;" is EXACTLY what Settings >
-//     System > Display > Graphics > High performance writes, and on Windows 10 20H1+ /
-//     Windows 11 it OVERRIDES the NVIDIA Control Panel. Electron's child processes (GPU,
-//     renderer, utility) share this exe path, so the preference steers all of them; the NSIS
-//     install path is stable across auto-updates, so the entry persists. HKCU needs no
-//     elevation. We write only when the value is missing or not already high-performance, so
-//     an already-correct launch does no work. Writing at module load (before the GPU process
-//     spawns) makes it effective the current launch too, not just the next one.
+//     for good). Setting GpuPreference=2 on the HKCU\Software\Microsoft\DirectX\
+//     UserGpuPreferences value NAMED by the app's own exe path is what Settings > System >
+//     Display > Graphics > High performance sets, and on Windows 10 20H1+ / Windows 11 it
+//     OVERRIDES the NVIDIA Control Panel. That ONE value packs other semicolon-separated
+//     per-app tokens too (the Windows 11 "Optimizations for windowed games" toggle stores
+//     SwapEffectUpgradeEnable=1; per-app Auto HDR stores AutoHDREnable tokens), so we never
+//     replace the value wholesale: the stored data is queried first and only the
+//     GpuPreference token is replaced (or appended), preserving the user's other per-app
+//     graphics settings. Electron's child processes (GPU, renderer, utility) share this exe
+//     path, so the preference steers all of them; the NSIS install path is stable across
+//     auto-updates, so the entry persists. HKCU needs no elevation. We write only when the
+//     value is missing or not already high-performance, so an already-correct launch does no
+//     work. Writing at module load (before the GPU process spawns) makes it effective the
+//     current launch too, not just the next one. This lever runs only in PACKAGED builds: an
+//     unpackaged dev run would key the preference to the checkout's node_modules electron
+//     binary (one orphan entry per worktree, steering everything else launched from that
+//     shared binary); only the stable installed exe path is worth pinning.
 //
-// The arg-building and the "already high performance?" decision are pure and dependency-
-// injected so tests exercise them without a real registry or a real Electron app.
+// The arg-building, query parsing, and token merging are pure and dependency-injected so
+// tests exercise them without a real registry or a real Electron app.
 
 const USER_GPU_PREFERENCES_KEY = 'HKCU\\Software\\Microsoft\\DirectX\\UserGpuPreferences';
 // GpuPreference values: 0 = let Windows decide, 1 = power saving (integrated), 2 = high
@@ -46,19 +54,50 @@ function buildRegQueryArgs(exePath) {
   return ['query', USER_GPU_PREFERENCES_KEY, '/v', exePath];
 }
 
-/** argv for `reg add` that pins this exe to the high-performance GPU (idempotent via /f). */
-function buildRegWriteArgs(exePath) {
-  return [
-    'add',
-    USER_GPU_PREFERENCES_KEY,
-    '/v',
-    exePath,
-    '/t',
-    'REG_SZ',
-    '/d',
-    HIGH_PERFORMANCE_PREFERENCE,
-    '/f',
-  ];
+/** argv for `reg add` that stores `data` for this exe's preference value (idempotent via /f). */
+function buildRegWriteArgs(exePath, data = HIGH_PERFORMANCE_PREFERENCE) {
+  return ['add', USER_GPU_PREFERENCES_KEY, '/v', exePath, '/t', 'REG_SZ', '/d', data, '/f'];
+}
+
+/**
+ * Extract the stored string data for the queried value from `reg query /v` output. The value
+ * line looks like `    <exe path>    REG_SZ    <data>`; the exe path contains spaces, so we
+ * anchor on the type column (REG_SZ, or REG_EXPAND_SZ for a hand-edited value) instead of
+ * splitting on whitespace. Returns '' when the output holds no such line.
+ */
+function parseRegQueryData(regQueryStdout) {
+  const match = String(regQueryStdout ?? '').match(/\bREG_(?:EXPAND_)?SZ\s+([^\r\n]+)/);
+  return match ? match[1].trim() : '';
+}
+
+/**
+ * Merge GpuPreference=2 into the stored per-app value, preserving every OTHER token. Windows
+ * packs multiple semicolon-separated key=value tokens into this one value (the Windows 11
+ * "Optimizations for windowed games" toggle stores SwapEffectUpgradeEnable=1; per-app Auto
+ * HDR stores AutoHDREnable tokens), so replacing the whole string would silently delete the
+ * user's other per-app graphics settings. The GpuPreference token is replaced in place
+ * (case-insensitively, and duplicates collapse to one) or appended when absent; every other
+ * token keeps its position.
+ */
+function mergeHighPerformancePreference(existingData) {
+  const tokens = String(existingData ?? '')
+    .split(';')
+    .map((token) => token.trim())
+    .filter((token) => token.length > 0);
+  const merged = [];
+  let replaced = false;
+  for (const token of tokens) {
+    if (/^GpuPreference=/i.test(token)) {
+      if (!replaced) {
+        merged.push('GpuPreference=2');
+        replaced = true;
+      }
+      continue;
+    }
+    merged.push(token);
+  }
+  if (!replaced) merged.push('GpuPreference=2');
+  return `${merged.join(';')};`;
 }
 
 /**
@@ -100,6 +139,10 @@ function forceHighPerformanceGpu(deps = {}) {
   }
 
   if (platform !== 'win32') return;
+  // Packaged builds only: an unpackaged dev run resolves the exe to the checkout's
+  // node_modules electron binary, so the entry would be an orphan keyed per worktree AND
+  // would force the discrete GPU for anything else launched from that shared binary.
+  if (app?.isPackaged !== true) return;
 
   let exePath;
   try {
@@ -112,18 +155,21 @@ function forceHighPerformanceGpu(deps = {}) {
   const reg = deps.regExe ?? defaultRegExe(env);
   const runOpts = { timeout: 4000, windowsHide: true };
 
+  let existingData = '';
   try {
     const stdout = execFileSync(reg, buildRegQueryArgs(exePath), {
       ...runOpts,
       stdio: ['ignore', 'pipe', 'ignore'],
     });
     if (alreadyHighPerformance(stdout)) return; // already pinned; nothing to do
+    existingData = parseRegQueryData(stdout);
   } catch {
     // Missing value/key (reg exits non-zero) or reg unavailable: fall through and write.
   }
 
   try {
-    execFileSync(reg, buildRegWriteArgs(exePath), { ...runOpts, stdio: 'ignore' });
+    const data = mergeHighPerformancePreference(existingData);
+    execFileSync(reg, buildRegWriteArgs(exePath, data), { ...runOpts, stdio: 'ignore' });
     log?.info?.('[gpu] pinned app to the high-performance GPU (Windows per-app preference)', {
       exePath,
     });
@@ -138,6 +184,8 @@ module.exports = {
   HIGH_PERF_GPU_SWITCHES,
   buildRegQueryArgs,
   buildRegWriteArgs,
+  parseRegQueryData,
+  mergeHighPerformancePreference,
   alreadyHighPerformance,
   forceHighPerformanceGpu,
 };
