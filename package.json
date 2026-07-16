@@ -1,12 +1,6 @@
 {
   "name": "world-of-claudecraft",
-<<<<<<< HEAD
   "version": "0.27.0",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-  "version": "0.25.0",
-=======
-  "version": "0.26.0",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
   "private": true,
   "license": "MIT",
   "author": {

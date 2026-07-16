@@ -409,24 +409,6 @@ export const pt_BR: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.voidfeast.description':
     'Devora um efeito mágico (um benéfico de um inimigo ou um nocivo de um aliado) e cura você em 6% da vida máxima.',
   'hudChrome.abilityError.shieldRequired': 'Você precisa ter um escudo equipado.',
-  'guide.family.reptile.desc':
-    'Caçadores de sangue frio, com um silvo e uma mordida inconfundíveis, distintos das feras de sangue quente.',
-  'guide.family.reptile.name': 'Répteis',
-  'hudChrome.bags.rightClickDestroy': 'Shift+clique direito para destruir',
-  'hudChrome.cameraPrompt.changeLater':
-    'Você pode alterar isso depois no menu Esc, Atalhos de teclado.',
-  'hudChrome.cameraPrompt.classicDesc':
-    'Segure o botão direito e mova o mouse para girar a câmera.',
-  'hudChrome.cameraPrompt.classicTitle': 'Câmera clássica',
-  'hudChrome.cameraPrompt.confirm': 'Confirmar',
-  'hudChrome.cameraPrompt.intro': 'Escolha como a câmera segue seu personagem.',
-  'hudChrome.cameraPrompt.mouseDesc': 'Mova o mouse para girar a câmera sem segurar nenhum botão.',
-  'hudChrome.cameraPrompt.title': 'Escolha sua câmera',
-  'hudChrome.discord.link.joinServer': 'Apenas entrar no servidor do Discord',
-  'hudChrome.meters.autoShowHint':
-    'As linhas aparecem automaticamente quando o seu grupo causa dano ou cura, e este segmento fecha alguns segundos após o fim do combate.',
-  'hudChrome.petFeed.disabledFullHp': 'O mascote está com a vida cheia',
-  'hudChrome.petFeed.disabledNoFood': 'Nenhum alimento nas suas bolsas pode curar o mascote',
   'entities.abilities.sport_boot.description':
     'Um chutão alto e longo em direção ao ponto de mira. A torcida adora.',
   'entities.abilities.sport_boot.name': 'Chutão',
@@ -6714,11 +6696,6 @@ export const pt_BR: Partial<Record<TranslationKey, string>> = {
   'hudChrome.discord.roleTag.levyst': 'Levy St',
   'hudChrome.discord.roleTag.devs': 'Dev',
   'hudChrome.discord.roleTag.mods': 'Mod',
-  'hudChrome.discord.roleTag.seniormods': 'Moderador sênior',
-  'hudChrome.discord.roleTag.juniormods': 'Moderador júnior',
-  'hudChrome.discord.roleTag.contentcreator': 'Criador de conteúdo',
-  'hudChrome.discord.roleTag.legend': 'LENDA',
-  'hudChrome.discord.roleTag.shill': 'PROMOTOR',
   'hudChrome.discord.roleTag.artists': 'Artista',
   'hudChrome.discord.guildMember': 'Membro verificado',
   'hudChrome.discord.notMember': 'Ainda não está no servidor',

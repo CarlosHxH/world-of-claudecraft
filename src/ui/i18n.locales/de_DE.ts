@@ -408,24 +408,6 @@ export const de_DE: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.voidfeast.description':
     'Verschlingt einen magischen Effekt (einen vorteilhaften von einem Gegner oder einen schädlichen von einem Verbündeten) und heilt Euch um 6 % Eurer maximalen Gesundheit.',
   'hudChrome.abilityError.shieldRequired': 'Ihr müsst einen Schild ausgerüstet haben.',
-  'guide.family.reptile.desc':
-    'Kaltblütige Jäger mit unverwechselbarem Zischen und Zuschnappen, klar von den warmblütigen Bestien zu unterscheiden.',
-  'guide.family.reptile.name': 'Reptilien',
-  'hudChrome.bags.rightClickDestroy': 'Umschalt+Rechtsklick zum Zerstören',
-  'hudChrome.cameraPrompt.changeLater': 'Du kannst dies später unter Esc, Tastenbelegung ändern.',
-  'hudChrome.cameraPrompt.classicDesc':
-    'Halte die rechte Maustaste gedrückt und bewege die Maus, um die Kamera zu drehen.',
-  'hudChrome.cameraPrompt.classicTitle': 'Klassische Kamera',
-  'hudChrome.cameraPrompt.confirm': 'Bestätigen',
-  'hudChrome.cameraPrompt.intro': 'Wähle, wie die Kamera deinem Charakter folgt.',
-  'hudChrome.cameraPrompt.mouseDesc':
-    'Bewege die Maus, um die Kamera zu drehen, ohne eine Taste gedrückt zu halten.',
-  'hudChrome.cameraPrompt.title': 'Wähle deine Kamera',
-  'hudChrome.discord.link.joinServer': 'Einfach dem Discord-Server beitreten',
-  'hudChrome.meters.autoShowHint':
-    'Die Zeilen erscheinen automatisch, sobald deine Gruppe Schaden verursacht oder heilt. Dieser Bereich schließt sich wenige Sekunden nach Kampfende.',
-  'hudChrome.petFeed.disabledFullHp': 'Begleiter hat volle Gesundheit',
-  'hudChrome.petFeed.disabledNoFood': 'Kein Futter in deinen Taschen kann deinen Begleiter heilen',
   'entities.abilities.sport_boot.description':
     'Ein hoher, weiter Schlag Richtung Zielpunkt. Die Menge liebt es.',
   'entities.abilities.sport_boot.name': 'Weitschlag',
@@ -6769,11 +6751,6 @@ export const de_DE: Partial<Record<TranslationKey, string>> = {
   'hudChrome.discord.roleTag.levyst': 'Levy St',
   'hudChrome.discord.roleTag.devs': 'Entwickler',
   'hudChrome.discord.roleTag.mods': 'Mod',
-  'hudChrome.discord.roleTag.seniormods': 'Senior-Moderator',
-  'hudChrome.discord.roleTag.juniormods': 'Junior-Moderator',
-  'hudChrome.discord.roleTag.contentcreator': 'Inhaltsersteller',
-  'hudChrome.discord.roleTag.legend': 'LEGENDE',
-  'hudChrome.discord.roleTag.shill': 'PROMOTER',
   'hudChrome.discord.roleTag.artists': 'Künstler',
   'hudChrome.discord.guildMember': 'Verifiziertes Mitglied',
   'hudChrome.discord.notMember': 'Noch nicht auf dem Server',

@@ -29,8 +29,8 @@
       "tick": 25,
       "time": 1.25,
       "nextId": 412,
-      "state": "1386bbb8",
-      "events": "ce18b70b",
+      "state": "6ef7a9c4",
+      "events": "ba65be17",
       "rng": {
         "draws": 0,
         "digest": "811c9dc5"
@@ -40,7 +40,7 @@
       "tick": 50,
       "time": 2.5,
       "nextId": 412,
-      "state": "c8de455f",
+      "state": "bb33baa6",
       "events": "b46d41a9",
       "rng": {
         "draws": 54,
@@ -51,7 +51,7 @@
       "tick": 75,
       "time": 3.75,
       "nextId": 412,
-      "state": "0eb58bdd",
+      "state": "cc201ea8",
       "events": "3a440865",
       "rng": {
         "draws": 152,
@@ -62,7 +62,7 @@
       "tick": 100,
       "time": 5,
       "nextId": 412,
-      "state": "406037a0",
+      "state": "1c828500",
       "events": "8025fc6d",
       "rng": {
         "draws": 276,
@@ -73,7 +73,7 @@
       "tick": 101,
       "time": 5.05,
       "nextId": 412,
-      "state": "2196bfbb",
+      "state": "33d0a5f6",
       "events": "91e52be5",
       "rng": {
         "draws": 280,
@@ -103,7 +103,6 @@
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ]
@@ -113,8 +112,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -128,7 +126,8 @@
           "mailWelcomed": true,
           "nodeHarvestReadyAt": {},
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -182,7 +181,8 @@
           "mailWelcomed": true,
           "nodeHarvestReadyAt": {},
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -231,7 +231,8 @@
           "mailWelcomed": true,
           "nodeHarvestReadyAt": {},
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -285,7 +286,8 @@
           "mailWelcomed": true,
           "nodeHarvestReadyAt": {},
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -294,34 +296,20 @@
         {
           "aiState": "idle",
           "attackPower": 46,
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3595,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
           "combatTimer": 99,
           "comboUntil": -1,
           "critChance": 0.06,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.06,
           "fiveSecondRule": 104.05,
-          "hp": 100,
+          "hp": 90,
           "id": 408,
           "kind": "player",
           "level": 1,
           "lootFfaTimer": "Infinity",
-          "maxHp": 100,
+          "maxHp": 90,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "onGround": true,
           "overpowerUntil": -1,
           "petMode": "defensive",
@@ -339,10 +327,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 20,
-            "armor": 144,
+            "armor": 110,
             "int": 10,
             "spi": 11,
-            "sta": 23,
+            "sta": 22,
             "str": 23
           },
           "templateId": "warrior",
@@ -505,7 +493,7 @@
       "tick": 102,
       "time": 5.1,
       "nextId": 412,
-      "state": "fc66d8da",
+      "state": "094501b0",
       "events": "f89dcd86",
       "rng": {
         "draws": 281,
@@ -537,7 +525,6 @@
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ]
@@ -547,8 +534,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -562,7 +548,8 @@
           "mailWelcomed": true,
           "nodeHarvestReadyAt": {},
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -616,7 +603,8 @@
           "mailWelcomed": true,
           "nodeHarvestReadyAt": {},
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -676,7 +664,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 5,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -730,7 +719,8 @@
           "mailWelcomed": true,
           "nodeHarvestReadyAt": {},
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -739,34 +729,20 @@
         {
           "aiState": "idle",
           "attackPower": 46,
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3594.95,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
           "combatTimer": 99.05,
           "comboUntil": -1,
           "critChance": 0.06,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.06,
           "fiveSecondRule": 104.1,
-          "hp": 100,
+          "hp": 90,
           "id": 408,
           "kind": "player",
           "level": 1,
           "lootFfaTimer": "Infinity",
-          "maxHp": 100,
+          "maxHp": 90,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "onGround": true,
           "overpowerUntil": -1,
           "petMode": "defensive",
@@ -784,10 +760,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 20,
-            "armor": 144,
+            "armor": 110,
             "int": 10,
             "spi": 11,
-            "sta": 23,
+            "sta": 22,
             "str": 23
           },
           "templateId": "warrior",
@@ -950,8 +926,8 @@
       "tick": 103,
       "time": 5.15,
       "nextId": 412,
-      "state": "12f9492d",
-      "events": "0f97fe98",
+      "state": "6da06524",
+      "events": "f4020904",
       "rng": {
         "draws": 284,
         "digest": "22941d42"
@@ -983,7 +959,6 @@
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ]
@@ -1003,8 +978,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -1028,7 +1002,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 15,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -1103,7 +1078,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 15,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -1168,7 +1144,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 10,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -1238,7 +1215,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 10,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -1247,34 +1225,20 @@
         {
           "aiState": "idle",
           "attackPower": 46,
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3599.95,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
           "combatTimer": 99.05,
           "comboUntil": -1,
           "critChance": 0.06,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.06,
           "fiveSecondRule": 104.15,
-          "hp": 100,
+          "hp": 90,
           "id": 408,
           "kind": "player",
           "level": 1,
           "lootFfaTimer": "Infinity",
-          "maxHp": 100,
+          "maxHp": 90,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "onGround": true,
           "overpowerUntil": -1,
           "petMode": "defensive",
@@ -1292,10 +1256,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 20,
-            "armor": 144,
+            "armor": 110,
             "int": 10,
             "spi": 11,
-            "sta": 23,
+            "sta": 22,
             "str": 23
           },
           "templateId": "warrior",
@@ -1458,7 +1422,7 @@
       "tick": 125,
       "time": 6.25,
       "nextId": 412,
-      "state": "8855d187",
+      "state": "0756e56c",
       "events": "741638a5",
       "rng": {
         "draws": 411,
@@ -1469,7 +1433,7 @@
       "tick": 150,
       "time": 7.5,
       "nextId": 412,
-      "state": "c1c36e5f",
+      "state": "3eb4e9a6",
       "events": "741638a5",
       "rng": {
         "draws": 548,
@@ -1480,7 +1444,7 @@
       "tick": 175,
       "time": 8.75,
       "nextId": 412,
-      "state": "a913ddc6",
+      "state": "2a3244d0",
       "events": "741638a5",
       "rng": {
         "draws": 704,
@@ -1491,7 +1455,7 @@
       "tick": 200,
       "time": 10,
       "nextId": 412,
-      "state": "65ef876c",
+      "state": "476fd94a",
       "events": "741638a5",
       "rng": {
         "draws": 898,
@@ -1502,8 +1466,8 @@
       "tick": 225,
       "time": 11.25,
       "nextId": 412,
-      "state": "7ec0b08b",
-      "events": "d3819beb",
+      "state": "067f0a94",
+      "events": "2bbf670f",
       "rng": {
         "draws": 1011,
         "digest": "e9b4d4be"
@@ -1513,7 +1477,7 @@
       "tick": 243,
       "time": 12.15,
       "nextId": 412,
-      "state": "93dd9642",
+      "state": "4a3b40b4",
       "events": "741638a5",
       "rng": {
         "draws": 1087,
@@ -1546,7 +1510,6 @@
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ],
@@ -1569,8 +1532,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -1594,7 +1556,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 15,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -1672,7 +1635,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 15,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -1740,7 +1704,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 10,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -1813,7 +1778,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 10,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -1822,19 +1788,6 @@
         {
           "aiState": "idle",
           "attackPower": 46,
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3598,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
           "combatTimer": 101,
           "comboUntil": -1,
           "critChance": 0.06,
@@ -1842,15 +1795,14 @@
           "dodgeChance": 0.06,
           "fallStartY": 3.238738,
           "fiveSecondRule": 111.15,
-          "hp": 100,
+          "hp": 90,
           "id": 408,
           "kind": "player",
           "level": 1,
           "lootFfaTimer": "Infinity",
-          "maxHp": 100,
+          "maxHp": 90,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "onGround": true,
           "overpowerUntil": -1,
           "petMode": "defensive",
@@ -1868,10 +1820,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 20,
-            "armor": 144,
+            "armor": 110,
             "int": 10,
             "spi": 11,
-            "sta": 23,
+            "sta": 22,
             "str": 23
           },
           "templateId": "warrior",
@@ -2038,7 +1990,7 @@
       "tick": 243,
       "time": 12.15,
       "nextId": 412,
-      "state": "93dd9642",
+      "state": "4a3b40b4",
       "events": "741638a5",
       "rng": {
         "draws": 1087,
@@ -2071,7 +2023,6 @@
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ],
@@ -2094,8 +2045,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -2119,7 +2069,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 15,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -2197,7 +2148,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 15,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -2265,7 +2217,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 10,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         },
@@ -2338,7 +2291,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 10,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -2347,19 +2301,6 @@
         {
           "aiState": "idle",
           "attackPower": 46,
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3598,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
           "combatTimer": 101,
           "comboUntil": -1,
           "critChance": 0.06,
@@ -2367,15 +2308,14 @@
           "dodgeChance": 0.06,
           "fallStartY": 3.238738,
           "fiveSecondRule": 111.15,
-          "hp": 100,
+          "hp": 90,
           "id": 408,
           "kind": "player",
           "level": 1,
           "lootFfaTimer": "Infinity",
-          "maxHp": 100,
+          "maxHp": 90,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "onGround": true,
           "overpowerUntil": -1,
           "petMode": "defensive",
@@ -2393,10 +2333,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 20,
-            "armor": 144,
+            "armor": 110,
             "int": 10,
             "spi": 11,
-            "sta": 23,
+            "sta": 22,
             "str": 23
           },
           "templateId": "warrior",

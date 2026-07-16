@@ -393,24 +393,6 @@ export const vi_VN: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.voidfeast.description':
     'Nuốt một hiệu ứng phép thuật (hiệu ứng có lợi từ kẻ địch hoặc có hại từ đồng minh) và hồi cho bạn 6% máu tối đa.',
   'hudChrome.abilityError.shieldRequired': 'Bạn phải trang bị khiên.',
-  'guide.family.reptile.desc':
-    'Những kẻ săn mồi máu lạnh với tiếng rít và cú ngoạm rất riêng, khác biệt với các loài thú máu nóng.',
-  'guide.family.reptile.name': 'Loài Bò Sát',
-  'hudChrome.bags.rightClickDestroy': 'Shift-chuột phải để phá hủy',
-  'hudChrome.cameraPrompt.changeLater':
-    'Bạn có thể thay đổi tùy chọn này sau trong menu Esc, Gán Phím.',
-  'hudChrome.cameraPrompt.classicDesc': 'Giữ chuột phải và di chuyển chuột để xoay camera.',
-  'hudChrome.cameraPrompt.classicTitle': 'Camera Cổ Điển',
-  'hudChrome.cameraPrompt.confirm': 'Xác Nhận',
-  'hudChrome.cameraPrompt.intro': 'Chọn cách camera đi theo nhân vật của bạn.',
-  'hudChrome.cameraPrompt.mouseDesc': 'Di chuyển chuột để xoay camera mà không cần giữ nút.',
-  'hudChrome.cameraPrompt.title': 'Chọn Camera',
-  'hudChrome.discord.link.joinServer': 'Chỉ cần tham gia máy chủ Discord',
-  'hudChrome.meters.autoShowHint':
-    'Các hàng tự động xuất hiện khi tổ đội của bạn gây sát thương hoặc hồi máu, và phần này đóng vài giây sau khi giao tranh kết thúc.',
-  'hudChrome.petFeed.disabledFullHp': 'Thú cưng đã đầy máu',
-  'hudChrome.petFeed.disabledNoFood':
-    'Không có thức ăn nào trong túi có thể hồi máu cho thú cưng của bạn',
   'loading.tips.classes':
     'Mẹo: mỗi lớp trong 9 lớp nhân vật có lối chơi khác nhau. Hãy thử vài lớp trước khi quyết định gắn bó.',
   'loading.tips.dungeons':
@@ -6703,11 +6685,6 @@ export const vi_VN: Partial<Record<TranslationKey, string>> = {
   'hudChrome.discord.roleTag.levyst': 'Levy St',
   'hudChrome.discord.roleTag.devs': 'Lập Trình Viên',
   'hudChrome.discord.roleTag.mods': 'Điều Hành Viên',
-  'hudChrome.discord.roleTag.seniormods': 'Điều Hành Viên Cấp Cao',
-  'hudChrome.discord.roleTag.juniormods': 'Điều Hành Viên Cấp Dưới',
-  'hudChrome.discord.roleTag.contentcreator': 'Nhà Sáng Tạo Nội Dung',
-  'hudChrome.discord.roleTag.legend': 'HUYỀN THOẠI',
-  'hudChrome.discord.roleTag.shill': 'NGƯỜI QUẢNG BÁ',
   'hudChrome.discord.roleTag.artists': 'Họa Sĩ',
   'hudChrome.discord.guildMember': 'Thành viên đã xác minh',
   'hudChrome.discord.notMember': 'Chưa tham gia máy chủ',

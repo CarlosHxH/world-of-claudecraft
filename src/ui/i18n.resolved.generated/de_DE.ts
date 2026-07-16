@@ -768,7 +768,6 @@ export const de_DE: EnTranslations = {
       "update": "Aktualisieren"
     },
     "cameraPrompt": {
-<<<<<<< HEAD
       "title": "Kamera wahlen",
       "intro": "Waehle, wie die Kamera deinem Charakter folgt.",
       "mouseDesc": "Maus bewegen, um die Kamera zu drehen, ohne eine Taste gehalten zu haben.",
@@ -776,23 +775,6 @@ export const de_DE: EnTranslations = {
       "classicDesc": "Rechtsklick halten und die Maus bewegen, um die Kamera zu drehen.",
       "changeLater": "Du kannst dies spater unter Esc, Tastenbelegung aendern.",
       "confirm": "Bestatigen"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "title": "Choose Your Camera",
-      "intro": "Pick how the camera follows your character.",
-      "mouseDesc": "Move the mouse to turn the camera without holding a button.",
-      "classicTitle": "Classic Camera",
-      "classicDesc": "Hold right-click and move the mouse to turn the camera.",
-      "changeLater": "You can change this later under Esc, Key Bindings.",
-      "confirm": "Confirm"
-=======
-      "title": "Wähle deine Kamera",
-      "intro": "Wähle, wie die Kamera deinem Charakter folgt.",
-      "mouseDesc": "Bewege die Maus, um die Kamera zu drehen, ohne eine Taste gedrückt zu halten.",
-      "classicTitle": "Klassische Kamera",
-      "classicDesc": "Halte die rechte Maustaste gedrückt und bewege die Maus, um die Kamera zu drehen.",
-      "changeLater": "Du kannst dies später unter Esc, Tastenbelegung ändern.",
-      "confirm": "Bestätigen"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "castBar": {
       "playerAria": "Eure Zauberleiste",
@@ -840,25 +822,11 @@ export const de_DE: EnTranslations = {
       "perSecondRow": "{total} ({rate})",
       "minutesSeconds": "{m} Min. {s} Sek.",
       "seconds": "{s} Sek.",
-<<<<<<< HEAD
       "autoShowHint": "Zeilen erscheinen automatisch, sobald deine Gruppe Schaden verursacht oder heilt, und dieses Segment schliessen sich einige Sekunden nach Kampfende."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "autoShowHint": "Rows appear automatically once your party deals damage or healing, and this segment closes a few seconds after combat ends."
-=======
-      "autoShowHint": "Die Zeilen erscheinen automatisch, sobald deine Gruppe Schaden verursacht oder heilt. Dieser Bereich schließt sich wenige Sekunden nach Kampfende."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "petFeed": {
-<<<<<<< HEAD
       "disabledFullHp": "Begleiter hat volle Gesundheit",
       "disabledNoFood": "Kein Futter in deinen Taschen heilt deinen Begleiter"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "disabledFullHp": "Pet is at full health",
-      "disabledNoFood": "No food in your bags will heal your pet"
-=======
-      "disabledFullHp": "Begleiter hat volle Gesundheit",
-      "disabledNoFood": "Kein Futter in deinen Taschen kann deinen Begleiter heilen"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "keybinds": {
       "emoteWheel": "Emote-Rad",
@@ -1501,16 +1469,10 @@ export const de_DE: EnTranslations = {
     },
     "bags": {
       "cannotDestroy": "Dieser Gegenstand kann nicht zerstört werden.",
-<<<<<<< HEAD
       "rightClickDestroy": "Rechtsklick zum Vernichten",
       "dragEquipHint": "Auf deinen Charakter ziehen, um anzulegen",
       "dragDestroyHint": "In die Welt ziehen, um zu vernichten",
       "reorderNeedsRecent": "Filter aufheben und nach Zuletzt sortieren, um deine Taschen neu anzuordnen",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "rightClickDestroy": "Shift+right-click to destroy",
-=======
-      "rightClickDestroy": "Umschalt+Rechtsklick zum Zerstören",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "filterGroupAria": "Taschen nach Kategorie filtern",
       "filterAll": "Alle",
       "filterWeapon": "Waffen",
@@ -2937,16 +2899,8 @@ export const de_DE: EnTranslations = {
         "desc": "Schuppige, schlangenhafte Wesen aus den alten Tiefen. Selten, stolz und weit stärker, als sie aussehen."
       },
       "reptile": {
-<<<<<<< HEAD
         "name": "Reptilien",
         "desc": "Kaltblutige Jaeger mit ihrem ganz eigenen Zischen und Schnappen, deutlich verschieden von den warmblutigen Bestien."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "name": "Reptiles",
-        "desc": "Cold-blooded hunters with a hiss and a snap all their own, distinct from the warm-blooded beasts."
-=======
-        "name": "Reptilien",
-        "desc": "Kaltblütige Jäger mit unverwechselbarem Zischen und Zuschnappen, klar von den warmblütigen Bestien zu unterscheiden."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     "worldPage": {

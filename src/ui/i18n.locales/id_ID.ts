@@ -396,24 +396,6 @@ export const id_ID: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.voidfeast.description':
     'Melahap efek sihir (efek menguntungkan dari musuh atau efek berbahaya dari sekutu) dan memulihkan 6% nyawa maksimummu.',
   'hudChrome.abilityError.shieldRequired': 'Kamu harus memakai perisai.',
-  'guide.family.reptile.desc':
-    'Pemburu berdarah dingin dengan desis dan gertakan khas mereka sendiri, berbeda dari binatang berdarah panas.',
-  'guide.family.reptile.name': 'Reptilia',
-  'hudChrome.bags.rightClickDestroy': 'Shift-klik kanan untuk menghancurkan',
-  'hudChrome.cameraPrompt.changeLater':
-    'Kamu dapat mengubahnya nanti di menu Esc, Pengaturan Tombol.',
-  'hudChrome.cameraPrompt.classicDesc': 'Tahan klik kanan dan gerakkan mouse untuk memutar kamera.',
-  'hudChrome.cameraPrompt.classicTitle': 'Kamera Klasik',
-  'hudChrome.cameraPrompt.confirm': 'Konfirmasi',
-  'hudChrome.cameraPrompt.intro': 'Pilih bagaimana kamera mengikuti karaktermu.',
-  'hudChrome.cameraPrompt.mouseDesc': 'Gerakkan mouse untuk memutar kamera tanpa menahan tombol.',
-  'hudChrome.cameraPrompt.title': 'Pilih Kameramu',
-  'hudChrome.discord.link.joinServer': 'Langsung bergabung dengan server Discord',
-  'hudChrome.meters.autoShowHint':
-    'Baris muncul secara otomatis setelah kelompokmu memberikan kerusakan atau penyembuhan, dan segmen ini menutup beberapa detik setelah pertarungan berakhir.',
-  'hudChrome.petFeed.disabledFullHp': 'Kesehatan peliharaan sudah penuh',
-  'hudChrome.petFeed.disabledNoFood':
-    'Tidak ada makanan di tasmu yang dapat menyembuhkan peliharaanmu',
   'loading.tips.classes':
     'Kiat: masing-masing dari 9 kelas memiliki gaya bermain berbeda. Cobalah beberapa sebelum menetapkan pilihan.',
   'loading.tips.dungeons':
@@ -6760,11 +6742,6 @@ export const id_ID: Partial<Record<TranslationKey, string>> = {
   'hudChrome.discord.roleTag.levyst': 'Levy St',
   'hudChrome.discord.roleTag.devs': 'Pengembang',
   'hudChrome.discord.roleTag.mods': 'Moderator',
-  'hudChrome.discord.roleTag.seniormods': 'Moderator Senior',
-  'hudChrome.discord.roleTag.juniormods': 'Moderator Junior',
-  'hudChrome.discord.roleTag.contentcreator': 'Kreator Konten',
-  'hudChrome.discord.roleTag.legend': 'LEGENDA',
-  'hudChrome.discord.roleTag.shill': 'PROMOTOR',
   'hudChrome.discord.roleTag.artists': 'Seniman',
   'hudChrome.discord.guildMember': 'Anggota terverifikasi',
   'hudChrome.discord.notMember': 'Belum berada di server',

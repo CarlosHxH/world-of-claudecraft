@@ -768,7 +768,6 @@ export const pl_PL: EnTranslations = {
       "update": "Aktualizuj"
     },
     "cameraPrompt": {
-<<<<<<< HEAD
       "title": "Wybierz Kamerę",
       "intro": "Wybierz, jak kamera podąża za twoją postacią.",
       "mouseDesc": "Ruszaj myszą, aby obracać kamerą bez przytrzymywania przycisku.",
@@ -776,23 +775,6 @@ export const pl_PL: EnTranslations = {
       "classicDesc": "Przytrzymaj prawy przycisk myszy i ruszaj myszą, aby obracać kamerą.",
       "changeLater": "Możesz to zmienić później w Esc, Skróty Klawiszowe.",
       "confirm": "Potwierdź"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "title": "Choose Your Camera",
-      "intro": "Pick how the camera follows your character.",
-      "mouseDesc": "Move the mouse to turn the camera without holding a button.",
-      "classicTitle": "Classic Camera",
-      "classicDesc": "Hold right-click and move the mouse to turn the camera.",
-      "changeLater": "You can change this later under Esc, Key Bindings.",
-      "confirm": "Confirm"
-=======
-      "title": "Wybierz kamerę",
-      "intro": "Wybierz sposób, w jaki kamera podąża za twoją postacią.",
-      "mouseDesc": "Poruszaj myszą, aby obracać kamerę bez przytrzymywania przycisku.",
-      "classicTitle": "Klasyczna kamera",
-      "classicDesc": "Przytrzymaj prawy przycisk myszy i poruszaj myszą, aby obracać kamerę.",
-      "changeLater": "Możesz to później zmienić w menu Esc, Przypisania klawiszy.",
-      "confirm": "Potwierdź"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "castBar": {
       "playerAria": "Twój pasek rzucania",
@@ -840,25 +822,11 @@ export const pl_PL: EnTranslations = {
       "perSecondRow": "{total} ({rate})",
       "minutesSeconds": "{m}m {s}s",
       "seconds": "{s}s",
-<<<<<<< HEAD
       "autoShowHint": "Wiersze pojawiają się automatycznie, gdy twoja drużyna zadaje obrażenia lub leczy, a ten segment zamyka się kilka sekund po zakończeniu walki."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "autoShowHint": "Rows appear automatically once your party deals damage or healing, and this segment closes a few seconds after combat ends."
-=======
-      "autoShowHint": "Wiersze pojawiają się automatycznie, gdy twoja grupa zadaje obrażenia lub leczy, a ten panel zamyka się kilka sekund po zakończeniu walki."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "petFeed": {
-<<<<<<< HEAD
       "disabledFullHp": "Zwierzę ma pełne zdrowie",
       "disabledNoFood": "W twoich torbach nie ma jedzenia, które uleczy twoje zwierzę"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "disabledFullHp": "Pet is at full health",
-      "disabledNoFood": "No food in your bags will heal your pet"
-=======
-      "disabledFullHp": "Zwierzę ma pełne zdrowie",
-      "disabledNoFood": "Żadne jedzenie w twoich torbach nie uleczy zwierzęcia"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "keybinds": {
       "emoteWheel": "Koło emotek",
@@ -1501,16 +1469,10 @@ export const pl_PL: EnTranslations = {
     },
     "bags": {
       "cannotDestroy": "Tego przedmiotu nie można zniszczyć.",
-<<<<<<< HEAD
       "rightClickDestroy": "Kliknij prawym przyciskiem, aby zniszczyć",
       "dragEquipHint": "Przeciągnij na postać, aby założyć",
       "dragDestroyHint": "Przeciągnij poza okno, aby zniszczyć",
       "reorderNeedsRecent": "Wyczyść filtr i posortuj według Ostatnich, aby zmienić kolejność w torbach",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "rightClickDestroy": "Shift+right-click to destroy",
-=======
-      "rightClickDestroy": "Shift+prawy przycisk myszy, aby zniszczyć",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "filterGroupAria": "Filtruj torby według kategorii",
       "filterAll": "Wszystko",
       "filterWeapon": "Bronie",
@@ -1740,13 +1702,7 @@ export const pl_PL: EnTranslations = {
         "benefits": "Połącz Discord, aby zdobywać punkty za grę i aktywność w społeczności oraz wspinać się po progach statusu.",
         "error": "Nie udało się połączyć Discorda. Spróbuj ponownie.",
         "success": "Discord połączony.",
-<<<<<<< HEAD
         "joinServer": "Dołącz do serwera Discord"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "joinServer": "Just join the Discord server"
-=======
-        "joinServer": "Po prostu dołącz do serwera Discord"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       },
       "choice": {
         "title": "Kontynuuj z Discordem",
@@ -2943,16 +2899,8 @@ export const pl_PL: EnTranslations = {
         "desc": "Łuskowate, wężowate istoty ze starych głębin. Rzadkie, dumne i znacznie silniejsze, niż na to wyglądają."
       },
       "reptile": {
-<<<<<<< HEAD
         "name": "Gady",
         "desc": "Zimnokrwiste drapieżniki o własnym syczeniu i kłapaniu, odmienne od ciepłokrwistych bestii."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "name": "Reptiles",
-        "desc": "Cold-blooded hunters with a hiss and a snap all their own, distinct from the warm-blooded beasts."
-=======
-        "name": "Gady",
-        "desc": "Zimnokrwiści łowcy o niepowtarzalnym syku i kłapaniu szczęk, odmienni od ciepłokrwistych bestii."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     "worldPage": {

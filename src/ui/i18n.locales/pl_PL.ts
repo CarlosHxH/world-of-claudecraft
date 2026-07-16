@@ -398,25 +398,6 @@ export const pl_PL: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.voidfeast.description':
     'Pożera efekt magiczny (korzystny z wroga albo szkodliwy z sojusznika) i leczy cię o 6% maksymalnego zdrowia.',
   'hudChrome.abilityError.shieldRequired': 'Musisz mieć założoną tarczę.',
-  'guide.family.reptile.desc':
-    'Zimnokrwiści łowcy o niepowtarzalnym syku i kłapaniu szczęk, odmienni od ciepłokrwistych bestii.',
-  'guide.family.reptile.name': 'Gady',
-  'hudChrome.bags.rightClickDestroy': 'Shift+prawy przycisk myszy, aby zniszczyć',
-  'hudChrome.cameraPrompt.changeLater':
-    'Możesz to później zmienić w menu Esc, Przypisania klawiszy.',
-  'hudChrome.cameraPrompt.classicDesc':
-    'Przytrzymaj prawy przycisk myszy i poruszaj myszą, aby obracać kamerę.',
-  'hudChrome.cameraPrompt.classicTitle': 'Klasyczna kamera',
-  'hudChrome.cameraPrompt.confirm': 'Potwierdź',
-  'hudChrome.cameraPrompt.intro': 'Wybierz sposób, w jaki kamera podąża za twoją postacią.',
-  'hudChrome.cameraPrompt.mouseDesc':
-    'Poruszaj myszą, aby obracać kamerę bez przytrzymywania przycisku.',
-  'hudChrome.cameraPrompt.title': 'Wybierz kamerę',
-  'hudChrome.discord.link.joinServer': 'Po prostu dołącz do serwera Discord',
-  'hudChrome.meters.autoShowHint':
-    'Wiersze pojawiają się automatycznie, gdy twoja grupa zadaje obrażenia lub leczy, a ten panel zamyka się kilka sekund po zakończeniu walki.',
-  'hudChrome.petFeed.disabledFullHp': 'Zwierzę ma pełne zdrowie',
-  'hudChrome.petFeed.disabledNoFood': 'Żadne jedzenie w twoich torbach nie uleczy zwierzęcia',
   'entities.abilities.sport_boot.description':
     'Długie, wysokie wykopnięcie w stronę punktu celowania. Trybuny to uwielbiają.',
   'entities.abilities.sport_boot.name': 'Potężny Wykop',
@@ -6673,11 +6654,6 @@ export const pl_PL: Partial<Record<TranslationKey, string>> = {
   'hudChrome.discord.roleTag.levyst': 'Levy St',
   'hudChrome.discord.roleTag.devs': 'Dev',
   'hudChrome.discord.roleTag.mods': 'Mod',
-  'hudChrome.discord.roleTag.seniormods': 'Starszy moderator',
-  'hudChrome.discord.roleTag.juniormods': 'Młodszy moderator',
-  'hudChrome.discord.roleTag.contentcreator': 'Twórca treści',
-  'hudChrome.discord.roleTag.legend': 'LEGENDA',
-  'hudChrome.discord.roleTag.shill': 'PROMOTOR',
   'hudChrome.discord.roleTag.artists': 'Grafik',
   'hudChrome.discord.guildMember': 'Zweryfikowany członek',
   'hudChrome.discord.notMember': 'Jeszcze nie na serwerze',

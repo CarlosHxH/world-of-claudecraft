@@ -768,7 +768,6 @@ export const fr_CA: EnTranslations = {
       "update": "Mettre à jour"
     },
     "cameraPrompt": {
-<<<<<<< HEAD
       "title": "Choisissez votre caméra",
       "intro": "Choisissez comment la caméra suit votre personnage.",
       "mouseDesc": "Déplacez la souris pour faire pivoter la caméra sans maintenir de bouton.",
@@ -776,23 +775,6 @@ export const fr_CA: EnTranslations = {
       "classicDesc": "Maintenez le clic droit et déplacez la souris pour faire pivoter la caméra.",
       "changeLater": "Vous pouvez modifier ce réglage plus tard via Échap, Raccourcis clavier.",
       "confirm": "Confirmer"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "title": "Choose Your Camera",
-      "intro": "Pick how the camera follows your character.",
-      "mouseDesc": "Move the mouse to turn the camera without holding a button.",
-      "classicTitle": "Classic Camera",
-      "classicDesc": "Hold right-click and move the mouse to turn the camera.",
-      "changeLater": "You can change this later under Esc, Key Bindings.",
-      "confirm": "Confirm"
-=======
-      "title": "Choisissez votre caméra",
-      "intro": "Choisissez comment la caméra suit votre personnage.",
-      "mouseDesc": "Déplacez la souris pour tourner la caméra sans maintenir de bouton.",
-      "classicTitle": "Caméra classique",
-      "classicDesc": "Maintenez le clic droit et déplacez la souris pour tourner la caméra.",
-      "changeLater": "Vous pourrez modifier ce choix plus tard dans le menu Échap, Raccourcis clavier.",
-      "confirm": "Confirmer"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "castBar": {
       "playerAria": "Votre barre d'incantation",
@@ -840,25 +822,11 @@ export const fr_CA: EnTranslations = {
       "perSecondRow": "{total} ({rate})",
       "minutesSeconds": "{m} min {s} s",
       "seconds": "{s} s",
-<<<<<<< HEAD
       "autoShowHint": "Les lignes apparaissent automatiquement dès que votre groupe inflige des dégâts ou des soins, et ce panneau se ferme quelques secondes après la fin du combat."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "autoShowHint": "Rows appear automatically once your party deals damage or healing, and this segment closes a few seconds after combat ends."
-=======
-      "autoShowHint": "Les lignes apparaissent automatiquement dès que votre groupe inflige des dégâts ou prodigue des soins, et ce segment se ferme quelques secondes après la fin du combat."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "petFeed": {
-<<<<<<< HEAD
       "disabledFullHp": "Le familier est à pleine santé",
       "disabledNoFood": "Aucune nourriture dans vos sacs ne peut soigner votre familier"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "disabledFullHp": "Pet is at full health",
-      "disabledNoFood": "No food in your bags will heal your pet"
-=======
-      "disabledFullHp": "Le familier a tous ses points de vie",
-      "disabledNoFood": "Aucune nourriture dans vos sacs ne peut soigner votre familier"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "keybinds": {
       "emoteWheel": "Roue des emotes",
@@ -1501,16 +1469,10 @@ export const fr_CA: EnTranslations = {
     },
     "bags": {
       "cannotDestroy": "Cet objet ne peut pas être détruit.",
-<<<<<<< HEAD
       "rightClickDestroy": "Clic droit pour détruire",
       "dragEquipHint": "Faites glisser sur votre personnage pour équiper",
       "dragDestroyHint": "Faites glisser dans le monde pour détruire",
       "reorderNeedsRecent": "Effacez le filtre et triez par Récents pour réorganiser vos sacs",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "rightClickDestroy": "Shift+right-click to destroy",
-=======
-      "rightClickDestroy": "Maj+clic droit pour détruire",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "filterGroupAria": "Filtrer les sacs par catégorie",
       "filterAll": "Tous",
       "filterWeapon": "Armes",
@@ -1740,13 +1702,7 @@ export const fr_CA: EnTranslations = {
         "benefits": "Liez votre Discord pour gagner des points en jouant et en participant à la communauté, et gravir les rangs de statut.",
         "error": "Impossible de lier Discord. Veuillez réessayer.",
         "success": "Discord lié.",
-<<<<<<< HEAD
         "joinServer": "Rejoignez simplement le serveur Discord"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "joinServer": "Just join the Discord server"
-=======
-        "joinServer": "Rejoindre simplement le serveur Discord"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       },
       "choice": {
         "title": "Continuer avec Discord",
@@ -2944,13 +2900,7 @@ export const fr_CA: EnTranslations = {
       },
       "reptile": {
         "name": "Reptiles",
-<<<<<<< HEAD
         "desc": "Des chasseurs à sang froid dotés d'un sifflement et d'un claquement qui leur sont propres, distincts des créatures à sang chaud."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "desc": "Cold-blooded hunters with a hiss and a snap all their own, distinct from the warm-blooded beasts."
-=======
-        "desc": "Chasseurs à sang froid, avec un sifflement et un claquement qui leur sont propres, distincts des bêtes à sang chaud."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     "worldPage": {

@@ -768,7 +768,6 @@ export const vi_VN: EnTranslations = {
       "update": "Cập Nhật"
     },
     "cameraPrompt": {
-<<<<<<< HEAD
       "title": "Chọn Máy Ảnh Của Bạn",
       "intro": "Chọn cách máy ảnh theo dõi nhân vật của bạn.",
       "mouseDesc": "Di chuyển chuột để xoay máy ảnh mà không cần giữ nút.",
@@ -776,23 +775,6 @@ export const vi_VN: EnTranslations = {
       "classicDesc": "Giữ chuột phải và di chuyển chuột để xoay máy ảnh.",
       "changeLater": "Bạn có thể thay đổi sau trong Esc, Phím Tắt.",
       "confirm": "Xác Nhận"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "title": "Choose Your Camera",
-      "intro": "Pick how the camera follows your character.",
-      "mouseDesc": "Move the mouse to turn the camera without holding a button.",
-      "classicTitle": "Classic Camera",
-      "classicDesc": "Hold right-click and move the mouse to turn the camera.",
-      "changeLater": "You can change this later under Esc, Key Bindings.",
-      "confirm": "Confirm"
-=======
-      "title": "Chọn Camera",
-      "intro": "Chọn cách camera đi theo nhân vật của bạn.",
-      "mouseDesc": "Di chuyển chuột để xoay camera mà không cần giữ nút.",
-      "classicTitle": "Camera Cổ Điển",
-      "classicDesc": "Giữ chuột phải và di chuyển chuột để xoay camera.",
-      "changeLater": "Bạn có thể thay đổi tùy chọn này sau trong menu Esc, Gán Phím.",
-      "confirm": "Xác Nhận"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "castBar": {
       "playerAria": "Thanh Niệm Chú Của Bạn",
@@ -840,25 +822,11 @@ export const vi_VN: EnTranslations = {
       "perSecondRow": "{total} ({rate})",
       "minutesSeconds": "{m}p {s}g",
       "seconds": "{s}g",
-<<<<<<< HEAD
       "autoShowHint": "Các hàng xuất hiện tự động sau khi nhóm của bạn gây sát thương hoặc hồi máu, và phần này đóng lại vài giây sau khi chiến đấu kết thúc."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "autoShowHint": "Rows appear automatically once your party deals damage or healing, and this segment closes a few seconds after combat ends."
-=======
-      "autoShowHint": "Các hàng tự động xuất hiện khi tổ đội của bạn gây sát thương hoặc hồi máu, và phần này đóng vài giây sau khi giao tranh kết thúc."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "petFeed": {
-<<<<<<< HEAD
       "disabledFullHp": "Thú cưng đang đầy máu",
       "disabledNoFood": "Không có thức ăn nào trong túi đồ của bạn có thể chữa lành thú cưng"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "disabledFullHp": "Pet is at full health",
-      "disabledNoFood": "No food in your bags will heal your pet"
-=======
-      "disabledFullHp": "Thú cưng đã đầy máu",
-      "disabledNoFood": "Không có thức ăn nào trong túi có thể hồi máu cho thú cưng của bạn"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "keybinds": {
       "emoteWheel": "Vòng Biểu Cảm",
@@ -1501,16 +1469,10 @@ export const vi_VN: EnTranslations = {
     },
     "bags": {
       "cannotDestroy": "Không thể phá hủy vật phẩm này.",
-<<<<<<< HEAD
       "rightClickDestroy": "Nhấp chuột phải để hủy bỏ",
       "dragEquipHint": "Kéo lên nhân vật để trang bị",
       "dragDestroyHint": "Kéo ra ngoài thế giới để hủy bỏ",
       "reorderNeedsRecent": "Xóa bộ lọc và sắp xếp theo Gần Đây để sắp xếp lại túi đồ",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "rightClickDestroy": "Shift+right-click to destroy",
-=======
-      "rightClickDestroy": "Shift-chuột phải để phá hủy",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "filterGroupAria": "Lọc túi đồ theo danh mục",
       "filterAll": "Tất cả",
       "filterWeapon": "Vũ khí",
@@ -2937,16 +2899,8 @@ export const vi_VN: EnTranslations = {
         "desc": "Những sinh vật có vảy, thân rắn từ vực sâu cổ xưa. Hiếm gặp, kiêu hãnh, và mạnh hơn vẻ ngoài của chúng rất nhiều."
       },
       "reptile": {
-<<<<<<< HEAD
         "name": "Bò Sát",
         "desc": "Những thợ săn máu lạnh với tiếng rít và cú đớp rất riêng của chúng, khác biệt hoàn toàn so với các dã thú máu nóng."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "name": "Reptiles",
-        "desc": "Cold-blooded hunters with a hiss and a snap all their own, distinct from the warm-blooded beasts."
-=======
-        "name": "Loài Bò Sát",
-        "desc": "Những kẻ săn mồi máu lạnh với tiếng rít và cú ngoạm rất riêng, khác biệt với các loài thú máu nóng."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     "worldPage": {

@@ -392,24 +392,6 @@ export const sv_SE: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.voidfeast.description':
     'Slukar en magisk effekt (en gynnsam från en fiende eller en skadlig från en allierad) och helar dig med 6 % av din maximala hälsa.',
   'hudChrome.abilityError.shieldRequired': 'Du måste ha en sköld utrustad.',
-  'guide.family.reptile.desc':
-    'Kallblodiga jägare med ett alldeles eget väsande och käftsmällande, skilda från varmblodiga bestar.',
-  'guide.family.reptile.name': 'Reptiler',
-  'hudChrome.bags.rightClickDestroy': 'Shift-högerklicka för att förstöra',
-  'hudChrome.cameraPrompt.changeLater': 'Du kan ändra detta senare under Esc, Tangentbindningar.',
-  'hudChrome.cameraPrompt.classicDesc':
-    'Håll inne höger musknapp och flytta musen för att vrida kameran.',
-  'hudChrome.cameraPrompt.classicTitle': 'Klassisk kamera',
-  'hudChrome.cameraPrompt.confirm': 'Bekräfta',
-  'hudChrome.cameraPrompt.intro': 'Välj hur kameran följer din karaktär.',
-  'hudChrome.cameraPrompt.mouseDesc':
-    'Flytta musen för att vrida kameran utan att hålla inne en knapp.',
-  'hudChrome.cameraPrompt.title': 'Välj din kamera',
-  'hudChrome.discord.link.joinServer': 'Gå bara med i Discord-servern',
-  'hudChrome.meters.autoShowHint':
-    'Rader visas automatiskt när din grupp orsakar skada eller läker, och det här segmentet stängs några sekunder efter att striden är över.',
-  'hudChrome.petFeed.disabledFullHp': 'Ditt husdjur har full hälsa',
-  'hudChrome.petFeed.disabledNoFood': 'Ingen mat i dina väskor kan läka ditt husdjur',
   'entities.abilities.sport_boot.description':
     'En lång, hög spark mot siktpunkten. Publiken älskar den.',
   'entities.abilities.sport_boot.name': 'Storspark',
@@ -6617,11 +6599,6 @@ export const sv_SE: Partial<Record<TranslationKey, string>> = {
   'hudChrome.discord.roleTag.levyst': 'Levy St',
   'hudChrome.discord.roleTag.devs': 'Utvecklare',
   'hudChrome.discord.roleTag.mods': 'Moderator',
-  'hudChrome.discord.roleTag.seniormods': 'Senior moderator',
-  'hudChrome.discord.roleTag.juniormods': 'Junior moderator',
-  'hudChrome.discord.roleTag.contentcreator': 'Innehållsskapare',
-  'hudChrome.discord.roleTag.legend': 'LEGEND',
-  'hudChrome.discord.roleTag.shill': 'PROMOTER',
   'hudChrome.discord.roleTag.artists': 'Konstnär',
   'hudChrome.discord.guildMember': 'Verifierad medlem',
   'hudChrome.discord.notMember': 'Inte med på servern ännu',

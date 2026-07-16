@@ -768,7 +768,6 @@ export const id_ID: EnTranslations = {
       "update": "Perbarui"
     },
     "cameraPrompt": {
-<<<<<<< HEAD
       "title": "Pilih Kameramu",
       "intro": "Pilih cara kamera mengikuti karaktermu.",
       "mouseDesc": "Gerakkan tetikus untuk memutar kamera tanpa menahan tombol apa pun.",
@@ -776,23 +775,6 @@ export const id_ID: EnTranslations = {
       "classicDesc": "Tahan klik kanan dan gerakkan tetikus untuk memutar kamera.",
       "changeLater": "Kamu dapat mengubah ini nanti di Esc, Ikatan Tombol.",
       "confirm": "Konfirmasi"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "title": "Choose Your Camera",
-      "intro": "Pick how the camera follows your character.",
-      "mouseDesc": "Move the mouse to turn the camera without holding a button.",
-      "classicTitle": "Classic Camera",
-      "classicDesc": "Hold right-click and move the mouse to turn the camera.",
-      "changeLater": "You can change this later under Esc, Key Bindings.",
-      "confirm": "Confirm"
-=======
-      "title": "Pilih Kameramu",
-      "intro": "Pilih bagaimana kamera mengikuti karaktermu.",
-      "mouseDesc": "Gerakkan mouse untuk memutar kamera tanpa menahan tombol.",
-      "classicTitle": "Kamera Klasik",
-      "classicDesc": "Tahan klik kanan dan gerakkan mouse untuk memutar kamera.",
-      "changeLater": "Kamu dapat mengubahnya nanti di menu Esc, Pengaturan Tombol.",
-      "confirm": "Konfirmasi"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "castBar": {
       "playerAria": "Bilah Rapal Anda",
@@ -840,25 +822,11 @@ export const id_ID: EnTranslations = {
       "perSecondRow": "{total} ({rate})",
       "minutesSeconds": "{m}m {s}d",
       "seconds": "{s}d",
-<<<<<<< HEAD
       "autoShowHint": "Baris muncul secara otomatis setelah partaimu memberikan kerusakan atau penyembuhan, dan segmen ini tertutup beberapa detik setelah pertarungan berakhir."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "autoShowHint": "Rows appear automatically once your party deals damage or healing, and this segment closes a few seconds after combat ends."
-=======
-      "autoShowHint": "Baris muncul secara otomatis setelah kelompokmu memberikan kerusakan atau penyembuhan, dan segmen ini menutup beberapa detik setelah pertarungan berakhir."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "petFeed": {
-<<<<<<< HEAD
       "disabledFullHp": "Peliharaan sudah dalam kondisi darah penuh",
       "disabledNoFood": "Tidak ada makanan di tasmu yang dapat menyembuhkan peliharaanmu"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "disabledFullHp": "Pet is at full health",
-      "disabledNoFood": "No food in your bags will heal your pet"
-=======
-      "disabledFullHp": "Kesehatan peliharaan sudah penuh",
-      "disabledNoFood": "Tidak ada makanan di tasmu yang dapat menyembuhkan peliharaanmu"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "keybinds": {
       "emoteWheel": "Roda Emote",
@@ -1501,16 +1469,10 @@ export const id_ID: EnTranslations = {
     },
     "bags": {
       "cannotDestroy": "Item ini tidak dapat dihancurkan.",
-<<<<<<< HEAD
       "rightClickDestroy": "Klik kanan untuk menghancurkan",
       "dragEquipHint": "Seret ke karaktermu untuk memakai",
       "dragDestroyHint": "Seret ke dunia untuk menghancurkan",
       "reorderNeedsRecent": "Hapus filter dan urutkan berdasarkan Terbaru untuk mengatur ulang tasmu",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "rightClickDestroy": "Shift+right-click to destroy",
-=======
-      "rightClickDestroy": "Shift-klik kanan untuk menghancurkan",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "filterGroupAria": "Saring tas menurut kategori",
       "filterAll": "Semua",
       "filterWeapon": "Senjata",
@@ -1740,13 +1702,7 @@ export const id_ID: EnTranslations = {
         "benefits": "Tautkan Discord-mu untuk meraih poin dari bermain dan aktivitas komunitas, serta naik tingkat status.",
         "error": "Tidak dapat menautkan Discord. Silakan coba lagi.",
         "success": "Discord tertaut.",
-<<<<<<< HEAD
         "joinServer": "Langsung bergabung ke server Discord"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "joinServer": "Just join the Discord server"
-=======
-        "joinServer": "Langsung bergabung dengan server Discord"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       },
       "choice": {
         "title": "Lanjutkan dengan Discord",
@@ -2943,16 +2899,8 @@ export const id_ID: EnTranslations = {
         "desc": "Makhluk bersisik dan berlekuk ular dari kedalaman purba. Langka, angkuh, dan jauh lebih kuat dari penampakannya."
       },
       "reptile": {
-<<<<<<< HEAD
         "name": "Reptil",
         "desc": "Pemburu berdarah dingin dengan desis dan cakitan khas mereka sendiri, berbeda dari hewan berdarah panas."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "name": "Reptiles",
-        "desc": "Cold-blooded hunters with a hiss and a snap all their own, distinct from the warm-blooded beasts."
-=======
-        "name": "Reptilia",
-        "desc": "Pemburu berdarah dingin dengan desis dan gertakan khas mereka sendiri, berbeda dari binatang berdarah panas."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     "worldPage": {

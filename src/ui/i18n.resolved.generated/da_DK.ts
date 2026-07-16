@@ -768,7 +768,6 @@ export const da_DK: EnTranslations = {
       "update": "Opdater"
     },
     "cameraPrompt": {
-<<<<<<< HEAD
       "title": "Vælg dit kamera",
       "intro": "Vælg, hvordan kameraet følger din karakter.",
       "mouseDesc": "Bevæg musen for at dreje kameraet uden at holde en knap nede.",
@@ -776,23 +775,6 @@ export const da_DK: EnTranslations = {
       "classicDesc": "Hold højreklik nede og bevæg musen for at dreje kameraet.",
       "changeLater": "Du kan ændre dette senere under Escape, Tastebindinger.",
       "confirm": "Bekræft"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "title": "Choose Your Camera",
-      "intro": "Pick how the camera follows your character.",
-      "mouseDesc": "Move the mouse to turn the camera without holding a button.",
-      "classicTitle": "Classic Camera",
-      "classicDesc": "Hold right-click and move the mouse to turn the camera.",
-      "changeLater": "You can change this later under Esc, Key Bindings.",
-      "confirm": "Confirm"
-=======
-      "title": "Vælg dit kamera",
-      "intro": "Vælg, hvordan kameraet følger din figur.",
-      "mouseDesc": "Bevæg musen for at dreje kameraet uden at holde en knap nede.",
-      "classicTitle": "Klassisk kamera",
-      "classicDesc": "Hold højre museknap nede, og bevæg musen for at dreje kameraet.",
-      "changeLater": "Du kan ændre dette senere under Esc, Tastebindinger.",
-      "confirm": "Bekræft"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "castBar": {
       "playerAria": "Din castbjælke",
@@ -840,25 +822,11 @@ export const da_DK: EnTranslations = {
       "perSecondRow": "{total} ({rate})",
       "minutesSeconds": "{m}m {s}s",
       "seconds": "{s}s",
-<<<<<<< HEAD
       "autoShowHint": "Rækker vises automatisk, når din gruppe påfører skade eller heling, og dette segment lukker et par sekunder efter kampens afslutning."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "autoShowHint": "Rows appear automatically once your party deals damage or healing, and this segment closes a few seconds after combat ends."
-=======
-      "autoShowHint": "Rækker vises automatisk, når din gruppe gør skade eller heler, og dette segment lukker få sekunder efter kampens afslutning."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "petFeed": {
-<<<<<<< HEAD
       "disabledFullHp": "Kæledyret har fuldt helbred",
       "disabledNoFood": "Ingen mad i dine tasker vil hele dit kæledyr"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "disabledFullHp": "Pet is at full health",
-      "disabledNoFood": "No food in your bags will heal your pet"
-=======
-      "disabledFullHp": "Dit kæledyr har fuldt helbred",
-      "disabledNoFood": "Ingen mad i dine tasker kan helbrede dit kæledyr"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "keybinds": {
       "emoteWheel": "Følelseshjul",
@@ -1501,16 +1469,10 @@ export const da_DK: EnTranslations = {
     },
     "bags": {
       "cannotDestroy": "Denne genstand kan ikke ødelægges.",
-<<<<<<< HEAD
       "rightClickDestroy": "Højreklik for at ødelægge",
       "dragEquipHint": "Træk hen på din karakter for at udruste",
       "dragDestroyHint": "Træk ud i verden for at ødelægge",
       "reorderNeedsRecent": "Ryd filteret og sortér efter Seneste for at omarrangere dine tasker",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "rightClickDestroy": "Shift+right-click to destroy",
-=======
-      "rightClickDestroy": "Shift-højreklik for at ødelægge",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "filterGroupAria": "Filtrér tasker efter kategori",
       "filterAll": "Alle",
       "filterWeapon": "Våben",
@@ -1740,13 +1702,7 @@ export const da_DK: EnTranslations = {
         "benefits": "Forbind din Discord for at optjene point fra spil og fællesskabsaktivitet og stige i statusrangene.",
         "error": "Kunne ikke forbinde Discord. Prøv igen.",
         "success": "Discord forbundet.",
-<<<<<<< HEAD
         "joinServer": "Tilslut dig Discord-serveren"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "joinServer": "Just join the Discord server"
-=======
-        "joinServer": "Bare tilslut dig Discord-serveren"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       },
       "choice": {
         "title": "Fortsæt med Discord",
@@ -2943,16 +2899,8 @@ export const da_DK: EnTranslations = {
         "desc": "Skældækkede, slangeagtige væsner fra de gamle dyb. Sjældne, stolte og langt stærkere, end de ser ud."
       },
       "reptile": {
-<<<<<<< HEAD
         "name": "Krybdyr",
         "desc": "Koldblodede jægere med en hvislen og et snap, der er helt deres egne, og som adskiller sig fra de varmblodede dyr."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "name": "Reptiles",
-        "desc": "Cold-blooded hunters with a hiss and a snap all their own, distinct from the warm-blooded beasts."
-=======
-        "name": "Krybdyr",
-        "desc": "Koldblodede jægere med deres helt egen hvislen og snappen, tydeligt forskellige fra varmblodede bæster."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     "worldPage": {

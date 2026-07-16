@@ -395,25 +395,6 @@ export const tr_TR: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.voidfeast.description':
     'Bir büyü etkisini (düşmandaki faydalı etkiyi veya müttefikteki zararlı etkiyi) yutar ve azami sağlığının %6’sını iyileştirir.',
   'hudChrome.abilityError.shieldRequired': 'Bir kalkan kuşanmış olmalısın.',
-  'guide.family.reptile.desc':
-    'Sıcakkanlı yaratıklardan ayrılan, kendilerine özgü tıslamaları ve çene şaklatmaları olan soğukkanlı avcılar.',
-  'guide.family.reptile.name': 'Sürüngenler',
-  'hudChrome.bags.rightClickDestroy': 'Yok etmek için Shift+sağ tık',
-  'hudChrome.cameraPrompt.changeLater':
-    'Bunu daha sonra Esc, Tuş Atamaları bölümünden değiştirebilirsin.',
-  'hudChrome.cameraPrompt.classicDesc':
-    'Kamerayı döndürmek için farenin sağ tuşunu basılı tutup fareyi hareket ettir.',
-  'hudChrome.cameraPrompt.classicTitle': 'Klasik Kamera',
-  'hudChrome.cameraPrompt.confirm': 'Onayla',
-  'hudChrome.cameraPrompt.intro': 'Kameranın karakterini nasıl takip edeceğini seç.',
-  'hudChrome.cameraPrompt.mouseDesc':
-    'Bir tuşu basılı tutmadan kamerayı döndürmek için fareyi hareket ettir.',
-  'hudChrome.cameraPrompt.title': 'Kameranı Seç',
-  'hudChrome.discord.link.joinServer': 'Yalnızca Discord sunucusuna katıl',
-  'hudChrome.meters.autoShowHint':
-    'Grubun hasar verdiğinde veya iyileştirme yaptığında satırlar otomatik olarak görünür ve bu bölüm savaş bittikten birkaç saniye sonra kapanır.',
-  'hudChrome.petFeed.disabledFullHp': 'Yoldaşın sağlığı dolu',
-  'hudChrome.petFeed.disabledNoFood': 'Çantalarında yoldaşını iyileştirecek yiyecek yok',
   'loading.tips.classes':
     'İpucu: 9 sınıfın her biri farklı oynanır. Birine bağlanmadan önce birkaçını dene.',
   'loading.tips.dungeons':
@@ -6677,11 +6658,6 @@ export const tr_TR: Partial<Record<TranslationKey, string>> = {
   'hudChrome.discord.roleTag.levyst': 'Levy St',
   'hudChrome.discord.roleTag.devs': 'Geliştirici',
   'hudChrome.discord.roleTag.mods': 'Moderatör',
-  'hudChrome.discord.roleTag.seniormods': 'Kıdemli Moderatör',
-  'hudChrome.discord.roleTag.juniormods': 'Genç Moderatör',
-  'hudChrome.discord.roleTag.contentcreator': 'İçerik Üreticisi',
-  'hudChrome.discord.roleTag.legend': 'EFSANE',
-  'hudChrome.discord.roleTag.shill': 'TANITIMCI',
   'hudChrome.discord.roleTag.artists': 'Sanatçı',
   'hudChrome.discord.guildMember': 'Onaylı üye',
   'hudChrome.discord.notMember': 'Henüz sunucuda değil',

@@ -412,25 +412,6 @@ export const it_IT: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.voidfeast.description':
     'Divora un effetto magico (uno benefico da un nemico o uno dannoso da un alleato) e ti cura del 6% della salute massima.',
   'hudChrome.abilityError.shieldRequired': 'Devi avere uno scudo equipaggiato.',
-  'guide.family.reptile.desc':
-    'Cacciatori a sangue freddo, dal sibilo e dal morso inconfondibili, distinti dalle bestie a sangue caldo.',
-  'guide.family.reptile.name': 'Rettili',
-  'hudChrome.bags.rightClickDestroy': 'Maiusc+clic destro per distruggere',
-  'hudChrome.cameraPrompt.changeLater':
-    'Puoi modificare questa scelta in seguito dal menu Esc, Comandi da tastiera.',
-  'hudChrome.cameraPrompt.classicDesc':
-    'Tieni premuto il tasto destro e muovi il mouse per ruotare la visuale.',
-  'hudChrome.cameraPrompt.classicTitle': 'Visuale classica',
-  'hudChrome.cameraPrompt.confirm': 'Conferma',
-  'hudChrome.cameraPrompt.intro': 'Scegli come la visuale segue il tuo personaggio.',
-  'hudChrome.cameraPrompt.mouseDesc':
-    'Muovi il mouse per ruotare la visuale senza tenere premuto alcun tasto.',
-  'hudChrome.cameraPrompt.title': 'Scegli la visuale',
-  'hudChrome.discord.link.joinServer': 'Entra direttamente nel server Discord',
-  'hudChrome.meters.autoShowHint':
-    'Le righe compaiono automaticamente quando il tuo gruppo infligge danni o effettua cure, e questo riquadro si chiude pochi secondi dopo la fine del combattimento.',
-  'hudChrome.petFeed.disabledFullHp': 'La salute del famiglio è al massimo',
-  'hudChrome.petFeed.disabledNoFood': "Nelle tue borse non c'è cibo che possa curare il famiglio",
   'entities.abilities.sport_boot.description':
     'Un calcione alto e lungo verso il punto mirato. La folla lo adora.',
   'entities.abilities.sport_boot.name': 'Calcione',
@@ -6740,11 +6721,6 @@ export const it_IT: Partial<Record<TranslationKey, string>> = {
   'hudChrome.discord.roleTag.levyst': 'Levy St',
   'hudChrome.discord.roleTag.devs': 'Dev',
   'hudChrome.discord.roleTag.mods': 'Mod',
-  'hudChrome.discord.roleTag.seniormods': 'Moderatore senior',
-  'hudChrome.discord.roleTag.juniormods': 'Moderatore junior',
-  'hudChrome.discord.roleTag.contentcreator': 'Creatore di contenuti',
-  'hudChrome.discord.roleTag.legend': 'LEGGENDA',
-  'hudChrome.discord.roleTag.shill': 'PROMOTORE',
   'hudChrome.discord.roleTag.artists': 'Artista',
   'hudChrome.discord.guildMember': 'Membro verificato',
   'hudChrome.discord.notMember': 'Non ancora nel server',

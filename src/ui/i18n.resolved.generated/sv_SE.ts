@@ -768,7 +768,6 @@ export const sv_SE: EnTranslations = {
       "update": "Uppdatera"
     },
     "cameraPrompt": {
-<<<<<<< HEAD
       "title": "Välj din kamera",
       "intro": "Välj hur kameran följer din karaktär.",
       "mouseDesc": "Rör musen för att vrida kameran utan att hålla in någon knapp.",
@@ -776,23 +775,6 @@ export const sv_SE: EnTranslations = {
       "classicDesc": "Håll in höger musknapp och rör musen för att vrida kameran.",
       "changeLater": "Du kan ändra detta senare under Esc, Tangentbindningar.",
       "confirm": "Bekräfta"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "title": "Choose Your Camera",
-      "intro": "Pick how the camera follows your character.",
-      "mouseDesc": "Move the mouse to turn the camera without holding a button.",
-      "classicTitle": "Classic Camera",
-      "classicDesc": "Hold right-click and move the mouse to turn the camera.",
-      "changeLater": "You can change this later under Esc, Key Bindings.",
-      "confirm": "Confirm"
-=======
-      "title": "Välj din kamera",
-      "intro": "Välj hur kameran följer din karaktär.",
-      "mouseDesc": "Flytta musen för att vrida kameran utan att hålla inne en knapp.",
-      "classicTitle": "Klassisk kamera",
-      "classicDesc": "Håll inne höger musknapp och flytta musen för att vrida kameran.",
-      "changeLater": "Du kan ändra detta senare under Esc, Tangentbindningar.",
-      "confirm": "Bekräfta"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "castBar": {
       "playerAria": "Din besvärjelsemätare",
@@ -840,25 +822,11 @@ export const sv_SE: EnTranslations = {
       "perSecondRow": "{total} ({rate})",
       "minutesSeconds": "{m} m {s} s",
       "seconds": "{s} s",
-<<<<<<< HEAD
       "autoShowHint": "Rader visas automatiskt när din grupp gör skada eller helar, och detta segment stängs några sekunder efter att striden avslutas."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "autoShowHint": "Rows appear automatically once your party deals damage or healing, and this segment closes a few seconds after combat ends."
-=======
-      "autoShowHint": "Rader visas automatiskt när din grupp orsakar skada eller läker, och det här segmentet stängs några sekunder efter att striden är över."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "petFeed": {
-<<<<<<< HEAD
       "disabledFullHp": "Husdjuret har fulla livspunkter",
       "disabledNoFood": "Ingen mat i dina väskor kan hela ditt husdjur"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "disabledFullHp": "Pet is at full health",
-      "disabledNoFood": "No food in your bags will heal your pet"
-=======
-      "disabledFullHp": "Ditt husdjur har full hälsa",
-      "disabledNoFood": "Ingen mat i dina väskor kan läka ditt husdjur"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "keybinds": {
       "emoteWheel": "Gesthjul",
@@ -1501,16 +1469,10 @@ export const sv_SE: EnTranslations = {
     },
     "bags": {
       "cannotDestroy": "Det här föremålet kan inte förstöras.",
-<<<<<<< HEAD
       "rightClickDestroy": "Högerklicka för att förstöra",
       "dragEquipHint": "Dra till din karaktär för att utrusta",
       "dragDestroyHint": "Dra ut i världen för att förstöra",
       "reorderNeedsRecent": "Rensa filtret och sortera efter Nyliga för att ordna om dina väskor",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "rightClickDestroy": "Shift+right-click to destroy",
-=======
-      "rightClickDestroy": "Shift-högerklicka för att förstöra",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "filterGroupAria": "Filtrera väskor efter kategori",
       "filterAll": "Alla",
       "filterWeapon": "Vapen",
@@ -1740,13 +1702,7 @@ export const sv_SE: EnTranslations = {
         "benefits": "Länka ditt Discord för att tjäna poäng från spel och gemenskapsaktivitet, och klättra på statusnivåerna.",
         "error": "Det gick inte att länka Discord. Försök igen.",
         "success": "Discord länkat.",
-<<<<<<< HEAD
         "joinServer": "Gå med i Discord-servern"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "joinServer": "Just join the Discord server"
-=======
-        "joinServer": "Gå bara med i Discord-servern"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       },
       "choice": {
         "title": "Fortsätt med Discord",
@@ -2943,16 +2899,8 @@ export const sv_SE: EnTranslations = {
         "desc": "Fjälliga, ormlika ting från de gamla djupen. Sällsynta, stolta och långt starkare än de ser ut."
       },
       "reptile": {
-<<<<<<< HEAD
         "name": "Reptiler",
         "desc": "Kallblodiga jägare med ett eget väsande och ett snäppande bett, skilda från de varmblodiga djuren."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "name": "Reptiles",
-        "desc": "Cold-blooded hunters with a hiss and a snap all their own, distinct from the warm-blooded beasts."
-=======
-        "name": "Reptiler",
-        "desc": "Kallblodiga jägare med ett alldeles eget väsande och käftsmällande, skilda från varmblodiga bestar."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     "worldPage": {

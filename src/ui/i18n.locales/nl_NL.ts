@@ -397,24 +397,6 @@ export const nl_NL: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.voidfeast.description':
     'Verslindt een magisch effect (een gunstig effect van een vijand of een schadelijk effect van een bondgenoot) en geneest je voor 6% van je maximale gezondheid.',
   'hudChrome.abilityError.shieldRequired': 'Je moet een schild hebben uitgerust.',
-  'guide.family.reptile.desc':
-    'Koudbloedige jagers met een geheel eigen gesis en beet, anders dan de warmbloedige beesten.',
-  'guide.family.reptile.name': 'Reptielen',
-  'hudChrome.bags.rightClickDestroy': 'Shift-rechtsklik om te vernietigen',
-  'hudChrome.cameraPrompt.changeLater': 'Je kunt dit later wijzigen via Esc, Toetsbindingen.',
-  'hudChrome.cameraPrompt.classicDesc':
-    'Houd de rechtermuisknop ingedrukt en beweeg de muis om de camera te draaien.',
-  'hudChrome.cameraPrompt.classicTitle': 'Klassieke camera',
-  'hudChrome.cameraPrompt.confirm': 'Bevestigen',
-  'hudChrome.cameraPrompt.intro': 'Kies hoe de camera je personage volgt.',
-  'hudChrome.cameraPrompt.mouseDesc':
-    'Beweeg de muis om de camera te draaien zonder een knop ingedrukt te houden.',
-  'hudChrome.cameraPrompt.title': 'Kies je camera',
-  'hudChrome.discord.link.joinServer': 'Gewoon lid worden van de Discord-server',
-  'hudChrome.meters.autoShowHint':
-    'Rijen verschijnen automatisch zodra je groep schade toebrengt of geneest, en dit onderdeel sluit enkele seconden nadat het gevecht eindigt.',
-  'hudChrome.petFeed.disabledFullHp': 'Je huisdier is volledig gezond',
-  'hudChrome.petFeed.disabledNoFood': 'Geen voedsel in je tassen kan je huisdier genezen',
   'entities.abilities.sport_boot.description':
     'Een lange, hoge uithaal richting het richtpunt. Het publiek smult ervan.',
   'entities.abilities.sport_boot.name': 'Grote Uithaal',
@@ -6702,11 +6684,6 @@ export const nl_NL: Partial<Record<TranslationKey, string>> = {
   'hudChrome.discord.roleTag.levyst': 'Levy St',
   'hudChrome.discord.roleTag.devs': 'Dev',
   'hudChrome.discord.roleTag.mods': 'Mod',
-  'hudChrome.discord.roleTag.seniormods': 'Senior moderator',
-  'hudChrome.discord.roleTag.juniormods': 'Junior moderator',
-  'hudChrome.discord.roleTag.contentcreator': 'Contentmaker',
-  'hudChrome.discord.roleTag.legend': 'LEGENDE',
-  'hudChrome.discord.roleTag.shill': 'PROMOTOR',
   'hudChrome.discord.roleTag.artists': 'Artiest',
   'hudChrome.discord.guildMember': 'Geverifieerd lid',
   'hudChrome.discord.notMember': 'Nog niet in de server',

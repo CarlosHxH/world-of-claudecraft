@@ -9,22 +9,14 @@
     "Sister Nhalia driver: Blackwater Mark + Tolling Bells volley rng draws",
     "cantor phases + Final Bell + rite choose -> playback pulses"
   ],
-<<<<<<< HEAD
   "draws": 2437,
   "drawDigest": "b74a7707",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-  "draws": 2460,
-  "drawDigest": "6783ec9d",
-=======
-  "draws": 2512,
-  "drawDigest": "f4f540d3",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
   "frames": [
     {
       "tick": 0,
       "time": 0,
       "nextId": 409,
-      "state": "e71ed8eb",
+      "state": "6bd4c62d",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -55,7 +47,6 @@
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ]
@@ -65,8 +56,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -80,7 +70,8 @@
           "mailWelcomed": true,
           "nodeHarvestReadyAt": {},
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -89,19 +80,6 @@
         {
           "aiState": "idle",
           "attackPower": 46,
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3600,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
           "combatTimer": 99,
           "comboUntil": -1,
           "critChance": 0.06,
@@ -109,15 +87,14 @@
           "dodgeChance": 0.06,
           "fallStartY": 1.5,
           "fiveSecondRule": 99,
-          "hp": 100,
+          "hp": 90,
           "id": 408,
           "kind": "player",
           "level": 1,
           "lootFfaTimer": "Infinity",
-          "maxHp": 100,
+          "maxHp": 90,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "onGround": true,
           "overpowerUntil": -1,
           "petMode": "defensive",
@@ -136,10 +113,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 20,
-            "armor": 144,
+            "armor": 110,
             "int": 10,
             "spi": 11,
-            "sta": 23,
+            "sta": 22,
             "str": 23
           },
           "templateId": "warrior",
@@ -155,7 +132,7 @@
       "tick": 9,
       "time": 0.45,
       "nextId": 429,
-      "state": "bdf905fa",
+      "state": "1ead7136",
       "events": "38c1c145",
       "rng": {
         "draws": 13,
@@ -190,7 +167,6 @@
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ]
@@ -214,8 +190,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -231,7 +206,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 20,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -240,19 +216,6 @@
         {
           "aiState": "idle",
           "attackPower": 98,
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3599.55,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
           "combatTimer": 0.45,
           "comboUntil": -1,
           "critChance": 0.0665,
@@ -268,7 +231,6 @@
           "maxHp": 50000,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "onGround": true,
           "overpowerUntil": -1,
           "petMode": "defensive",
@@ -286,10 +248,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 33,
-            "armor": 326,
+            "armor": 292,
             "int": 10,
             "spi": 11,
-            "sta": 49,
+            "sta": 48,
             "str": 49
           },
           "templateId": "warrior",
@@ -305,158 +267,118 @@
       "tick": 10,
       "time": 0.5,
       "nextId": 431,
-      "state": "35543c21",
-      "events": "18aa515f",
+      "state": "d6b4467a",
+      "events": "405ae620",
       "rng": {
-        "draws": 22,
-        "digest": "a92b1b6e"
+        "draws": 19,
+        "digest": "7bf0f984"
       }
     },
     {
       "tick": 20,
       "time": 1,
       "nextId": 431,
-      "state": "f113a39a",
-      "events": "7aed83aa",
+      "state": "28125c7d",
+      "events": "396ec386",
       "rng": {
-        "draws": 26,
-        "digest": "a40b557e"
+        "draws": 23,
+        "digest": "48789450"
       }
     },
     {
       "tick": 30,
       "time": 1.5,
       "nextId": 431,
-      "state": "c682a5f5",
+      "state": "bc559df4",
       "events": "741638a5",
       "rng": {
-        "draws": 26,
-        "digest": "a40b557e"
+        "draws": 23,
+        "digest": "48789450"
       }
     },
     {
       "tick": 40,
       "time": 2,
       "nextId": 431,
-      "state": "7fdfbf34",
+      "state": "ba028c0d",
       "events": "741638a5",
       "rng": {
-        "draws": 26,
-        "digest": "a40b557e"
+        "draws": 23,
+        "digest": "48789450"
       }
     },
     {
       "tick": 50,
       "time": 2.5,
       "nextId": 431,
-      "state": "48939fa2",
-      "events": "a12e170d",
+      "state": "e3db9b81",
+      "events": "85a37fc8",
       "rng": {
-        "draws": 61,
-        "digest": "36558f4b"
+        "draws": 60,
+        "digest": "4dc61a9c"
       }
     },
     {
       "tick": 60,
       "time": 3,
       "nextId": 431,
-      "state": "cbb0a870",
-      "events": "3e9a72c4",
+      "state": "0d087352",
+      "events": "446c9fb3",
       "rng": {
-        "draws": 120,
-        "digest": "36521275"
+        "draws": 117,
+        "digest": "bc1e0606"
       }
     },
     {
       "tick": 70,
       "time": 3.5,
       "nextId": 431,
-      "state": "982fd30c",
+      "state": "ff5d99c3",
       "events": "741638a5",
       "rng": {
-        "draws": 171,
-        "digest": "7f918056"
+        "draws": 170,
+        "digest": "b53c9690"
       }
     },
     {
       "tick": 80,
       "time": 4,
       "nextId": 431,
-      "state": "c2e94626",
+      "state": "20861beb",
       "events": "741638a5",
       "rng": {
-        "draws": 212,
-        "digest": "3bd85f4d"
+        "draws": 207,
+        "digest": "f31c906a"
       }
     },
     {
       "tick": 90,
       "time": 4.5,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "20010b62",
       "events": "85a37fc8",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "38051d14",
-      "events": "a12e170d",
-=======
-      "state": "add8a451",
-      "events": "c9451d6d",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 266,
         "digest": "b1b59aaf"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 264,
-        "digest": "96f6aaad"
-=======
-        "draws": 273,
-        "digest": "38cb689b"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 100,
       "time": 5,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "40c4ca31",
       "events": "4e1abb21",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "e5bbc926",
-      "events": "25a3c6d6",
-=======
-      "state": "0ee4e45a",
-      "events": "ee035c73",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 323,
         "digest": "3b52aa76"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 321,
-        "digest": "3235109a"
-=======
-        "draws": 329,
-        "digest": "89b4cba9"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 110,
       "time": 5.5,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "73cb29fa",
       "events": "e8a6e20e",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "9de185ec",
-      "events": "2d4a4c82",
-=======
-      "state": "892607b7",
-      "events": "a6db84ad",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
         "draws": 379,
         "digest": "4680ff72"
@@ -466,1046 +388,440 @@
       "tick": 120,
       "time": 6,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "5a58ea42",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "429b94c6",
-=======
-      "state": "349925e7",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
-<<<<<<< HEAD
         "draws": 435,
         "digest": "9653dab4"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 431,
-        "digest": "d40c0971"
-=======
-        "draws": 433,
-        "digest": "f65d3083"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 130,
       "time": 6.5,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "f1288ae7",
       "events": "85a37fc8",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "062549e5",
-      "events": "a12e170d",
-=======
-      "state": "f35aef68",
-      "events": "85a37fc8",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 483,
         "digest": "9229358d"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 479,
-        "digest": "34599dad"
-=======
-        "draws": 482,
-        "digest": "b222dd3d"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 140,
       "time": 7,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "bd38b2ba",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "0085b38e",
-=======
-      "state": "f4b50ad7",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
-<<<<<<< HEAD
         "draws": 536,
         "digest": "8df119cb"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 528,
-        "digest": "7d805111"
-=======
-        "draws": 546,
-        "digest": "cead6396"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 150,
       "time": 7.5,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "2e5213ce",
       "events": "7681dff1",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "a1e7900e",
-      "events": "7571bd92",
-=======
-      "state": "b5949c3e",
-      "events": "a4c90db8",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 600,
         "digest": "d085c9f3"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 593,
-        "digest": "2e79bccb"
-=======
-        "draws": 606,
-        "digest": "e843009f"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 160,
       "time": 8,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "41bbef8e",
       "events": "ab0ad552",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "6bd36adb",
-      "events": "e8a6e20e",
-=======
-      "state": "d432fe15",
-      "events": "2b4b83df",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 668,
         "digest": "3264c6cd"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 666,
-        "digest": "0f921dd1"
-=======
-        "draws": 677,
-        "digest": "04be45c6"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 170,
       "time": 8.5,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "3e6358cd",
       "events": "a12e170d",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "1693af3c",
-      "events": "a12e170d",
-=======
-      "state": "70981add",
-      "events": "85a37fc8",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 753,
         "digest": "5ab80566"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 748,
-        "digest": "15cca544"
-=======
-        "draws": 772,
-        "digest": "00b729a1"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 180,
       "time": 9,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "d6b78cc5",
       "events": "f0ea442d",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "b6e5f8a8",
-      "events": "f0ea442d",
-=======
-      "state": "d33f5831",
-      "events": "22015a62",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 815,
         "digest": "404f8775"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 813,
-        "digest": "377571e6"
-=======
-        "draws": 830,
-        "digest": "2df58fab"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 190,
       "time": 9.5,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "9cec44e4",
       "events": "cf390882",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "7191013e",
-      "events": "3e31d926",
-=======
-      "state": "8e726daa",
-      "events": "b75b8e81",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 882,
         "digest": "933ad064"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 891,
-        "digest": "7486b787"
-=======
-        "draws": 914,
-        "digest": "9e65e390"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 200,
       "time": 10,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "d78ff59f",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "333a0e1d",
-=======
-      "state": "666ad4ff",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
-        "draws": 978,
-        "digest": "b8911700"
+        "draws": 948,
+        "digest": "dae8d248"
       }
     },
     {
       "tick": 210,
       "time": 10.5,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "ca037671",
       "events": "7967baa5",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "48313cb4",
-      "events": "959a61d0",
-=======
-      "state": "dfe6db67",
-      "events": "d98634fe",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 984,
         "digest": "49cfb581"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 990,
-        "digest": "de39e7b4"
-=======
-        "draws": 1025,
-        "digest": "791e5eba"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 220,
       "time": 11,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "534ba940",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "740c1081",
-=======
-      "state": "7b8c6e10",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
-<<<<<<< HEAD
         "draws": 1036,
         "digest": "54629129"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1037,
-        "digest": "ccaebea5"
-=======
-        "draws": 1062,
-        "digest": "9821ffc6"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 230,
       "time": 11.5,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "aa1d9d26",
       "events": "7571bd92",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "f18cdcee",
-      "events": "9584550e",
-=======
-      "state": "6d30bf38",
-      "events": "152e3cbf",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 1079,
         "digest": "13fa788e"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1080,
-        "digest": "5560e93d"
-=======
-        "draws": 1095,
-        "digest": "406ac493"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 240,
       "time": 12,
       "nextId": 431,
-<<<<<<< HEAD
       "state": "08713a20",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "34e48764",
-=======
-      "state": "dac7e501",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
-<<<<<<< HEAD
         "draws": 1124,
         "digest": "ba2294b7"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1129,
-        "digest": "44f36b9e"
-=======
-        "draws": 1137,
-        "digest": "04112eaa"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 250,
       "time": 12.5,
       "nextId": 435,
-<<<<<<< HEAD
       "state": "10814f06",
       "events": "4721b9ec",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "f3bb9824",
-      "events": "e8da8865",
-=======
-      "state": "f1b41180",
-      "events": "3cbe6676",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 1173,
         "digest": "9de4d927"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1176,
-        "digest": "61a24720"
-=======
-        "draws": 1175,
-        "digest": "05b958c4"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 260,
       "time": 13,
       "nextId": 435,
-<<<<<<< HEAD
       "state": "362247bd",
       "events": "35502e52",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "9032c96a",
-      "events": "c5e86170",
-=======
-      "state": "2050df45",
-      "events": "2100f3aa",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 1217,
         "digest": "b216b15c"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1225,
-        "digest": "8b56da20"
-=======
-        "draws": 1223,
-        "digest": "a67f7a65"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 270,
       "time": 13.5,
       "nextId": 435,
-<<<<<<< HEAD
       "state": "0c74067f",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "8ba53c3c",
-=======
-      "state": "909a9b81",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
-<<<<<<< HEAD
         "draws": 1268,
         "digest": "35655b78"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1272,
-        "digest": "42e3d9d4"
-=======
-        "draws": 1266,
-        "digest": "4273070f"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 280,
       "time": 14,
       "nextId": 435,
-<<<<<<< HEAD
       "state": "f5e94c5a",
       "events": "c8c4831d",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "06105d73",
-      "events": "e9a97d23",
-=======
-      "state": "3517b697",
-      "events": "9ba1384e",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 1314,
         "digest": "10cb2d02"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1327,
-        "digest": "eccd27d6"
-=======
-        "draws": 1319,
-        "digest": "becea31e"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 290,
       "time": 14.5,
       "nextId": 435,
-<<<<<<< HEAD
       "state": "cc70025b",
       "events": "813f06d2",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "00a3f9da",
-      "events": "813f06d2",
-=======
-      "state": "5e7cc684",
-      "events": "dfd190a4",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 1364,
         "digest": "8d98ffd1"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1360,
-        "digest": "6097c6dc"
-=======
-        "draws": 1370,
-        "digest": "e8791fc4"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 300,
       "time": 15,
       "nextId": 435,
-<<<<<<< HEAD
       "state": "48076d41",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "e649338c",
-=======
-      "state": "043bc5fd",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
-<<<<<<< HEAD
         "draws": 1415,
         "digest": "9eb3773a"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1408,
-        "digest": "5df5a37f"
-=======
-        "draws": 1441,
-        "digest": "c056dc21"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 310,
       "time": 15.5,
       "nextId": 435,
-<<<<<<< HEAD
       "state": "5f2e960d",
       "events": "98749b37",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "820a8f9e",
-      "events": "7a45b84b",
-=======
-      "state": "c8d07224",
-      "events": "022dc994",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 1479,
         "digest": "f16ebcb1"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1469,
-        "digest": "4608ba4a"
-=======
-        "draws": 1502,
-        "digest": "15c2f88b"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 320,
       "time": 16,
       "nextId": 435,
-<<<<<<< HEAD
       "state": "78d4f0f8",
       "events": "52ebdb2f",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "074dbbd1",
-      "events": "ec054d70",
-=======
-      "state": "b61a2358",
-      "events": "47d92e15",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 1538,
         "digest": "6b93ddae"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1536,
-        "digest": "6332bcd2"
-=======
-        "draws": 1573,
-        "digest": "f1b706f0"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 330,
       "time": 16.5,
       "nextId": 437,
-<<<<<<< HEAD
       "state": "8c2f904f",
       "events": "61ad3044",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "974c0f52",
-      "events": "67a0e49e",
-=======
-      "state": "899bba36",
-      "events": "c3ed73f4",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 1588,
         "digest": "4ade4f3d"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1592,
-        "digest": "f9e453ff"
-=======
-        "draws": 1623,
-        "digest": "b2502787"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 340,
       "time": 17,
       "nextId": 437,
-<<<<<<< HEAD
       "state": "d266c942",
       "events": "df720560",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "412eae52",
-      "events": "3f40fb73",
-=======
-      "state": "afa67ae3",
-      "events": "67794d06",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 1659,
         "digest": "a06b1e4d"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1640,
-        "digest": "8d585c6d"
-=======
-        "draws": 1683,
-        "digest": "9cb68f1a"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 350,
       "time": 17.5,
       "nextId": 437,
-<<<<<<< HEAD
       "state": "45da28ca",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "7b8dcd02",
-=======
-      "state": "de6b1273",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "f30c7f9c",
       "rng": {
-<<<<<<< HEAD
         "draws": 1716,
         "digest": "fa4793f8"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1700,
-        "digest": "7434a36f"
-=======
-        "draws": 1738,
-        "digest": "c9b65ac5"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 360,
       "time": 18,
       "nextId": 437,
-<<<<<<< HEAD
       "state": "2f23e243",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "bfb9258b",
-=======
-      "state": "31c1df01",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
-<<<<<<< HEAD
         "draws": 1759,
         "digest": "29c4e324"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1751,
-        "digest": "20f6f529"
-=======
-        "draws": 1785,
-        "digest": "16117da1"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 370,
       "time": 18.5,
       "nextId": 437,
-<<<<<<< HEAD
       "state": "665cfbcc",
       "events": "6260ee47",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "a9ffc0eb",
-      "events": "7cbafeaa",
-=======
-      "state": "9584d1ef",
-      "events": "950edb66",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 1802,
         "digest": "b92de812"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1799,
-        "digest": "79cb8480"
-=======
-        "draws": 1832,
-        "digest": "976df439"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 380,
       "time": 19,
       "nextId": 437,
-<<<<<<< HEAD
       "state": "14d4365a",
       "events": "d83b5fc5",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "200f5be7",
-      "events": "8dd50540",
-=======
-      "state": "72e5e168",
-      "events": "d95821cc",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 1845,
         "digest": "31abe175"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1854,
-        "digest": "747e29c4"
-=======
-        "draws": 1885,
-        "digest": "427eb33d"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 390,
       "time": 19.5,
       "nextId": 437,
-<<<<<<< HEAD
       "state": "44c05a9c",
       "events": "fcc8f22e",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "790419d6",
-      "events": "c05435aa",
-=======
-      "state": "8217a771",
-      "events": "c05435aa",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 1897,
         "digest": "d5b14985"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1911,
-        "digest": "a7ca5a8d"
-=======
-        "draws": 1930,
-        "digest": "7eb54ce2"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 400,
       "time": 20,
       "nextId": 437,
-<<<<<<< HEAD
       "state": "f4b05905",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "bf36b3b7",
-=======
-      "state": "70afa6ef",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
-<<<<<<< HEAD
         "draws": 1933,
         "digest": "ae00ff2a"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 1945,
-        "digest": "bba2276a"
-=======
-        "draws": 1972,
-        "digest": "07199572"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 410,
       "time": 20.5,
       "nextId": 442,
-<<<<<<< HEAD
       "state": "5e98601c",
       "events": "8be35ce1",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "d4643f62",
-      "events": "b7d0d75f",
-=======
-      "state": "c41459e5",
-      "events": "bcce02e9",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 1981,
         "digest": "4784d717"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 2008,
-        "digest": "501fe12f"
-=======
-        "draws": 2031,
-        "digest": "0ae83dfa"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 420,
       "time": 21,
       "nextId": 442,
-<<<<<<< HEAD
       "state": "53528a87",
       "events": "e0d42a14",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "8d04dcc5",
-      "events": "027e058c",
-=======
-      "state": "32786835",
-      "events": "027e058c",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 2036,
         "digest": "ddfef766"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 2044,
-        "digest": "0f187b43"
-=======
-        "draws": 2092,
-        "digest": "898585fd"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 430,
       "time": 21.5,
       "nextId": 442,
-<<<<<<< HEAD
       "state": "95aa2cb4",
       "events": "5df173e0",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "77041b42",
-      "events": "3d9e25ed",
-=======
-      "state": "9e54aa87",
-      "events": "b61af736",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 2086,
         "digest": "9a9f90df"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 2099,
-        "digest": "d3af7230"
-=======
-        "draws": 2129,
-        "digest": "7c2ae9ac"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 440,
       "time": 22,
       "nextId": 442,
-<<<<<<< HEAD
       "state": "a9f27134",
       "events": "741638a5",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "dc871c89",
-      "events": "5e8cc8d1",
-=======
-      "state": "bfbe5755",
-      "events": "5e8cc8d1",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 2141,
         "digest": "c07d70f0"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 2146,
-        "digest": "ef39f5e8"
-=======
-        "draws": 2186,
-        "digest": "3b959429"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 450,
       "time": 22.5,
       "nextId": 442,
-<<<<<<< HEAD
       "state": "7cbcf1ab",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "79880398",
-=======
-      "state": "5566d114",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "8c962e82",
       "rng": {
-<<<<<<< HEAD
         "draws": 2178,
         "digest": "a303d586"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 2187,
-        "digest": "155fde35"
-=======
-        "draws": 2228,
-        "digest": "eb3bc260"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 460,
       "time": 23,
       "nextId": 442,
-<<<<<<< HEAD
       "state": "b62b49f1",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "d8ca3c82",
-=======
-      "state": "04f6f5d3",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "8c962e82",
       "rng": {
-<<<<<<< HEAD
         "draws": 2218,
         "digest": "e86aed35"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 2224,
-        "digest": "a7dd850c"
-=======
-        "draws": 2281,
-        "digest": "b3a53417"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 470,
       "time": 23.5,
       "nextId": 442,
-<<<<<<< HEAD
       "state": "074fdfee",
       "events": "5cc6cb6e",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "c3db021b",
-      "events": "2cb5bfaa",
-=======
-      "state": "d58bdd74",
-      "events": "2cb5bfaa",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 2250,
         "digest": "aceb24b3"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 2270,
-        "digest": "14662e65"
-=======
-        "draws": 2317,
-        "digest": "d58f5a08"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 480,
       "time": 24,
       "nextId": 442,
-<<<<<<< HEAD
       "state": "c6be3d59",
       "events": "1c88981a",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "3f98a52c",
-      "events": "b593412a",
-=======
-      "state": "b4e3eee7",
-      "events": "56fb17de",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 2294,
         "digest": "37bb4a77"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 2330,
-        "digest": "278b2ddd"
-=======
-        "draws": 2361,
-        "digest": "71956e94"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 490,
       "time": 24.5,
       "nextId": 442,
-<<<<<<< HEAD
       "state": "38555e0f",
       "events": "b3ff6ed0",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "9f73a002",
-      "events": "b3ff6ed0",
-=======
-      "state": "220660db",
-      "events": "58a700d7",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 2347,
         "digest": "a8ada59d"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 2372,
-        "digest": "f016912a"
-=======
-        "draws": 2404,
-        "digest": "24c455e9"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 500,
       "time": 25,
       "nextId": 442,
-<<<<<<< HEAD
       "state": "8fbdfca4",
       "events": "5cc6cb6e",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "f89dfceb",
-      "events": "2cb5bfaa",
-=======
-      "state": "3808a0c9",
-      "events": "2cb5bfaa",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
-<<<<<<< HEAD
         "draws": 2396,
         "digest": "af18877c"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 2429,
-        "digest": "2177ac60"
-=======
-        "draws": 2472,
-        "digest": "083bfa44"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     {
       "tick": 505,
       "time": 25.25,
       "nextId": 442,
-<<<<<<< HEAD
       "state": "6dcd57d7",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "044a215f",
-=======
-      "state": "0e7078ae",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "8c962e82",
       "rng": {
-<<<<<<< HEAD
         "draws": 2429,
         "digest": "2177ac60"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 2450,
-        "digest": "8227aee9"
-=======
-        "draws": 2504,
-        "digest": "728b0543"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       },
       "label": "rite-started",
       "players": [
@@ -1525,36 +841,21 @@
           "cls": "warrior",
           "companionUpgrades": {},
           "counters": {
-<<<<<<< HEAD
             "damageDealt": 5574,
             "damageTaken": 30884,
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-            "damageDealt": 5576,
-            "damageTaken": 30859,
-=======
-            "damageDealt": 5559,
-            "damageTaken": 30886,
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
             "kills": 3,
-            "xpGained": 450
+            "xpGained": 488
           },
           "craftSkills": {},
           "craftThrottle": {},
           "deedStats": {
             "counters": {
-<<<<<<< HEAD
               "damageDealt": 5574,
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-              "damageDealt": 5576,
-=======
-              "damageDealt": 5559,
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
               "kills": 3
             },
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ]
@@ -1582,8 +883,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -1594,54 +894,30 @@
               "itemId": "baked_bread"
             }
           ],
-          "lifetimeXp": 65950,
+          "lifetimeXp": 65988,
           "mailWelcomed": true,
           "nodeHarvestReadyAt": {},
           "renown": 25,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {},
-          "xp": 450
+          "xp": 488
         }
       ],
       "entities": [
         {
           "aiState": "idle",
           "attackPower": 98,
-<<<<<<< HEAD
           "combatTimer": 1.35,
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-          "combatTimer": 1.3,
-=======
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3574.75,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
-          "combatTimer": 1.3,
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
           "comboUntil": -1,
           "critChance": 0.0665,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.0665,
           "facing": -1.561597,
           "fiveSecondRule": 124.25,
-<<<<<<< HEAD
           "hp": 31624,
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-          "hp": 31590,
-=======
-          "hp": 50000,
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
           "id": 408,
           "inCombat": true,
           "kind": "player",
@@ -1650,7 +926,6 @@
           "maxHp": 50000,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "onGround": true,
           "overpowerUntil": -1,
           "petMode": "defensive",
@@ -1669,10 +944,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 33,
-            "armor": 326,
+            "armor": 292,
             "int": 10,
             "spi": 11,
-            "sta": 49,
+            "sta": 48,
             "str": 49
           },
           "targetId": 428,
@@ -1703,13 +978,7 @@
           },
           "level": 17,
           "loot": {
-<<<<<<< HEAD
             "copper": 433
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-            "copper": 306
-=======
-            "copper": 434
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
           },
           "lootFfaTimer": 55.2,
           "lootRecipientIds": [
@@ -1761,25 +1030,11 @@
       "tick": 507,
       "time": 25.35,
       "nextId": 442,
-<<<<<<< HEAD
       "state": "653e5b8c",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "d3a28f6e",
-=======
-      "state": "0eb56832",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
-<<<<<<< HEAD
         "draws": 2437,
         "digest": "b74a7707"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "draws": 2460,
-        "digest": "6783ec9d"
-=======
-        "draws": 2512,
-        "digest": "f4f540d3"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       },
       "label": "final",
       "players": [
@@ -1799,36 +1054,21 @@
           "cls": "warrior",
           "companionUpgrades": {},
           "counters": {
-<<<<<<< HEAD
             "damageDealt": 5574,
             "damageTaken": 30884,
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-            "damageDealt": 5576,
-            "damageTaken": 30859,
-=======
-            "damageDealt": 5559,
-            "damageTaken": 30886,
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
             "kills": 3,
-            "xpGained": 450
+            "xpGained": 488
           },
           "craftSkills": {},
           "craftThrottle": {},
           "deedStats": {
             "counters": {
-<<<<<<< HEAD
               "damageDealt": 5574,
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-              "damageDealt": 5576,
-=======
-              "damageDealt": 5559,
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
               "kills": 3
             },
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ]
@@ -1856,8 +1096,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -1868,54 +1107,30 @@
               "itemId": "baked_bread"
             }
           ],
-          "lifetimeXp": 65950,
+          "lifetimeXp": 65988,
           "mailWelcomed": true,
           "nodeHarvestReadyAt": {},
           "renown": 25,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {},
-          "xp": 450
+          "xp": 488
         }
       ],
       "entities": [
         {
           "aiState": "idle",
           "attackPower": 98,
-<<<<<<< HEAD
           "combatTimer": 1.45,
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-          "combatTimer": 1.4,
-=======
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3574.65,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
-          "combatTimer": 1.4,
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
           "comboUntil": -1,
           "critChance": 0.0665,
           "detonateTimer": "Infinity",
           "dodgeChance": 0.0665,
           "facing": -1.561597,
           "fiveSecondRule": 124.35,
-<<<<<<< HEAD
           "hp": 31624,
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-          "hp": 31590,
-=======
-          "hp": 50000,
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
           "id": 408,
           "inCombat": true,
           "kind": "player",
@@ -1924,7 +1139,6 @@
           "maxHp": 50000,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "onGround": true,
           "overpowerUntil": -1,
           "petMode": "defensive",
@@ -1943,10 +1157,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 33,
-            "armor": 326,
+            "armor": 292,
             "int": 10,
             "spi": 11,
-            "sta": 49,
+            "sta": 48,
             "str": 49
           },
           "targetId": 428,
@@ -1977,13 +1191,7 @@
           },
           "level": 17,
           "loot": {
-<<<<<<< HEAD
             "copper": 433
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-            "copper": 306
-=======
-            "copper": 434
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
           },
           "lootFfaTimer": 55.1,
           "lootRecipientIds": [

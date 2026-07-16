@@ -393,24 +393,6 @@ export const da_DK: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.voidfeast.description':
     'Fortærer en magisk effekt (en gavnlig fra en fjende eller en skadelig fra en allieret) og helbreder dig for 6 % af dit maksimale helbred.',
   'hudChrome.abilityError.shieldRequired': 'Du skal have et skjold udstyret.',
-  'guide.family.reptile.desc':
-    'Koldblodede jægere med deres helt egen hvislen og snappen, tydeligt forskellige fra varmblodede bæster.',
-  'guide.family.reptile.name': 'Krybdyr',
-  'hudChrome.bags.rightClickDestroy': 'Shift-højreklik for at ødelægge',
-  'hudChrome.cameraPrompt.changeLater': 'Du kan ændre dette senere under Esc, Tastebindinger.',
-  'hudChrome.cameraPrompt.classicDesc':
-    'Hold højre museknap nede, og bevæg musen for at dreje kameraet.',
-  'hudChrome.cameraPrompt.classicTitle': 'Klassisk kamera',
-  'hudChrome.cameraPrompt.confirm': 'Bekræft',
-  'hudChrome.cameraPrompt.intro': 'Vælg, hvordan kameraet følger din figur.',
-  'hudChrome.cameraPrompt.mouseDesc':
-    'Bevæg musen for at dreje kameraet uden at holde en knap nede.',
-  'hudChrome.cameraPrompt.title': 'Vælg dit kamera',
-  'hudChrome.discord.link.joinServer': 'Bare tilslut dig Discord-serveren',
-  'hudChrome.meters.autoShowHint':
-    'Rækker vises automatisk, når din gruppe gør skade eller heler, og dette segment lukker få sekunder efter kampens afslutning.',
-  'hudChrome.petFeed.disabledFullHp': 'Dit kæledyr har fuldt helbred',
-  'hudChrome.petFeed.disabledNoFood': 'Ingen mad i dine tasker kan helbrede dit kæledyr',
   'entities.abilities.sport_boot.description':
     'Et langt, højt spark mod sigtepunktet. Publikum elsker det.',
   'entities.abilities.sport_boot.name': 'Kæmpespark',
@@ -6617,11 +6599,6 @@ export const da_DK: Partial<Record<TranslationKey, string>> = {
   'hudChrome.discord.roleTag.levyst': 'Levy St',
   'hudChrome.discord.roleTag.devs': 'Udvikler',
   'hudChrome.discord.roleTag.mods': 'Moderator',
-  'hudChrome.discord.roleTag.seniormods': 'Senior-moderator',
-  'hudChrome.discord.roleTag.juniormods': 'Junior-moderator',
-  'hudChrome.discord.roleTag.contentcreator': 'Indholdsskaber',
-  'hudChrome.discord.roleTag.legend': 'LEGENDE',
-  'hudChrome.discord.roleTag.shill': 'PROMOTER',
   'hudChrome.discord.roleTag.artists': 'Kunstner',
   'hudChrome.discord.guildMember': 'Verificeret medlem',
   'hudChrome.discord.notMember': 'Ikke på serveren endnu',

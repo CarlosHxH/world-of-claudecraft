@@ -281,17 +281,10 @@ export const GUIDE_CLASSES: GuideClassInfo[] = [
         "name": "Goad"
       },
       {
-<<<<<<< HEAD
-        "id": "pummel",
-        "name": "Jawcrack"
-      },
-      {
         "id": "ironhold",
         "name": "Ironhold"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "id": "pummel",
-        "name": "Jawcrack"
-=======
+      },
+      {
         "id": "measured_fury",
         "name": "Measured Fury"
       },
@@ -326,7 +319,6 @@ export const GUIDE_CLASSES: GuideClassInfo[] = [
       {
         "id": "enrage_passive",
         "name": "Mayhem"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     ],
     "model": "player_warrior",

@@ -16,7 +16,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 409,
-      "state": "9c11b16d",
+      "state": "fe2f8f05",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -75,7 +75,8 @@
           "mailWelcomed": true,
           "nodeHarvestReadyAt": {},
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -137,7 +138,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 409,
-      "state": "f8741a70",
+      "state": "49e3ab1c",
       "events": "132fbe2c",
       "rng": {
         "draws": 0,
@@ -148,7 +149,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 409,
-      "state": "91f27ca2",
+      "state": "ad32f10e",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -159,7 +160,7 @@
       "tick": 60,
       "time": 3,
       "nextId": 409,
-      "state": "f74178a7",
+      "state": "0b4e495f",
       "events": "741638a5",
       "rng": {
         "draws": 100,
@@ -170,7 +171,7 @@
       "tick": 80,
       "time": 4,
       "nextId": 409,
-      "state": "bd455f78",
+      "state": "55314384",
       "events": "741638a5",
       "rng": {
         "draws": 186,
@@ -181,7 +182,7 @@
       "tick": 100,
       "time": 5,
       "nextId": 410,
-      "state": "d1e46ed8",
+      "state": "b0a4b5e4",
       "events": "9274ab64",
       "rng": {
         "draws": 271,
@@ -192,16 +193,8 @@
       "tick": 120,
       "time": 6,
       "nextId": 411,
-<<<<<<< HEAD
       "state": "1af8a5df",
       "events": "fa1e7409",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "1af8a5df",
-      "events": "78a4c011",
-=======
-      "state": "dfe14927",
-      "events": "78a4c011",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
         "draws": 366,
         "digest": "e513d33c"
@@ -211,16 +204,8 @@
       "tick": 140,
       "time": 7,
       "nextId": 411,
-<<<<<<< HEAD
       "state": "10fe985a",
       "events": "b66db8b9",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "10fe985a",
-      "events": "100b4f31",
-=======
-      "state": "f60a5606",
-      "events": "100b4f31",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
         "draws": 495,
         "digest": "3b351463"
@@ -230,7 +215,7 @@
       "tick": 160,
       "time": 8,
       "nextId": 411,
-      "state": "93851114",
+      "state": "feb757b8",
       "events": "d3da1ea1",
       "rng": {
         "draws": 636,
@@ -241,16 +226,8 @@
       "tick": 180,
       "time": 9,
       "nextId": 411,
-<<<<<<< HEAD
       "state": "064f847a",
       "events": "938be258",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "064f847a",
-      "events": "bae9a5e0",
-=======
-      "state": "c87e3d26",
-      "events": "bae9a5e0",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
         "draws": 774,
         "digest": "89995251"
@@ -260,7 +237,7 @@
       "tick": 200,
       "time": 10,
       "nextId": 411,
-      "state": "169f41bb",
+      "state": "62737aab",
       "events": "2ef2ec5c",
       "rng": {
         "draws": 944,
@@ -271,16 +248,8 @@
       "tick": 220,
       "time": 11,
       "nextId": 411,
-<<<<<<< HEAD
       "state": "563d002b",
       "events": "a2a8914d",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "563d002b",
-      "events": "4a2b1f75",
-=======
-      "state": "1e0aa33b",
-      "events": "4a2b1f75",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
         "draws": 1021,
         "digest": "c5358026"
@@ -290,7 +259,7 @@
       "tick": 220,
       "time": 11,
       "nextId": 411,
-      "state": "9d6eab76",
+      "state": "a22ad02a",
       "events": "741638a5",
       "rng": {
         "draws": 1021,
@@ -373,7 +342,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 20,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -549,7 +519,7 @@
       "tick": 224,
       "time": 11.2,
       "nextId": 411,
-      "state": "21363821",
+      "state": "a4a95c91",
       "events": "855988fa",
       "rng": {
         "draws": 1050,
@@ -632,7 +602,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 20,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }

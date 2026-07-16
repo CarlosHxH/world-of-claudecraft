@@ -381,11 +381,12 @@ describe('Primal Reflexes (druid): dodge cooldown', () => {
 });
 
 describe('Druid parity: Dire Bruin threat/armor buff', () => {
-  it('grants +20% threat and +15% armor', () => {
-    const druid = TALENTS.druid!;
-    const choice = druid.nodes.find((n: any) => n.id === 'feral_choice');
-    const bruin = choice?.choices?.find((c: any) => c.id === 'feral_choice_bear');
-    expect(bruin?.effect.global?.threatPct).toBe(0.2);
-    expect(bruin?.effect.stats?.armorPct).toBe(0.15);
+  it('grants +20% threat and +15% armor through the feral spec mastery', () => {
+    // Talents 2.0 retired the feral_choice_bear node; the bear-tank identity
+    // lives on the feral spec mastery, which carries the v0.27 Dire Bruin
+    // retune (threat 20%, armor 15%).
+    const feral = TALENTS.druid?.specs.find((s) => s.id === 'feral');
+    expect(feral?.mastery.effect.global?.threatPct).toBe(0.2);
+    expect(feral?.mastery.effect.stats?.armorPct).toBe(0.15);
   });
 });

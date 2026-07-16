@@ -413,26 +413,6 @@ export const fr_FR: Partial<Record<TranslationKey, string>> = {
   'entities.abilities.voidfeast.description':
     'Dévore un effet magique (un effet bénéfique sur un ennemi ou un effet néfaste sur un allié) et vous rend 6 % de votre maximum de points de vie.',
   'hudChrome.abilityError.shieldRequired': 'Vous devez équiper un bouclier.',
-  'guide.family.reptile.desc':
-    'Chasseurs à sang froid, avec un sifflement et un claquement qui leur sont propres, distincts des bêtes à sang chaud.',
-  'guide.family.reptile.name': 'Reptiles',
-  'hudChrome.bags.rightClickDestroy': 'Maj+clic droit pour détruire',
-  'hudChrome.cameraPrompt.changeLater':
-    'Vous pourrez modifier ce choix plus tard dans le menu Échap, Raccourcis clavier.',
-  'hudChrome.cameraPrompt.classicDesc':
-    'Maintenez le clic droit et déplacez la souris pour tourner la caméra.',
-  'hudChrome.cameraPrompt.classicTitle': 'Caméra classique',
-  'hudChrome.cameraPrompt.confirm': 'Confirmer',
-  'hudChrome.cameraPrompt.intro': 'Choisissez comment la caméra suit votre personnage.',
-  'hudChrome.cameraPrompt.mouseDesc':
-    'Déplacez la souris pour tourner la caméra sans maintenir de bouton.',
-  'hudChrome.cameraPrompt.title': 'Choisissez votre caméra',
-  'hudChrome.discord.link.joinServer': 'Rejoindre simplement le serveur Discord',
-  'hudChrome.meters.autoShowHint':
-    'Les lignes apparaissent automatiquement dès que votre groupe inflige des dégâts ou prodigue des soins, et ce segment se ferme quelques secondes après la fin du combat.',
-  'hudChrome.petFeed.disabledFullHp': 'Le familier a tous ses points de vie',
-  'hudChrome.petFeed.disabledNoFood':
-    'Aucune nourriture dans vos sacs ne peut soigner votre familier',
   'entities.abilities.chain_heal.description':
     'Rend une grande quantité de points de vie à une cible alliée, puis rebondit sur un maximum de 2 autres alliés proches, avec des soins réduits de 50 % à chaque rebond. (signature Restauration)',
   'entities.abilities.chain_heal.name': 'Salve de guérison',
@@ -7154,11 +7134,6 @@ export const fr_FR: Partial<Record<TranslationKey, string>> = {
   'hudChrome.discord.roleTag.levyst': 'Levy St',
   'hudChrome.discord.roleTag.devs': 'Dév',
   'hudChrome.discord.roleTag.mods': 'Modo',
-  'hudChrome.discord.roleTag.seniormods': 'Modérateur senior',
-  'hudChrome.discord.roleTag.juniormods': 'Modérateur junior',
-  'hudChrome.discord.roleTag.contentcreator': 'Créateur de contenu',
-  'hudChrome.discord.roleTag.legend': 'LÉGENDE',
-  'hudChrome.discord.roleTag.shill': 'PROMOTEUR',
   'hudChrome.discord.roleTag.artists': 'Artiste',
   'hudChrome.discord.guildMember': 'Membre vérifié',
   'hudChrome.discord.notMember': 'Pas encore sur le serveur',

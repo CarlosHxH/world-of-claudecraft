@@ -768,7 +768,6 @@ export const tr_TR: EnTranslations = {
       "update": "Güncelle"
     },
     "cameraPrompt": {
-<<<<<<< HEAD
       "title": "Kamera Modunu Seç",
       "intro": "Kameranın karakterini nasıl takip edeceğini seç.",
       "mouseDesc": "Bir tuşa basmadan fareyi hareket ettirerek kamerayı döndür.",
@@ -776,23 +775,6 @@ export const tr_TR: EnTranslations = {
       "classicDesc": "Kamerayı döndürmek için sağ tıklayı basılı tut ve fareyi hareket ettir.",
       "changeLater": "Bunu daha sonra Esc, Tuş Atamaları menüsünden değiştirebilirsin.",
       "confirm": "Onayla"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "title": "Choose Your Camera",
-      "intro": "Pick how the camera follows your character.",
-      "mouseDesc": "Move the mouse to turn the camera without holding a button.",
-      "classicTitle": "Classic Camera",
-      "classicDesc": "Hold right-click and move the mouse to turn the camera.",
-      "changeLater": "You can change this later under Esc, Key Bindings.",
-      "confirm": "Confirm"
-=======
-      "title": "Kameranı Seç",
-      "intro": "Kameranın karakterini nasıl takip edeceğini seç.",
-      "mouseDesc": "Bir tuşu basılı tutmadan kamerayı döndürmek için fareyi hareket ettir.",
-      "classicTitle": "Klasik Kamera",
-      "classicDesc": "Kamerayı döndürmek için farenin sağ tuşunu basılı tutup fareyi hareket ettir.",
-      "changeLater": "Bunu daha sonra Esc, Tuş Atamaları bölümünden değiştirebilirsin.",
-      "confirm": "Onayla"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "castBar": {
       "playerAria": "Senin Büyü Çubuğun",
@@ -840,25 +822,11 @@ export const tr_TR: EnTranslations = {
       "perSecondRow": "{total} ({rate})",
       "minutesSeconds": "{m}dk {s}sn",
       "seconds": "{s}sn",
-<<<<<<< HEAD
       "autoShowHint": "Satırlar, partindeki oyuncular hasar vermeye veya iyileştirmeye başladığında otomatik görünür; bu bölüm ise savaş bittikten birkaç saniye sonra kapanır."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "autoShowHint": "Rows appear automatically once your party deals damage or healing, and this segment closes a few seconds after combat ends."
-=======
-      "autoShowHint": "Grubun hasar verdiğinde veya iyileştirme yaptığında satırlar otomatik olarak görünür ve bu bölüm savaş bittikten birkaç saniye sonra kapanır."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "petFeed": {
-<<<<<<< HEAD
       "disabledFullHp": "Evcil hayvanın canı dolu",
       "disabledNoFood": "Çantalarında evcil hayvanını iyileştirecek yiyecek yok"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "disabledFullHp": "Pet is at full health",
-      "disabledNoFood": "No food in your bags will heal your pet"
-=======
-      "disabledFullHp": "Yoldaşın sağlığı dolu",
-      "disabledNoFood": "Çantalarında yoldaşını iyileştirecek yiyecek yok"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "keybinds": {
       "emoteWheel": "İfade Çarkı",
@@ -1501,16 +1469,10 @@ export const tr_TR: EnTranslations = {
     },
     "bags": {
       "cannotDestroy": "Bu eşya yok edilemez.",
-<<<<<<< HEAD
       "rightClickDestroy": "Yok etmek için sağ tıkla",
       "dragEquipHint": "Kuşanmak için karakterinin üzerine sürükle",
       "dragDestroyHint": "Yok etmek için dünyaya sürükle",
       "reorderNeedsRecent": "Çantalarını yeniden düzenlemek için filtreyi temizle ve Son Eklenen sıralama seçeneğini kullan",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "rightClickDestroy": "Shift+right-click to destroy",
-=======
-      "rightClickDestroy": "Yok etmek için Shift+sağ tık",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "filterGroupAria": "Çantaları kategoriye göre filtrele",
       "filterAll": "Tümü",
       "filterWeapon": "Silahlar",
@@ -1740,13 +1702,7 @@ export const tr_TR: EnTranslations = {
         "benefits": "Oyun ve topluluk etkinliğinden puan kazanmak ve statü kademelerini tırmanmak için Discord hesabını bağla.",
         "error": "Discord bağlanamadı. Lütfen tekrar dene.",
         "success": "Discord bağlandı.",
-<<<<<<< HEAD
         "joinServer": "Discord sunucusuna katıl"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "joinServer": "Just join the Discord server"
-=======
-        "joinServer": "Yalnızca Discord sunucusuna katıl"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       },
       "choice": {
         "title": "Discord ile devam et",
@@ -2943,16 +2899,8 @@ export const tr_TR: EnTranslations = {
         "desc": "Eski derinliklerin pullu, yılansı yaratıkları. Nadir, mağrur ve göründüklerinden çok daha güçlü."
       },
       "reptile": {
-<<<<<<< HEAD
         "name": "Sürüngenler",
         "desc": "Kendi özgün tıslaması ve ısırışıyla soğukkanlı avcılar; sıcakkanlı yaratıklardan tamamen farklı bir türdür."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "name": "Reptiles",
-        "desc": "Cold-blooded hunters with a hiss and a snap all their own, distinct from the warm-blooded beasts."
-=======
-        "name": "Sürüngenler",
-        "desc": "Sıcakkanlı yaratıklardan ayrılan, kendilerine özgü tıslamaları ve çene şaklatmaları olan soğukkanlı avcılar."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     "worldPage": {

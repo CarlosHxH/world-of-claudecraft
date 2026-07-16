@@ -768,7 +768,6 @@ export const cs_CZ: EnTranslations = {
       "update": "Aktualizovat"
     },
     "cameraPrompt": {
-<<<<<<< HEAD
       "title": "Zvolte si kameru",
       "intro": "Zvol, jak kamera sleduje tvou postavu.",
       "mouseDesc": "Pohybuj myší pro otáčení kamery bez nutnosti přidržovat tlačítko.",
@@ -776,23 +775,6 @@ export const cs_CZ: EnTranslations = {
       "classicDesc": "Přidržte pravé tlačítko myši a pohybujte myší pro otáčení kamery.",
       "changeLater": "Toto nastavení můžeš změnit později v nabídce Esc, Klávesové zkratky.",
       "confirm": "Potvrdit"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "title": "Choose Your Camera",
-      "intro": "Pick how the camera follows your character.",
-      "mouseDesc": "Move the mouse to turn the camera without holding a button.",
-      "classicTitle": "Classic Camera",
-      "classicDesc": "Hold right-click and move the mouse to turn the camera.",
-      "changeLater": "You can change this later under Esc, Key Bindings.",
-      "confirm": "Confirm"
-=======
-      "title": "Vyber si kameru",
-      "intro": "Vyber, jak má kamera sledovat tvou postavu.",
-      "mouseDesc": "Pohybem myši otáčej kamerou bez držení tlačítka.",
-      "classicTitle": "Klasická kamera",
-      "classicDesc": "Podrž pravé tlačítko myši a pohybem myši otáčej kamerou.",
-      "changeLater": "Později to můžeš změnit v nabídce Esc, Klávesové zkratky.",
-      "confirm": "Potvrdit"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "castBar": {
       "playerAria": "Tvoje lišta sesílání",
@@ -840,25 +822,11 @@ export const cs_CZ: EnTranslations = {
       "perSecondRow": "{total} ({rate})",
       "minutesSeconds": "{m} min {s} s",
       "seconds": "{s} s",
-<<<<<<< HEAD
       "autoShowHint": "Řádky se zobrazí automaticky, jakmile tvoje skupina způsobí poškození nebo léčení, a tento segment se zavře několik sekund po skončení boje."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "autoShowHint": "Rows appear automatically once your party deals damage or healing, and this segment closes a few seconds after combat ends."
-=======
-      "autoShowHint": "Řádky se zobrazí automaticky, jakmile tvoje skupina způsobí poškození nebo léčení, a tento panel se několik sekund po skončení boje zavře."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "petFeed": {
-<<<<<<< HEAD
       "disabledFullHp": "Mazlíček má plné zdraví",
       "disabledNoFood": "V batohách nemáš žádné jídlo, které by vyléčilo tvého mazlíčka"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "disabledFullHp": "Pet is at full health",
-      "disabledNoFood": "No food in your bags will heal your pet"
-=======
-      "disabledFullHp": "Mazlíček má plné zdraví",
-      "disabledNoFood": "Žádné jídlo v tvých brašnách mazlíčka nevyléčí"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "keybinds": {
       "emoteWheel": "Kruh emotů",
@@ -1501,16 +1469,10 @@ export const cs_CZ: EnTranslations = {
     },
     "bags": {
       "cannotDestroy": "Tento předmět nelze zničit.",
-<<<<<<< HEAD
       "rightClickDestroy": "Kliknutím pravým tlačítkem zničíš",
       "dragEquipHint": "Přetáhni na svou postavu a předmět bude vybaven",
       "dragDestroyHint": "Přetáhni do světa a předmět bude zničen",
       "reorderNeedsRecent": "Zruš filtr a seřaď podle Nedávných, chceš-li přeuspořádat batohy",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "rightClickDestroy": "Shift+right-click to destroy",
-=======
-      "rightClickDestroy": "Shift+kliknutí pravým tlačítkem pro zničení",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "filterGroupAria": "Filtrovat batohy podle kategorie",
       "filterAll": "Vše",
       "filterWeapon": "Zbraně",
@@ -1740,13 +1702,7 @@ export const cs_CZ: EnTranslations = {
         "benefits": "Propoj Discord, získávej body za hraní a komunitní aktivitu a stoupej ve statusových stupních.",
         "error": "Discord se nepodařilo propojit. Zkus to prosím znovu.",
         "success": "Discord propojen.",
-<<<<<<< HEAD
         "joinServer": "Připojit se na Discord server"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "joinServer": "Just join the Discord server"
-=======
-        "joinServer": "Jen se připojit k serveru Discord"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       },
       "choice": {
         "title": "Pokračovat přes Discord",
@@ -2943,16 +2899,8 @@ export const cs_CZ: EnTranslations = {
         "desc": "Šupinaté, hadovité věci ze starých hlubin. Vzácné, hrdé a mnohem silnější, než vypadají."
       },
       "reptile": {
-<<<<<<< HEAD
         "name": "Plazi",
         "desc": "Studenokrevní lovci s vlastním syčením a lupem čelistí, odlišní od teplokrevných bestií."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "name": "Reptiles",
-        "desc": "Cold-blooded hunters with a hiss and a snap all their own, distinct from the warm-blooded beasts."
-=======
-        "name": "Plazi",
-        "desc": "Chladnokrevní lovci s nezaměnitelným syčením a cvakáním čelistí, odlišní od teplokrevných šelem."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     "worldPage": {

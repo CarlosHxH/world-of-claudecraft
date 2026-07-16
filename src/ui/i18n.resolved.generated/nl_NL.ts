@@ -768,7 +768,6 @@ export const nl_NL: EnTranslations = {
       "update": "Bijwerken"
     },
     "cameraPrompt": {
-<<<<<<< HEAD
       "title": "Kies je Camera",
       "intro": "Kies hoe de camera je personage volgt.",
       "mouseDesc": "Beweeg de muis om de camera te draaien zonder een knop ingedrukt te houden.",
@@ -776,23 +775,6 @@ export const nl_NL: EnTranslations = {
       "classicDesc": "Houd rechts klikken ingedrukt en beweeg de muis om de camera te draaien.",
       "changeLater": "Je kunt dit later wijzigen via Esc, Sneltoetsen.",
       "confirm": "Bevestigen"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "title": "Choose Your Camera",
-      "intro": "Pick how the camera follows your character.",
-      "mouseDesc": "Move the mouse to turn the camera without holding a button.",
-      "classicTitle": "Classic Camera",
-      "classicDesc": "Hold right-click and move the mouse to turn the camera.",
-      "changeLater": "You can change this later under Esc, Key Bindings.",
-      "confirm": "Confirm"
-=======
-      "title": "Kies je camera",
-      "intro": "Kies hoe de camera je personage volgt.",
-      "mouseDesc": "Beweeg de muis om de camera te draaien zonder een knop ingedrukt te houden.",
-      "classicTitle": "Klassieke camera",
-      "classicDesc": "Houd de rechtermuisknop ingedrukt en beweeg de muis om de camera te draaien.",
-      "changeLater": "Je kunt dit later wijzigen via Esc, Toetsbindingen.",
-      "confirm": "Bevestigen"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "castBar": {
       "playerAria": "Jouw Spreukbalk",
@@ -840,25 +822,11 @@ export const nl_NL: EnTranslations = {
       "perSecondRow": "{total} ({rate})",
       "minutesSeconds": "{m}m {s}s",
       "seconds": "{s}s",
-<<<<<<< HEAD
       "autoShowHint": "Rijen verschijnen automatisch zodra je groep schade aanricht of geneest, en dit segment sluit een paar seconden na het einde van het gevecht."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "autoShowHint": "Rows appear automatically once your party deals damage or healing, and this segment closes a few seconds after combat ends."
-=======
-      "autoShowHint": "Rijen verschijnen automatisch zodra je groep schade toebrengt of geneest, en dit onderdeel sluit enkele seconden nadat het gevecht eindigt."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "petFeed": {
-<<<<<<< HEAD
       "disabledFullHp": "Huisdier heeft volledige gezondheid",
       "disabledNoFood": "Geen voedsel in je tassen dat je huisdier kan genezen"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "disabledFullHp": "Pet is at full health",
-      "disabledNoFood": "No food in your bags will heal your pet"
-=======
-      "disabledFullHp": "Je huisdier is volledig gezond",
-      "disabledNoFood": "Geen voedsel in je tassen kan je huisdier genezen"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
     },
     "keybinds": {
       "emoteWheel": "Emotewiel",
@@ -1501,16 +1469,10 @@ export const nl_NL: EnTranslations = {
     },
     "bags": {
       "cannotDestroy": "Dit voorwerp kan niet worden vernietigd.",
-<<<<<<< HEAD
       "rightClickDestroy": "Klik met rechts om te vernietigen",
       "dragEquipHint": "Sleep naar je personage om uit te rusten",
       "dragDestroyHint": "Sleep naar buiten in de wereld om te vernietigen",
       "reorderNeedsRecent": "Verwijder het filter en sorteer op Recent om je tassen opnieuw te rangschikken",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "rightClickDestroy": "Shift+right-click to destroy",
-=======
-      "rightClickDestroy": "Shift-rechtsklik om te vernietigen",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "filterGroupAria": "Tassen filteren op categorie",
       "filterAll": "Alle",
       "filterWeapon": "Wapens",
@@ -1740,13 +1702,7 @@ export const nl_NL: EnTranslations = {
         "benefits": "Koppel je Discord om punten te verdienen door spelen en gemeenschapsactiviteit, en klim door de statusrangen.",
         "error": "Kon Discord niet koppelen. Probeer het opnieuw.",
         "success": "Discord gekoppeld.",
-<<<<<<< HEAD
         "joinServer": "Doe gewoon mee met de Discord-server"
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "joinServer": "Just join the Discord server"
-=======
-        "joinServer": "Gewoon lid worden van de Discord-server"
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       },
       "choice": {
         "title": "Doorgaan met Discord",
@@ -1794,9 +1750,9 @@ export const nl_NL: EnTranslations = {
         "admin": "Admin",
         "coredevs": "Kernontwikkelaar",
         "devs": "Dev",
-        "seniormods": "Senior moderator",
+        "seniormods": "Senior Mod",
         "mods": "Mod",
-        "juniormods": "Junior moderator",
+        "juniormods": "Junior Mod",
         "artists": "Artiest",
         "contentcreator": "Contentmaker",
         "legend": "LEGENDE",
@@ -2943,16 +2899,8 @@ export const nl_NL: EnTranslations = {
         "desc": "Geschubde, slangachtige wezens uit de oude diepten. Zeldzaam, trots en veel sterker dan ze eruitzien."
       },
       "reptile": {
-<<<<<<< HEAD
         "name": "Reptielen",
         "desc": "Koudbloedige jagers met een eigen sis en snap, onderscheiden van de warmbloedige dieren."
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-        "name": "Reptiles",
-        "desc": "Cold-blooded hunters with a hiss and a snap all their own, distinct from the warm-blooded beasts."
-=======
-        "name": "Reptielen",
-        "desc": "Koudbloedige jagers met een geheel eigen gesis en beet, anders dan de warmbloedige beesten."
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       }
     },
     "worldPage": {

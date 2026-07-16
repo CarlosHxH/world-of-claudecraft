@@ -340,8 +340,10 @@ const DRUID_SPECS: SpecDef[] = [
     'A shapeshifter who tanks in bear form and fights up close.',
     'feral_charge',
     'Primal Heart',
-    'Increases your physical ability damage by 15%, your bleed damage by 15%, and threat by 20%.',
-    { global: { meleeDmgPct: 0.15, dotDmgPct: 0.15, threatPct: 0.2 } },
+    // The +15% armor carries the v0.27 Dire Bruin retune (the old feral_choice_bear
+    // node) into the spec mastery: in Talents 2.0 the bear-tank identity IS this spec.
+    'Increases your physical ability damage by 15%, your bleed damage by 15%, your threat by 20%, and your armor by 15%.',
+    { global: { meleeDmgPct: 0.15, dotDmgPct: 0.15, threatPct: 0.2 }, stats: { armorPct: 0.15 } },
   ),
   spec(
     'restoration',

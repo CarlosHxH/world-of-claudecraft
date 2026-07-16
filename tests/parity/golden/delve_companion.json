@@ -16,7 +16,7 @@
       "tick": 0,
       "time": 0,
       "nextId": 409,
-      "state": "e71ed8eb",
+      "state": "6bd4c62d",
       "events": "741638a5",
       "rng": {
         "draws": 0,
@@ -47,7 +47,6 @@
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ]
@@ -57,8 +56,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -72,7 +70,8 @@
           "mailWelcomed": true,
           "nodeHarvestReadyAt": {},
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -81,19 +80,6 @@
         {
           "aiState": "idle",
           "attackPower": 46,
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3600,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
           "combatTimer": 99,
           "comboUntil": -1,
           "critChance": 0.06,
@@ -101,15 +87,14 @@
           "dodgeChance": 0.06,
           "fallStartY": 1.5,
           "fiveSecondRule": 99,
-          "hp": 100,
+          "hp": 90,
           "id": 408,
           "kind": "player",
           "level": 1,
           "lootFfaTimer": "Infinity",
-          "maxHp": 100,
+          "maxHp": 90,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "onGround": true,
           "overpowerUntil": -1,
           "petMode": "defensive",
@@ -128,10 +113,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 20,
-            "armor": 144,
+            "armor": 110,
             "int": 10,
             "spi": 11,
-            "sta": 23,
+            "sta": 22,
             "str": 23
           },
           "templateId": "warrior",
@@ -147,16 +132,8 @@
       "tick": 5,
       "time": 0.25,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "2f4eb4b8",
       "events": "5872ec92",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "dba81f3f",
-      "events": "fb9117db",
-=======
-      "state": "82e9b0ab",
-      "events": "fb9117db",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
         "draws": 7,
         "digest": "5dd8bdd5"
@@ -166,13 +143,7 @@
       "tick": 10,
       "time": 0.5,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "4f37185f",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "46c981fe",
-=======
-      "state": "80c01a7f",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
         "draws": 7,
@@ -183,13 +154,7 @@
       "tick": 15,
       "time": 0.75,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "65d37a9f",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "5b7c9f12",
-=======
-      "state": "7ef92caf",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
         "draws": 7,
@@ -200,13 +165,7 @@
       "tick": 20,
       "time": 1,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "40b75905",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "0ad1cdcf",
-=======
-      "state": "6aaffe3f",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "e8535d0d",
       "rng": {
         "draws": 7,
@@ -217,13 +176,7 @@
       "tick": 25,
       "time": 1.25,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "0bfbf454",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "b0aed0bc",
-=======
-      "state": "af5c3b23",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
         "draws": 7,
@@ -234,16 +187,8 @@
       "tick": 30,
       "time": 1.5,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "7ec17d94",
       "events": "640241c6",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "df34af6d",
-      "events": "741638a5",
-=======
-      "state": "2738492f",
-      "events": "741638a5",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
         "draws": 10,
         "digest": "88e18b82"
@@ -253,16 +198,8 @@
       "tick": 35,
       "time": 1.75,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "7bf3cd2c",
       "events": "741638a5",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "f29194fe",
-      "events": "297f933e",
-=======
-      "state": "12d71496",
-      "events": "297f933e",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
         "draws": 10,
         "digest": "88e18b82"
@@ -272,13 +209,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "a23bba5f",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "fb95448e",
-=======
-      "state": "bc8a8149",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
         "draws": 10,
@@ -289,13 +220,7 @@
       "tick": 40,
       "time": 2,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "a23bba5f",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "fb95448e",
-=======
-      "state": "bc8a8149",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
         "draws": 10,
@@ -328,7 +253,6 @@
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ]
@@ -348,8 +272,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -365,7 +288,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 10,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -374,19 +298,6 @@
         {
           "aiState": "idle",
           "attackPower": 70,
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3598,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
           "combatTimer": 101,
           "comboUntil": -1,
           "critChance": 0.063,
@@ -402,7 +313,6 @@
           "maxHp": 50000,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "onGround": true,
           "overpowerUntil": -1,
           "petMode": "defensive",
@@ -420,10 +330,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 26,
-            "armor": 228,
+            "armor": 194,
             "int": 10,
             "spi": 11,
-            "sta": 35,
+            "sta": 34,
             "str": 35
           },
           "targetId": 414,
@@ -536,16 +446,8 @@
       "tick": 41,
       "time": 2.05,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "a50d12d5",
       "events": "29f40302",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "5c7320f7",
-      "events": "dc75b071",
-=======
-      "state": "82541cf3",
-      "events": "dc75b071",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "rng": {
         "draws": 12,
         "digest": "3de539dc"
@@ -577,7 +479,6 @@
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ]
@@ -597,8 +498,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -614,7 +514,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 10,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -623,19 +524,6 @@
         {
           "aiState": "idle",
           "attackPower": 70,
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3597.95,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
           "combatTimer": 101.05,
           "comboUntil": -1,
           "critChance": 0.063,
@@ -652,7 +540,6 @@
           "maxHp": 50000,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "overpowerUntil": -1,
           "petMode": "defensive",
           "pos": {
@@ -670,10 +557,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 26,
-            "armor": 228,
+            "armor": 194,
             "int": 10,
             "spi": 11,
-            "sta": 35,
+            "sta": 34,
             "str": 35
           },
           "targetId": 414,
@@ -786,13 +673,7 @@
       "tick": 45,
       "time": 2.25,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "efc2724f",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "b2521d95",
-=======
-      "state": "d5be9107",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
         "draws": 12,
@@ -803,13 +684,7 @@
       "tick": 49,
       "time": 2.45,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "3211cbb6",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "986e7287",
-=======
-      "state": "20fbfaaf",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
         "draws": 12,
@@ -842,7 +717,6 @@
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ]
@@ -862,8 +736,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -879,7 +752,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 10,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -888,19 +762,6 @@
         {
           "aiState": "idle",
           "attackPower": 70,
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3597.55,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
           "combatTimer": 101.45,
           "comboUntil": -1,
           "critChance": 0.063,
@@ -916,7 +777,6 @@
           "maxHp": 50000,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "overpowerUntil": -1,
           "petMode": "defensive",
           "pos": {
@@ -934,10 +794,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 26,
-            "armor": 228,
+            "armor": 194,
             "int": 10,
             "spi": 11,
-            "sta": 35,
+            "sta": 34,
             "str": 35
           },
           "templateId": "warrior",
@@ -994,13 +854,7 @@
       "tick": 50,
       "time": 2.5,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "571e9ddf",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "f24c8476",
-=======
-      "state": "a10df2c5",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
         "draws": 12,
@@ -1011,13 +865,7 @@
       "tick": 51,
       "time": 2.55,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "2d8e314a",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "78c8f27f",
-=======
-      "state": "cbdea296",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
         "draws": 12,
@@ -1050,7 +898,6 @@
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ]
@@ -1070,8 +917,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -1087,7 +933,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 10,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -1096,19 +943,6 @@
         {
           "aiState": "idle",
           "attackPower": 70,
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3597.45,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
           "combatTimer": 101.55,
           "comboUntil": -1,
           "critChance": 0.063,
@@ -1124,7 +958,6 @@
           "maxHp": 50000,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "overpowerUntil": -1,
           "petMode": "defensive",
           "pos": {
@@ -1142,10 +975,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 26,
-            "armor": 228,
+            "armor": 194,
             "int": 10,
             "spi": 11,
-            "sta": 35,
+            "sta": 34,
             "str": 35
           },
           "templateId": "warrior",
@@ -1203,13 +1036,7 @@
       "tick": 51,
       "time": 2.55,
       "nextId": 418,
-<<<<<<< HEAD
       "state": "2d8e314a",
-||||||| parent of c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
-      "state": "78c8f27f",
-=======
-      "state": "cbdea296",
->>>>>>> c82ae1bf0 (feat(talents): integrate v2 rows and redesigned warrior)
       "events": "741638a5",
       "rng": {
         "draws": 12,
@@ -1242,7 +1069,6 @@
             "dungeonClears": {},
             "itemsDiscovered": [
               "baked_bread",
-              "eastbrook_buckler",
               "recruit_tunic",
               "worn_sword"
             ]
@@ -1262,8 +1088,7 @@
           "entityId": 408,
           "equipment": {
             "chest": "recruit_tunic",
-            "mainhand": "worn_sword",
-            "offhand": "eastbrook_buckler"
+            "mainhand": "worn_sword"
           },
           "equipmentInstance": {},
           "gatheringProficiency": {},
@@ -1279,7 +1104,8 @@
           "nodeHarvestReadyAt": {},
           "renown": 10,
           "talents": {
-            "rows": {}
+            "choices": {},
+            "ranks": {}
           },
           "townFocus": {}
         }
@@ -1288,19 +1114,6 @@
         {
           "aiState": "idle",
           "attackPower": 70,
-          "auras": [
-            {
-              "duration": 3600,
-              "id": "battle_stance",
-              "kind": "battle_stance",
-              "name": "Battle Stance",
-              "remaining": 3597.45,
-              "school": "physical",
-              "sourceId": 408
-            }
-          ],
-          "blockChance": 0.05,
-          "blockValue": 6,
           "combatTimer": 101.55,
           "comboUntil": -1,
           "critChance": 0.063,
@@ -1316,7 +1129,6 @@
           "maxHp": 50000,
           "maxResource": 100,
           "moveSpeed": 7,
-          "offhandItemId": "eastbrook_buckler",
           "overpowerUntil": -1,
           "petMode": "defensive",
           "pos": {
@@ -1334,10 +1146,10 @@
           "spellPower": 5,
           "stats": {
             "agi": 26,
-            "armor": 228,
+            "armor": 194,
             "int": 10,
             "spi": 11,
-            "sta": 35,
+            "sta": 34,
             "str": 35
           },
           "templateId": "warrior",
