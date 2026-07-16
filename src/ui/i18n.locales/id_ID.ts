@@ -7595,7 +7595,8 @@ export const id_ID: Partial<Record<TranslationKey, string>> = {
   'devCommand.actions.despawntarget.description':
     'Hapus makhluk terpilih yang dibuat dengan alat ini.',
   'devCommand.actions.despawntarget.label': 'Hilangkan target',
-  'devCommand.actions.dungeon.description': 'Masuki dungeon dengan melewati gerbang pengembang.',
+  'devCommand.actions.dungeon.description':
+    'Masuki penjara bawah tanah dengan melewati persyaratan masuk mode pengembang.',
   'devCommand.actions.dungeon.label': 'Masuk dungeon',
   'devCommand.actions.gather.description': 'Tingkatkan profesi pengumpulan.',
   'devCommand.actions.gather.label': 'Berikan keterampilan mengumpulkan',
@@ -7706,4 +7707,19 @@ export const id_ID: Partial<Record<TranslationKey, string>> = {
   'hudChrome.partyFrames.styleRaid': 'Bingkai Raid',
   'hudChrome.partyFrames.unlock': 'Pindahkan bingkai grup dan raid',
   'hudChrome.partyFrames.width': 'Lebar Bingkai',
+  'apiError.welcome.invalid_input': 'Data yang dimasukkan tidak valid.',
+  'welcome.back': 'Selamat datang kembali, {name}',
+  'welcome.level': 'Level {level}',
+  'welcome.lastPlayed': 'Terakhir dimainkan: {when}',
+  'welcome.continue': 'Masuki Dunia',
+  'welcome.continueHint': 'Tekan Enter untuk melanjutkan, Esc untuk melewati',
+  'welcome.continueHintTouch': 'Ketuk untuk melanjutkan',
+  'welcome.discord.title': 'Komunitas berkumpul di Discord',
+  'welcome.discord.sub':
+    'Pratinjau pembaruan, acara, obrolan pengembang, serta 2 slot bank bonus saat Discord ditautkan.',
+  'welcome.discord.join': 'Gabung ke Discord kami',
+  'welcome.chest.ready': 'Peti harian siap dibuka',
+  'welcome.armory.cta': 'Masuki dunia dan jelajahi Gudang Senjata',
+  'welcome.news.new': 'Baru',
+  'welcome.news.viewAll': 'Lihat semua pembaruan di GitHub',
 };

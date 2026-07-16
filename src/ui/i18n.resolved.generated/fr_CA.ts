@@ -75,7 +75,7 @@ export const fr_CA: EnTranslations = {
         "description": "Réinitialise les temps de recharge des capacités, du GCD et des potions."
       },
       "god": {
-        "label": "Activer le mode divin",
+        "label": "Activer ou désactiver le mode divin",
         "description": "Active ou désactive l’invulnérabilité et les dégâts augmentés."
       },
       "revive": {
@@ -132,7 +132,7 @@ export const fr_CA: EnTranslations = {
       },
       "gather": {
         "label": "Augmenter la compétence de récolte",
-        "description": "Augmente un métier de récolte."
+        "description": "Augmente la compétence d’un métier de récolte."
       },
       "teleport": {
         "label": "Téléporter",
@@ -2304,6 +2304,9 @@ export const fr_CA: EnTranslations = {
       "already_linked": "Votre compte est déjà lié à un compte Steam.",
       "account_taken": "Ce compte Steam est déjà lié à un autre compte.",
       "upstream": "Steam n'a pas répondu. Réessayez dans un instant."
+    },
+    "welcome": {
+      "invalid_input": "Saisie invalide."
     }
   },
   "guide": {
@@ -4999,6 +5002,29 @@ export const fr_CA: EnTranslations = {
     "heading": "Le monde est temporairement indisponible.",
     "body": "Nous redémarrons le service de jeu et Claudemoon devrait revenir sous peu. Cette page continuera de vérifier automatiquement.",
     "status": "De retour bientôt"
+  },
+  "welcome": {
+    "back": "Bon retour parmi nous, {name}",
+    "level": "Niveau {level}",
+    "lastPlayed": "Dernière partie : {when}",
+    "continue": "Entrer dans le monde",
+    "continueHint": "Entrée pour continuer, Échap pour passer",
+    "continueHintTouch": "Touchez pour continuer",
+    "discord": {
+      "title": "La communauté vit sur Discord",
+      "sub": "Aperçus des patchs, événements, discussions avec les développeurs et 2 emplacements de banque bonus en liant votre compte Discord.",
+      "join": "Rejoindre notre Discord"
+    },
+    "chest": {
+      "ready": "Coffre des récompenses quotidiennes prêt"
+    },
+    "armory": {
+      "cta": "Entrer dans le monde et parcourir l’Armurerie"
+    },
+    "news": {
+      "new": "Nouveau",
+      "viewAll": "Voir toutes les mises à jour sur GitHub"
+    }
   },
   "hud": {
     "core": {

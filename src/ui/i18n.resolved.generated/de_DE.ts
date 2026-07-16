@@ -132,7 +132,7 @@ export const de_DE: EnTranslations = {
       },
       "gather": {
         "label": "Sammelfertigkeit erhöhen",
-        "description": "Einen Sammelberuf erhöhen."
+        "description": "Die Fertigkeit eines Sammelberufs erhöhen."
       },
       "teleport": {
         "label": "Teleportieren",
@@ -1632,7 +1632,7 @@ export const de_DE: EnTranslations = {
       "spacing": "Rahmenabstand",
       "columns": "Schlachtzugsspalten",
       "healthText": "Gesundheitstext",
-      "healthNone": "Keine",
+      "healthNone": "Kein Text",
       "healthPercent": "Prozent",
       "healthCurrent": "Aktuell",
       "healthCurrentMax": "Aktuell / Maximum",
@@ -2304,6 +2304,9 @@ export const de_DE: EnTranslations = {
       "already_linked": "Dein Konto ist bereits mit einem Steam-Konto verknüpft.",
       "account_taken": "Dieses Steam-Konto ist bereits mit einem anderen Konto verknüpft.",
       "upstream": "Steam hat nicht geantwortet. Versuch es gleich noch einmal."
+    },
+    "welcome": {
+      "invalid_input": "Ungültige Eingabe."
     }
   },
   "guide": {
@@ -4999,6 +5002,29 @@ export const de_DE: EnTranslations = {
     "heading": "Die Welt ist vorübergehend nicht verfügbar.",
     "body": "Wir starten den Spieldienst neu und erwarten, dass Claudemoon bald zurückkehrt. Diese Seite prüft automatisch weiter.",
     "status": "Bald zurück"
+  },
+  "welcome": {
+    "back": "Willkommen zurück, {name}",
+    "level": "Stufe {level}",
+    "lastPlayed": "Zuletzt gespielt: {when}",
+    "continue": "Welt betreten",
+    "continueHint": "Enter zum Fortfahren, Esc zum Überspringen",
+    "continueHintTouch": "Tippe, um fortzufahren",
+    "discord": {
+      "title": "Die Gemeinschaft lebt auf Discord",
+      "sub": "Patch-Vorschauen, Events, Entwicklerchat und 2 Bonusfächer in der Bank, wenn du dein Discord-Konto verknüpfst.",
+      "join": "Tritt unserem Discord bei"
+    },
+    "chest": {
+      "ready": "Truhe der täglichen Belohnungen ist bereit"
+    },
+    "armory": {
+      "cta": "Welt betreten und die Waffenkammer durchstöbern"
+    },
+    "news": {
+      "new": "Neu",
+      "viewAll": "Alle Updates auf GitHub ansehen"
+    }
   },
   "hud": {
     "core": {

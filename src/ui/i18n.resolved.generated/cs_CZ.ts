@@ -140,7 +140,7 @@ export const cs_CZ: EnTranslations = {
       },
       "dungeon": {
         "label": "Vstoupit do dungeonu",
-        "description": "Vstup do dungeonu s obejitím vývojářské podmínky."
+        "description": "Vstup do dungeonu s obejitím vývojářského omezení."
       },
       "raid": {
         "label": "Vstoupit do raidu",
@@ -1632,7 +1632,7 @@ export const cs_CZ: EnTranslations = {
       "spacing": "Rozestupy rámečků",
       "columns": "Sloupce raidu",
       "healthText": "Text zdraví",
-      "healthNone": "Žádné",
+      "healthNone": "Žádný",
       "healthPercent": "Procenta",
       "healthCurrent": "Aktuální",
       "healthCurrentMax": "Aktuální / Maximum",
@@ -2304,6 +2304,9 @@ export const cs_CZ: EnTranslations = {
       "already_linked": "Tvůj účet už má propojený účet Steam.",
       "account_taken": "Tento účet Steam už je propojený s jiným účtem.",
       "upstream": "Steam neodpověděl. Zkus to za chvíli znovu."
+    },
+    "welcome": {
+      "invalid_input": "Neplatný vstup."
     }
   },
   "guide": {
@@ -4999,6 +5002,29 @@ export const cs_CZ: EnTranslations = {
     "heading": "Svět je dočasně nedostupný.",
     "body": "Restartujeme herní službu a očekáváme, že se Claudemoon brzy vrátí. Tato stránka bude stav automaticky kontrolovat.",
     "status": "Brzy zpět"
+  },
+  "welcome": {
+    "back": "Vítej zpět, {name}",
+    "level": "Úroveň {level}",
+    "lastPlayed": "Naposledy ve hře: {when}",
+    "continue": "Vstoupit do světa",
+    "continueHint": "Enter pro pokračování, Esc pro přeskočení",
+    "continueHintTouch": "Klepnutím pokračuj",
+    "discord": {
+      "title": "Komunita žije na Discordu",
+      "sub": "Ukázky aktualizací, události, chat s vývojáři a 2 bonusové sloty v bance za propojení účtu s Discordem.",
+      "join": "Připojit se na náš Discord"
+    },
+    "chest": {
+      "ready": "Denní truhla je připravená"
+    },
+    "armory": {
+      "cta": "Vstoupit a prohlédnout si Zbrojnici"
+    },
+    "news": {
+      "new": "Nové",
+      "viewAll": "Zobrazit všechny aktualizace na GitHubu"
+    }
   },
   "hud": {
     "core": {

@@ -755,7 +755,8 @@ export const nl_NL: Record<string, string> = {
   'accountRewards.colTotal': 'Totaal aantal punten',
   'accountRewards.date': 'Beloningsdatum',
   'accountRewards.detailBasePoints': '{value} basispunten',
-  'accountRewards.detailBountifulMultiplier': 'x{value} gulheidsvermenigvuldiger',
+  'accountRewards.detailBountifulMultiplier':
+    'x{value} vermenigvuldiger voor de Overvloedige Koffer',
   'accountRewards.detailMultiplier': 'x{value} beloningsvermenigvuldiger',
   'accountRewards.detailOnlineMinutes': '{value} online minuten',
   'accountRewards.detailRepeat': 'Herhaling {value}',

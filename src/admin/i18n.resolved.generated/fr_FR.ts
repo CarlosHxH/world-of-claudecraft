@@ -352,7 +352,7 @@ export const fr_FR: AdminTranslations = {
   "accountRewards.actionOther": "Action de récompense : {kind}",
   "accountRewards.detailMultiplier": "Multiplicateur de récompense x{value}",
   "accountRewards.detailTierMultiplier": "Multiplicateur de palier x{value}",
-  "accountRewards.detailBountifulMultiplier": "Multiplicateur d’abondance x{value}",
+  "accountRewards.detailBountifulMultiplier": "Multiplicateur du Coffre opulent x{value}",
   "accountRewards.detailBasePoints": "{value} points de base",
   "accountRewards.detailOnlineMinutes": "{value} minutes en ligne",
   "accountRewards.detailRepeat": "Répétition {value}",

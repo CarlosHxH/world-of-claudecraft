@@ -7606,7 +7606,7 @@ export const nl_NL: Partial<Record<TranslationKey, string>> = {
   'devCommand.actions.dungeon.description':
     'Ga een kerker binnen zonder de ontwikkelaarsvergrendeling.',
   'devCommand.actions.dungeon.label': 'Kerker binnengaan',
-  'devCommand.actions.gather.description': 'Verhoog een verzamelberoep.',
+  'devCommand.actions.gather.description': 'Verhoog de vaardigheid van een verzamelberoep.',
   'devCommand.actions.gather.label': 'Verzamelvaardigheid verhogen',
   'devCommand.actions.give.description': 'Voeg een voorwerp toe aan de inventaris van de speler.',
   'devCommand.actions.give.label': 'Voorwerp geven',
@@ -7643,7 +7643,7 @@ export const nl_NL: Partial<Record<TranslationKey, string>> = {
   'devCommand.actions.revive.description':
     'Breng de speler tot leven via het normale herrijzenisproces.',
   'devCommand.actions.revive.label': 'Tot leven wekken',
-  'devCommand.actions.spawn.description': 'Maak een concrete mob in de buurt van de speler.',
+  'devCommand.actions.spawn.description': 'Maak een specifieke mob aan in de buurt van de speler.',
   'devCommand.actions.spawn.label': 'Mob spawnen',
   'devCommand.actions.teleport.description': 'Ga naar exacte coördinaten in de wereld.',
   'devCommand.actions.teleport.label': 'Teleporteren',
@@ -7717,4 +7717,19 @@ export const nl_NL: Partial<Record<TranslationKey, string>> = {
   'hudChrome.partyFrames.styleRaid': 'Raidframes',
   'hudChrome.partyFrames.unlock': 'Groeps- en raidframes verplaatsen',
   'hudChrome.partyFrames.width': 'Framebreedte',
+  'apiError.welcome.invalid_input': 'Ongeldige invoer.',
+  'welcome.back': 'Welkom terug, {name}',
+  'welcome.level': 'Niveau {level}',
+  'welcome.lastPlayed': 'Laatst gespeeld: {when}',
+  'welcome.continue': 'Wereld betreden',
+  'welcome.continueHint': 'Enter om door te gaan, Esc om over te slaan',
+  'welcome.continueHintTouch': 'Tik om door te gaan',
+  'welcome.discord.title': 'De community leeft op Discord',
+  'welcome.discord.sub':
+    'Voorproefjes van patches, evenementen, chat met de ontwikkelaars en 2 bonusvakken in de bank als je je Discord-account koppelt.',
+  'welcome.discord.join': 'Word lid van onze Discord',
+  'welcome.chest.ready': 'Kist met dagelijkse beloningen staat klaar',
+  'welcome.armory.cta': 'Wereld betreden en het Arsenaal bekijken',
+  'welcome.news.new': 'Nieuw',
+  'welcome.news.viewAll': 'Bekijk alle updates op GitHub',
 };

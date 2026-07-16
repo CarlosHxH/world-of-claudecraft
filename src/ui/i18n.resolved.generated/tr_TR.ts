@@ -79,12 +79,12 @@ export const tr_TR: EnTranslations = {
         "description": "Dokunulmazlığı ve artırılmış hasarı aç veya kapat."
       },
       "revive": {
-        "label": "Yeniden canlandır",
-        "description": "Normal dirilme yolunu kullanarak yeniden canlandır."
+        "label": "Diril",
+        "description": "Normal dirilme sürecini kullanarak diril."
       },
       "kill": {
         "label": "Oyuncuyu öldür",
-        "description": "Ölüm, ruh ve ceset akışlarını sına."
+        "description": "Ölüm, hayalet ve ceset durumlarını sına."
       },
       "combatreset": {
         "label": "Savaşı sıfırla",
@@ -120,11 +120,11 @@ export const tr_TR: EnTranslations = {
       },
       "quest": {
         "label": "Görevi tamamla",
-        "description": "Kimliğe göre belirli bir görevi tamamla."
+        "description": "Kimliğine göre belirli bir görevi tamamla."
       },
       "quests": {
         "label": "Etkin görevleri tamamla",
-        "description": "Mevcut kayıt defterindeki tüm görevleri tamamla."
+        "description": "Mevcut görev günlüğündeki tüm görevleri tamamla."
       },
       "attune": {
         "label": "Uyumlanmaları aç",
@@ -140,7 +140,7 @@ export const tr_TR: EnTranslations = {
       },
       "dungeon": {
         "label": "Zindana gir",
-        "description": "Geliştirici kapısını atlayarak bir zindana gir."
+        "description": "Geliştirici erişim kontrolünü atlayarak bir zindana gir."
       },
       "raid": {
         "label": "Akına gir",
@@ -391,7 +391,7 @@ export const tr_TR: EnTranslations = {
         "under_minimum": "Cüzdan, 20 USD değerindeki WOC alt sınırının altında.",
         "price_unavailable": "WOC fiyatı alınamıyor, ödüller geçici olarak kilitli.",
         "banned": "Günlük Ödüllerden yasaklandın. Gerekçe: {reason}",
-        "bannedUntil": "Günlük Ödüllerden {remaining} daha yasaklısın. Erişim {until} tarihinde geri açılır. Gerekçe: {reason}"
+        "bannedUntil": "Günlük Ödüller'e erişim yasağın {remaining} daha sürecek. Erişim {until} tarihinde geri açılır. Gerekçe: {reason}"
       }
     },
     "wocStore": {
@@ -2304,6 +2304,9 @@ export const tr_TR: EnTranslations = {
       "already_linked": "Hesabına zaten bağlı bir Steam hesabı var.",
       "account_taken": "Bu Steam hesabı zaten başka bir hesaba bağlı.",
       "upstream": "Steam yanıt vermedi. Birazdan tekrar dene."
+    },
+    "welcome": {
+      "invalid_input": "Geçersiz girdi."
     }
   },
   "guide": {
@@ -4999,6 +5002,29 @@ export const tr_TR: EnTranslations = {
     "heading": "Dünya geçici olarak kullanılamıyor.",
     "body": "Oyun hizmetini yeniden başlatıyoruz ve Claudemoon'un kısa süre içinde geri döneceğini umuyoruz. Bu sayfa otomatik olarak denetlemeye devam edecek.",
     "status": "Birazdan döneriz"
+  },
+  "welcome": {
+    "back": "Tekrar hoş geldin, {name}",
+    "level": "Seviye {level}",
+    "lastPlayed": "Son oynama tarihi: {when}",
+    "continue": "Dünyaya Gir",
+    "continueHint": "Devam etmek için Enter'a, atlamak için Esc'ye bas",
+    "continueHintTouch": "Devam etmek için dokun",
+    "discord": {
+      "title": "Topluluk Discord'da yaşıyor",
+      "sub": "Yama ön izlemeleri, etkinlikler, geliştirici sohbeti ve Discord hesabını bağlayınca 2 bonus banka yuvası.",
+      "join": "Discord topluluğumuza katıl"
+    },
+    "chest": {
+      "ready": "Günlük sandık hazır"
+    },
+    "armory": {
+      "cta": "Dünyaya gir ve Cephaneliğe göz at"
+    },
+    "news": {
+      "new": "Yeni",
+      "viewAll": "GitHub'daki tüm güncellemeleri görüntüle"
+    }
   },
   "hud": {
     "core": {

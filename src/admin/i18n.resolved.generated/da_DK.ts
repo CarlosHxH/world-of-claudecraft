@@ -352,7 +352,7 @@ export const da_DK: AdminTranslations = {
   "accountRewards.actionOther": "Belønningshandling: {kind}",
   "accountRewards.detailMultiplier": "x{value} belønningsmultiplikator",
   "accountRewards.detailTierMultiplier": "x{value} niveaumultiplikator",
-  "accountRewards.detailBountifulMultiplier": "x{value} gavmild multiplikator",
+  "accountRewards.detailBountifulMultiplier": "x{value} multiplikator for den Righoldige kiste",
   "accountRewards.detailBasePoints": "{value} basispoint",
   "accountRewards.detailOnlineMinutes": "{value} minutter online",
   "accountRewards.detailRepeat": "Gentagelse {value}",

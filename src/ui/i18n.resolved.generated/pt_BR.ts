@@ -29,7 +29,7 @@ export const pt_BR: EnTranslations = {
     "categoryNavAria": "Categorias de comandos de desenvolvimento",
     "categories": {
       "player": "Jogador",
-      "spawns": "Gerações",
+      "spawns": "Entidades geradas",
       "inventory": "Inventário",
       "progress": "Progresso",
       "travel": "Viagem",
@@ -132,7 +132,7 @@ export const pt_BR: EnTranslations = {
       },
       "gather": {
         "label": "Conceder habilidade de coleta",
-        "description": "Aumenta uma profissão de coleta."
+        "description": "Aumenta a habilidade em uma profissão de coleta."
       },
       "teleport": {
         "label": "Teletransportar",
@@ -2304,6 +2304,9 @@ export const pt_BR: EnTranslations = {
       "already_linked": "Sua conta já tem uma conta Steam vinculada.",
       "account_taken": "Essa conta Steam já está vinculada a outra conta.",
       "upstream": "O Steam não respondeu. Tente novamente em instantes."
+    },
+    "welcome": {
+      "invalid_input": "Entrada inválida."
     }
   },
   "guide": {
@@ -4999,6 +5002,29 @@ export const pt_BR: EnTranslations = {
     "heading": "O mundo está temporariamente indisponível.",
     "body": "Estamos reiniciando o serviço do jogo e esperamos que Claudemoon volte em breve. Esta página continuará verificando automaticamente.",
     "status": "Voltamos em breve"
+  },
+  "welcome": {
+    "back": "Que bom ter você de volta, {name}",
+    "level": "Nível {level}",
+    "lastPlayed": "Última vez em jogo: {when}",
+    "continue": "Entrar no mundo",
+    "continueHint": "Pressione Enter para continuar, Esc para pular",
+    "continueHintTouch": "Toque para continuar",
+    "discord": {
+      "title": "A comunidade vive no Discord",
+      "sub": "Prévias de patches, eventos, bate-papo com os desenvolvedores e 2 espaços bônus no banco ao vincular sua conta do Discord.",
+      "join": "Entre no nosso Discord"
+    },
+    "chest": {
+      "ready": "Baú de Recompensas Diárias pronto"
+    },
+    "armory": {
+      "cta": "Entrar no mundo e explorar o Arsenal"
+    },
+    "news": {
+      "new": "Novo",
+      "viewAll": "Ver todas as atualizações no GitHub"
+    }
   },
   "hud": {
     "core": {

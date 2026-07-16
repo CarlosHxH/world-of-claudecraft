@@ -2304,6 +2304,9 @@ export const vi_VN: EnTranslations = {
       "already_linked": "Tài khoản của bạn đã liên kết với một tài khoản Steam.",
       "account_taken": "Tài khoản Steam đó đã được liên kết với một tài khoản khác.",
       "upstream": "Steam không phản hồi. Hãy thử lại sau giây lát."
+    },
+    "welcome": {
+      "invalid_input": "Dữ liệu nhập không hợp lệ."
     }
   },
   "guide": {
@@ -4999,6 +5002,29 @@ export const vi_VN: EnTranslations = {
     "heading": "Thế giới tạm thời không khả dụng.",
     "body": "Chúng tôi đang khởi động lại dịch vụ trò chơi và dự kiến Claudemoon sẽ trở lại trong giây lát. Trang này sẽ tự động tiếp tục kiểm tra.",
     "status": "Sớm trở lại"
+  },
+  "welcome": {
+    "back": "Mừng bạn trở lại, {name}",
+    "level": "Cấp {level}",
+    "lastPlayed": "Lần chơi gần nhất: {when}",
+    "continue": "Vào Thế Giới",
+    "continueHint": "Nhấn Enter để tiếp tục, Esc để bỏ qua",
+    "continueHintTouch": "Chạm để tiếp tục",
+    "discord": {
+      "title": "Cộng đồng tụ hội trên Discord",
+      "sub": "Xem trước các bản cập nhật, tham gia sự kiện, trò chuyện cùng nhà phát triển và nhận 2 ô ngân hàng thưởng khi liên kết Discord.",
+      "join": "Tham gia Discord của chúng tôi"
+    },
+    "chest": {
+      "ready": "Rương thưởng hằng ngày đã sẵn sàng"
+    },
+    "armory": {
+      "cta": "Vào thế giới và khám phá Kho Vũ Khí"
+    },
+    "news": {
+      "new": "Mới",
+      "viewAll": "Xem tất cả cập nhật trên GitHub"
+    }
   },
   "hud": {
     "core": {

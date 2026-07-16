@@ -352,7 +352,7 @@ export const de_DE: AdminTranslations = {
   "accountRewards.actionOther": "Belohnungsaktion: {kind}",
   "accountRewards.detailMultiplier": "x{value} Belohnungsmultiplikator",
   "accountRewards.detailTierMultiplier": "x{value} Stufenmultiplikator",
-  "accountRewards.detailBountifulMultiplier": "x{value} Üppigkeitsmultiplikator",
+  "accountRewards.detailBountifulMultiplier": "x{value} Multiplikator für reich gefüllte Truhen",
   "accountRewards.detailBasePoints": "{value} Basispunkte",
   "accountRewards.detailOnlineMinutes": "{value} Online-Minuten",
   "accountRewards.detailRepeat": "Wiederholung {value}",

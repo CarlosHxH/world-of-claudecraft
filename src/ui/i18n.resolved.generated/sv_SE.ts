@@ -76,7 +76,7 @@ export const sv_SE: EnTranslations = {
       },
       "god": {
         "label": "Växla gudaläge",
-        "description": "Slå på eller av odödlighet och förstärkt skada."
+        "description": "Slå på eller av osårbarhet och förstärkt skada."
       },
       "revive": {
         "label": "Återuppliva",
@@ -127,12 +127,12 @@ export const sv_SE: EnTranslations = {
         "description": "Slutför alla uppdrag i den aktuella loggen."
       },
       "attune": {
-        "label": "Lås upp harmoniseringar",
-        "description": "Markera alla harmoniseringskrav som slutförda."
+        "label": "Lås upp länkningar",
+        "description": "Markera alla länkningskrav som slutförda."
       },
       "gather": {
         "label": "Ge insamlingsfärdighet",
-        "description": "Höj ett insamlingsyrke."
+        "description": "Höj färdigheten i ett insamlingsyrke."
       },
       "teleport": {
         "label": "Teleportera",
@@ -1632,10 +1632,10 @@ export const sv_SE: EnTranslations = {
       "spacing": "Ramavstånd",
       "columns": "Raidkolumner",
       "healthText": "Hälsotext",
-      "healthNone": "Inga",
+      "healthNone": "Ingen",
       "healthPercent": "Procent",
       "healthCurrent": "Nuvarande",
-      "healthCurrentMax": "Nuvarande / Högsta",
+      "healthCurrentMax": "Nuvarande / max",
       "sort": "Sortera spelare",
       "sortGroup": "Grupp",
       "sortRole": "Roll",
@@ -2304,6 +2304,9 @@ export const sv_SE: EnTranslations = {
       "already_linked": "Ditt konto har redan ett länkat Steam-konto.",
       "account_taken": "Det Steam-kontot är redan länkat till ett annat konto.",
       "upstream": "Steam svarade inte. Försök igen om en stund."
+    },
+    "welcome": {
+      "invalid_input": "Ogiltig indata."
     }
   },
   "guide": {
@@ -4999,6 +5002,29 @@ export const sv_SE: EnTranslations = {
     "heading": "Världen är tillfälligt otillgänglig.",
     "body": "Vi startar om speltjänsten och förväntar oss att Claudemoon är tillbaka inom kort. Den här sidan fortsätter att kontrollera automatiskt.",
     "status": "Tillbaka snart"
+  },
+  "welcome": {
+    "back": "Välkommen tillbaka, {name}",
+    "level": "Nivå {level}",
+    "lastPlayed": "Senast spelad: {when}",
+    "continue": "Träd in i världen",
+    "continueHint": "Enter för att fortsätta, Esc för att hoppa över",
+    "continueHintTouch": "Tryck för att fortsätta",
+    "discord": {
+      "title": "Gemenskapen lever på Discord",
+      "sub": "Förhandsvisningar av patchar, evenemang, utvecklarchatt och 2 bonusfack i banken när du länkar ditt Discord-konto.",
+      "join": "Gå med i vår Discord"
+    },
+    "chest": {
+      "ready": "Kistan för dagliga belöningar är klar"
+    },
+    "armory": {
+      "cta": "Träd in i världen och utforska Vapenhuset"
+    },
+    "news": {
+      "new": "Ny",
+      "viewAll": "Se alla uppdateringar på GitHub"
+    }
   },
   "hud": {
     "core": {

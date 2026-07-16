@@ -72,7 +72,7 @@ export const zh_TW: EnTranslations = {
       },
       "cooldowns": {
         "label": "清除冷卻時間",
-        "description": "重設技能、公共冷卻與藥水計時器。"
+        "description": "重設技能、全域冷卻與藥水計時器。"
       },
       "god": {
         "label": "切換無敵模式",
@@ -88,7 +88,7 @@ export const zh_TW: EnTranslations = {
       },
       "combatreset": {
         "label": "重設戰鬥",
-        "description": "清除戰鬥狀態與敵對仇恨。"
+        "description": "清除戰鬥狀態與敵人的仇恨。"
       },
       "level": {
         "label": "設定等級",
@@ -140,7 +140,7 @@ export const zh_TW: EnTranslations = {
       },
       "dungeon": {
         "label": "進入地城",
-        "description": "略過開發者門檻進入地城。"
+        "description": "略過開發者模式的入場限制進入地城。"
       },
       "raid": {
         "label": "進入團隊副本",
@@ -2304,6 +2304,9 @@ export const zh_TW: EnTranslations = {
       "already_linked": "你的帳號已連結一個 Steam 帳號。",
       "account_taken": "該 Steam 帳號已連結到另一個帳號。",
       "upstream": "Steam 未回應。請稍後重試。"
+    },
+    "welcome": {
+      "invalid_input": "輸入無效。"
     }
   },
   "guide": {
@@ -4999,6 +5002,29 @@ export const zh_TW: EnTranslations = {
     "heading": "這個世界暫時無法使用。",
     "body": "我們正在重新啟動遊戲服務，Claudemoon 應會很快恢復。此頁面會自動持續檢查。",
     "status": "即將恢復"
+  },
+  "welcome": {
+    "back": "歡迎回來，{name}",
+    "level": "等級 {level}",
+    "lastPlayed": "上次遊玩：{when}",
+    "continue": "進入世界",
+    "continueHint": "按 Enter 繼續，按 Esc 跳過",
+    "continueHintTouch": "點擊繼續",
+    "discord": {
+      "title": "社群活躍在 Discord",
+      "sub": "版本預告、活動、開發者聊天，綁定還可獲得 2 個額外銀行格。",
+      "join": "加入我們的 Discord"
+    },
+    "chest": {
+      "ready": "每日寶箱已就緒"
+    },
+    "armory": {
+      "cta": "進入並瀏覽軍械庫"
+    },
+    "news": {
+      "new": "新",
+      "viewAll": "在 GitHub 上查看全部更新"
+    }
   },
   "hud": {
     "core": {

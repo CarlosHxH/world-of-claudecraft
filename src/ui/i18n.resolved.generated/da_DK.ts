@@ -127,12 +127,12 @@ export const da_DK: EnTranslations = {
         "description": "Fuldfør alle opgaver i den aktuelle log."
       },
       "attune": {
-        "label": "Lås adgangskrav op",
-        "description": "Markér alle adgangskrav som fuldførte."
+        "label": "Lås indstillinger op",
+        "description": "Markér alle indstillingskrav som fuldførte."
       },
       "gather": {
         "label": "Giv indsamlingsfærdighed",
-        "description": "Forøg et indsamlingsfag."
+        "description": "Forøg færdigheden i et indsamlingsfag."
       },
       "teleport": {
         "label": "Teleportér",
@@ -1634,8 +1634,8 @@ export const da_DK: EnTranslations = {
       "healthText": "Helbredstekst",
       "healthNone": "Ingen",
       "healthPercent": "Procent",
-      "healthCurrent": "Aktuel",
-      "healthCurrentMax": "Aktuel / Højeste",
+      "healthCurrent": "Nuværende",
+      "healthCurrentMax": "Nuværende / maks.",
       "sort": "Sortér spillere",
       "sortGroup": "Gruppe",
       "sortRole": "Rolle",
@@ -2304,6 +2304,9 @@ export const da_DK: EnTranslations = {
       "already_linked": "Din konto har allerede en tilknyttet Steam-konto.",
       "account_taken": "Den Steam-konto er allerede knyttet til en anden konto.",
       "upstream": "Steam svarede ikke. Prøv igen om et øjeblik."
+    },
+    "welcome": {
+      "invalid_input": "Ugyldig indtastning."
     }
   },
   "guide": {
@@ -4999,6 +5002,29 @@ export const da_DK: EnTranslations = {
     "heading": "Verdenen er midlertidigt utilgængelig.",
     "body": "Vi genstarter spiltjenesten og forventer, at Claudemoon vender tilbage om kort tid. Denne side bliver ved med at tjekke automatisk.",
     "status": "Tilbage snart"
+  },
+  "welcome": {
+    "back": "Velkommen tilbage, {name}",
+    "level": "Niveau {level}",
+    "lastPlayed": "Sidst spillet: {when}",
+    "continue": "Træd ind i verden",
+    "continueHint": "Enter for at fortsætte, Esc for at springe over",
+    "continueHintTouch": "Tryk for at fortsætte",
+    "discord": {
+      "title": "Fællesskabet lever på Discord",
+      "sub": "Forhåndsvisninger af patches, begivenheder, udviklerchat og 2 bonuspladser i banken, når du forbinder din Discord-konto.",
+      "join": "Tilslut dig vores Discord"
+    },
+    "chest": {
+      "ready": "Kisten med daglige belønninger er klar"
+    },
+    "armory": {
+      "cta": "Træd ind i verden, og udforsk Våbenhuset"
+    },
+    "news": {
+      "new": "Ny",
+      "viewAll": "Se alle opdateringer på GitHub"
+    }
   },
   "hud": {
     "core": {

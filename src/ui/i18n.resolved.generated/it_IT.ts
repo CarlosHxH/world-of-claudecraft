@@ -24,12 +24,12 @@ export const it_IT: EnTranslations = {
     "dialogLabel": "Centro comandi di sviluppo",
     "kicker": "Strumenti di sviluppo",
     "title": "Centro comandi",
-    "subtitle": "Controlli di test autorevoli per il mondo attivo.",
+    "subtitle": "Controlli di test autoritativi per il mondo attivo.",
     "closeAria": "Chiudi comandi di sviluppo",
     "categoryNavAria": "Categorie dei comandi di sviluppo",
     "categories": {
       "player": "Giocatore",
-      "spawns": "Generazioni",
+      "spawns": "Entità generate",
       "inventory": "Inventario",
       "progress": "Progresso",
       "travel": "Viaggio",
@@ -132,7 +132,7 @@ export const it_IT: EnTranslations = {
       },
       "gather": {
         "label": "Aumenta abilità di raccolta",
-        "description": "Aumenta un mestiere di raccolta."
+        "description": "Aumenta l’abilità in un mestiere di raccolta."
       },
       "teleport": {
         "label": "Teletrasporta",
@@ -2304,6 +2304,9 @@ export const it_IT: EnTranslations = {
       "already_linked": "Il tuo account ha già un account Steam collegato.",
       "account_taken": "Quell'account Steam è già collegato a un altro account.",
       "upstream": "Steam non ha risposto. Riprova tra un istante."
+    },
+    "welcome": {
+      "invalid_input": "Dati non validi."
     }
   },
   "guide": {
@@ -4999,6 +5002,29 @@ export const it_IT: EnTranslations = {
     "heading": "Il mondo è temporaneamente non disponibile.",
     "body": "Stiamo riavviando il servizio di gioco e prevediamo che Claudemoon torni a breve. Questa pagina continuerà a controllare automaticamente.",
     "status": "Torna presto"
+  },
+  "welcome": {
+    "back": "Bentornato, {name}",
+    "level": "Livello {level}",
+    "lastPlayed": "Ultima partita: {when}",
+    "continue": "Entra nel mondo",
+    "continueHint": "Invio per continuare, Esc per saltare",
+    "continueHintTouch": "Tocca per continuare",
+    "discord": {
+      "title": "La community vive su Discord",
+      "sub": "Anteprime delle patch, eventi, chat con gli sviluppatori e 2 spazi bonus in banca collegando il tuo account Discord.",
+      "join": "Unisciti al nostro Discord"
+    },
+    "chest": {
+      "ready": "Forziere delle ricompense giornaliere pronto"
+    },
+    "armory": {
+      "cta": "Entra nel mondo ed esplora l’Armeria"
+    },
+    "news": {
+      "new": "Novità",
+      "viewAll": "Vedi tutti gli aggiornamenti su GitHub"
+    }
   },
   "hud": {
     "core": {

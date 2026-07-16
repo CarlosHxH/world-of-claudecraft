@@ -352,7 +352,7 @@ export const nl_NL: AdminTranslations = {
   "accountRewards.actionOther": "Beloningsactie: {kind}",
   "accountRewards.detailMultiplier": "x{value} beloningsvermenigvuldiger",
   "accountRewards.detailTierMultiplier": "x{value} niveauvermenigvuldiger",
-  "accountRewards.detailBountifulMultiplier": "x{value} gulheidsvermenigvuldiger",
+  "accountRewards.detailBountifulMultiplier": "x{value} vermenigvuldiger voor de Overvloedige Koffer",
   "accountRewards.detailBasePoints": "{value} basispunten",
   "accountRewards.detailOnlineMinutes": "{value} online minuten",
   "accountRewards.detailRepeat": "Herhaling {value}",

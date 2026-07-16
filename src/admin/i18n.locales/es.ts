@@ -760,7 +760,7 @@ export const es: Record<string, string> = {
   'accountRewards.colTotal': 'Puntos totales',
   'accountRewards.date': 'Fecha de recompensa',
   'accountRewards.detailBasePoints': '{value} puntos base',
-  'accountRewards.detailBountifulMultiplier': 'Multiplicador de abundancia x{value}',
+  'accountRewards.detailBountifulMultiplier': 'Multiplicador del Cofre Pródigo x{value}',
   'accountRewards.detailMultiplier': 'Multiplicador de recompensa x{value}',
   'accountRewards.detailOnlineMinutes': '{value} minutos en línea',
   'accountRewards.detailRepeat': 'Repetición {value}',

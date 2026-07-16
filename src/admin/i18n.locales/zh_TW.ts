@@ -731,7 +731,7 @@ export const zh_TW: Record<string, string> = {
   'accountRewards.actionQuest': '任務已完成：{quest}',
   'accountRewards.actionSpin': '每日轉盤',
   'accountRewards.actionTask': '每日獎勵任務：{task}',
-  'accountRewards.actionValeCup': '溪谷盃獲勝：{matchType}，組別 {bracket}',
+  'accountRewards.actionValeCup': '溪谷盃獲勝：{matchType}，賽級 {bracket}',
   'accountRewards.colAction': '操作',
   'accountRewards.colPoints': '點數',
   'accountRewards.colTimestamp': '時間戳記',
@@ -755,6 +755,6 @@ export const zh_TW: Record<string, string> = {
   'detail.dailyRewardsBanDurationHint': '留空代表永久封禁。',
   'detail.dailyRewardsBanDurationPlaceholder': '永久',
   'detail.dailyRewardsBanRemaining': '剩餘時間：{value}',
-  'detail.dailyRewardsBanUntil': '恢復存取：{value}',
+  'detail.dailyRewardsBanUntil': '恢復每日獎勵資格：{value}',
   'detail.dailyRewardsPermanent': '永久',
 };

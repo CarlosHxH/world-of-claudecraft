@@ -745,7 +745,7 @@ export const da_DK: Record<string, string> = {
   'accountRewards.colTotal': 'Point i alt',
   'accountRewards.date': 'Belønningsdato',
   'accountRewards.detailBasePoints': '{value} basispoint',
-  'accountRewards.detailBountifulMultiplier': 'x{value} gavmild multiplikator',
+  'accountRewards.detailBountifulMultiplier': 'x{value} multiplikator for den Righoldige kiste',
   'accountRewards.detailMultiplier': 'x{value} belønningsmultiplikator',
   'accountRewards.detailOnlineMinutes': '{value} minutter online',
   'accountRewards.detailRepeat': 'Gentagelse {value}',

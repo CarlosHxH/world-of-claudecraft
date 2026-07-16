@@ -763,7 +763,7 @@ export const it_IT: Record<string, string> = {
   'accountRewards.colTotal': 'Punti totali',
   'accountRewards.date': 'Data ricompensa',
   'accountRewards.detailBasePoints': '{value} punti base',
-  'accountRewards.detailBountifulMultiplier': 'Moltiplicatore di abbondanza x{value}',
+  'accountRewards.detailBountifulMultiplier': 'Moltiplicatore del Forziere Ricolmo x{value}',
   'accountRewards.detailMultiplier': 'Moltiplicatore ricompensa x{value}',
   'accountRewards.detailOnlineMinutes': '{value} minuti online',
   'accountRewards.detailRepeat': 'Ripetizione {value}',

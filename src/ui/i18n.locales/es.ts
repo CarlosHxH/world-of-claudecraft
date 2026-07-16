@@ -7654,7 +7654,7 @@ export const es: Partial<Record<TranslationKey, string>> = {
   'devCommand.actions.dungeon.description':
     'Entra en una mazmorra omitiendo la restricción de desarrollo.',
   'devCommand.actions.dungeon.label': 'Entrar en mazmorra',
-  'devCommand.actions.gather.description': 'Aumenta una profesión de recolección.',
+  'devCommand.actions.gather.description': 'Aumenta la habilidad de una profesión de recolección.',
   'devCommand.actions.gather.label': 'Otorgar habilidad de recolección',
   'devCommand.actions.give.description': 'Añade un objeto al inventario del jugador.',
   'devCommand.actions.give.label': 'Dar objeto',
@@ -7765,4 +7765,19 @@ export const es: Partial<Record<TranslationKey, string>> = {
   'hudChrome.partyFrames.styleRaid': 'Marcos de banda',
   'hudChrome.partyFrames.unlock': 'Mover marcos de grupo y banda',
   'hudChrome.partyFrames.width': 'Anchura del marco',
+  'apiError.welcome.invalid_input': 'Entrada no válida.',
+  'welcome.back': 'Te damos la bienvenida de nuevo, {name}',
+  'welcome.level': 'Nivel {level}',
+  'welcome.lastPlayed': 'Última partida: {when}',
+  'welcome.continue': 'Entrar al Mundo',
+  'welcome.continueHint': 'Pulsa Enter para continuar, Esc para omitir',
+  'welcome.continueHintTouch': 'Toca para continuar',
+  'welcome.discord.title': 'La comunidad vive en Discord',
+  'welcome.discord.sub':
+    'Avances de parches, eventos, chat con los desarrolladores y 2 espacios extra en el banco al vincular tu cuenta de Discord.',
+  'welcome.discord.join': 'Únete a nuestro Discord',
+  'welcome.chest.ready': 'Cofre de recompensas diarias listo',
+  'welcome.armory.cta': 'Entrar al Mundo y explorar la Armería',
+  'welcome.news.new': 'Nuevo',
+  'welcome.news.viewAll': 'Ver todas las actualizaciones en GitHub',
 };

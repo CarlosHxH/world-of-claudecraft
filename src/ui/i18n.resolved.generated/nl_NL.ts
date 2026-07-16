@@ -96,7 +96,7 @@ export const nl_NL: EnTranslations = {
       },
       "spawn": {
         "label": "Mob spawnen",
-        "description": "Maak een concrete mob in de buurt van de speler."
+        "description": "Maak een specifieke mob aan in de buurt van de speler."
       },
       "killtarget": {
         "label": "Doel doden",
@@ -132,7 +132,7 @@ export const nl_NL: EnTranslations = {
       },
       "gather": {
         "label": "Verzamelvaardigheid verhogen",
-        "description": "Verhoog een verzamelberoep."
+        "description": "Verhoog de vaardigheid van een verzamelberoep."
       },
       "teleport": {
         "label": "Teleporteren",
@@ -2304,6 +2304,9 @@ export const nl_NL: EnTranslations = {
       "already_linked": "Je account heeft al een gekoppeld Steam-account.",
       "account_taken": "Dat Steam-account is al aan een ander account gekoppeld.",
       "upstream": "Steam reageerde niet. Probeer het zo meteen opnieuw."
+    },
+    "welcome": {
+      "invalid_input": "Ongeldige invoer."
     }
   },
   "guide": {
@@ -4999,6 +5002,29 @@ export const nl_NL: EnTranslations = {
     "heading": "De wereld is tijdelijk niet beschikbaar.",
     "body": "We herstarten de gameservice en verwachten dat Claudemoon binnenkort weer terug is. Deze pagina blijft automatisch controleren.",
     "status": "Snel terug"
+  },
+  "welcome": {
+    "back": "Welkom terug, {name}",
+    "level": "Niveau {level}",
+    "lastPlayed": "Laatst gespeeld: {when}",
+    "continue": "Wereld betreden",
+    "continueHint": "Enter om door te gaan, Esc om over te slaan",
+    "continueHintTouch": "Tik om door te gaan",
+    "discord": {
+      "title": "De community leeft op Discord",
+      "sub": "Voorproefjes van patches, evenementen, chat met de ontwikkelaars en 2 bonusvakken in de bank als je je Discord-account koppelt.",
+      "join": "Word lid van onze Discord"
+    },
+    "chest": {
+      "ready": "Kist met dagelijkse beloningen staat klaar"
+    },
+    "armory": {
+      "cta": "Wereld betreden en het Arsenaal bekijken"
+    },
+    "news": {
+      "new": "Nieuw",
+      "viewAll": "Bekijk alle updates op GitHub"
+    }
   },
   "hud": {
     "core": {
