@@ -452,7 +452,6 @@ describe('tiered mastery gating (#1128)', () => {
     resultCount: 1,
     reagents: [{ itemId: 'bone_fragments', count: 1 }],
     skillReq: 25,
-    trivialAt: 50,
     itemLevelBudget: 10,
     level: 10,
   };
