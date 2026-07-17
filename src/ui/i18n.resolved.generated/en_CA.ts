@@ -6081,7 +6081,7 @@ export const en_CA: EnTranslations = {
         "description": "Rains arrows on the target area for 3 sec, dealing {damage} damage every 0.5 sec to enemies caught in it."
       },
       "hurricane": {
-        "name": "Hurricane",
+        "name": "Galeheart",
         "description": "Calls a hurricane onto the target area for 6 sec, battering enemies for {damage} Nature damage each second."
       },
       "earthquake": {

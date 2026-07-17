@@ -1973,7 +1973,7 @@ export const ABILITIES: Record<string, AbilityDef> = {
   },
   hurricane: {
     id: 'hurricane',
-    name: 'Hurricane',
+    name: 'Galeheart',
     class: 'druid',
     learnLevel: 18,
     cost: 90,

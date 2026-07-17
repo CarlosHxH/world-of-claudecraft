@@ -1480,7 +1480,7 @@ export const GUIDE_CLASSES: GuideClassInfo[] = [
       },
       {
         "id": "hurricane",
-        "name": "Hurricane"
+        "name": "Galeheart"
       },
       {
         "id": "skull_bash",

@@ -106,7 +106,7 @@ const RETAINED_ROW_TITLE_SOURCES = [
   'Mercy Seed',
   'Oaken Reflex',
   'Ironhide Reflex',
-  'Storm Refrain',
+  "Nature's Fury",
 ] as const;
 
 type RetainedRowTitle = (typeof RETAINED_ROW_TITLE_SOURCES)[number];
@@ -429,7 +429,7 @@ const CJK_TITLES: Partial<Record<SupportedLanguage, Partial<TitleMap>>> = {
     'Mercy Seed': '慈悲之种',
     'Oaken Reflex': '橡木瞬应',
     'Ironhide Reflex': '铁甲瞬应',
-    'Storm Refrain': '风暴复唱',
+    "Nature's Fury": '自然之怒',
   },
   zh_TW: {
     'Double Charge': '雙重衝鋒',
@@ -532,7 +532,7 @@ const CJK_TITLES: Partial<Record<SupportedLanguage, Partial<TitleMap>>> = {
     'Mercy Seed': '慈悲之種',
     'Oaken Reflex': '橡木瞬應',
     'Ironhide Reflex': '鐵甲瞬應',
-    'Storm Refrain': '風暴複唱',
+    "Nature's Fury": '自然之怒',
   },
   ja_JP: {
     'Double Charge': '二連突撃',
@@ -635,7 +635,7 @@ const CJK_TITLES: Partial<Record<SupportedLanguage, Partial<TitleMap>>> = {
     'Mercy Seed': '慈悲の種',
     'Oaken Reflex': '樫皮の即応',
     'Ironhide Reflex': '鉄皮の即応',
-    'Storm Refrain': '嵐の反唱',
+    "Nature's Fury": '自然の怒り',
   },
   ko_KR: {
     'Double Charge': '이중 돌진',
@@ -738,7 +738,7 @@ const CJK_TITLES: Partial<Record<SupportedLanguage, Partial<TitleMap>>> = {
     'Mercy Seed': '자비의 씨앗',
     'Oaken Reflex': '참나무껍질의 즉응',
     'Ironhide Reflex': '무쇠가죽의 즉응',
-    'Storm Refrain': '폭풍의 후렴',
+    "Nature's Fury": '자연의 격노',
   },
 };
 

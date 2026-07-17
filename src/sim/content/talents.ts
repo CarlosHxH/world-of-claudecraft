@@ -107,6 +107,9 @@ export interface GlobalModEffect {
   // extra swing (the classic Sword Specialization shape; combat/auto_attack.ts).
   // The extra swing never chains into another proc.
   extraAttackPct?: number;
+  // Nature's Fury (druid row): spell-crit fraction pulsed to the druid and
+  // nearby party members while in Moonwing Form (combat/natures_fury.ts).
+  moonwingPartyCritPct?: number;
   autoRagePct?: number;
   abilityRagePct?: number;
   onKillSpeedPct?: number;
@@ -493,6 +496,7 @@ function zeroGlobal(): Required<GlobalModEffect> {
     spellHastePct: 0,
     critVsRooted: 0,
     extraAttackPct: 0,
+    moonwingPartyCritPct: 0,
     autoRagePct: 0,
     abilityRagePct: 0,
     onKillSpeedPct: 0,
@@ -595,6 +599,7 @@ export function accumulateTalentEffect(
     target.spellHastePct += (source.spellHastePct ?? 0) * multiplier;
     target.critVsRooted += (source.critVsRooted ?? 0) * multiplier;
     target.extraAttackPct += (source.extraAttackPct ?? 0) * multiplier;
+    target.moonwingPartyCritPct += (source.moonwingPartyCritPct ?? 0) * multiplier;
     target.autoRagePct += (source.autoRagePct ?? 0) * multiplier;
     target.abilityRagePct += (source.abilityRagePct ?? 0) * multiplier;
     target.onKillSpeedPct += (source.onKillSpeedPct ?? 0) * multiplier;

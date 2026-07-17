@@ -64,6 +64,7 @@ import {
   hexOutputMult as hexOutputMultImpl,
 } from './combat/heal';
 import { advanceHeroicLeap } from './combat/heroic_leap';
+import { tickNaturesFury } from './combat/natures_fury';
 import { rewindHealAmount } from './combat/rewind';
 import { applySetProcs as applySetProcsImpl } from './combat/set_procs';
 import { spellCritBonusFromAuras, spellDamageMultFromAuras } from './combat/spell_combat';
@@ -4167,6 +4168,9 @@ export class Sim {
         lap?.('p.casting');
         this.updatePlayerAutoAttack(p, meta);
         lap?.('p.autoAtk');
+        // Nature's Fury: the moonwing party-crit pulse (no-op for everyone
+        // without the druid row talent).
+        tickNaturesFury(this.ctx, p, meta);
         updateRegen(this.ctx, p, meta);
         // Rested XP feeds one one-shot deed predicate, so only the 0 to
         // positive transition needs a dirty mark (a resting player must not

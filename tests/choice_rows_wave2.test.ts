@@ -230,11 +230,13 @@ describe('druid wave 2 choice rows', () => {
     dealDamage(bear.sim, bear.p, Math.ceil(bear.p.maxHp * 0.25));
     expect(bear.p.resource).toBe(20);
     expect(bear.p.auras.some((a) => a.id === 'dru_survival_of_the_fittest')).toBe(true);
+    // Balance pass round two: the capstone is Nature's Fury (a passive
+    // moonwing party-crit radiator, covered in tests/natures_fury.test.ts);
+    // Galeheart casts no longer refund or arm anything.
     bear.p.cooldowns.set('hurricane', 10);
     completeCast(bear.sim, 'hurricane');
-    // Balance pass: the capstone refund is 6 sec now (10 - 6 = 4 remaining).
-    expect(bear.p.cooldowns.get('hurricane')).toBe(4);
-    expect(bear.p.auras.some((a) => a.id === 'dru_improved_hurricane')).toBe(true);
+    expect(bear.p.cooldowns.get('hurricane')).toBe(10);
+    expect(bear.p.auras.some((a) => a.id === 'dru_improved_hurricane')).toBe(false);
   });
 });
 

@@ -193,6 +193,8 @@ const PCT_FIELDS = new Set([
   'healPctMaxHp',
   // Thuggery mastery: the Sword Specialization extra-attack chance.
   'extraAttackPct',
+  // Nature's Fury: the moonwing party spell-crit fraction.
+  'moonwingPartyCritPct',
   // Serpent's Venom (hunter choice row): the added dot totals a fraction of the
   // direct hit (effect_dispatch resolves total = lastDirectDamage * directPct),
   // shown as "50% of its damage".

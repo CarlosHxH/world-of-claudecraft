@@ -59,6 +59,7 @@ type GlobalKey = keyof GlobalModEffect;
 type DisplayGlobalKey = Exclude<
   GlobalKey,
   | 'critVsRooted'
+  | 'moonwingPartyCritPct'
   | 'autoRagePct'
   | 'abilityRagePct'
   | 'onKillSpeedPct'

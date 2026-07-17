@@ -2246,33 +2246,19 @@ export const DRUID_CHOICE_ROWS: ClassChoiceRows = {
     {
       level: 20,
       theme: 'apex_harmony',
-      decision: 'Galeheart cadence vs feral burst vs party healing channel',
+      decision: 'moonwing party crit vs feral burst vs party healing channel',
       options: [
         {
-          // Balance pass: buffed into a real capstone (was a 4 sec refund on
-          // a 12 sec cooldown plus one free 25-mana Lunar Tempest).
+          // Balance pass round two (maintainer): Storm Refrain still read as a
+          // dud, so the capstone is the party buff instead: Moonwing druids
+          // radiate spell crit (combat/natures_fury.ts pulses it; the form
+          // requirement is the whole point).
           id: 'dru_r20_improved_hurricane',
-          name: 'Storm Refrain',
+          name: "Nature's Fury",
           description:
-            'Galeheart costs 50% less, and starting it removes 6 sec from its cooldown and makes your next Lunar Tempest within 8 sec free.',
+            'While in Moonwing Form, you and your party members within 30 yd gain 3% spell critical strike chance.',
           icon: 'hurricane',
-          effect: {
-            ability: [{ ability: 'hurricane', costPct: -0.5 }],
-            proc: {
-              id: 'dru_improved_hurricane',
-              name: 'Storm Refrain',
-              trigger: { on: 'castNth', n: 1, abilities: ['hurricane'] },
-              responses: [
-                { kind: 'cooldownRefund', ability: 'hurricane', seconds: 6 },
-                {
-                  kind: 'empowerNext',
-                  aura: 'next_cast_free',
-                  abilities: ['moonfire'],
-                  duration: 8,
-                },
-              ],
-            },
-          },
+          effect: { global: { moonwingPartyCritPct: 0.03 } },
         },
         {
           id: 'dru_r20_berserk',

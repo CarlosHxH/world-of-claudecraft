@@ -617,7 +617,7 @@ const classAbilityNamesEn = {
       ],
       [
         'hurricane',
-        'Hurricane',
+        'Galeheart',
         'Calls a hurricane onto the target area for 6 sec, battering enemies for {damage} Nature damage each second.',
       ],
       [
