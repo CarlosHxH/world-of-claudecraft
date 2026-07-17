@@ -423,7 +423,21 @@ tables, i18n key namespaces, files created)
     professions suites are byte-near-identical copies): Phase 3 QA judged
     the extraction a standalone chore, not QA churn (a shared
     tests/helpers/bare_client.ts adopted first by the three identical
-    copies; the 18 divergent variants need per-file verification).
+    copies; the 18 divergent variants need per-file verification; filed
+    as issue 2088).
+  - Phase 3 QA: PASS 2026-07-17, zero blocking. Found and fixed
+    test-first the tradeConfirm sequencing defect in the pre-landed
+    PR 2045 code (same-itemId bidirectional trades cross-contaminated:
+    grant-before-remove let the second removal consume just-granted
+    stock; now two-phase, removeOffer both sides then grantOffer both
+    sides, matching the fitsAfterSwap model; no dupe or loss existed,
+    conservation always held). Coverage closed: live GameServer
+    broadcast suite for hcb (lite delta record + scope
+    eviction/re-entry, claims and clears made out of view),
+    partial-stack sparing pin, no-escrow cancel pin, claimed-corpse
+    arms of corpseLootAvailability. Reviewer fan-out (architecture,
+    cross-platform-sync, test-coverage-auditor with revert
+    experiments, qa-checklist): all PASS. Details in progress.md.
 - Phase 4: (planned) node material tables; per-node-type rare events
   (pristine vein / ancient heartwood / moonlit bloom) + deed-mark hooks.
 - Phase 5: (planned) professions window (.window id professions-window) +
