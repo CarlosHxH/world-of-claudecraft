@@ -14,7 +14,13 @@ Workflow-orchestrated batch or verify-heavy work).
 1. **Step 0, pre-flight:** `git status` clean (a concurrent session may share
    the checkout); scan Claude Code memory (`MEMORY.md` index) for entries
    matching the phase domain (professions, design language, gate/Node quirks,
-   PR 2039).
+   PR 2039). Then **sync with the LATEST release branch**: fetch
+   `refs/heads/release/*`, pick the newest by version sort (`git branch -r
+   --list "origin/release/*" | sort -V | tail -1`; today that is
+   release/v0.27.0, tomorrow v0.28.0 and onward), base fresh branches on it,
+   and merge it into any existing feature branch at session start, running the
+   `release-merge-audit` skill on every such merge. The packet never falls
+   behind the active integration base.
 2. **Step 1, load context:** spawn an Explore agent to read and summarize
    `state.md`, `progress.md`, this phase's file, and the phase-relevant source
    and CLAUDE.md files. The main session does NOT read planning docs or
@@ -67,7 +73,16 @@ landed. Therefore every UI phase in this packet:
 - MUST NOT introduce DESIGN.md phase vocabulary (new ramp/radius/duration
   tokens, retuned gold-edge recipe, font flips, self-hosted fonts, window
   grammar fragments): that is a PR-blocking piecemeal re-land (DESIGN.md 14,
-  `src/styles/CLAUDE.md` dead-ends note).
+  `src/styles/CLAUDE.md` dead-ends note). This guardrail is CONDITIONAL on the
+  design-language program's rollout state: each UI phase checks at session
+  start whether DESIGN.md phases have landed (does `src/styles/tokens.css`
+  carry the ink/gold ramps and `--radius-window`? has `src/styles/CLAUDE.md`
+  been updated to point at DESIGN.md?). Once a DESIGN.md phase HAS landed, its
+  vocabulary is the baseline and new work consumes it. The maintainer intends
+  the professions windows to be the first feature under the new design system,
+  so the ideal sequencing is DESIGN.md phase 1 (tokens/theme/type) landing
+  before packet Phase 5; either way, building grammar-ready means the windows
+  inherit the restyle automatically.
 - Zero hex literals outside `tokens.css`/`theme.ts`; themed-vs-static token
   split respected (preset-aware jobs go through `theme.ts` knobs); focus via
   the `--color-border-focus` outline mechanism only.

@@ -42,6 +42,11 @@ Goal: typed stations with named masters exist in the world model, the hands-vs-s
 live in the sim-side craft gate, and placement is provably safe via an automated test.
 
 STEP 0 - PRE-FLIGHT:
+- Sync with the LATEST release branch FIRST: git fetch origin "+refs/heads/release/*:refs/remotes/origin/release/*"; pick
+  the newest by version sort (git branch -r --list "origin/release/*" | sort -V | tail -1). If this phase
+  starts a fresh branch or worktree, base it on that branch; if the feature branch already exists, merge
+  that release branch into it NOW, resolve conflicts, and run the release-merge-audit skill on the merge
+  before proceeding. Never base work on main or an older release branch than the newest.
 - Run `git status`: the working tree must be clean (a concurrent session may share the checkout).
   If it is not clean, stop and report.
 - Scan Claude Code memory (the MEMORY.md index) for phase-relevant entries, at minimum:

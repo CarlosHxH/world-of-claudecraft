@@ -40,6 +40,11 @@ Goal: make fishing a real gathering skill feeding cooking (proficiency plus a ca
 ladder) without touching what makes the minigame fun.
 
 STEP 0 - PRE-FLIGHT:
+- Sync with the LATEST release branch FIRST: git fetch origin "+refs/heads/release/*:refs/remotes/origin/release/*"; pick
+  the newest by version sort (git branch -r --list "origin/release/*" | sort -V | tail -1). If this phase
+  starts a fresh branch or worktree, base it on that branch; if the feature branch already exists, merge
+  that release branch into it NOW, resolve conflicts, and run the release-merge-audit skill on the merge
+  before proceeding. Never base work on main or an older release branch than the newest.
 - `git status` must be clean (a concurrent session may share the checkout); stop and report if it
   is not.
 - Scan Claude Code memory (the MEMORY.md index) for phase-relevant entries, at minimum:

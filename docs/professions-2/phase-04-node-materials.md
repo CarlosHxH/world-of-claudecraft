@@ -39,6 +39,11 @@ Goal: make node gathering yield real materials with rarity, signed rare+ yields,
 event (the pristine vein), and visible feedback for every harvest.
 
 STEP 0 - PRE-FLIGHT:
+- Sync with the LATEST release branch FIRST: git fetch origin "+refs/heads/release/*:refs/remotes/origin/release/*"; pick
+  the newest by version sort (git branch -r --list "origin/release/*" | sort -V | tail -1). If this phase
+  starts a fresh branch or worktree, base it on that branch; if the feature branch already exists, merge
+  that release branch into it NOW, resolve conflicts, and run the release-merge-audit skill on the merge
+  before proceeding. Never base work on main or an older release branch than the newest.
 - Confirm `git status` is clean (a concurrent session may share the checkout). Record the
   current HEAD hash; the QA session diffs against it (note it in progress.md at STEP 6).
 - Scan Claude Code memory (the MEMORY.md index) for phase-relevant entries: the node25 gate

@@ -44,6 +44,11 @@ Goal: make the crafting window legible (skill, combo, station) and make masterwo
 celebrated moment.
 
 STEP 0 - PRE-FLIGHT:
+- Sync with the LATEST release branch FIRST: git fetch origin "+refs/heads/release/*:refs/remotes/origin/release/*"; pick
+  the newest by version sort (git branch -r --list "origin/release/*" | sort -V | tail -1). If this phase
+  starts a fresh branch or worktree, base it on that branch; if the feature branch already exists, merge
+  that release branch into it NOW, resolve conflicts, and run the release-merge-audit skill on the merge
+  before proceeding. Never base work on main or an older release branch than the newest.
 - Verify `git status` is clean before starting. If not, ask the user (a concurrent session
   may share this checkout).
 - Memory scan (if you use Claude Code memory): check your `MEMORY.md` index and any entries

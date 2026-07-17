@@ -42,6 +42,11 @@ wave-one archetypes, honest switching costs, and the legibility layer (nudges, c
 pre-commit preview, celebration).
 
 STEP 0 - PRE-FLIGHT:
+- Sync with the LATEST release branch FIRST: git fetch origin "+refs/heads/release/*:refs/remotes/origin/release/*"; pick
+  the newest by version sort (git branch -r --list "origin/release/*" | sort -V | tail -1). If this phase
+  starts a fresh branch or worktree, base it on that branch; if the feature branch already exists, merge
+  that release branch into it NOW, resolve conflicts, and run the release-merge-audit skill on the merge
+  before proceeding. Never base work on main or an older release branch than the newest.
 - Run git status; the checkout must be clean (a concurrent session may share it). Record the
   current HEAD as the phase-start commit in docs/professions-2/progress.md Notes.
 - Scan Claude Code memory (MEMORY.md index) for phase-relevant entries: the node25 gate rule

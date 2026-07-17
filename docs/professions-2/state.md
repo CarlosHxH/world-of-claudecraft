@@ -65,6 +65,11 @@ Phase 1 (Ring and identity foundations): not started.
 - Prime directive: nothing breaks. Never delete an ItemDef players may hold;
   deprecate by removing sources. Existing deeds stay earnable. Additive JSONB
   with normalize-on-load defaults. The T window keeps working.
+- Release-branch currency: every session syncs with the NEWEST release/**
+  branch at start (version-sort the remote list; 0.27 gives way to 0.28 and
+  onward); fresh branches base on it, existing feature branches merge it in
+  immediately with the release-merge-audit skill run on the merge. Never base
+  work on main or a stale release branch.
 - Shared-worktree commit care: explicit paths, never `git add -A`.
 - npm run gate under Node 24 (memory: node25-breaks-jsdom-gate); the known
   armory browser-test failure aborts the gate early, finish tsc + builds
@@ -172,6 +177,13 @@ tables, i18n key namespaces, files created)
 - Pristine vein: roughly 1 per zone per 20 minutes, 5x yield, always signed.
 
 ## OPEN items
+
+- Design-system sequencing: the maintainer wants professions to be the first
+  feature under the new design system (root DESIGN.md). Ideal order: the
+  design-language program's phase 1 (tokens/theme/type) lands before packet
+  Phase 5 (the wheel window). Each UI phase probes the rollout state at
+  session start (see implementation-plan.md guardrails) and uses the new
+  vocabulary once it exists; until then, today's tokens, grammar-ready.
 
 - PR 2039 merge timing and who lands the Phase 1 amendments (same PR vs
   immediate follow-up in one deploy window). Coordinate with the maintainer.
