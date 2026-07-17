@@ -301,13 +301,18 @@ export function runMobSwingAffixes(
   // disarm: a brutal swing can knock the weapon from a player's grip, suppressing
   // their auto-attack for a duration. Players only (only they run the primary-target
   // auto-attack path) and hostile only, so a friendly pet (mobSwing's other caller)
-  // never disarms the party. Refreshes by id; never stacks.
+  // never disarms the party. Never stacks, and never refreshes while already active:
+  // a landed hit is only able to seed a FRESH disarm window, so a run of procs (one
+  // brute swinging faster than its own duration, or several in the same pack each
+  // rolling their own chance) cannot chain-extend the lockout past its stated
+  // duration (issue #1969, "Autoattack ... Cant start swingtimer again").
   const disarm = MOBS[mob.templateId]?.disarm;
   if (
     disarm &&
     mob.hostile &&
     target.kind === 'player' &&
     !target.dead &&
+    !target.auras.some((a) => a.kind === 'disarm') &&
     ctx.rng.chance(disarm.chance)
   ) {
     ctx.applyAura(target, {
