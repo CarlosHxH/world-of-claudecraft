@@ -415,16 +415,6 @@ export const nl_NL: Partial<Record<TranslationKey, string>> = {
   'hudChrome.vcup.walkUp': 'Loop naar het Zeugveld om toe te kijken vanaf de tribunes.',
   'hudChrome.archetypeTitle.label': 'Titel',
   'hudChrome.archetypeTitle.none': 'Geen',
-  'hudChrome.archetypeTitle.armorcrafting': 'Harnasmaker',
-  'hudChrome.archetypeTitle.weaponcrafting': 'Wapensmid',
-  'hudChrome.archetypeTitle.jewelcrafting': 'Juwelier',
-  'hudChrome.archetypeTitle.alchemy': 'Alchemist',
-  'hudChrome.archetypeTitle.engineering': 'Knutselaar',
-  'hudChrome.archetypeTitle.cooking': 'Kok',
-  'hudChrome.archetypeTitle.inscription': 'Schrijver',
-  'hudChrome.archetypeTitle.enchanting': 'Betoveraar',
-  'hudChrome.archetypeTitle.tailoring': 'Kleermaker',
-  'hudChrome.archetypeTitle.leatherworking': 'Leerbewerker',
   'entities.itemSets.crownforged.bonus4':
     'Je kritieke wapentreffers splinteren het doelwit met Beensplinter, waardoor het 8 schade bloedt elke 2 sec gedurende 12 sec. Stapelt tot 3 keer.',
   'entities.itemSets.deathlord.bonus4':

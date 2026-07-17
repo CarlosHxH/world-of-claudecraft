@@ -435,16 +435,6 @@ export const it_IT: Partial<Record<TranslationKey, string>> = {
   'hudChrome.vcup.walkUp': 'Avvicinati al Campo della Scrofa per guardare dagli spalti.',
   'hudChrome.archetypeTitle.label': 'Titolo',
   'hudChrome.archetypeTitle.none': 'Nessuno',
-  'hudChrome.archetypeTitle.armorcrafting': 'Armaiolo',
-  'hudChrome.archetypeTitle.weaponcrafting': "Fabbro d'armi",
-  'hudChrome.archetypeTitle.jewelcrafting': 'Gioielliere',
-  'hudChrome.archetypeTitle.alchemy': 'Alchimista',
-  'hudChrome.archetypeTitle.engineering': 'Ingegnere',
-  'hudChrome.archetypeTitle.cooking': 'Cuoco',
-  'hudChrome.archetypeTitle.inscription': 'Scriba',
-  'hudChrome.archetypeTitle.enchanting': 'Incantatore',
-  'hudChrome.archetypeTitle.tailoring': 'Sarto',
-  'hudChrome.archetypeTitle.leatherworking': 'Conciatore',
   'entities.itemSets.crownforged.bonus4':
     'I colpi critici della tua arma scheggiano il bersaglio con Scheggiaossa, facendolo sanguinare per 8 danni ogni 2 sec per 12 sec. Si accumula fino a 3 volte.',
   'entities.itemSets.deathlord.bonus4':

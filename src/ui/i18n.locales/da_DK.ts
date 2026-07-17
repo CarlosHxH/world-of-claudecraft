@@ -404,16 +404,6 @@ export const da_DK: Partial<Record<TranslationKey, string>> = {
   'hudChrome.vcup.walkUp': 'Gå hen til Somarken for at se med fra tribunerne.',
   'hudChrome.archetypeTitle.label': 'Titel',
   'hudChrome.archetypeTitle.none': 'Ingen',
-  'hudChrome.archetypeTitle.armorcrafting': 'Rustningssmed',
-  'hudChrome.archetypeTitle.weaponcrafting': 'Våbensmed',
-  'hudChrome.archetypeTitle.jewelcrafting': 'Juveler',
-  'hudChrome.archetypeTitle.alchemy': 'Alkymist',
-  'hudChrome.archetypeTitle.engineering': 'Ingeniør',
-  'hudChrome.archetypeTitle.cooking': 'Kok',
-  'hudChrome.archetypeTitle.inscription': 'Skriver',
-  'hudChrome.archetypeTitle.enchanting': 'Fortryller',
-  'hudChrome.archetypeTitle.tailoring': 'Skrædder',
-  'hudChrome.archetypeTitle.leatherworking': 'Garver',
   'entities.itemSets.crownforged.bonus4':
     'Dine kritiske våbenslag splintrer målet med Bensplint og påfører 8 blødningsskade hvert 2. sek. i 12 sek. Stakker op til 3 gange.',
   'entities.itemSets.deathlord.bonus4':

@@ -1,4 +1,4 @@
-import { archetypeTitleText } from './char_window';
+import { archetypeTitleText, craftNameText } from './char_window';
 import { esc } from './esc';
 import { formatNumber, t } from './i18n';
 import type { ProfessionIdentityModel } from './profession_identity_view';
@@ -45,11 +45,11 @@ export function renderProfessionIdentityCard(
   const summaryHtml =
     identity.state === 'unattuned' || !summary.majors
       ? `<p>${esc(t('hudChrome.crafting.identity.unattuned'))}</p>`
-      : `<dl class="profession-identity-summary"><dt>${esc(t('hudChrome.crafting.identity.titleLabel'))}</dt><dd>${esc(archetypeTitleText(summary.titleCraft))}</dd><dt>${esc(t('hudChrome.crafting.identity.majorsLabel'))}</dt><dd>${esc(summary.majors.map(archetypeTitleText).join(' + '))}</dd><dt>${esc(t('hudChrome.crafting.identity.hobbyLabel'))}</dt><dd>${esc(archetypeTitleText(summary.hobbyCraft))}</dd><dt>${esc(t('hudChrome.crafting.identity.historyLabel'))}</dt><dd>${esc(t('hudChrome.crafting.identity.history', { pairs: formatNumber(summary.attunedPairCount, { maximumFractionDigits: 0 }), returns: formatNumber(summary.returnCount, { maximumFractionDigits: 0 }) }))}</dd></dl>`;
+      : `<dl class="profession-identity-summary"><dt>${esc(t('hudChrome.crafting.identity.titleLabel'))}</dt><dd>${esc(archetypeTitleText(summary.pairId))}</dd><dt>${esc(t('hudChrome.crafting.identity.majorsLabel'))}</dt><dd>${esc(summary.majors.map(craftNameText).join(' + '))}</dd><dt>${esc(t('hudChrome.crafting.identity.hobbyLabel'))}</dt><dd>${esc(craftNameText(summary.hobbyCraft))}</dd><dt>${esc(t('hudChrome.crafting.identity.historyLabel'))}</dt><dd>${esc(t('hudChrome.crafting.identity.history', { pairs: formatNumber(summary.attunedPairCount, { maximumFractionDigits: 0 }), returns: formatNumber(summary.returnCount, { maximumFractionDigits: 0 }) }))}</dd></dl>`;
 
   const skillRows = identity.skills
     .map((row) => {
-      const label = archetypeTitleText(row.craftId);
+      const label = craftNameText(row.craftId);
       const detail = t('hudChrome.crafting.identity.skillAria', {
         craft: label,
         skill: formatNumber(row.skill, { maximumFractionDigits: 0 }),
@@ -67,8 +67,8 @@ export function renderProfessionIdentityCard(
   const nudges = identity.nudges
     .map((nudge) =>
       nudge.type === 'nearTier'
-        ? `<li>${esc(t('hudChrome.crafting.identity.nearTier', { craft: archetypeTitleText(nudge.craftId), points: formatNumber(nudge.points, { maximumFractionDigits: 0 }) }))}</li>`
-        : `<li>${esc(t('hudChrome.crafting.identity.dormantKnowledge', { craft: archetypeTitleText(nudge.craftId) }))}</li>`,
+        ? `<li>${esc(t('hudChrome.crafting.identity.nearTier', { craft: craftNameText(nudge.craftId), points: formatNumber(nudge.points, { maximumFractionDigits: 0 }) }))}</li>`
+        : `<li>${esc(t('hudChrome.crafting.identity.dormantKnowledge', { craft: craftNameText(nudge.craftId) }))}</li>`,
     )
     .join('');
 

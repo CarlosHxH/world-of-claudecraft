@@ -417,16 +417,6 @@ export const pl_PL: Partial<Record<TranslationKey, string>> = {
   'hudChrome.vcup.walkUp': 'Podejdź na Maciorowe Błonie, aby oglądać z trybun.',
   'hudChrome.archetypeTitle.label': 'Tytuł',
   'hudChrome.archetypeTitle.none': 'Brak',
-  'hudChrome.archetypeTitle.armorcrafting': 'Płatnerz',
-  'hudChrome.archetypeTitle.weaponcrafting': 'Zbrojmistrz',
-  'hudChrome.archetypeTitle.jewelcrafting': 'Jubiler',
-  'hudChrome.archetypeTitle.alchemy': 'Alchemik',
-  'hudChrome.archetypeTitle.engineering': 'Inżynier',
-  'hudChrome.archetypeTitle.cooking': 'Kucharz',
-  'hudChrome.archetypeTitle.inscription': 'Skryba',
-  'hudChrome.archetypeTitle.enchanting': 'Zaklinacz',
-  'hudChrome.archetypeTitle.tailoring': 'Krawiec',
-  'hudChrome.archetypeTitle.leatherworking': 'Garbarz',
   'entities.itemSets.crownforged.bonus4':
     'Twoje krytyczne trafienia bronią rozłupują cel Kościaną Drzazgą, zadając 8 obrażeń od krwawienia co 2 s przez 12 s. Kumuluje się do 3 razy.',
   'entities.itemSets.deathlord.bonus4':

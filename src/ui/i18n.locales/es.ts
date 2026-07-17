@@ -435,16 +435,6 @@ export const es: Partial<Record<TranslationKey, string>> = {
   'hudChrome.vcup.walkUp': 'Acércate al Sembradal para mirar desde las gradas.',
   'hudChrome.archetypeTitle.label': 'Título',
   'hudChrome.archetypeTitle.none': 'Ninguno',
-  'hudChrome.archetypeTitle.armorcrafting': 'Armero',
-  'hudChrome.archetypeTitle.weaponcrafting': 'Forjador de armas',
-  'hudChrome.archetypeTitle.jewelcrafting': 'Joyero',
-  'hudChrome.archetypeTitle.alchemy': 'Alquimista',
-  'hudChrome.archetypeTitle.engineering': 'Ingeniero',
-  'hudChrome.archetypeTitle.cooking': 'Cocinero',
-  'hudChrome.archetypeTitle.inscription': 'Escriba',
-  'hudChrome.archetypeTitle.enchanting': 'Encantador',
-  'hudChrome.archetypeTitle.tailoring': 'Sastre',
-  'hudChrome.archetypeTitle.leatherworking': 'Peletero',
   'entities.itemSets.crownforged.bonus4':
     'Tus golpes críticos con el arma astillan al objetivo con Astilla de Hueso, haciéndolo sangrar 8 de daño cada 2 s durante 12 s. Se acumula hasta 3 veces.',
   'entities.itemSets.deathlord.bonus4':

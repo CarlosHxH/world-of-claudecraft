@@ -460,16 +460,6 @@ export const id_ID: Partial<Record<TranslationKey, string>> = {
   'hudChrome.vcup.walkUp': 'Datanglah ke Sowfield untuk menonton dari tribun.',
   'hudChrome.archetypeTitle.label': 'Gelar',
   'hudChrome.archetypeTitle.none': 'Tidak Ada',
-  'hudChrome.archetypeTitle.armorcrafting': 'Pandai Zirah',
-  'hudChrome.archetypeTitle.weaponcrafting': 'Pandai Senjata',
-  'hudChrome.archetypeTitle.jewelcrafting': 'Perajin Permata',
-  'hudChrome.archetypeTitle.alchemy': 'Alkemis',
-  'hudChrome.archetypeTitle.engineering': 'Insinyur',
-  'hudChrome.archetypeTitle.cooking': 'Koki',
-  'hudChrome.archetypeTitle.inscription': 'Juru Tulis',
-  'hudChrome.archetypeTitle.enchanting': 'Pemantra',
-  'hudChrome.archetypeTitle.tailoring': 'Penjahit',
-  'hudChrome.archetypeTitle.leatherworking': 'Perajin Kulit',
   'entities.itemSets.crownforged.bonus4':
     'Serangan kritis senjatamu menyerpihkan target dengan Serpih Tulang, membuatnya berdarah sebesar 8 kerusakan setiap 2 detik selama 12 detik. Menumpuk hingga 3 kali.',
   'entities.itemSets.deathlord.bonus4':

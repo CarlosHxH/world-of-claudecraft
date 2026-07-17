@@ -450,16 +450,6 @@ export const vi_VN: Partial<Record<TranslationKey, string>> = {
   'hudChrome.vcup.walkUp': 'Hãy đi tới Sân Heo Nái để xem từ khán đài.',
   'hudChrome.archetypeTitle.label': 'Danh hiệu',
   'hudChrome.archetypeTitle.none': 'Không có',
-  'hudChrome.archetypeTitle.armorcrafting': 'Thợ Giáp',
-  'hudChrome.archetypeTitle.weaponcrafting': 'Thợ Rèn Vũ Khí',
-  'hudChrome.archetypeTitle.jewelcrafting': 'Thợ Kim Hoàn',
-  'hudChrome.archetypeTitle.alchemy': 'Nhà Giả Kim',
-  'hudChrome.archetypeTitle.engineering': 'Kỹ Sư',
-  'hudChrome.archetypeTitle.cooking': 'Đầu Bếp',
-  'hudChrome.archetypeTitle.inscription': 'Thợ Khắc Chữ',
-  'hudChrome.archetypeTitle.enchanting': 'Thợ Phù Phép',
-  'hudChrome.archetypeTitle.tailoring': 'Thợ May',
-  'hudChrome.archetypeTitle.leatherworking': 'Thợ Da',
   'entities.itemSets.crownforged.bonus4':
     'Các đòn chí mạng bằng vũ khí của bạn găm Dằm Xương vào mục tiêu, khiến nó chảy máu nhận 8 sát thương mỗi 2 giây trong 12 giây. Cộng dồn tối đa 3 lần.',
   'entities.itemSets.deathlord.bonus4':

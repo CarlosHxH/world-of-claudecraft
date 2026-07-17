@@ -404,16 +404,6 @@ export const sv_SE: Partial<Record<TranslationKey, string>> = {
   'hudChrome.vcup.walkUp': 'Gå fram till Suggfältet för att titta från läktarna.',
   'hudChrome.archetypeTitle.label': 'Titel',
   'hudChrome.archetypeTitle.none': 'Ingen',
-  'hudChrome.archetypeTitle.armorcrafting': 'Rustningssmed',
-  'hudChrome.archetypeTitle.weaponcrafting': 'Vapensmed',
-  'hudChrome.archetypeTitle.jewelcrafting': 'Juvelerare',
-  'hudChrome.archetypeTitle.alchemy': 'Alkemist',
-  'hudChrome.archetypeTitle.engineering': 'Ingenjör',
-  'hudChrome.archetypeTitle.cooking': 'Kock',
-  'hudChrome.archetypeTitle.inscription': 'Skrivare',
-  'hudChrome.archetypeTitle.enchanting': 'Förtrollare',
-  'hudChrome.archetypeTitle.tailoring': 'Skräddare',
-  'hudChrome.archetypeTitle.leatherworking': 'Garvare',
   'entities.itemSets.crownforged.bonus4':
     'Dina kritiska vapenträffar splittrar målet med Benflisa och får det att blöda för 8 skada var 2:e sek i 12 sek. Staplas upp till 3 gånger.',
   'entities.itemSets.deathlord.bonus4':

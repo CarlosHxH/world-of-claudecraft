@@ -5,7 +5,7 @@
 // wires the craft/close actions. It owns no state; cross-window orchestration
 // stays in Hud (open<Window>/close<Window>), same as vendor_window.ts.
 
-import { archetypeTitleText } from './char_window';
+import { craftNameText } from './char_window';
 import type { CraftingView } from './crafting_view';
 import { itemDisplayName } from './entity_i18n';
 import { esc } from './esc';
@@ -47,12 +47,11 @@ export function renderCraftingWindow(
   // craft that already appeared earlier in the array, interleaving with other
   // crafts in between), so this groups by professionId rather than by
   // run-length, or a non-contiguous craft would render as two separate
-  // sections. Note the section headers render the practitioner title (e.g.
-  // "Tinkerer"), not the craft name, so the engineering-only hub-tier
-  // TOOL_RECIPES group under "Tinkerer" alongside the rest of that craft.
-  // Reuses archetypeTitleText (char_window.ts) for the header text: same
-  // id-to-name table the character window's title uses, so the two surfaces
-  // never drift.
+  // sections. The section headers render the craft display name (e.g.
+  // "Engineering"), so the engineering-only hub-tier TOOL_RECIPES group under
+  // "Engineering" alongside the rest of that craft. Reuses craftNameText
+  // (char_window.ts) for the header text: same id-to-name table the character
+  // window's hobby line uses, so the two surfaces never drift.
   const sections = new Map<string, (typeof view.recipes)[number][]>();
   for (const row of view.recipes) {
     const rows = sections.get(row.professionId);
@@ -63,7 +62,7 @@ export function renderCraftingWindow(
   for (const [professionId, rows] of sections) {
     const section = document.createElement('div');
     section.className = 'vendor-section-title';
-    section.textContent = archetypeTitleText(professionId);
+    section.textContent = craftNameText(professionId);
     el.appendChild(section);
 
     for (const row of rows) {
@@ -81,8 +80,8 @@ export function renderCraftingWindow(
         .join(', ');
       const comboLine = row.comboRequirement
         ? t('hudChrome.crafting.comboRequires', {
-            craftA: archetypeTitleText(row.comboRequirement.craftA),
-            craftB: archetypeTitleText(row.comboRequirement.craftB),
+            craftA: craftNameText(row.comboRequirement.craftA),
+            craftB: craftNameText(row.comboRequirement.craftB),
             tier: formatNumber(row.comboRequirement.minTier, { maximumFractionDigits: 0 }),
           })
         : '';

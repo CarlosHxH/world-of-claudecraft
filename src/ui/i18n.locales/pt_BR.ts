@@ -433,16 +433,6 @@ export const pt_BR: Partial<Record<TranslationKey, string>> = {
   'hudChrome.vcup.walkUp': 'Vá até o Sowfield para assistir das arquibancadas.',
   'hudChrome.archetypeTitle.label': 'Título',
   'hudChrome.archetypeTitle.none': 'Nenhum',
-  'hudChrome.archetypeTitle.armorcrafting': 'Armeiro',
-  'hudChrome.archetypeTitle.weaponcrafting': 'Forjador de armas',
-  'hudChrome.archetypeTitle.jewelcrafting': 'Joalheiro',
-  'hudChrome.archetypeTitle.alchemy': 'Alquimista',
-  'hudChrome.archetypeTitle.engineering': 'Engenheiro',
-  'hudChrome.archetypeTitle.cooking': 'Cozinheiro',
-  'hudChrome.archetypeTitle.inscription': 'Escriba',
-  'hudChrome.archetypeTitle.enchanting': 'Encantador',
-  'hudChrome.archetypeTitle.tailoring': 'Alfaiate',
-  'hudChrome.archetypeTitle.leatherworking': 'Curtidor',
   'entities.itemSets.crownforged.bonus4':
     'Seus acertos críticos com armas estilhaçam o alvo com Estilhaço Ósseo, causando 8 de sangramento a cada 2 s por 12 s. Acumula até 3 vezes.',
   'entities.itemSets.deathlord.bonus4':

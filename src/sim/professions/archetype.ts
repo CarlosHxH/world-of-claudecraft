@@ -7,8 +7,8 @@
 // but it never mutates any craft skill value.
 //
 // Per #1129's actual text ("an adjacent pair, the two majors"), an archetype is
-// NOT a single craft: it is `activeArchetype` (the craft the acceptance/title
-// quest names, see getArchetypeTitle) PLUS `pairedMajor`, its ring-adjacent
+// NOT a single craft: it is `activeArchetype` (the craft the acceptance quest
+// names; the granted TITLE is per pair, see getArchetypeTitle) PLUS `pairedMajor`, its ring-adjacent
 // neighbor (content/professions.ts adjacentCrafts), together the two majors
 // empowered past rare. Both start unset (null). Live profession quests select
 // an exact adjacent pair through attuneArchetypePair. The legacy direct helpers
@@ -246,35 +246,43 @@ export function archetypeStateFor(ctx: SimContext, pid: number): ArchetypeState 
     : emptyArchetypeState();
 }
 
-// Issue #1130 (re-scoped per the comment on the live issue, superseding its stale
-// two-crafts-at-rare title/body): a player's CURRENTLY-ACTIVE archetype grants the
-// named title for that craft. There is no "Jack of All Trades" fallback under this
-// model, since a character always has at most one active archetype at a time; the
-// natural analog of the old "below rare grants no title" rule is the pre-acceptance
-// state (activeArchetype === null), which grants no title at all.
+// Issue #1130 (re-scoped per the comment on the live issue, then pair-named
+// under the Professions 2.0 Phase 1 blueprint): a player's CURRENTLY-ACTIVE
+// adjacent-pair attunement grants one named archetype title for that PAIR
+// (Smith for weaponcrafting+armorcrafting, Bombardier for engineering+alchemy,
+// and so on). There is no "Jack of All Trades" fallback under this model, since
+// a character always has at most one active pair at a time; the natural analog
+// of the old "below rare grants no title" rule is the pre-acceptance state
+// (activeArchetype === null), which grants no title at all.
 //
-// `getArchetypeTitle` returns the TITLE'S IDENTIFIER, which is simply the active
-// craft id itself: the ten named titles are a strict one-to-one mapping onto the
-// ten crafts on the ring (see content/professions.ts CRAFT_RING), so the craft id
-// already uniquely identifies which title is granted. Keeping this an identifier
-// (never localized English prose) matches the "IWorld is a string-free seam" rule
-// (src/CLAUDE.md): the actual title WORDS are English-source, localized-at-client
-// data, defined per craft id in src/ui/i18n.catalog/hud_chrome.ts under
-// `archetypeTitle.<craftId>` (see that file for the ten title names chosen).
+// `getArchetypeTitle` returns the TITLE'S IDENTIFIER, which is the active pair's
+// CANONICAL PAIR ID (archetypePairId): the ten named titles are a strict
+// one-to-one mapping onto the ten selectable adjacent pairs
+// (ARCHETYPE_PAIR_TARGETS), so the pair id already uniquely identifies which
+// title is granted. Keeping this an identifier (never localized English prose)
+// matches the "IWorld is a string-free seam" rule (src/CLAUDE.md): the actual
+// title WORDS are English-source, localized-at-client data, defined per pair id
+// in src/ui/i18n.catalog/hud_chrome.ts under `archetypePair.<pairId>` (see that
+// file for the ten title names chosen).
 
-/** The granted title's identifier for a given active archetype: the craft id
- *  itself when one is set and valid, or null before the acceptance quest (or for
- *  a malformed/unknown craft id, which should never happen for real state). */
-export function getArchetypeTitle(activeArchetype: string | null): string | null {
+/** The granted title's identifier for a given active pair: the canonical pair
+ *  id (archetypePairId) when a valid adjacent pair is set, or null before the
+ *  acceptance quest (or for a malformed/non-adjacent pair, which should never
+ *  happen for state that went through normalizeArchetypeState). */
+export function getArchetypeTitle(
+  activeArchetype: string | null,
+  pairedMajor: string | null,
+): string | null {
   if (activeArchetype === null) return null;
-  return isCraftId(activeArchetype) ? activeArchetype : null;
+  return archetypePairId(activeArchetype, pairedMajor);
 }
 
 /** Read surface: the granted title identifier for a player's CURRENT active
- *  archetype. Backs the IWorld `archetypeTitle` read (professions facet). Updates
- *  immediately when switchArchetype changes the active archetype. */
+ *  pair. Backs the IWorld `archetypeTitle` read (professions facet). Updates
+ *  immediately when a pair transition changes the active archetype. */
 export function archetypeTitleFor(ctx: SimContext, pid: number): string | null {
-  return getArchetypeTitle(archetypeStateFor(ctx, pid).activeArchetype);
+  const state = archetypeStateFor(ctx, pid);
+  return getArchetypeTitle(state.activeArchetype, state.pairedMajor);
 }
 
 // Issue #1294 (the hobby): one opposite craft, empowered up to rare, is the

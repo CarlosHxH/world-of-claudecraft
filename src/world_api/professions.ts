@@ -86,21 +86,22 @@ export interface IWorldProfessions {
   // requirement itself (scales with archetypeSwitchCount; see archetype.ts).
   archetypeAmendsProgress: number;
   archetypeAmendsRequired: number;
-  // The title granted by the CURRENTLY-ACTIVE archetype (#1130, re-scoped per the
-  // comment on the live issue): the craft id whose named title the player has
-  // earned, or null before the acceptance quest has ever been completed (no
-  // "Jack of All Trades" fallback under the #1129 active-archetype model, since a
-  // character has at most one active archetype at a time). An identifier, not
-  // localized text, per the string-free IWorld seam: the ten title names live in
-  // src/ui/i18n.catalog/hud_chrome.ts (`archetypeTitle.<craftId>`).
+  // The title granted by the CURRENTLY-ACTIVE pair attunement (#1130, pair-named
+  // under Professions 2.0 Phase 1): the CANONICAL PAIR ID (see
+  // src/sim/professions/archetype.ts archetypePairId / ARCHETYPE_PAIR_TARGETS)
+  // whose named archetype title the player has earned, or null before the
+  // acceptance quest has ever been completed (no "Jack of All Trades" fallback
+  // under the #1129 active-archetype model, since a character has at most one
+  // active pair at a time). An identifier, not localized text, per the
+  // string-free IWorld seam: the ten title names live in
+  // src/ui/i18n.catalog/hud_chrome.ts (`archetypePair.<pairId>`).
   archetypeTitle: string | null;
   // The explicit hobby craft (#1294), empowered up to rare rather than common.
   // For an active pair it is one of the two crafts opposite its majors, and a
   // repeatable quest can switch that choice. `null` before attunement. An
-  // identifier, with the same string-free-seam rule as
-  // `archetypeTitle`: localized text lives in
-  // src/ui/i18n.catalog/hud_chrome.ts (`archetypeTitle.<craftId>`, reused as
-  // the hobby's display name too since a hobby id IS a craft id).
+  // identifier, with the same string-free-seam rule as `archetypeTitle`: the
+  // craft display name lives in src/ui/i18n.catalog/hud_chrome.ts
+  // (`craftName.<craftId>`, the per-craft display-name table).
   hobbyCraft: string | null;
   // Legacy direct transition entry points kept for compatibility. Online
   // ClientWorld does not send these as commands; live changes use quests.

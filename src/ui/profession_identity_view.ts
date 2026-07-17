@@ -1,5 +1,9 @@
 import { CRAFT_RING } from '../sim/content/professions';
-import { craftsForPairTarget, defaultHobbyForPair } from '../sim/professions/archetype';
+import {
+  archetypePairId,
+  craftsForPairTarget,
+  defaultHobbyForPair,
+} from '../sim/professions/archetype';
 import { TIER_SKILL_STEP, tierForSkill } from '../sim/professions/wheel';
 import type { CraftingIdentityView } from '../world_api/professions';
 
@@ -24,7 +28,9 @@ export type ProfessionNudge =
 export interface ProfessionIdentityModel {
   state: ProfessionIdentityState;
   summary: {
-    titleCraft: string | null;
+    // The active pair's canonical id (archetypePairId), the identifier the
+    // pair-archetype title renders from; null when unattuned.
+    pairId: string | null;
     majors: [string, string] | null;
     hobbyCraft: string | null;
     attunedPairCount: number;
@@ -36,8 +42,9 @@ export interface ProfessionIdentityModel {
 }
 
 export interface AttunementPreview {
+  // `target` IS the canonical pair id, so it doubles as the previewed title's
+  // identifier (see getArchetypeTitle).
   target: string;
-  titleCraft: string;
   majors: [string, string];
   hobbyCraft: string | null;
   majorCeiling: 'unlimited';
@@ -94,7 +101,7 @@ export function buildProfessionIdentityView(
   return {
     state,
     summary: {
-      titleCraft: identity.activeArchetype,
+      pairId: majors ? archetypePairId(majors[0], majors[1]) : null,
       majors,
       hobbyCraft: identity.hobbyCraft,
       attunedPairCount: identity.attunedPairs.length,
@@ -114,7 +121,6 @@ export function buildAttunementPreview(
   if (!pair) return null;
   return {
     target,
-    titleCraft: pair[0],
     majors: pair,
     hobbyCraft: defaultHobbyForPair(pair[0], pair[1], { ...craftSkills }),
     majorCeiling: 'unlimited',

@@ -453,16 +453,6 @@ export const tr_TR: Partial<Record<TranslationKey, string>> = {
   'hudChrome.vcup.walkUp': "Tribünlerden izlemek için Domuz Tarlası'na gel.",
   'hudChrome.archetypeTitle.label': 'Unvan',
   'hudChrome.archetypeTitle.none': 'Yok',
-  'hudChrome.archetypeTitle.armorcrafting': 'Zırhçı',
-  'hudChrome.archetypeTitle.weaponcrafting': 'Silah Ustası',
-  'hudChrome.archetypeTitle.jewelcrafting': 'Kuyumcu',
-  'hudChrome.archetypeTitle.alchemy': 'Simyacı',
-  'hudChrome.archetypeTitle.engineering': 'Mühendis',
-  'hudChrome.archetypeTitle.cooking': 'Aşçı',
-  'hudChrome.archetypeTitle.inscription': 'Kâtip',
-  'hudChrome.archetypeTitle.enchanting': 'Efsuncu',
-  'hudChrome.archetypeTitle.tailoring': 'Terzi',
-  'hudChrome.archetypeTitle.leatherworking': 'Derici',
   'entities.itemSets.crownforged.bonus4':
     "Silah kritik vuruşların hedefi Kemikkıymık ile parçalar, 12 sn boyunca her 2 sn'de 8 kanama hasarı verir. 3 kata kadar üst üste binebilir.",
   'entities.itemSets.deathlord.bonus4':

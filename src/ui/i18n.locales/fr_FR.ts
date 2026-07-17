@@ -794,16 +794,6 @@ export const fr_FR: Partial<Record<TranslationKey, string>> = {
   'hudChrome.vcup.walkUp': 'Approchez-vous du Pré de la Truie pour regarder depuis les tribunes.',
   'hudChrome.archetypeTitle.label': 'Titre',
   'hudChrome.archetypeTitle.none': 'Aucun',
-  'hudChrome.archetypeTitle.armorcrafting': 'Armurier',
-  'hudChrome.archetypeTitle.weaponcrafting': "Forgeron d'armes",
-  'hudChrome.archetypeTitle.jewelcrafting': 'Joaillier',
-  'hudChrome.archetypeTitle.alchemy': 'Alchimiste',
-  'hudChrome.archetypeTitle.engineering': 'Ingénieur',
-  'hudChrome.archetypeTitle.cooking': 'Cuisinier',
-  'hudChrome.archetypeTitle.inscription': 'Scribe',
-  'hudChrome.archetypeTitle.enchanting': 'Enchanteur',
-  'hudChrome.archetypeTitle.tailoring': 'Tailleur',
-  'hudChrome.archetypeTitle.leatherworking': 'Tanneur',
   'entities.itemSets.crownforged.bonus4':
     "Vos coups critiques d'arme lacèrent la cible avec Éclat d'os, lui infligeant 8 points de dégâts de saignement toutes les 2 s pendant 12 s. Se cumule jusqu'à 3 fois.",
   'entities.itemSets.deathlord.bonus4':

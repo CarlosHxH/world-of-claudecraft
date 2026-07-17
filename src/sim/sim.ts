@@ -8344,8 +8344,9 @@ export class Sim {
     return this.archetypeAmendsRequiredFor(this.primaryId);
   }
 
-  /** The title granted by the CURRENTLY-ACTIVE archetype (#1130): the craft id
-   *  whose named title is earned, or null before an archetype is ever chosen. See
+  /** The title granted by the CURRENTLY-ACTIVE pair attunement (#1130,
+   *  pair-named under Professions 2.0): the canonical pair id whose named title
+   *  is earned, or null before an archetype is ever chosen. See
    *  professions/archetype.ts getArchetypeTitle for the "no title" rule. */
   archetypeTitleFor(pid: number): string | null {
     return archetypeTitleFor(this.ctx, pid);

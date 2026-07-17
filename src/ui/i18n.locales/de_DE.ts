@@ -432,16 +432,6 @@ export const de_DE: Partial<Record<TranslationKey, string>> = {
   'hudChrome.vcup.walkUp': 'Komm zum Saufeld, um von den Rängen aus zuzusehen.',
   'hudChrome.archetypeTitle.label': 'Titel',
   'hudChrome.archetypeTitle.none': 'Keiner',
-  'hudChrome.archetypeTitle.armorcrafting': 'Rüstungsschmied',
-  'hudChrome.archetypeTitle.weaponcrafting': 'Waffenschmied',
-  'hudChrome.archetypeTitle.jewelcrafting': 'Juwelier',
-  'hudChrome.archetypeTitle.alchemy': 'Alchemist',
-  'hudChrome.archetypeTitle.engineering': 'Ingenieur',
-  'hudChrome.archetypeTitle.cooking': 'Koch',
-  'hudChrome.archetypeTitle.inscription': 'Schreiber',
-  'hudChrome.archetypeTitle.enchanting': 'Verzauberer',
-  'hudChrome.archetypeTitle.tailoring': 'Schneider',
-  'hudChrome.archetypeTitle.leatherworking': 'Gerber',
   'entities.itemSets.crownforged.bonus4':
     'Eure kritischen Waffentreffer zersplittern das Ziel mit Knochensplitter und lassen es 12 Sek. lang alle 2 Sek. 8 Schaden bluten. Stapelt sich bis zu 3-mal.',
   'entities.itemSets.deathlord.bonus4':

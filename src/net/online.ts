@@ -1282,9 +1282,13 @@ export class ClientWorld implements IWorld {
   acceptArchetypeQuest(_craftId: string): void {}
   advanceAmendsProgress(): void {}
   switchArchetype(_craftId: string): void {}
-  // Title granted by the active archetype (#1130), derived from the cprof mirror.
+  // Title granted by the active pair attunement (#1130, pair-named under
+  // Professions 2.0): the canonical pair id, derived live from the cprof
+  // mirror (applySnapshot replaces craftingIdentity wholesale on every cprof
+  // delta, so this getter tracks the server's pair with no extra wiring).
   get archetypeTitle(): string | null {
-    return getArchetypeTitle(this.activeArchetype);
+    const identity = this.craftingIdentity;
+    return getArchetypeTitle(identity.activeArchetype, identity.pairedMajor);
   }
   // Explicit hobby from cprof. The fallback supports pre-cprof servers.
   get hobbyCraft(): string | null {

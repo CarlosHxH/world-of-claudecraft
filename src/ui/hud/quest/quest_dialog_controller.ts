@@ -10,7 +10,7 @@ import {
   questObjectiveRequired,
 } from '../../../sim/types';
 import type { IWorld } from '../../../world_api';
-import { archetypeTitleText } from '../../char_window';
+import { archetypeTitleText, craftNameText } from '../../char_window';
 import { markDialogRoot } from '../../dialog_root';
 import { itemDisplayName } from '../../entity_i18n';
 import { esc } from '../../esc';
@@ -365,23 +365,31 @@ export class QuestDialogController {
       const options = professionTargets
         .map((target) => {
           const pair = craftsForPairTarget(target);
+          // A pair target leads with its archetype name and keeps both craft
+          // names visible so the choice stays informative, e.g.
+          // "Smith (Weaponcrafting + Armorcrafting)"; a single-craft target
+          // (the hobby-switch quest) is just the craft name.
           const label = pair
-            ? `${archetypeTitleText(pair[0])} + ${archetypeTitleText(pair[1])}`
-            : archetypeTitleText(target);
+            ? t('hudChrome.crafting.pairOptionLabel', {
+                pair: archetypeTitleText(target),
+                craftA: craftNameText(pair[0]),
+                craftB: craftNameText(pair[1]),
+              })
+            : craftNameText(target);
           return `<option value="${esc(target)}">${esc(label)}</option>`;
         })
         .join('');
       professionPreviewText = (target) => {
         if (quest.completionEffect?.type === 'switchHobby') {
-          return t('hudChrome.crafting.hobbyPreview', { hobby: archetypeTitleText(target) });
+          return t('hudChrome.crafting.hobbyPreview', { hobby: craftNameText(target) });
         }
         const preview = buildAttunementPreview(target, identity.craftSkills);
         if (!preview) return '';
         return t('hudChrome.crafting.attunementPreview', {
-          title: archetypeTitleText(preview.titleCraft),
-          majorA: archetypeTitleText(preview.majors[0]),
-          majorB: archetypeTitleText(preview.majors[1]),
-          hobby: archetypeTitleText(preview.hobbyCraft),
+          title: archetypeTitleText(preview.target),
+          majorA: craftNameText(preview.majors[0]),
+          majorB: craftNameText(preview.majors[1]),
+          hobby: craftNameText(preview.hobbyCraft),
         });
       };
       const initialPreview = professionTargets[0]

@@ -412,16 +412,6 @@ export const cs_CZ: Partial<Record<TranslationKey, string>> = {
   'hudChrome.vcup.walkUp': 'Přijď k Prasečímu poli a sleduj zápas z tribun.',
   'hudChrome.archetypeTitle.label': 'Titul',
   'hudChrome.archetypeTitle.none': 'Žádný',
-  'hudChrome.archetypeTitle.armorcrafting': 'Zbrojíř',
-  'hudChrome.archetypeTitle.weaponcrafting': 'Kovář zbraní',
-  'hudChrome.archetypeTitle.jewelcrafting': 'Klenotník',
-  'hudChrome.archetypeTitle.alchemy': 'Alchymista',
-  'hudChrome.archetypeTitle.engineering': 'Inženýr',
-  'hudChrome.archetypeTitle.cooking': 'Kuchař',
-  'hudChrome.archetypeTitle.inscription': 'Písař',
-  'hudChrome.archetypeTitle.enchanting': 'Očarovatel',
-  'hudChrome.archetypeTitle.tailoring': 'Krejčí',
-  'hudChrome.archetypeTitle.leatherworking': 'Koželuh',
   'entities.itemSets.crownforged.bonus4':
     'Kritické zásahy tvé zbraně roztříští cíl efektem Kostitříska a způsobí mu krvácení za 8 poškození každé 2 s po dobu 12 s. Nasčítá se až 3krát.',
   'entities.itemSets.deathlord.bonus4':
