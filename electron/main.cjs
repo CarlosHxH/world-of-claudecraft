@@ -40,6 +40,7 @@ const { attachRendererCrashRecovery, installProcessCrashGuards } = require('./cr
 const { initUpdater } = require('./updater.cjs');
 const {
   forceHighPerformanceGpu,
+  PRIME_RELAUNCH_MARKER,
   relaunchForLinuxPrime,
   summarizeGpuDevices,
 } = require('./gpu_preference.cjs');
@@ -54,11 +55,13 @@ const {
 // GPU process forks from a zygote that already exec'd (and snapshotted its environ) before
 // any of this script's lines run, so a later process.env write is invisible to it. This is
 // the earliest point re-exec can happen (before crash reporting, logging, or any window are
-// set up in this soon-to-exit process), and it must run before app 'ready'.
-if (relaunchForLinuxPrime({ app })) {
-  // process.exit (not app.exit, which only quits asynchronously) stops this script from
-  // executing any further statement below, so the rest of this soon-to-be-replaced
-  // process never sets up crash reporting, logging, or a window.
+// set up in this soon-to-exit process), and it must run before app 'ready'. log: console
+// because file logging is deliberately not initialized yet in this soon-to-exit process; the
+// durable main.log evidence is the relaunched-child line the child writes below.
+if (relaunchForLinuxPrime({ log: console })) {
+  // process.exit stops the main script before any statement below runs, so this
+  // soon-to-be-replaced process never sets up crash reporting, logging, or a window
+  // (app.exit would also exit promptly, but process.exit depends on nothing).
   process.exit(0);
 }
 
@@ -129,6 +132,13 @@ crashReporter.start({
 // diagnosable; the renderer's warnings/errors and uncaught exceptions are
 // mirrored into the same file below.
 const { log, filePath: logFilePath } = initLogging({ isPackaged: app.isPackaged });
+
+// The durable evidence that the Linux PRIME relaunch happened: the parent that spawned us
+// exited before logging existed, so the CHILD records it (docs/desktop-release.md points
+// its GPU verification checklist at this line).
+if (process.platform === 'linux' && process.env[PRIME_RELAUNCH_MARKER] === '1') {
+  log.info('[gpu] running as PRIME-relaunched child (Linux discrete-GPU offload env active)');
+}
 
 // Force the discrete high-performance GPU on hybrid (Optimus) systems, with zero user
 // action. Runs before app 'ready' (so the Chromium switches are read) and before any
