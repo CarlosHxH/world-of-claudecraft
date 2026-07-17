@@ -146,12 +146,16 @@ export type ProcTrigger =
   // icd: optional internal cooldown in seconds (talent_procs.ts). While it
   // runs, matching casts/crits are ignored entirely: nothing fires and nothing
   // is banked toward n.
-  | { on: 'castNth'; n: number; abilities: string[]; icd?: number }
-  | { on: 'spellCrit'; abilities?: string[]; icd?: number }
+  // chance: optional 0-1 fire probability (the item-set Clearcasting shape).
+  // Rolled through the sim Rng only at the moment the proc would otherwise
+  // fire, so players without such a proc draw no rng. A failed castNth roll
+  // still resets the counter; the icd arms only on a successful fire.
+  | { on: 'castNth'; n: number; abilities: string[]; icd?: number; chance?: number }
+  | { on: 'spellCrit'; abilities?: string[]; icd?: number; chance?: number }
   | { on: 'shieldConsumed'; ability: string }
   | { on: 'hotExpired'; ability: string }
   | { on: 'bigHitTaken'; hpFrac: number; icd: number }
-  | { on: 'meleeSwingWhile'; auraKind: string }
+  | { on: 'meleeSwingWhile'; auraKind: string; icd?: number; chance?: number }
   | { on: 'thornsReflect'; ability: string };
 
 export type ProcResponse =

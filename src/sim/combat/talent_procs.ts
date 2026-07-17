@@ -3,8 +3,10 @@
 // declarative ProcDef; combat code reports moments (cast completed, crit,
 // shield consumed, HoT expired, big hit taken, imbued swing) through single
 // delegating calls here, and this module holds the per-player counters and
-// internal cooldowns and applies the response. Everything is plain tick math:
-// no rng, nothing persisted, so replay determinism is untouched.
+// internal cooldowns and applies the response. Counters and icds are plain
+// tick math; a trigger with an optional `chance` draws through the sim Rng
+// only at the moment it would otherwise fire, so players without such a proc
+// draw no rng and replay determinism is untouched. Nothing is persisted.
 
 import type { ProcDef, ProcResponse } from '../content/talents';
 
@@ -164,6 +166,9 @@ export function onCastCompleted(
     const count = (procState.counters[def.id] ?? 0) + 1;
     if (count >= trigger.n) {
       procState.counters[def.id] = 0;
+      // G4: an optional fire chance (rolled only here, so proc-less players
+      // draw no rng). A failed roll consumes the counted casts but arms no icd.
+      if (trigger.chance !== undefined && !ctx.rng.chance(trigger.chance)) continue;
       if (trigger.icd !== undefined) procState.icds[def.id] = trigger.icd;
       fire(ctx, player, def, target && !target.dead ? target : player);
     } else {
@@ -195,11 +200,10 @@ export function onSpellCrit(
     }
     // G2 guard: an optional internal cooldown caps the fire rate (crit streams
     // from dot ticks and multi-target spells would otherwise chain-fire).
-    if (trigger.icd !== undefined) {
-      const procState = state(player);
-      if (procState.icds[def.id] !== undefined) continue;
-      procState.icds[def.id] = trigger.icd;
-    }
+    if (trigger.icd !== undefined && state(player).icds[def.id] !== undefined) continue;
+    // G4: optional fire chance; the icd arms only on a successful fire.
+    if (trigger.chance !== undefined && !ctx.rng.chance(trigger.chance)) continue;
+    if (trigger.icd !== undefined) state(player).icds[def.id] = trigger.icd;
     fire(ctx, player, def, target);
   }
 }
@@ -256,6 +260,11 @@ export function onMeleeSwing(ctx: SimContext, player: Entity): void {
     const trigger = def.trigger;
     if (trigger.on !== 'meleeSwingWhile') continue;
     if (!player.auras.some((aura) => aura.kind === trigger.auraKind)) continue;
+    // G2/G4 (mirrors the cast triggers): optional internal cooldown and fire
+    // chance; the icd arms only on a successful fire.
+    if (trigger.icd !== undefined && state(player).icds[def.id] !== undefined) continue;
+    if (trigger.chance !== undefined && !ctx.rng.chance(trigger.chance)) continue;
+    if (trigger.icd !== undefined) state(player).icds[def.id] = trigger.icd;
     fire(ctx, player, def, player);
   }
 }

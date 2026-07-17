@@ -2,10 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { consumeFreeCostFor } from '../src/sim/combat/empower_next';
 import {
   onCastCompleted,
+  onMeleeSwing,
   onSpellCrit,
   type ProcDef,
   tickProcState,
 } from '../src/sim/combat/talent_procs';
+import { Rng } from '../src/sim/rng';
 import type { SimContext } from '../src/sim/sim_context';
 import type { Entity } from '../src/sim/types';
 
@@ -15,6 +17,8 @@ import type { Entity } from '../src/sim/types';
 //     free-cast relay procs cannot feed cast-counter procs.
 // G2: castNth and spellCrit triggers accept an optional internal cooldown; while
 //     it runs, matching casts are ignored entirely (no counting, no firing).
+// G4: triggers accept an optional chance (item-set Clearcasting shape); the rng
+//     draw happens only at the moment the proc would otherwise fire.
 
 function fakePlayer(procs: ProcDef[]): { p: Entity; ctx: SimContext; events: string[] } {
   const events: string[] = [];
@@ -42,6 +46,7 @@ function fakePlayer(procs: ProcDef[]): { p: Entity; ctx: SimContext; events: str
     },
     emit: () => {},
     entities: new Map([[1, p]]),
+    rng: new Rng(11),
   } as unknown as SimContext;
   return { p, ctx, events };
 }
@@ -143,6 +148,58 @@ describe('G2: internal cooldowns on castNth and spellCrit triggers', () => {
     expect(p.resource).toBe(60);
     onCastCompleted(ctx, p, 'smite'); // second fresh count: fires
     expect(p.resource).toBe(70);
+  });
+
+  it('chance 1 on castNth fires every matching cast, chance 0 never fires', () => {
+    const always: ProcDef = {
+      id: 'test_always',
+      name: 'Test Always',
+      trigger: { on: 'castNth', n: 1, abilities: ['sinister_strike'], chance: 1 },
+      responses: [{ kind: 'resource', amount: 5 }],
+    };
+    const never: ProcDef = {
+      id: 'test_never',
+      name: 'Test Never',
+      trigger: { on: 'castNth', n: 1, abilities: ['sinister_strike'], chance: 0 },
+      responses: [{ kind: 'resource', amount: 100 }],
+    };
+    const { p, ctx } = fakePlayer([always, never]);
+    onCastCompleted(ctx, p, 'sinister_strike');
+    onCastCompleted(ctx, p, 'sinister_strike');
+    expect(p.resource).toBe(60); // two 5s from `always`, nothing from `never`
+  });
+
+  it('chance-gated meleeSwingWhile rolls per swing and honors its icd', () => {
+    const dividend: ProcDef = {
+      id: 'test_dividend',
+      name: 'Test Dividend',
+      trigger: { on: 'meleeSwingWhile', auraKind: 'imbue', chance: 1, icd: 2 },
+      responses: [{ kind: 'resource', amount: 5 }],
+    };
+    const dud: ProcDef = {
+      id: 'test_dud',
+      name: 'Test Dud',
+      trigger: { on: 'meleeSwingWhile', auraKind: 'imbue', chance: 0 },
+      responses: [{ kind: 'resource', amount: 100 }],
+    };
+    const { p, ctx } = fakePlayer([dividend, dud]);
+    p.auras.push({
+      id: 'test_poison',
+      name: 'Test Poison',
+      kind: 'imbue',
+      remaining: 60,
+      duration: 60,
+      value: 5,
+      sourceId: 1,
+      school: 'physical',
+    } as Entity['auras'][number]);
+    onMeleeSwing(ctx, p);
+    expect(p.resource).toBe(55); // dividend fired, dud never does
+    onMeleeSwing(ctx, p); // inside the 2s icd
+    expect(p.resource).toBe(55);
+    tickProcState(p, 2.05);
+    onMeleeSwing(ctx, p);
+    expect(p.resource).toBe(60);
   });
 
   it('spellCrit with an icd fires at most once per window', () => {
