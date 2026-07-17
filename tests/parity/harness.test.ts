@@ -149,6 +149,7 @@ describe('exclude lists are pinned and real (anti-loosening guard)', () => {
       'prevFacing',
       'prevPos',
       'scale',
+      'sharedCritBonus', // derived crit core; its inputs (ratings/talents/auras) are sampled
       'skin',
       'skinCatalog',
       'stealthed',

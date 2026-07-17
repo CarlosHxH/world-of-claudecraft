@@ -2577,6 +2577,11 @@ export interface Entity {
   hasteRating: number; // accumulated haste rating from gear + set bonuses
   hitRating: number; // accumulated hit rating from gear + set bonuses
   hitBonus: number; // hit fraction (hitRating converted): reduces miss/resist, 0..1
+  // The class-agnostic crit core every strike shares: crit rating, talent and
+  // set crit, and flat crit auras (recalcPlayerStats). Agility tops up the
+  // physical channel and Intellect the spell channel. Derived from sampled
+  // inputs, so parity-excluded like the other derived stats.
+  sharedCritBonus: number;
   // Extra critical-strike damage from a spec mastery (0 = none), split by OUTPUT CHANNEL
   // so a mastery only strengthens the crits it is meant to. Added to the matching base
   // crit multiplier at the crit site: spell crits deal 1.5 + critDmgSpellBonus, physical

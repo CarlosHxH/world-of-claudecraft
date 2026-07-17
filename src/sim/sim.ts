@@ -4826,7 +4826,9 @@ export class Sim {
   }
 
   private spellCrit(p: Entity): number {
-    return 0.05 + p.stats.int * 0.0008 + spellCritBonusFromAuras(p);
+    // Base + Intellect + the shared crit core (crit rating, talent/set crit,
+    // flat crit auras; recalcPlayerStats) + spell-crit-specific auras.
+    return 0.05 + p.stats.int * 0.0008 + (p.sharedCritBonus ?? 0) + spellCritBonusFromAuras(p);
   }
 
   // Heal core, heal multipliers, heal-absorb soak, crit-vuln bonus, and the

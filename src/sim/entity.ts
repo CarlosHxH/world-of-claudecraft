@@ -73,6 +73,7 @@ function baseEntity(id: number, pos: Vec3): Entity {
     setProcs: [],
     procReadyAt: undefined as unknown as Record<string, number>,
     critChance: 0.05,
+    sharedCritBonus: 0,
     critRating: 0,
     hasteRating: 0,
     hitRating: 0,
@@ -551,14 +552,17 @@ export function recalcPlayerStats(
   e.spellHaste = hasteFrac + bonusHaste + (mods?.global.spellHastePct ?? 0);
   e.setProcs = setEff.procs;
   if (e.setProcs.length > 0 && !e.procReadyAt) e.procReadyAt = {};
+  // The class-agnostic crit core (rating + talent/set crit + flat crit auras).
+  // Both hit tables read it: melee adds Agility on top, spells add Intellect
+  // (the community-found gap: spell crit read ONLY Intellect, so crit gear and
+  // crit talents were dead weight to casters).
+  e.sharedCritBonus =
+    bonusCrit + (mods?.stats.crit ?? 0) + setEff.crit + critFractionFromRating(e.critRating);
   // Crit: ~1% per 20 agi at low level
   e.critChance =
     0.05 +
     s.agi * 0.0005 +
-    bonusCrit +
-    (mods?.stats.crit ?? 0) +
-    setEff.crit +
-    critFractionFromRating(e.critRating) +
+    e.sharedCritBonus +
     (e.auras.some((a) => a.kind === 'berserker_stance') ? BERSERKER_CRIT_CHANCE : 0);
   // Extra crit damage from a spec mastery, per output channel (e.g. Fire mage: SPELL
   // crits deal more; Holy paladin: HEAL crits; Subtlety/Arms: PHYSICAL crits). Each

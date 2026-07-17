@@ -997,6 +997,7 @@ function blankEntity(id: number): Entity {
     setProcs: [],
     procReadyAt: undefined as unknown as Record<string, number>,
     critChance: 0.05,
+    sharedCritBonus: 0,
     critRating: 0,
     hasteRating: 0,
     hitRating: 0,
