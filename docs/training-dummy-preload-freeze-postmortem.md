@@ -1,13 +1,18 @@
-## Bug: teleporting near the zone3 ogre camp freezes the client
+# Training Dummy Preload Freeze: Postmortem
 
-### Symptom
+Date: 2026-07-17
+
+Bug: teleporting near the zone3 ogre camp froze the client. Fixed in PR
+#2078; the systemic backstop is tracked in issue #2079.
+
+## Symptom
 
 `/dev tp -90 668` (near the `thornpeak_ogre` war-camp in zone3) reliably froze
 the client: the first frame rendered, then the screen stopped updating
 entirely while sim ticks and audio kept running in the background. Reproduced
 in both Chrome and Firefox, in offline mode.
 
-### Exact error
+## Exact error
 
 ```
 Uncaught Error: character asset not preloaded: models/creatures/training_dummy.glb
@@ -26,7 +31,7 @@ Uncaught Error: character asset not preloaded: models/creatures/training_dummy.g
 Repeated on every single animation frame after the freeze started (192+
 occurrences observed in one session), each with an identical stack.
 
-### Why it looks like a freeze, not a crash
+## Why it looks like a freeze, not a crash
 
 `requestAnimationFrame` keeps firing every frame (visible in the trace: `frame
 @ main.ts:2761` -> `requestAnimationFrame` -> repeat), so the outer loop never
@@ -36,11 +41,12 @@ The screen never visually updates again, while the sim tick and audio (which
 run earlier in the same frame, on a separate code path from the renderer)
 keep working normally. That's why sound kept firing after the "freeze."
 
-### Root cause
+## Root cause
 
 `training_dummy` is a zone3 camp near the ogre war-camp
 (`{ mobId: 'training_dummy', center: { x: -40, z: 648 }, radius: 0, count: 1 }`,
-`src/sim/content/zone3.ts:1883`), about 54 yards from the teleport point.
+the camp record in `src/sim/content/zone3.ts`), about 54 yards from the
+teleport point.
 Its model, `models/creatures/training_dummy.glb`, is deliberately marked
 `lazyPreload: true` in `src/render/characters/manifest.ts` (it appears in
 exactly one hub, so it was kept out of the eager boot sweep, the same
@@ -60,7 +66,7 @@ the throw repeated every frame forever (the entity never gets marked as
 having a created view, so it re-enters the candidate list every subsequent
 frame), permanently stalling that frame's paint.
 
-### How we confirmed it was pre-existing, not a regression
+## How we confirmed it was pre-existing, not a regression
 
 Initial testing was inconclusive: the bug reproduced repeatedly on the
 `feature/mob-idle-sfx` branch but not on what was assumed to be a baseline,
@@ -79,7 +85,7 @@ present, reproduced the identical error and freeze. That confirms the bug is
 pre-existing in `release/v0.27.0` itself and entirely unrelated to the idle
 mob-voice trigger work; no idle-sfx code appears anywhere in the stack trace.
 
-### Fix
+## Fix
 
 Adds `preloadTrainingDummyAssets()`/`trainingDummyAssetsReady()`
 (`src/render/characters/assets.ts`), mirroring
@@ -90,11 +96,11 @@ instead of throwing. `training_dummy` was confirmed to be one of exactly two
 `lazyPreload` visuals in the manifest (the mech is the other), so no other
 creature camp shares this gap today.
 
-### Follow-up not covered by this PR
+## Follow-up (issue #2079)
 
 Making `resolvedGltf` fail soft (log + skip that entity's view) instead of
 throwing synchronously inside the per-frame render path would be a more
 defensive backstop: it would stop ANY future missing-preload entry, for any
 model added later without its own gate, from being able to freeze rendering
-the same way this one did. Worth filing as its own follow-up issue rather
-than folding into this fix.
+the same way this one did. Filed as issue #2079 rather than folded into
+this fix.
