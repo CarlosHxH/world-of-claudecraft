@@ -8244,6 +8244,48 @@ export const en_XA: EnTranslations = {
       "silverleaf_herb": {
         "name": "[Šíļʋéŕļéáƒ Ĥéŕƀ]"
       },
+      "rough_hide": {
+        "name": "[Ŕóúĝĥ Ĥíðé]"
+      },
+      "spider_silk": {
+        "name": "[Šþíðéŕ Šíļķ]"
+      },
+      "venom_gland": {
+        "name": "[Ʋéñóɱ Ĝļáñð]"
+      },
+      "game_meat": {
+        "name": "[Ĝáɱé Ɱéáţ]"
+      },
+      "homespun_cloth": {
+        "name": "[Ĥóɱéšþúñ Çļóţĥ]"
+      },
+      "pristine_hide": {
+        "name": "[Þŕíšţíñé Ĥíðé]"
+      },
+      "pristine_silk": {
+        "name": "[Þŕíšţíñé Šíļķ]"
+      },
+      "pristine_venom_gland": {
+        "name": "[Þŕíšţíñé Ʋéñóɱ Ĝļáñð]"
+      },
+      "prime_cut": {
+        "name": "[Þŕíɱé Çúţ]"
+      },
+      "smithing_flux": {
+        "name": "[Šɱíţĥíñĝ Ƒļúẋ]"
+      },
+      "spool_of_thread": {
+        "name": "[Šþóóļ óƒ Ţĥŕéáð]"
+      },
+      "tanning_agent": {
+        "name": "[Ţáññíñĝ Áĝéñţ]"
+      },
+      "cooking_salt": {
+        "name": "[Çóóķíñĝ Šáļţ]"
+      },
+      "glass_vial": {
+        "name": "[Ĝļášš Ʋíáļ]"
+      },
       "conjured_water4": {
         "name": "[Çóñĵúŕéð Šþŕíñĝŵáţéŕ]"
       },

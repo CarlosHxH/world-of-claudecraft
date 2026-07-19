@@ -8244,6 +8244,48 @@ export const ja_JP: EnTranslations = {
       "silverleaf_herb": {
         "name": "シルバーリーフ草"
       },
+      "rough_hide": {
+        "name": "粗い獣皮"
+      },
+      "spider_silk": {
+        "name": "蜘蛛の糸"
+      },
+      "venom_gland": {
+        "name": "毒腺"
+      },
+      "game_meat": {
+        "name": "野獣の肉"
+      },
+      "homespun_cloth": {
+        "name": "手織りの布"
+      },
+      "pristine_hide": {
+        "name": "極上の獣皮"
+      },
+      "pristine_silk": {
+        "name": "極上の蜘蛛の糸"
+      },
+      "pristine_venom_gland": {
+        "name": "極上の毒腺"
+      },
+      "prime_cut": {
+        "name": "極上の肉"
+      },
+      "smithing_flux": {
+        "name": "鍛冶の融剤"
+      },
+      "spool_of_thread": {
+        "name": "糸巻き"
+      },
+      "tanning_agent": {
+        "name": "なめし剤"
+      },
+      "cooking_salt": {
+        "name": "調理用の塩"
+      },
+      "glass_vial": {
+        "name": "ガラスの小瓶"
+      },
       "conjured_water4": {
         "name": "魔法の湧き水"
       },

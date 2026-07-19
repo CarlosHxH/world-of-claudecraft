@@ -8244,6 +8244,48 @@ export const tr_TR: EnTranslations = {
       "silverleaf_herb": {
         "name": "Silverleaf Herb"
       },
+      "rough_hide": {
+        "name": "Rough Hide"
+      },
+      "spider_silk": {
+        "name": "Spider Silk"
+      },
+      "venom_gland": {
+        "name": "Venom Gland"
+      },
+      "game_meat": {
+        "name": "Game Meat"
+      },
+      "homespun_cloth": {
+        "name": "Homespun Cloth"
+      },
+      "pristine_hide": {
+        "name": "Pristine Hide"
+      },
+      "pristine_silk": {
+        "name": "Pristine Silk"
+      },
+      "pristine_venom_gland": {
+        "name": "Pristine Venom Gland"
+      },
+      "prime_cut": {
+        "name": "Prime Cut"
+      },
+      "smithing_flux": {
+        "name": "Smithing Flux"
+      },
+      "spool_of_thread": {
+        "name": "Spool of Thread"
+      },
+      "tanning_agent": {
+        "name": "Tanning Agent"
+      },
+      "cooking_salt": {
+        "name": "Cooking Salt"
+      },
+      "glass_vial": {
+        "name": "Glass Vial"
+      },
       "conjured_water4": {
         "name": "Sihirle Yaratılmış Kaynak Suyu"
       },

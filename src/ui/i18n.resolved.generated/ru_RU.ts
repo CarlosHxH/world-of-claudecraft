@@ -8244,6 +8244,48 @@ export const ru_RU: EnTranslations = {
       "silverleaf_herb": {
         "name": "Трава серебролист"
       },
+      "rough_hide": {
+        "name": "Грубая шкура"
+      },
+      "spider_silk": {
+        "name": "Паучий шелк"
+      },
+      "venom_gland": {
+        "name": "Ядовитая железа"
+      },
+      "game_meat": {
+        "name": "Мясо дичи"
+      },
+      "homespun_cloth": {
+        "name": "Домотканое полотно"
+      },
+      "pristine_hide": {
+        "name": "Безупречная шкура"
+      },
+      "pristine_silk": {
+        "name": "Безупречный паучий шелк"
+      },
+      "pristine_venom_gland": {
+        "name": "Безупречная ядовитая железа"
+      },
+      "prime_cut": {
+        "name": "Отборная вырезка"
+      },
+      "smithing_flux": {
+        "name": "Кузнечный флюс"
+      },
+      "spool_of_thread": {
+        "name": "Катушка ниток"
+      },
+      "tanning_agent": {
+        "name": "Дубильное средство"
+      },
+      "cooking_salt": {
+        "name": "Поваренная соль"
+      },
+      "glass_vial": {
+        "name": "Стеклянный флакон"
+      },
       "conjured_water4": {
         "name": "Сотворённая родниковая вода"
       },

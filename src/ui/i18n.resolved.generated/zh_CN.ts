@@ -8244,6 +8244,48 @@ export const zh_CN: EnTranslations = {
       "silverleaf_herb": {
         "name": "银叶草"
       },
+      "rough_hide": {
+        "name": "粗糙的兽皮"
+      },
+      "spider_silk": {
+        "name": "蜘蛛丝"
+      },
+      "venom_gland": {
+        "name": "毒液腺"
+      },
+      "game_meat": {
+        "name": "野味肉"
+      },
+      "homespun_cloth": {
+        "name": "手织布"
+      },
+      "pristine_hide": {
+        "name": "完美的兽皮"
+      },
+      "pristine_silk": {
+        "name": "完美的蜘蛛丝"
+      },
+      "pristine_venom_gland": {
+        "name": "完美的毒液腺"
+      },
+      "prime_cut": {
+        "name": "上等肉块"
+      },
+      "smithing_flux": {
+        "name": "锻造助熔剂"
+      },
+      "spool_of_thread": {
+        "name": "线轴"
+      },
+      "tanning_agent": {
+        "name": "鞣革剂"
+      },
+      "cooking_salt": {
+        "name": "烹饪用盐"
+      },
+      "glass_vial": {
+        "name": "玻璃瓶"
+      },
       "conjured_water4": {
         "name": "魔法泉水"
       },

@@ -8244,6 +8244,48 @@ export const ko_KR: EnTranslations = {
       "silverleaf_herb": {
         "name": "은빛잎 약초"
       },
+      "rough_hide": {
+        "name": "거친 가죽"
+      },
+      "spider_silk": {
+        "name": "거미 비단"
+      },
+      "venom_gland": {
+        "name": "독샘"
+      },
+      "game_meat": {
+        "name": "야생 고기"
+      },
+      "homespun_cloth": {
+        "name": "손으로 짠 천"
+      },
+      "pristine_hide": {
+        "name": "완벽한 가죽"
+      },
+      "pristine_silk": {
+        "name": "완벽한 거미 비단"
+      },
+      "pristine_venom_gland": {
+        "name": "완벽한 독샘"
+      },
+      "prime_cut": {
+        "name": "최상급 고기"
+      },
+      "smithing_flux": {
+        "name": "제련용 융제"
+      },
+      "spool_of_thread": {
+        "name": "실타래"
+      },
+      "tanning_agent": {
+        "name": "무두질 약품"
+      },
+      "cooking_salt": {
+        "name": "요리용 소금"
+      },
+      "glass_vial": {
+        "name": "유리병"
+      },
       "conjured_water4": {
         "name": "창조된 샘물"
       },
