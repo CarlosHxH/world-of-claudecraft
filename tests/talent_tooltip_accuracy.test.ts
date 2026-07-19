@@ -136,6 +136,27 @@ describe('talent tooltip accuracy (all 9 classes x 3 specs)', () => {
     expect(mastery).toContain('auto-attacks are 5% faster');
     expect(mastery).toContain('at least 20%');
   });
+
+  it('renders Warded source-health scaling in non-English tooltips', async () => {
+    const warded = CHOICE_ROWS.mage.rows
+      .flatMap((row) => [...row.options])
+      .find((choice) => choice.id === 'mag_r8_warded');
+    if (!warded) throw new Error('missing mag_r8_warded');
+
+    await ensureLocaleLoaded('es');
+    setLanguage('es');
+    try {
+      const rendered = tTalent({
+        kind: 'talentChoice',
+        choice: warded,
+        field: 'description',
+      });
+      expect(rendered).toContain('+10\u00a0% salud máxima');
+      expect(rendered).not.toContain('+0 Sanación');
+    } finally {
+      setLanguage('en');
+    }
+  });
 });
 
 // Talent descriptions are generated from effect data outside English. English remains
