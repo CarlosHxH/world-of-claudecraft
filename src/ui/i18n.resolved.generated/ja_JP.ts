@@ -8427,8 +8427,8 @@ export const ja_JP: EnTranslations = {
       "silverleaf_mana_draught": {
         "name": "シルバーリーフのマナ薬"
       },
-      "elixir_of_thick_hide": {
-        "name": "厚皮のエリクサー"
+      "elixir_of_the_boar": {
+        "name": "猪のエリクサー"
       },
       "goldleaf_healing_draught": {
         "name": "ゴールドリーフの治癒薬"

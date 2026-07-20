@@ -792,7 +792,7 @@ tables, i18n key namespaces, files created)
   which also covers the station-free combos), material demand coverage
   for every Phase 4 and Phase 10 material id, and the ladder shape rules.
   i18n: 68 new entities.items.<id>.name keys with five non-Latin overlay
-  fills each; three new aura keys (aura.elixirThickHide,
+  fills each; three new aura keys (aura.elixirBoar,
   aura.elixirVenomfire, aura.elixirSerpent) beside aura.elixirBear in
   sim_i18n (baseEnTable, the 14 locale DICT blocks, AURA_NAME_KEY
   reverse rows), S3 guard green.

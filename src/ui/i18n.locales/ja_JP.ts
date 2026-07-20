@@ -8321,7 +8321,7 @@ export const ja_JP: Partial<Record<TranslationKey, string>> = {
   'entities.items.marlows_grand_roast.name': 'マーロウの豪華ロースト',
   'entities.items.silverleaf_healing_draught.name': 'シルバーリーフの治癒薬',
   'entities.items.silverleaf_mana_draught.name': 'シルバーリーフのマナ薬',
-  'entities.items.elixir_of_thick_hide.name': '厚皮のエリクサー',
+  'entities.items.elixir_of_the_boar.name': '猪のエリクサー',
   'entities.items.goldleaf_healing_draught.name': 'ゴールドリーフの治癒薬',
   'entities.items.goldleaf_mana_draught.name': 'ゴールドリーフのマナ薬',
   'entities.items.venomfire_elixir.name': '毒炎のエリクサー',

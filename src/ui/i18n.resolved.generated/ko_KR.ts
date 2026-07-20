@@ -8427,8 +8427,8 @@ export const ko_KR: EnTranslations = {
       "silverleaf_mana_draught": {
         "name": "은빛잎 마나 물약"
       },
-      "elixir_of_thick_hide": {
-        "name": "두꺼운 가죽의 비약"
+      "elixir_of_the_boar": {
+        "name": "멧돼지의 비약"
       },
       "goldleaf_healing_draught": {
         "name": "금빛잎 치유 물약"

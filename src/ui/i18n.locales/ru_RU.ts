@@ -8477,7 +8477,7 @@ export const ru_RU: Partial<Record<TranslationKey, string>> = {
   'entities.items.marlows_grand_roast.name': 'Роскошное жаркое Марлоу',
   'entities.items.silverleaf_healing_draught.name': 'Целебный настой серебролиста',
   'entities.items.silverleaf_mana_draught.name': 'Настой маны серебролиста',
-  'entities.items.elixir_of_thick_hide.name': 'Эликсир толстой шкуры',
+  'entities.items.elixir_of_the_boar.name': 'Эликсир вепря',
   'entities.items.goldleaf_healing_draught.name': 'Целебный настой золотолиста',
   'entities.items.goldleaf_mana_draught.name': 'Настой маны золотолиста',
   'entities.items.venomfire_elixir.name': 'Эликсир ядопламени',

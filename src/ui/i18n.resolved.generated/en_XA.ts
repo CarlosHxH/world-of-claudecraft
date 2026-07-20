@@ -8427,8 +8427,8 @@ export const en_XA: EnTranslations = {
       "silverleaf_mana_draught": {
         "name": "[Šíļʋéŕļéáƒ Ɱáñá Ðŕáúĝĥţ]"
       },
-      "elixir_of_thick_hide": {
-        "name": "[Éļíẋíŕ óƒ Ţĥíçķ Ĥíðé]"
+      "elixir_of_the_boar": {
+        "name": "[Éļíẋíŕ óƒ ţĥé Ɓóáŕ]"
       },
       "goldleaf_healing_draught": {
         "name": "[Ĝóļðļéáƒ Ĥéáļíñĝ Ðŕáúĝĥţ]"

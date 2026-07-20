@@ -8427,8 +8427,8 @@ export const ru_RU: EnTranslations = {
       "silverleaf_mana_draught": {
         "name": "Настой маны серебролиста"
       },
-      "elixir_of_thick_hide": {
-        "name": "Эликсир толстой шкуры"
+      "elixir_of_the_boar": {
+        "name": "Эликсир вепря"
       },
       "goldleaf_healing_draught": {
         "name": "Целебный настой золотолиста"

@@ -161,7 +161,7 @@ export const PROFESSION_ITEMS: Record<string, ItemDef> = {
     slot: 'mainhand',
     hand: 'twohand',
     quality: 'common',
-    weapon: { min: 8, max: 14, speed: 3.2 },
+    weapon: { min: 30, max: 41, speed: 3.2 },
     sellValue: 36,
   },
   ironedge_longsword: {
@@ -171,7 +171,7 @@ export const PROFESSION_ITEMS: Record<string, ItemDef> = {
     slot: 'mainhand',
     quality: 'uncommon',
     weapon: { min: 8, max: 13, speed: 2.4 },
-    stats: { str: 2, sta: 1 },
+    stats: { str: 4, sta: 2 },
     sellValue: 52,
   },
   ironshod_maul: {
@@ -181,8 +181,8 @@ export const PROFESSION_ITEMS: Record<string, ItemDef> = {
     slot: 'mainhand',
     hand: 'twohand',
     quality: 'uncommon',
-    weapon: { min: 14, max: 22, speed: 3.3 },
-    stats: { str: 3, sta: 2 },
+    weapon: { min: 36, max: 51, speed: 3.3 },
+    stats: { str: 5, sta: 3 },
     sellValue: 95,
   },
   whetted_iron_dirk: {
@@ -192,7 +192,7 @@ export const PROFESSION_ITEMS: Record<string, ItemDef> = {
     slot: 'mainhand',
     quality: 'uncommon',
     weapon: { min: 5, max: 9, speed: 1.8, dagger: true },
-    stats: { agi: 2, sta: 1 },
+    stats: { agi: 4, sta: 2 },
     sellValue: 45,
   },
   thorium_warblade: {
@@ -202,7 +202,7 @@ export const PROFESSION_ITEMS: Record<string, ItemDef> = {
     slot: 'mainhand',
     quality: 'rare',
     weapon: { min: 20, max: 32, speed: 2.5 },
-    stats: { str: 4, sta: 2 },
+    stats: { str: 9, sta: 4 },
     sellValue: 275,
   },
   arcanite_war_axe: {
@@ -212,7 +212,7 @@ export const PROFESSION_ITEMS: Record<string, ItemDef> = {
     slot: 'mainhand',
     quality: 'rare',
     weapon: { min: 22, max: 34, speed: 2.7 },
-    stats: { agi: 4, sta: 2 },
+    stats: { agi: 9, sta: 4 },
     sellValue: 300,
   },
   elderwood_battle_staff: {
@@ -222,7 +222,7 @@ export const PROFESSION_ITEMS: Record<string, ItemDef> = {
     slot: 'mainhand',
     quality: 'rare',
     weapon: { min: 19, max: 31, speed: 3.0 },
-    stats: { int: 4, spi: 2 },
+    stats: { int: 9, spi: 4 },
     sellValue: 285,
   },
 
@@ -622,12 +622,12 @@ export const PROFESSION_ITEMS: Record<string, ItemDef> = {
     potionMana: 160,
     sellValue: 12,
   },
-  elixir_of_thick_hide: {
-    id: 'elixir_of_thick_hide',
-    name: 'Elixir of Thick Hide',
+  elixir_of_the_boar: {
+    id: 'elixir_of_the_boar',
+    name: 'Elixir of the Boar',
     kind: 'elixir',
     quality: 'common',
-    elixir: { aura: 'Thick Hide', kind: 'buff_sta', value: 6, duration: 600 },
+    elixir: { aura: 'Might of the Boar', kind: 'buff_sta', value: 6, duration: 600 },
     sellValue: 10,
   },
   goldleaf_healing_draught: {

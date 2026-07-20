@@ -8427,8 +8427,8 @@ export const es_ES: EnTranslations = {
       "silverleaf_mana_draught": {
         "name": "Silverleaf Mana Draught"
       },
-      "elixir_of_thick_hide": {
-        "name": "Elixir of Thick Hide"
+      "elixir_of_the_boar": {
+        "name": "Elixir of the Boar"
       },
       "goldleaf_healing_draught": {
         "name": "Goldleaf Healing Draught"

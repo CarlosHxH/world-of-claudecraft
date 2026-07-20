@@ -1143,9 +1143,9 @@ export const LADDER_RECIPES: ProfessionRecipeRecord[] = [
     stationType: 'apothecary',
   },
   {
-    id: 'recipe_elixir_of_thick_hide',
+    id: 'recipe_elixir_of_the_boar',
     professionId: 'alchemy',
-    resultItemId: 'elixir_of_thick_hide',
+    resultItemId: 'elixir_of_the_boar',
     resultCount: 1,
     reagents: [
       { itemId: 'venom_gland', count: 2 },

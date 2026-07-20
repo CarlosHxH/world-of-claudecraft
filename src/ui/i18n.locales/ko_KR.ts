@@ -8305,7 +8305,7 @@ export const ko_KR: Partial<Record<TranslationKey, string>> = {
   'entities.items.marlows_grand_roast.name': '마를로의 대형 구이',
   'entities.items.silverleaf_healing_draught.name': '은빛잎 치유 물약',
   'entities.items.silverleaf_mana_draught.name': '은빛잎 마나 물약',
-  'entities.items.elixir_of_thick_hide.name': '두꺼운 가죽의 비약',
+  'entities.items.elixir_of_the_boar.name': '멧돼지의 비약',
   'entities.items.goldleaf_healing_draught.name': '금빛잎 치유 물약',
   'entities.items.goldleaf_mana_draught.name': '금빛잎 마나 물약',
   'entities.items.venomfire_elixir.name': '독화의 비약',

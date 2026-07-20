@@ -8427,8 +8427,8 @@ export const zh_CN: EnTranslations = {
       "silverleaf_mana_draught": {
         "name": "银叶法力药水"
       },
-      "elixir_of_thick_hide": {
-        "name": "厚皮药剂"
+      "elixir_of_the_boar": {
+        "name": "野猪药剂"
       },
       "goldleaf_healing_draught": {
         "name": "金叶治疗药水"

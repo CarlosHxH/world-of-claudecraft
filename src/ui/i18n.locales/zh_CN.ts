@@ -7926,7 +7926,7 @@ export const zh_CN: Partial<Record<TranslationKey, string>> = {
   'entities.items.marlows_grand_roast.name': '马洛的盛大烤肉',
   'entities.items.silverleaf_healing_draught.name': '银叶治疗药水',
   'entities.items.silverleaf_mana_draught.name': '银叶法力药水',
-  'entities.items.elixir_of_thick_hide.name': '厚皮药剂',
+  'entities.items.elixir_of_the_boar.name': '野猪药剂',
   'entities.items.goldleaf_healing_draught.name': '金叶治疗药水',
   'entities.items.goldleaf_mana_draught.name': '金叶法力药水',
   'entities.items.venomfire_elixir.name': '毒火药剂',
